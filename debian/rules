@@ -1,0 +1,21 @@
+#!/usr/bin/make -f
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/rules/simple-patchsys.mk
+include /usr/share/cdbs/1/rules/utils.mk
+
+# debian package version
+version=$(shell dpkg-parsechangelog | grep ^Version: | cut -d ' ' -f 2)
+
+maint: debian/control
+
+common_conf_flags = \
+	--disable-debug
+
+# FIXME: should disable docs for arch only builds
+DEB_CONFIGURE_EXTRA_FLAGS := $(common_conf_flags)
+
+DEB_INSTALL_DOCS_ALL += debian/README.Debian NEWS
+
+.PHONY: maint

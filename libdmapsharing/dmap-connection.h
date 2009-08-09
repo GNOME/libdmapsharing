@@ -1,0 +1,137 @@
+/*
+ * Copyright (C) 2004,2005 Charles Schmidt <cschmidt2@emich.edu>
+ * Copyright (C) 2006 INDT
+ *  Andre Moreira Magalhaes <andre.magalhaes@indt.org.br>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+#ifndef __DMAP_CONNECTION_H
+#define __DMAP_CONNECTION_H
+
+#include <glib.h>
+#include <glib-object.h>
+#include <libsoup/soup.h>
+
+#include "dmap-db.h"
+#include "dmap-record-factory.h"
+
+G_BEGIN_DECLS
+
+typedef struct {
+	char  *name;
+	int    id;
+	GList *uris;
+} DMAPPlaylist;
+
+#define TYPE_DMAP_CONNECTION		(dmap_connection_get_type ())
+#define DMAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DMAP_CONNECTION, DMAPConnection))
+#define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), TYPE_DMAP_CONNECTION, DMAPConnectionClass))
+#define IS_DMAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DMAP_CONNECTION))
+#define IS_DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DMAP_CONNECTION))
+#define DMAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DMAP_CONNECTION, DMAPConnectionClass))
+
+typedef struct DMAPConnectionPrivate DMAPConnectionPrivate;
+
+typedef enum {
+	DMAP_GET_INFO = 0,
+	DMAP_GET_PASSWORD,
+	DMAP_LOGIN,
+	DMAP_GET_REVISION_NUMBER,
+	DMAP_GET_DB_INFO,
+	DMAP_GET_SONGS,
+	DMAP_GET_PLAYLISTS,
+	DMAP_GET_PLAYLIST_ENTRIES,
+	DMAP_LOGOUT,
+	DMAP_DONE
+} DMAPConnectionState;
+
+typedef struct {
+	GObject parent;
+	DMAPConnectionPrivate *priv;
+} DMAPConnection;
+
+typedef struct {
+	GObjectClass parent;
+
+	SoupMessage * (*build_message)
+				  (DMAPConnection     *connection,
+				   const gchar        *path,
+				   gboolean            need_hash,
+				   gdouble             version,
+				   gint                req_id,
+				   gboolean            send_close);
+	void   (* connected)      (DMAPConnection     *connection);
+	void   (* disconnected)   (DMAPConnection     *connection);
+
+	char * (* authenticate)   (DMAPConnection     *connection,
+				   const char           *name);
+	void   (* connecting)     (DMAPConnection     *connection,
+				   DMAPConnectionState state,
+				   float		 progress);
+
+	void   (* operation_done) (DMAPConnection     *connection);
+
+} DMAPConnectionClass;
+
+/* hmm, maybe should give more error information? */
+typedef gboolean (* DMAPConnectionCallback)  (DMAPConnection *connection,
+						gboolean          result,
+						const char       *reason,
+						gpointer          user_data);
+
+typedef void (* DMAPResponseHandler) (DMAPConnection *connection,
+                                      guint status,
+				      GNode *structure);
+
+GType              dmap_connection_get_type        (void);
+
+DMAPConnection * dmap_connection_new             (const char              *name,
+						       const char              *host,
+						       int                      port,
+						       gboolean                 password_protected,
+						       DMAPDb		  *db,
+						       DMAPRecordFactory *factory);
+
+gboolean           dmap_connection_is_connected    (DMAPConnection        *connection);
+void               dmap_connection_connect         (DMAPConnection        *connection,
+						       DMAPConnectionCallback callback,
+						       gpointer                 user_data);
+void               dmap_connection_disconnect      (DMAPConnection        *connection,
+						       DMAPConnectionCallback callback,
+						       gpointer                 user_data);
+
+char *             dmap_connection_get_headers     (DMAPConnection         *connection,
+						       const char               *uri,
+						       gint64                    bytes);
+
+GSList *           dmap_connection_get_playlists   (DMAPConnection         *connection);
+
+SoupMessage *      dmap_connection_build_message   (DMAPConnection     *connection,
+				  		    const gchar        *path,
+				  		    gboolean            need_hash,
+				  		    gdouble             version,
+				  		    gint                req_id,
+				  		    gboolean            send_close);
+
+gboolean dmap_connection_get (DMAPConnection *self,
+                     const gchar *path,
+                     gboolean need_hash,
+                     DMAPResponseHandler handler,
+                     gpointer user_data);
+
+G_END_DECLS
+
+#endif /* __DMAP_CONNECTION_H */

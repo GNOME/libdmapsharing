@@ -1,0 +1,26 @@
+Source: libdmapsharing1.0
+Priority: optional
+Maintainer: Andre Moreira Magalhaes <andre.magalhaes@indt.org.br>
+Build-Depends: debhelper (>= 4.0.0), autotools-dev, cdbs (>= 0.4.0), libglib2.0-dev, libavahi-client-dev (>= 0.6.9-2ubuntu5indt2), libavahi-common-dev (>= 0.6.9-2ubuntu5indt2), libavahi-core-dev (>= 0.6.9-2ubuntu5indt2), libavahi-glib-dev (>= 0.6.9-2ubuntu5indt2), libsoup2.2-dev (>= 2.2.92)
+Standards-Version: 3.6.1
+Section: libs
+
+Package: libdmapsharing1.0-0
+Section: libs
+Architecture: any
+Depends: libglib2.0-0, avahi-daemon (>= 0.6.9-2ubuntu5indt2), libavahi-client3 (>= 0.6.9-2ubuntu5indt2), libavahi-common3 (>= 0.6.9-2ubuntu5indt2), libavahi-core4 (>= 0.6.9-2ubuntu5indt2), libavahi-glib1 (>= 0.6.9-2ubuntu5indt2), libsoup2.2-8 (>= 2.2.92)
+Description: libdmapsharing library
+ Contains the library used by apps to communicate with the
+ DAAP/DPAP services. 
+ .
+ This package contains the libdmapsharing library.
+
+Package: libdmapsharing1.0-dev
+Section: libdevel
+Architecture: any
+Depends: libglib2.0-dev, libavahi-client-dev (>= 0.6.9-2ubuntu5indt2), libavahi-common-dev (>= 0.6.9-2ubuntu5indt2), libavahi-core-dev (>= 0.6.9-2ubuntu5indt2), libavahi-glib-dev (>= 0.6.9-2ubuntu5indt2), libsoup2.2-dev (>= 2.2.92), libdmapsharing1.0-0 (= ${Source-Version})
+Description: libdmapsharing library development files
+ Contains the library used by apps to communicate with the
+ DAAP/DPAP services. 
+ .
+ This package contains development files for the libdmapsharing library.

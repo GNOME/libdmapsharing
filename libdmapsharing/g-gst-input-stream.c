@@ -1,0 +1,433 @@
+/*
+ * GGstInputStream class: Open a URI using g_gst_input_stream_new ().
+ * Data is decoded using GStreamer and is then made available by the class's
+ * read operations.
+ *
+ * Copyright (C) 2008 W. Michael Petullo <mike@flyn.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+#include <gst/gst.h>
+#include <gst/app/gstappsink.h>
+#include <gst/app/gstappbuffer.h>
+
+#include "g-gst-input-stream.h"
+#include "gst-util.h"
+//#include "util.h"
+
+#define GST_APP_MAX_BUFFERS 1024
+#define DECODED_BUFFER_SIZE 1024 * 128
+#define QUEUE_PUSH_WAIT_SECONDS 10
+#define QUEUE_POP_WAIT_SECONDS 1
+
+struct g_gst_format {
+	gchar *id;		/* E.g., used as command line arguments. */
+	gchar *extension;	/* E.g., iTunes uses URI extension to
+				 * determine stream format.
+				 */
+};
+
+/* NOTE: Roku clients require lower case extension. */
+static const struct g_gst_format g_gst_formats[] = { 
+	{ "raw", "raw" },
+	{ "wav16", "wav" },
+	{ "mp3", "mp3" },
+	{ NULL, NULL }
+};
+
+struct GGstInputStreamPrivate {
+	GQueue *buffer;
+	gsize read_request;		/* Size of data asked for */
+	gsize write_request;		/* Number of bytes that must be read
+					 * to make room for write */
+	GCond *buffer_read_ready;	/* Signals when buffer >= read_req. */
+	GCond *buffer_write_ready;	/* Signals when buffer not full. */
+	GMutex *buffer_mutex; 		/* Protects buffer and read_request */
+	gboolean buffer_closed;		/* May close before decoding complete */
+};
+
+static goffset
+g_gst_input_stream_tell (GSeekable *seekable)
+{
+	/* FIXME: implement return current position in stream. */
+	g_error ("Not implemented");
+	return 0;
+}
+
+static gboolean
+g_gst_input_stream_can_seek (GSeekable *seekable)
+{
+	return TRUE;
+}
+
+static gboolean
+g_gst_input_stream_seek (GSeekable *seekable,
+			 goffset offset,
+			 GSeekType type,
+			 GCancellable *cacellable,
+			 GError **error)
+{
+	GGstInputStream *stream;
+	goffset absolute;
+
+	stream = G_GST_INPUT_STREAM (seekable);
+
+	switch (type) {
+		/* FIXME: implement:
+		 * case G_SEEK_CUR:
+		 *	absolute = stream->priv->pos + offset;
+		 *	break;
+		 *
+		 * case G_SEEK_END:
+		 *	absolute = stream->priv->len + offset;
+		 *	break;
+		 */
+
+		 case G_SEEK_SET:
+		 	absolute = offset;
+		 	break;
+
+		default:
+			g_set_error (error,
+				     G_IO_ERROR,
+				     G_IO_ERROR_INVALID_ARGUMENT,
+				     "Invalid GSeekType supplied");
+
+		return FALSE;
+	}
+
+	/* FIXME: implement:
+	 * if (absolute < 0 || absolute > stream->priv->len) {
+	 *	g_set_error_literal (error,
+	 *		G_IO_ERROR,
+	 *		G_IO_ERROR_INVALID_ARGUMENT,
+	 *		_("Invalid seek request"));
+	 *	return FALSE;
+	 * }
+	 */
+
+	/* FIXME:
+	if (! gst_element_seek_simple (G_GST_INPUT_STREAM (seekable)->priv->pipeline,
+				GST_FORMAT_BYTES,
+				GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
+				absolute)) {
+		g_set_error (error,
+			     G_IO_ERROR,
+			     G_IO_ERROR_FAILED,
+			     "Seek failed");
+		return FALSE;
+	}
+	*/
+
+	return TRUE;
+}
+
+static gboolean
+g_gst_input_stream_can_truncate (GSeekable *seekable)
+{
+	return FALSE;
+}
+
+static gboolean
+g_gst_input_stream_truncate (GSeekable *seekable,
+			     goffset offset,
+			     GCancellable *cancellable,
+			     GError **error)
+{
+	g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
+		     "Cannot truncate GGstInputStream");
+	return FALSE;
+}
+
+static void
+g_gst_input_stream_seekable_iface_init (GSeekableIface *iface)
+{
+	iface->tell         = g_gst_input_stream_tell;
+	iface->can_seek     = g_gst_input_stream_can_seek;
+	iface->seek         = g_gst_input_stream_seek;
+	iface->can_truncate = g_gst_input_stream_can_truncate;
+	iface->truncate_fn  = g_gst_input_stream_truncate;
+}
+
+void
+g_gst_input_stream_new_buffer_cb (GstElement *element, GGstInputStream *stream)
+{
+	gsize i;
+	guint8 *ptr;
+	GTimeVal time;
+	GstBuffer *buffer;
+
+	/* FIXME: Is this necessary? I am trying to protect against this
+	 * thread manipulating data after the pipeline has been destroyed.
+	 * see also g_gst_input_stream_close ().
+	 */
+	g_mutex_lock (stream->priv->buffer_mutex);
+
+	if (stream->priv->buffer_closed) {
+		g_warning ("Unread data");
+		goto _return;
+	}
+
+	g_get_current_time (&time);
+	g_time_val_add (&time, QUEUE_PUSH_WAIT_SECONDS * 1000000);
+
+	buffer = gst_app_sink_pull_buffer (GST_APP_SINK (element));
+
+	if (buffer == NULL) {
+		g_warning ("Error getting GStreamer buffer");
+		goto _return;
+	}
+
+	/* FIXME: this actually allows buffer to grow larger than max. */
+	if (g_queue_get_length (stream->priv->buffer) + GST_BUFFER_SIZE (buffer)> DECODED_BUFFER_SIZE) {
+		stream->priv->write_request = GST_BUFFER_SIZE (buffer);
+		if (! g_cond_timed_wait (stream->priv->buffer_write_ready,
+			   stream->priv->buffer_mutex, &time)) {
+			g_warning ("Timeout waiting for buffer to empty; will drop");
+		}
+		/* Required again because g_cond_timed_wait released mutex. */
+		if (stream->priv->buffer_closed) {
+			g_warning ("Unread data");
+			goto _return;
+		}
+	} else {
+		stream->priv->write_request = 0;
+	}
+
+	if (g_queue_get_length (stream->priv->buffer) + GST_BUFFER_SIZE (buffer) <= DECODED_BUFFER_SIZE) {
+		ptr = GST_BUFFER_DATA (buffer);
+
+		for (i = 0; i < GST_BUFFER_SIZE (buffer); i++) {
+			g_queue_push_tail (stream->priv->buffer, GINT_TO_POINTER((gint) *ptr++));
+		}
+	}
+
+	gst_buffer_unref (buffer);
+
+	if (g_queue_get_length (stream->priv->buffer)
+	    >= stream->priv->read_request) {
+		stream->priv->read_request = 0;
+		g_cond_signal (stream->priv->buffer_read_ready);
+	}
+
+_return:
+	g_mutex_unlock (stream->priv->buffer_mutex);
+}
+
+GInputStream* g_gst_input_stream_new (const gchar *uri)
+{
+	GGstInputStream *stream;
+
+	stream = G_GST_INPUT_STREAM (g_object_new (TYPE_G_GST_INPUT_STREAM,
+						   NULL));
+
+	g_assert (G_IS_SEEKABLE (stream));
+	return G_INPUT_STREAM (stream);
+}
+
+gchar *
+dmapd_input_stream_strdup_format_extension (const gint format_code)
+{
+	return g_strdup (g_gst_formats[format_code].extension);
+}
+
+static gssize
+min (gssize a, gssize b)
+{
+	return a < b ? a : b;
+}
+
+static gssize
+g_gst_input_stream_read (GInputStream  *stream,
+			 void          *buffer,
+			 gsize          count,
+			 GCancellable  *cancellable,
+			 GError       **error)
+{
+	int i;
+	GGstInputStream *gst_stream = G_GST_INPUT_STREAM (stream);
+	GTimeVal time;
+
+	g_get_current_time (&time);
+	g_time_val_add (&time, QUEUE_POP_WAIT_SECONDS * 1000000);
+
+	g_mutex_lock (gst_stream->priv->buffer_mutex);
+
+	gst_stream->priv->read_request = count;
+	if (g_queue_get_length (gst_stream->priv->buffer) < count
+	    && ! g_cond_timed_wait (gst_stream->priv->buffer_read_ready,
+			   gst_stream->priv->buffer_mutex,
+			   &time)) {
+		/* Timeout: Count is now what's remaining.  Let's hope
+		 * we have enough of a lead on encoding so that this one
+		 * second timeout will go unnoticed.
+		 */
+		g_warning ("Timeout waiting for converted data");
+		/* Depending on timing, more data may have been written
+		 * since check: do not pull more than count:
+		 */
+		count = min (count, g_queue_get_length (
+					gst_stream->priv->buffer));
+	}
+
+	for (i = 0; i < count; i++) {
+		((guint8 *) buffer)[i] = GPOINTER_TO_INT (
+			g_queue_pop_head (gst_stream->priv->buffer));
+	}
+
+	if (gst_stream->priv->write_request > count)
+		gst_stream->priv->write_request -= count;
+	else
+		gst_stream->priv->write_request = 0;
+
+	if (gst_stream->priv->write_request <= 0) {
+		g_cond_signal (gst_stream->priv->buffer_write_ready);
+	}
+
+	g_mutex_unlock (gst_stream->priv->buffer_mutex);
+
+	return count;
+}
+
+static gssize
+g_gst_input_stream_skip (GInputStream *stream,
+			    gsize count,
+			    GCancellable *cancellable,
+			    GError **error)
+{
+	g_error ("Not implemented");
+	return 0;
+}
+
+static void
+g_gst_input_stream_kill_pipeline (GGstInputStream *stream)
+{
+	G_GST_INPUT_STREAM_GET_CLASS (stream)->kill_pipeline (stream);
+}
+
+static gboolean
+g_gst_input_stream_close (GInputStream *stream,
+			  GCancellable *cancellable,
+			  GError **error)
+{
+	GGstInputStream *gst_stream = G_GST_INPUT_STREAM (stream);
+
+	g_gst_input_stream_kill_pipeline (gst_stream);
+
+	g_mutex_lock (gst_stream->priv->buffer_mutex);
+
+	g_queue_free (gst_stream->priv->buffer);
+	gst_stream->priv->buffer_closed = TRUE;
+
+	g_mutex_unlock (gst_stream->priv->buffer_mutex);
+
+	return TRUE;
+}
+
+static gssize
+g_gst_input_stream_read_finish (GInputStream *stream,
+				GAsyncResult *result,
+				GError **error)
+{
+	g_error ("Not implemented");
+	return 0;
+}
+
+static gssize
+g_gst_input_stream_skip_finish (GInputStream *stream,
+				GAsyncResult *result,
+				GError **error)
+{
+	g_error ("Not implemented");
+	return 0;
+}
+
+static void
+g_gst_input_stream_close_async (GInputStream *stream,
+				int io_priority,
+				GCancellable *cancellabl,
+				GAsyncReadyCallback callback,
+				gpointer data)
+{
+}
+
+static void
+g_gst_input_stream_read_async (GInputStream *stream,
+			       void *buffer,
+			       gsize count,
+			       int io_priority,
+			       GCancellable *cancellable,
+			       GAsyncReadyCallback callback,
+			       gpointer user_data)
+{
+}
+
+static void
+g_gst_input_stream_skip_async (GInputStream *stream,
+			       gsize count,
+			       int io_priority,
+			       GCancellable *cancellabl,
+			       GAsyncReadyCallback callback,
+			       gpointer datae)
+{
+}
+
+static gboolean
+g_gst_input_stream_close_finish (GInputStream *stream,
+			         GAsyncResult *result,
+				 GError **error)
+{
+	g_error ("Not implemented");
+	return FALSE;
+}
+
+static void
+g_gst_input_stream_class_init (GGstInputStreamClass *klass)
+{
+	GInputStreamClass *istream_class;
+
+	g_type_class_add_private (klass, sizeof (GGstInputStreamPrivate));
+
+	istream_class = G_INPUT_STREAM_CLASS (klass);
+	istream_class->read_fn      = g_gst_input_stream_read;
+	istream_class->skip         = g_gst_input_stream_skip;
+	istream_class->close_fn     = g_gst_input_stream_close;
+	istream_class->read_async   = g_gst_input_stream_read_async;
+	istream_class->read_finish  = g_gst_input_stream_read_finish;
+	istream_class->skip_async   = g_gst_input_stream_skip_async;
+	istream_class->skip_finish  = g_gst_input_stream_skip_finish;
+	istream_class->close_async  = g_gst_input_stream_close_async;
+	istream_class->close_finish = g_gst_input_stream_close_finish;
+}
+
+static void
+g_gst_input_stream_init (GGstInputStream *stream)
+{
+	stream->priv = G_GST_INPUT_STREAM_GET_PRIVATE (stream);
+
+	stream->priv->buffer = g_queue_new ();
+	stream->priv->read_request = 0;
+	stream->priv->write_request = 0;
+	stream->priv->buffer_read_ready = g_cond_new ();
+	stream->priv->buffer_write_ready = g_cond_new ();
+	stream->priv->buffer_mutex = g_mutex_new ();
+	stream->priv->buffer_closed = FALSE;
+}
+
+G_DEFINE_TYPE_WITH_CODE (GGstInputStream, g_gst_input_stream,
+			 G_TYPE_INPUT_STREAM,
+			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
+				g_gst_input_stream_seekable_iface_init))

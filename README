@@ -1,0 +1,22 @@
+The libdmapsharing package includes two test programs, test-client-dmap
+and test-client-server. The source code for these programs provide good
+examples of how to develop a DMAP client or server application. 
+
+There are three steps to writting a DMAP server: 
+
+First, define classes that implement the DAAPDb (or DPAP) and DAAPRecord
+interfaces (for an example, see test-daap-db.c and test-daap-record.c). If
+your application already has a media database interface, then these new
+definitions will simply be adapter classes encapsulating your existing
+interface.
+
+Second, define classes that implement the DMAPContainerDb and
+DMAPContainerRecord interfaces (see test-dmap-container-db.c and
+test-dmap-container-record.c). These classes will allow the creation of
+playlists (DAAP) or albums (DPAP).
+
+Finally, write the code that creates a new DAAPShare object (see
+test-dmap-server.c) and provide it your DAAPDb object.
+
+The libdmapsharing package also provides an optional interface,
+DMAPRecordFactory, that may be convenient for application developers.

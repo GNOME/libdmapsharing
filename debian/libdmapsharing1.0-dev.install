@@ -1,0 +1,4 @@
+debian/tmp/usr/include/libdmapsharing-*/libdmapsharing/
+debian/tmp/usr/lib/libdmapsharing*.so
+debian/tmp/usr/lib/libdmapsharing*.la
+debian/tmp/usr/lib/pkgconfig/libdmapsharing*.pc

@@ -1,0 +1,199 @@
+/*
+ * Header for DMAP (e.g., iTunes Music or iPhoto Picture) sharing
+ *
+ * Copyright (C) 2005 Charles Schmidt <cschmidt2@emich.edu>
+ *
+ * Modifications Copyright (C) 2008 W. Michael Petullo <mike@flyn.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#ifndef __DMAP_SHARE_H
+#define __DMAP_SHARE_H
+
+#include <glib-object.h>
+
+#include <libsoup/soup.h>
+#include <libsoup/soup-address.h>
+#include <libsoup/soup-message.h>
+#include <libsoup/soup-uri.h>
+#include <libsoup/soup-server.h>
+
+#include <libdmapsharing/dmap-record.h>
+#include <libdmapsharing/dmap-mdns-publisher.h>
+#include <libdmapsharing/dmap-container-record.h>
+
+G_BEGIN_DECLS
+
+#define TYPE_DMAP_SHARE         (dmap_share_get_type ())
+#define DMAP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
+				 TYPE_DMAP_SHARE, DMAPShare))
+#define DMAP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
+				 TYPE_DMAP_SHARE, DMAPShareClass))
+#define IS_DMAP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+				 TYPE_DMAP_SHARE))
+#define IS_DMAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
+				 TYPE_DMAP_SHARE))
+#define DMAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
+				 TYPE_DMAP_SHARE, DMAPShareClass))
+
+#define DMAP_SHARE_CHUNK_SIZE 16384
+
+typedef struct DMAPSharePrivate DMAPSharePrivate;
+
+typedef struct {
+	GObject parent;
+	DMAPSharePrivate *priv;
+} DMAPShare;
+
+typedef struct {
+	GObjectClass parent;
+
+	/* Pure virtual methods: */
+	guint        (*get_desired_port)    (DMAPShare *share);
+	const char * (*get_type_of_service) (DMAPShare *share);
+	void         (*message_add_standard_headers) (SoupMessage *message);
+
+	/* Pure virtual methods: libsoup callbacks */
+	void	  (*server_info)   (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
+
+	void	  (*content_codes) (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
+
+	void	  (*login)         (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
+
+	void	  (*logout)        (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
+
+	void	  (*update)        (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
+
+	void	  (*databases)     (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
+
+	/* Virtual methods: MDNS callbacks */
+	void	  (*published)	   (DMAPShare         *share,
+				    DmapMdnsPublisher *publisher,
+	              		    const char        *name);
+
+	void	  (*name_collision)(DMAPShare	      *share,
+				    DmapMdnsPublisher *publisher,
+	              		    const char        *name);
+} DMAPShareClass;
+
+struct DMAPMetaDataMap {
+        gchar *tag;
+	guint md;
+};
+
+GType    dmap_share_get_type (void);
+
+/* Non-virtual methods */
+guint    dmap_share_get_auth_method (DMAPShare *share);
+
+guint    dmap_share_get_revision_number (DMAPShare *share);
+
+gboolean dmap_share_get_revision_number_from_query (GHashTable *query,
+						    guint *number);
+
+gboolean dmap_share_session_id_validate (DMAPShare *share,
+					 SoupClientContext *context, 
+					 SoupMessage *msg, GHashTable *query,
+					 guint32 *id);
+
+guint32  dmap_share_session_id_create (DMAPShare *share,
+				       SoupClientContext *ctx);
+
+void     dmap_share_session_id_remove (DMAPShare *share,
+				       SoupClientContext *ctx,
+				       guint32 id);
+
+gboolean dmap_share_client_requested (bitwise bits, gint field);
+
+gboolean dmap_share_uri_is_local (const char *text_uri);
+
+gboolean dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
+				      SoupMessage *msg, gpointer user_data);
+
+gboolean dmap_share_server_start  (DMAPShare *share);
+
+gboolean dmap_share_publish_start (DMAPShare *share);
+
+void     dmap_share_message_set_from_dmap_structure (DMAPShare *share,
+						     SoupMessage *message,
+						     GNode *structure);
+
+bitwise  dmap_share_parse_meta (GHashTable *query,
+				struct DMAPMetaDataMap *mdm,
+				guint mdmlen);
+
+bitwise  dmap_share_parse_meta_str (const char *attrs,
+				    struct DMAPMetaDataMap *mdm,
+				    guint mdmlen);
+
+void dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record,
+				      gpointer mlcl);
+
+/* Virtual methods (libsoup callbacks with default implementation): */
+void dmap_share_content_codes (DMAPShare *share,
+		  SoupServer        *server,
+		  SoupMessage       *message,
+		  const char        *path,
+		  GHashTable        *query,
+		  SoupClientContext *context);
+
+void dmap_share_login (DMAPShare *share,
+		  SoupServer        *server,
+		  SoupMessage       *message,
+		  const char        *path,
+		  GHashTable        *query,
+		  SoupClientContext *context);
+
+void dmap_share_logout (DMAPShare *share,
+		  SoupServer        *server,
+		  SoupMessage       *message,
+		  const char        *path,
+		  GHashTable        *query,
+		  SoupClientContext *context);
+
+void dmap_share_update (DMAPShare *share,
+		  SoupServer        *server,
+		  SoupMessage       *message,
+		  const char        *path,
+		  GHashTable        *query,
+		  SoupClientContext *context);
+
+
+/* Virtual methods: MDNS callbacks */
+void dmap_share_published     (DMAPShare         *share,
+			       DmapMdnsPublisher *publisher,
+			       const char        *name);
+
+void dmap_share_name_collision(DMAPShare         *share,
+			       DmapMdnsPublisher *publisher,
+			       const char        *name);
+
+#endif /* __DMAP_SHARE_H */
+
+G_END_DECLS

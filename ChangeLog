@@ -1,0 +1,288 @@
+30 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Modify configure.ac to require gstreamer-plugins-base >=
+	0.10.23.2 for GNOME Bugzilla #588205 & #587896.
+
+	* Remove newly obsolete code (daap-item.c, etc.)
+
+	* Auto-generate marshaling code for dmap-connection.c.
+
+29 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Port tests to new client API.
+
+28 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* More rhythmbox-related work.
+
+27 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Rhythmbox-related work.
+
+25 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Pull DMAPConnection from more modern Rhythmbox in preparation
+	of implementing libdmapsharing-base Rhythmbox DAAP plugin.
+
+22 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* D[AP]APRecord no longer had DMAPRecord as parent.
+
+	* Fixed various runtime warnings.
+
+21 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix handling of DAAP filesize.
+
+	* Work on seeking.
+
+18 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix various GLib Warnings.
+
+13 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix bug where the first stream/pipeline continues after
+	a fast forwarding to a second.
+
+11 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Change some g_warning's to g_debug.
+
+10 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix HTTP encoding decision in daap-share.c.
+
+09 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix use of giostream element (two upstream GStreamer bugs
+	fixed in the process).
+
+06 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Make all GStreamer / transcoding code optional.
+
+05 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Move transcoding to libdmapsharing.
+
+02 July 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Get rid of get methods in daap-record.c and replace with
+	GObject properties.
+
+17 June 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Slight API change to support delaying trancoding decisions
+	until after a file has been requested.
+
+30 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix compiler warning.
+
+	* Update RPM specification.
+
+19 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix memory leaks in dmap-db.c's filter code.
+
+18 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Start to implement dmap-mdns-browser-dnssd.c and
+	dmap-mdns-publisher-dnssd.c -- still needs work.
+
+11 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Add support for Apple's DNSSD to configure.ac.
+
+10 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Clean up some compiler warnings.
+
+07 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Completed DAAP browsing.
+
+05 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Filtering now works.
+
+04 April 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Work on DAAP browsing, start support for filter.
+
+31 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Began supporting DAAP browsing (e.g., list genres).
+
+30 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Set rating in daap-share.c.
+
+29 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix compiler warnings related to const return from
+	dmap_container_record_get_entries.
+
+28 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix support for Roku clients; they use query parameter, much
+	like iPhoto.
+
+	* Update pkg-config file to support includedir & libdir in terms
+	of prefix.
+
+26 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Work on seeking.
+
+	* Add new DAAPRecord method: itunes_compat.
+
+24 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Make dmap_container_record_get_entries return a const DMAPDb *.
+
+	* Remove commented out mmap code from daap-share.c.
+
+07 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix Cflags in libdmapsharing.pc.in.
+
+06 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Use @libdir@ in libdmapsharing.pc.in to support 64-bit
+	architectures.
+
+	* Do not include -<major verion> in SONAME.
+
+	* Set LDFLAGS properly when building libdmapsharing.
+
+	* Update RPM specification file.
+
+02 March 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix some issues that broke compiling on 64-bit platforms.
+
+28 February 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Support building with older versions of libsoup, just don't
+	build HTTP 1.0 / SOUP_ENCODING_EOF support.
+
+27 February 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Always use content length encoding for video data, as iTunes
+	seems to require this.
+
+22 February 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Require libsoup >= 2.25.92, as this version supports
+	SOUP_ENCODING_EOF message encoding, required for HTTP 1.0 clients.
+
+	* Decrease DMAP_SHARE_CHUNK_SIZE now that the Roku SoundBridge is
+	properly handled as a HTTP 1.0 client.
+
+12 February 2009 W. Michael Petullo <mike@flyn.org>
+
+	* dmap_container_record_get_entries now returns a DMAPDb *
+	instead of a GSList *.
+
+	* Increase DMAP_SHARE_CHUNK_SIZE in order to keep Roku SoundBridge
+	client from popping.
+
+	* Send proper count to client when providing list of containers.
+
+02 February 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Bump version number to 1.9 in preparation for release.
+
+31 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Slight change to DAAPRecord and DPAPRecord interfaces. Add
+	read method that returns GInputStream * (instead of simply the
+	location/path). This sets the conditions for realtime transcoding
+	done by interface implementations.
+
+25 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Don't try to mmap large files for DAAP sharing; they may be
+	large videos that could cause the server to thrash.
+
+19 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Add a DMAP record factory interface.
+
+18 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Support sharing video (Quicktime for now).
+
+	* Merge DAAPDb and DPAPDb interfaces into DMAPDb.
+
+10 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Update libdmapsharing.spec.
+
+09 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Format some code better.
+
+	* Release mmap'ed files before mmap'ing another one.
+
+	* Implement sharing of playlists / albums.
+
+08 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Add to README.
+
+	* Format some code better.
+
+	* Update license headings.
+
+07 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Add library version to build system.
+
+	* Remove fork from dmap-test-server.c.
+
+	* Consolidate parsing of meta-data portion of query in dmap-share.c.
+
+06 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Add Fedora RPM spec file.
+
+05 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix test code to work with new thumbnail interface.
+
+01 January 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Reengineered database code.
+
+30 December 2008 W. Michael Petullo <mike@flyn.org>
+
+	* DPAP sharing now works with iPhoto 6.
+
+28 December 2008 W. Michael Petullo <mike@flyn.org>
+
+	* DAAP sharing now works with iTunes 8.
+
+26 December 2008 W. Michael Petullo <mike@flyn.org>
+
+	* Split DAAP sharing functionality into two classes: DMAPShare
+	and DAAPShare. DAAPShare is a subclass of DMAPShare.
+
+	* Start work on DPAP server code.
+
+21 December 2008 W. Michael Petullo <mike@flyn.org>
+
+	* Moved daap_mdns_publisher* to dmap_mdns_publisher*.
+
+	* Make type_of_service (e.g., _daap._tcp) configurable in
+	dmap_mdns_publisher*.
+
+18 December 2008 W. Michael Petullo <mike@flyn.org>
+
+	* Begin implementing server code.
+
+18 December 2008 W. Michael Petullo <mike@flyn.org>
+
+	* Update to compile against libsoup-2.24.
