@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="containerdb">
+	<refmeta>
+		<refentrytitle>Container Database Implementation</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Container Database Implementation</refname>
+		<refpurpose>
+			Implementing a container database
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Container Database Implementation</title>
+		<para>
+Second, define classes that implement the DMAPContainerDb and
+DMAPContainerRecord interfaces (see test-dmap-container-db.c and
+test-dmap-container-record.c). These classes will allow the creation of
+playlists (DAAP) or albums (DPAP).
+		</para>
+	</refsect1>
+</refentry>

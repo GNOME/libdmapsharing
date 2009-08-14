@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="shareapi">
+	<refmeta>
+		<refentrytitle>Share API</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Share API</refname>
+		<refpurpose>
+			Using the share API
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Share API</title>
+		<para>
+Finally, write the code that creates a new DAAPShare object (see
+test-dmap-server.c) and provide it your DAAPDb object.
+
+		</para>
+
+		<para>
+The libdmapsharing package also provides an optional interface,
+DMAPRecordFactory, that may be convenient for application developers.
+
+		</para>
+	</refsect1>
+</refentry>

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="mediadb">
+	<refmeta>
+		<refentrytitle>Media Database Implementation</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Media Database Implementation</refname>
+		<refpurpose>
+			Implementing a media database
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Media Database Implementation</title>
+		<para>
+First, define classes that implement the DAAPDb (or DPAP) and DAAPRecord
+interfaces (for an example, see test-daap-db.c and test-daap-record.c). If
+your application already has a media database interface, then these new
+definitions will simply be adapter classes encapsulating your existing
+interface.
+
+		</para>
+	</refsect1>
+</refentry>
