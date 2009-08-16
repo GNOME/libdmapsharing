@@ -75,6 +75,7 @@ create_share (guint conn_type)
 	record = DMAP_RECORD (dmap_record_factory_create (factory, NULL));
 	db = DMAP_DB (test_dmap_db_new ());
 	dmap_db_add (db, record);
+	g_object_unref (record);
 
 	g_warning ("initialize DAAP sharing");
 

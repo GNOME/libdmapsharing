@@ -1,5 +1,5 @@
 Name: libdmapsharing
-Version: 1.9.0.10
+Version: 1.9.0.11
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://downloads.sourceforge.net/%name/%{name}-%{version}.tar.gz
@@ -35,6 +35,7 @@ other resources needed for developing applications using libdmapsharing.
 %{_libdir}/pkgconfig/libdmapsharing-*.pc
 %{_includedir}/libdmapsharing-*/
 %{_libdir}/libdmapsharing.so
+%{_datadir}/gtk-doc/html/libdmapsharing
 
 %prep
 
@@ -57,6 +58,10 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Sat Aug 15 2009 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.11-1
+- New upstream version.
+- Add gtk-doc documentation to devel package.
+
 * Wed Jul 29 2009 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.10-1
 - New upstream version.
 

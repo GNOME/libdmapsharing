@@ -9,7 +9,7 @@ AUTOMAKE_OPTIONS = 1.6
 # of using the various options.
 
 # The name of the module, e.g. 'glib'.
-DOC_MODULE=
+DOC_MODULE=libdmapsharing
 
 # Uncomment for versioned docs and specify the version of the module, e.g. '2'.
 #DOC_MODULE_VERSION=2
@@ -22,7 +22,7 @@ DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.sgml
 # gtk-doc will search all .c & .h files beneath here for inline comments
 # documenting the functions and macros.
 # e.g. DOC_SOURCE_DIR=../../../gtk
-DOC_SOURCE_DIR=
+DOC_SOURCE_DIR=../libdmapsharing
 
 # Extra options to pass to gtkdoc-scangobj. Not normally needed.
 SCANGOBJ_OPTIONS=
@@ -58,7 +58,18 @@ EXTRA_HFILES=
 
 # Header files to ignore when scanning. Use base file name, no paths
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
-IGNORE_HFILES=
+IGNORE_HFILES= \
+	dmap-marshal.h \
+	dmap-config.h \
+	dmap-md5.h \
+	dmap-mdns-avahi.h \
+	dmap-mdns-publisher.h \
+	dmap-structure.h \
+	dmap-utils.h \
+	g-gst-input-stream.h \
+	g-gst-mp3-input-stream.h \
+	g-gst-wav-input-stream.h \
+	gst-util.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
@@ -78,8 +89,20 @@ expand_content_files=
 # signals and properties.
 # e.g. GTKDOC_CFLAGS=-I$(top_srcdir) -I$(top_builddir) $(GTK_DEBUG_FLAGS)
 # e.g. GTKDOC_LIBS=$(top_builddir)/gtk/$(gtktargetlib)
-GTKDOC_CFLAGS=
-GTKDOC_LIBS=
+GTKDOC_CFLAGS= \
+	-I$(top_srcdir) \
+	$(SOUP_CFLAGS) \
+	$(GSTREAMERAPP_CFLAGS) \
+	$(MDNS_CFLAGS)
+
+GTKDOC_LIBS= \
+	$(top_builddir)/libdmapsharing/libdmapsharing.la \
+	$(GLIB_LIBS) \
+	$(GTHREAD_LIBS) \
+	$(GOBJECT_LIBS) \
+	$(MDNS_LIBS) \
+	$(GSTREAMERAPP_LIBS) \
+	$(SOUP_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make

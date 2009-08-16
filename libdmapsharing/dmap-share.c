@@ -84,7 +84,7 @@ G_DEFINE_ABSTRACT_TYPE (DMAPShare, dmap_share, G_TYPE_OBJECT)
 				   TYPE_DMAP_SHARE, DMAPSharePrivate))
 
 static gboolean
-dmap_share_soup_auth_callback (SoupAuthDomain *auth_domain,
+_dmap_share_soup_auth_callback (SoupAuthDomain *auth_domain,
 		    SoupMessage    *msg,
 		    const char     *username,
 		    gpointer        password,
@@ -193,7 +193,7 @@ static void databases_adapter (SoupServer *server,
 }
 
 gboolean
-dmap_share_server_start (DMAPShare *share)
+_dmap_share_server_start (DMAPShare *share)
 {
 	guint port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
 	gboolean              password_required;
@@ -221,10 +221,10 @@ dmap_share_server_start (DMAPShare *share)
 							  SOUP_AUTH_DOMAIN_ADD_PATH, "/login",
 							  SOUP_AUTH_DOMAIN_ADD_PATH, "/update",
 							  SOUP_AUTH_DOMAIN_ADD_PATH, "/database",
-							  SOUP_AUTH_DOMAIN_FILTER, dmap_share_soup_auth_filter,
+							  SOUP_AUTH_DOMAIN_FILTER, _dmap_share_soup_auth_filter,
 							  NULL);
 		soup_auth_domain_basic_set_auth_callback (auth_domain,
-							  (SoupAuthDomainBasicAuthCallback) dmap_share_soup_auth_callback,
+							  (SoupAuthDomainBasicAuthCallback) _dmap_share_soup_auth_callback,
 							  g_object_ref (share),
 							  g_object_unref);
 		soup_server_add_auth_domain (share->priv->server, auth_domain);
@@ -259,7 +259,7 @@ dmap_share_server_start (DMAPShare *share)
 }
 
 static gboolean
-dmap_share_server_stop (DMAPShare *share)
+_dmap_share_server_stop (DMAPShare *share)
 {
 	g_warning ("Stopping music sharing server on port %d", share->priv->port);
 
@@ -280,7 +280,7 @@ dmap_share_server_stop (DMAPShare *share)
 }
 
 gboolean
-dmap_share_publish_start (DMAPShare *share)
+_dmap_share_publish_start (DMAPShare *share)
 {
 	gchar *nameprop;
 	GError  *error;
@@ -318,7 +318,7 @@ dmap_share_publish_start (DMAPShare *share)
 }
 
 static gboolean
-dmap_share_publish_stop (DMAPShare *share)
+_dmap_share_publish_stop (DMAPShare *share)
 {
 	if (share->priv->publisher) {
 		gboolean res;
@@ -337,30 +337,30 @@ dmap_share_publish_stop (DMAPShare *share)
 }
 
 static void
-dmap_share_restart (DMAPShare *share)
+_dmap_share_restart (DMAPShare *share)
 {
 	gboolean res;
 
-	dmap_share_server_stop (share);
-	res = dmap_share_server_start (share);
+	_dmap_share_server_stop (share);
+	res = _dmap_share_server_start (share);
 	if (res) {
 		/* To update information just publish again */
-		dmap_share_publish_start (share);
+		_dmap_share_publish_start (share);
 	} else {
-		dmap_share_publish_stop (share);
+		_dmap_share_publish_stop (share);
 	}
 }
 
 static void
-dmap_share_maybe_restart (DMAPShare *share)
+_dmap_share_maybe_restart (DMAPShare *share)
 {
 	if (share->priv->published) {
-		dmap_share_restart (share);
+		_dmap_share_restart (share);
 	}
 }
 
 static void
-dmap_share_set_name (DMAPShare *share, const char  *name)
+_dmap_share_set_name (DMAPShare *share, const char  *name)
 {
 	GError *error;
 	gboolean res;
@@ -382,7 +382,7 @@ dmap_share_set_name (DMAPShare *share, const char  *name)
 }
 
 static void
-dmap_share_set_password (DMAPShare *share, const char  *password)
+_dmap_share_set_password (DMAPShare *share, const char  *password)
 {
 	g_return_if_fail (share != NULL);
 
@@ -399,11 +399,11 @@ dmap_share_set_password (DMAPShare *share, const char  *password)
 		share->priv->auth_method = DMAP_SHARE_AUTH_METHOD_NONE;
 	}
 
-	dmap_share_maybe_restart (share);
+	_dmap_share_maybe_restart (share);
 }
 
 static void
-dmap_share_set_property (GObject *object,
+_dmap_share_set_property (GObject *object,
 			 guint prop_id,
 			 const GValue *value,
 			 GParamSpec *pspec)
@@ -412,10 +412,10 @@ dmap_share_set_property (GObject *object,
 
 	switch (prop_id) {
 	case PROP_NAME:
-		dmap_share_set_name (share, g_value_get_string (value));
+		_dmap_share_set_name (share, g_value_get_string (value));
 		break;
 	case PROP_PASSWORD:
-		dmap_share_set_password (share, g_value_get_string (value));
+		_dmap_share_set_password (share, g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -424,7 +424,7 @@ dmap_share_set_property (GObject *object,
 }
 
 static void
-dmap_share_get_property (GObject *object,
+_dmap_share_get_property (GObject *object,
 			 guint prop_id,
 			 GValue *value,
 			 GParamSpec *pspec)
@@ -440,12 +440,12 @@ dmap_share_get_property (GObject *object,
 		break;
 	case PROP_REVISION_NUMBER:
 		g_value_set_uint (value,
-				  dmap_share_get_revision_number
+				  _dmap_share_get_revision_number
 					(DMAP_SHARE (object)));
 		break;
 	case PROP_AUTH_METHOD:
 		g_value_set_uint (value,
-				  dmap_share_get_auth_method
+				  _dmap_share_get_auth_method
 					(DMAP_SHARE (object)));
 		break;
 	default:
@@ -455,16 +455,16 @@ dmap_share_get_property (GObject *object,
 }
 
 static void
-dmap_share_dispose (GObject *object)
+_dmap_share_dispose (GObject *object)
 {
 	DMAPShare *share = DMAP_SHARE (object);
 
 	if (share->priv->published) {
-		dmap_share_publish_stop (share);
+		_dmap_share_publish_stop (share);
 	}
 
 	if (share->priv->server_active) {
-		dmap_share_server_stop (share);
+		_dmap_share_server_stop (share);
 	}
 
 	g_free (share->priv->name);
@@ -481,24 +481,24 @@ dmap_share_class_init (DMAPShareClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-	object_class->get_property = dmap_share_get_property;
-	object_class->set_property = dmap_share_set_property;
-	object_class->dispose = dmap_share_dispose;
+	object_class->get_property = _dmap_share_get_property;
+	object_class->set_property = _dmap_share_set_property;
+	object_class->dispose = _dmap_share_dispose;
 
 	/* Pure virtual methods: */
 	klass->get_desired_port    = NULL;
 	klass->get_type_of_service = NULL;
 	klass->message_add_standard_headers = NULL;
 	klass->server_info         = NULL;
-	klass->content_codes       = dmap_share_content_codes;
-	klass->login               = dmap_share_login;
-	klass->logout              = dmap_share_logout;
-	klass->update              = dmap_share_update;
+	klass->content_codes       = _dmap_share_content_codes;
+	klass->login               = _dmap_share_login;
+	klass->logout              = _dmap_share_logout;
+	klass->update              = _dmap_share_update;
 	klass->databases           = NULL;
 
 	/* Virtual methods: */
-	klass->published      = dmap_share_published;
-	klass->name_collision = dmap_share_name_collision;
+	klass->published      = _dmap_share_published;
+	klass->name_collision = _dmap_share_name_collision;
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
@@ -573,13 +573,13 @@ dmap_share_init (DMAPShare *share)
 }
 
 guint
-dmap_share_get_auth_method (DMAPShare *share)
+_dmap_share_get_auth_method (DMAPShare *share)
 {
 	return share->priv->auth_method;
 }
 
 guint
-dmap_share_get_revision_number (DMAPShare *share)
+_dmap_share_get_revision_number (DMAPShare *share)
 {
 	return share->priv->revision_number;
 }
@@ -607,7 +607,7 @@ get_session_id (GHashTable *query,
 }
 
 gboolean
-dmap_share_get_revision_number_from_query (GHashTable *query,
+_dmap_share_get_revision_number_from_query (GHashTable *query,
 		     guint *number)
 {
 	char *revision_number_str;
@@ -627,7 +627,7 @@ dmap_share_get_revision_number_from_query (GHashTable *query,
 }
 
 gboolean
-dmap_share_session_id_validate (DMAPShare       *share,
+_dmap_share_session_id_validate (DMAPShare       *share,
 		     SoupClientContext *context,
 		     SoupMessage       *message,
 		     GHashTable        *query,
@@ -684,7 +684,7 @@ session_id_generate (DMAPShare       *share,
 }
 
 guint32
-dmap_share_session_id_create (DMAPShare       *share,
+_dmap_share_session_id_create (DMAPShare       *share,
 		   SoupClientContext *context)
 {
 	guint32     id;
@@ -710,7 +710,7 @@ dmap_share_session_id_create (DMAPShare       *share,
 }
 
 void
-dmap_share_session_id_remove (DMAPShare       *share,
+_dmap_share_session_id_remove (DMAPShare       *share,
 		   SoupClientContext *context,
 		   guint32            id)
 {
@@ -718,7 +718,7 @@ dmap_share_session_id_remove (DMAPShare       *share,
 }
 
 void
-dmap_share_message_set_from_dmap_structure (DMAPShare *share,
+_dmap_share_message_set_from_dmap_structure (DMAPShare *share,
 					    SoupMessage *message,
 				    	    GNode *structure)
 {
@@ -742,20 +742,20 @@ dmap_share_message_set_from_dmap_structure (DMAPShare *share,
 
 
 gboolean
-dmap_share_client_requested (bitwise bits,
+_dmap_share_client_requested (bitwise bits,
 		  gint field)
 {
 	return 0 != (bits & (((bitwise) 1) << field));
 }
 
 gboolean
-dmap_share_uri_is_local (const char *text_uri)
+_dmap_share_uri_is_local (const char *text_uri)
 {
         return g_str_has_prefix (text_uri, "file://");
 }
 
 gboolean
-dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
+_dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
 		  SoupMessage    *msg,
 		  gpointer        user_data)
 {
@@ -776,7 +776,7 @@ dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
 }
 
 void
-dmap_share_published (DMAPShare         *share,
+_dmap_share_published (DMAPShare         *share,
 		      DmapMdnsPublisher *publisher,
 		      const char        *name)
 {
@@ -798,7 +798,7 @@ dmap_share_published (DMAPShare         *share,
 }
 
 void
-dmap_share_name_collision (DMAPShare         *share,
+_dmap_share_name_collision (DMAPShare         *share,
 			   DmapMdnsPublisher *publisher,
 			   const char        *name)
 {
@@ -815,7 +815,7 @@ dmap_share_name_collision (DMAPShare         *share,
         if (strcmp (nameprop, name) == 0) {
                 g_warning ("Duplicate share name on mDNS");
 
-                dmap_share_set_name (DMAP_SHARE(share), new_name);
+                _dmap_share_set_name (DMAP_SHARE(share), new_name);
                 g_free (new_name);
         }
 
@@ -825,7 +825,7 @@ dmap_share_name_collision (DMAPShare         *share,
 }
 
 void
-dmap_share_content_codes (DMAPShare *share,
+_dmap_share_content_codes (DMAPShare *share,
 		  SoupServer        *server,
 		  SoupMessage       *message,
 		  const char        *path,
@@ -862,12 +862,12 @@ dmap_share_content_codes (DMAPShare *share,
 		dmap_structure_add (mdcl, DMAP_CC_MCTY, (gint32) defs[i].type);
 	}
 
-	dmap_share_message_set_from_dmap_structure (share, message, mccr);
+	_dmap_share_message_set_from_dmap_structure (share, message, mccr);
 	dmap_structure_destroy (mccr);
 }
 
 void
-dmap_share_login (DMAPShare *share,
+_dmap_share_login (DMAPShare *share,
 	  SoupServer        *server,
 	  SoupMessage       *message,
 	  const char        *path,
@@ -883,18 +883,18 @@ dmap_share_login (DMAPShare *share,
 
 	g_debug ("Path is %s.", path);
 
-	session_id = dmap_share_session_id_create (share, context);
+	session_id = _dmap_share_session_id_create (share, context);
 
 	mlog = dmap_structure_add (NULL, DMAP_CC_MLOG);
 	dmap_structure_add (mlog, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
 	dmap_structure_add (mlog, DMAP_CC_MLID, session_id);
 
-	dmap_share_message_set_from_dmap_structure (share, message, mlog);
+	_dmap_share_message_set_from_dmap_structure (share, message, mlog);
 	dmap_structure_destroy (mlog);
 }
 
 void
-dmap_share_logout (DMAPShare *share,
+_dmap_share_logout (DMAPShare *share,
 	   SoupServer        *server,
 	   SoupMessage       *message,
 	   const char        *path,
@@ -906,8 +906,8 @@ dmap_share_logout (DMAPShare *share,
 
 	g_debug ("Path is %s.", path);
 
-	if (dmap_share_session_id_validate (share, context, message, query, &id)) {
-		dmap_share_session_id_remove (share, context, id);
+	if (_dmap_share_session_id_validate (share, context, message, query, &id)) {
+		_dmap_share_session_id_remove (share, context, id);
 
 		status = SOUP_STATUS_NO_CONTENT;
 	} else {
@@ -918,7 +918,7 @@ dmap_share_logout (DMAPShare *share,
 }
 
 void
-dmap_share_update (DMAPShare *share,
+_dmap_share_update (DMAPShare *share,
 	   SoupServer        *server,
 	   SoupMessage       *message,
 	   const char        *path,
@@ -930,9 +930,9 @@ dmap_share_update (DMAPShare *share,
 
 	g_debug ("Path is %s.", path);
 
-	res = dmap_share_get_revision_number_from_query (query, &revision_number);
+	res = _dmap_share_get_revision_number_from_query (query, &revision_number);
 
-	if (res && revision_number != dmap_share_get_revision_number (share)) {
+	if (res && revision_number != _dmap_share_get_revision_number (share)) {
 		/* MUPD update response
 		 * 	MSTT status
 		 * 	MUSR server revision
@@ -941,9 +941,9 @@ dmap_share_update (DMAPShare *share,
 
 		mupd = dmap_structure_add (NULL, DMAP_CC_MUPD);
 		dmap_structure_add (mupd, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
-		dmap_structure_add (mupd, DMAP_CC_MUSR, (gint32) dmap_share_get_revision_number (share));
+		dmap_structure_add (mupd, DMAP_CC_MUSR, (gint32) _dmap_share_get_revision_number (share));
 
-		dmap_share_message_set_from_dmap_structure (share, message, mupd);
+		_dmap_share_message_set_from_dmap_structure (share, message, mupd);
 		dmap_structure_destroy (mupd);
 	} else {
 		/* FIXME: This seems like a bug. It just leaks the
@@ -955,7 +955,7 @@ dmap_share_update (DMAPShare *share,
 }
 
 bitwise
-dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm, guint mdmlen)
+_dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm, guint mdmlen)
 {
 	guint i;
 	bitwise bits = 0;
@@ -984,7 +984,7 @@ dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm, guint
 }
 
 bitwise
-dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm, guint mdmlen)
+_dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm, guint mdmlen)
 {
 	const gchar *attrs;
 
@@ -992,11 +992,11 @@ dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm, guint mdm
 	if (attrs == NULL) {
 		return 0;
 	}
-	return dmap_share_parse_meta_str (attrs, mdm, mdmlen);
+	return _dmap_share_parse_meta_str (attrs, mdm, mdmlen);
 }
 
 void
-dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record, gpointer mlcl)
+_dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record, gpointer mlcl)
 {
 	/* MLIT listing item
 	 * MIID item id

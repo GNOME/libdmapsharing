@@ -1,22 +1,10 @@
-The libdmapsharing package includes two test programs, test-client-dmap
-and test-client-server. The source code for these programs provide good
-examples of how to develop a DMAP client or server application. 
+libdmapsharing is a library you may use to access and share DMAP (DAAP &
+DPAP) content. The library is written in C using GObject and libsoup. The
+DMAP family of protocols are used by products such as iTunes(TM),
+iPhoto(TM) and the Roku SoundBridge(TM) family to share content such as
+music and photos.
 
-There are three steps to writting a DMAP server: 
-
-First, define classes that implement the DAAPDb (or DPAP) and DAAPRecord
-interfaces (for an example, see test-daap-db.c and test-daap-record.c). If
-your application already has a media database interface, then these new
-definitions will simply be adapter classes encapsulating your existing
-interface.
-
-Second, define classes that implement the DMAPContainerDb and
-DMAPContainerRecord interfaces (see test-dmap-container-db.c and
-test-dmap-container-record.c). These classes will allow the creation of
-playlists (DAAP) or albums (DPAP).
-
-Finally, write the code that creates a new DAAPShare object (see
-test-dmap-server.c) and provide it your DAAPDb object.
-
-The libdmapsharing package also provides an optional interface,
-DMAPRecordFactory, that may be convenient for application developers.
+For documentation on libdmapsharing's API,
+please refer to the API documentation, available at
+http://www.flyn.org/projects/libdmapsharing/docs/ or with the
+libdmapsharing source code.

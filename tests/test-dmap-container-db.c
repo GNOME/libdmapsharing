@@ -26,14 +26,14 @@
  */
 static DMAPContainerRecord *record = NULL;
 
-DMAPContainerRecord *
+static DMAPContainerRecord *
 test_dmap_container_db_lookup_by_id (DMAPContainerDb *db, gint id)
 {
 	/* In reality, lookup the proper record and return it. */
 	return record;
 }
 
-void
+static void
 test_dmap_container_db_foreach (DMAPContainerDb *db,
 				   void (*fn) (DMAPContainerRecord *record,
 					       gpointer data),
@@ -43,7 +43,7 @@ test_dmap_container_db_foreach (DMAPContainerDb *db,
         fn (record, data);
 }
 
-gint64
+static gint64
 test_dmap_container_db_count (DMAPContainerDb *db)
 {
 	/* In reality, return the record count. */

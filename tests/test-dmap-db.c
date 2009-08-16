@@ -27,13 +27,16 @@ struct TestDMAPDbPrivate {
 	guint nextid;
 };
 
-DMAPRecord *
+static DMAPRecord *
 test_dmap_db_lookup_by_id (DMAPDb *db, guint id)
 {
-	return g_hash_table_lookup (TEST_DMAP_DB (db)->priv->db, GUINT_TO_POINTER (id));
+	DMAPRecord *record;
+	record = g_hash_table_lookup (TEST_DMAP_DB (db)->priv->db, GUINT_TO_POINTER (id));
+	g_object_ref (record);
+	return record;
 }
 
-void
+static void
 test_dmap_db_foreach	     (const DMAPDb *db,
 			      void (*fn) (gpointer id,
 			      		  DMAPRecord *record,
@@ -43,7 +46,7 @@ test_dmap_db_foreach	     (const DMAPDb *db,
 	g_hash_table_foreach (TEST_DMAP_DB (db)->priv->db, (GHFunc) fn, data);
 }
 
-gint64
+static gint64
 test_dmap_db_count (const DMAPDb *db)
 {
 	return g_hash_table_size (TEST_DMAP_DB (db)->priv->db);
@@ -54,17 +57,10 @@ test_dmap_db_add (DMAPDb *db, DMAPRecord *record)
 {
         guint id;
 	id = TEST_DMAP_DB (db)->priv->nextid--;
+	g_object_ref (record);
 	g_hash_table_insert (TEST_DMAP_DB (db)->priv->db, GUINT_TO_POINTER (id), record);
 	return id;
 }
-
-gint
-test_dmap_db_add_with_id (DMAPDb *db, DMAPRecord *record, guint id)
-{
-        g_hash_table_insert (TEST_DMAP_DB (db)->priv->db, GUINT_TO_POINTER (id), record);
-	return id;
-}
-
 
 static void
 test_dmap_db_init (TestDMAPDb *db)

@@ -28,11 +28,38 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DAAP_RECORD:
+ *
+ * The type for #DAAPRecord.
+ */
 #define TYPE_DAAP_RECORD	     (daap_record_get_type ())
+/**
+ * DAAP_RECORD:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DAAPRecord or derived pointer into a (DAAPRecord *) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DAAP_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				      TYPE_DAAP_RECORD, DAAPRecord))
+/**
+ * IS_DAAP_RECORD:
+ * @o: Instance to check for being a %TYPE_DAAP_RECORD.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DAAP_RECORD.
+ */
 #define IS_DAAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      TYPE_DAAP_RECORD))
+/**
+ * DAAP_RECORD_GET_INTERFACE:
+ * @o: a #DAAPRecord instance.
+ *
+ * Get the class structure associated to a #DAAPRecord instance.
+ *
+ * Returns: pointer to object interface structure.
+ */
 #define DAAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      TYPE_DAAP_RECORD, DAAPRecordInterface))
 
@@ -47,7 +74,23 @@ struct _DAAPRecordInterface {
 };
 
 GType         daap_record_get_type      (void);
+
+/**
+ * daap_record_itunes_compat:
+ * @record: A DAAPRecord.
+ *
+ * Returns: TRUE if record is compatible with iTunes, else FALSE.
+ */
 gboolean      daap_record_itunes_compat (DAAPRecord *record);
+
+/**
+ * daap_record_read:
+ * @record: a DAAPRecord.
+ * @err: a GError.
+ *
+ * Returns: A GInputStream that provides read-only access to the data stream
+ * associated with record.
+ */
 GInputStream *daap_record_read          (DAAPRecord *record, GError **err);
 
 #endif /* __DAAP_RECORD_H */

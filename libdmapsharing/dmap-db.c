@@ -108,7 +108,7 @@ unescape (const gchar *str)
 }
 
 gchar **
-dmap_db_strsplit_using_quotes (const gchar *str)
+_dmap_db_strsplit_using_quotes (const gchar *str)
 {
 	/* What we are splitting looks something like this:
 	 * 'foo'text to ignore'bar'.
@@ -181,7 +181,7 @@ apply_filter (gpointer id, DMAPRecord *record, gpointer data)
 }
 
 GHashTable *
-dmap_db_apply_filter (DMAPDb *db, GSList *filter_def)
+_dmap_db_apply_filter (DMAPDb *db, GSList *filter_def)
 {
 	GHashTable *ht;
 	FilterData data;

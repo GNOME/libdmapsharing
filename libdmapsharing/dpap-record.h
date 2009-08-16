@@ -28,11 +28,38 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DPAP_RECORD:
+ *
+ * The type for #DPAPRecord.
+ */
 #define TYPE_DPAP_RECORD	     (dpap_record_get_type ())
+/**
+ * DPAP_RECORD:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DPAPRecord or derived pointer into a (DPAPRecord *) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DPAP_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				      TYPE_DPAP_RECORD, DPAPRecord))
+/**
+ * IS_DPAP_RECORD:
+ * @o: Instance to check for being a %TYPE_DPAP_RECORD.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DPAP_RECORD.
+ */
 #define IS_DPAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      TYPE_DPAP_RECORD))
+/**
+ * DPAP_RECORD_GET_INTERFACE:
+ * @o: a #DPAPRecord instance.
+ *
+ * Get the class structure associated to a #DPAPRecord instance.
+ *
+ * Returns: pointer to object interface structure.
+ */
 #define DPAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      TYPE_DPAP_RECORD, DPAPRecordInterface))
 
@@ -42,11 +69,20 @@ typedef struct _DPAPRecordInterface DPAPRecordInterface;
 struct _DPAPRecordInterface {
 	GTypeInterface parent;
 
-	GInputStream *  (*read)              (DPAPRecord *record, gchar *transcode_mimetype, GError **err);
+	GInputStream *  (*read)              (DPAPRecord *record, GError **err);
 };
 
 GType          dpap_record_get_type          (void);
-GInputStream  *dpap_record_read              (DPAPRecord *record, gchar *transcode_mimetype, GError **err);
+
+/**
+ * dpap_record_read:
+ * @record: a DPAPRecord.
+ * @err: a GError.
+ *
+ * Returns: A GInputStream that provides read-only access to the data stream
+ * associated with record.
+ */
+GInputStream  *dpap_record_read              (DPAPRecord *record, GError **err);
 
 #endif /* __DPAP_RECORD_H */
 

@@ -161,7 +161,7 @@ dpap_record_get_type (void)
 }
 
 GInputStream *
-dpap_record_read (DPAPRecord *record, gchar *transcode_mimetype, GError **err)
+dpap_record_read (DPAPRecord *record, GError **err)
 {
-	return DPAP_RECORD_GET_INTERFACE (record)->read (record, transcode_mimetype, err);
+	return DPAP_RECORD_GET_INTERFACE (record)->read (record, err);
 }

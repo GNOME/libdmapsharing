@@ -27,11 +27,39 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DMAP_CONTAINER_DB:
+ *
+ * The type for #DMAPContainerDb.
+ */
 #define TYPE_DMAP_CONTAINER_DB		 (dmap_container_db_get_type ())
+/**
+ * DMAP_CONTAINER_DB:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPContainerDb or derived pointer into a (DMAPContainerDb*) 
+ * pointer. Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_CONTAINER_DB(o)		 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				          TYPE_DMAP_CONTAINER_DB, DMAPContainerDb))
+/**
+ * IS_DMAP_CONTAINER_DB:
+ * @o: Instance to check for being a %TYPE_DMAP_CONTAINER_DB.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type
+ * %TYPE_DMAP_CONTAINER_DB.
+ */
 #define IS_DMAP_CONTAINER_DB(o)		 (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				          TYPE_DMAP_CONTAINER_DB))
+/**
+ * DMAP_CONTAINER_DB_GET_INTERFACE:
+ * @o: a #DMAPContainerDb instance.
+ *
+ * Get the interface structure associated to a #DMAPContainerDb instance.
+ *
+ * Returns: pointer to object interface structure.
+ */
 #define DMAP_CONTAINER_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				            TYPE_DMAP_CONTAINER_DB, DMAPContainerDbInterface))
 
@@ -53,15 +81,35 @@ struct _DMAPContainerDbInterface {
 
 GType	    dmap_container_db_get_type        (void);
 
-gint        dmap_container_db_get_id          (DMAPContainerDb *db);
-
+/**
+ * dmap_container_db_lookup_by_id:
+ * @db: A container database.
+ * @id: A record ID.
+ *
+ * Returns: the database record corresponding to @id. This record should
+ * be unrefed when no longer required.
+ */
 DMAPContainerRecord *dmap_container_db_lookup_by_id    (DMAPContainerDb *db, gint id);
 
+/**
+ * dmap_container_db_foreach:
+ * @db: A container database.
+ * @fn: The function to apply to each record in the database.
+ * @data: User data to pass to the function.
+ *
+ * Apply a function to each record in a container database.
+ */
 void	    dmap_container_db_foreach         (DMAPContainerDb *db,
 				     	       void (*fn) (DMAPContainerRecord *record,
 						 	   gpointer data),
 				     	       gpointer data);
 
+/**
+ * dmap_container_db_count:
+ * @db: A container database.
+ *
+ * Returns: the number of records in the database.
+ */
 gulong      dmap_container_db_count           (DMAPContainerDb *db);
 
 #endif /* __DMAP_CONTAINER_DB_H */

@@ -8,29 +8,41 @@
   <bookinfo>
     <title>libdmapsharing Reference Manual</title>
     <releaseinfo>
-      for libdmapsharing [VERSION]
+      for libdmapsharing 1.9
       The latest version of this documentation can be found on-line at
-      <ulink role="online-location" url="http://[SERVER]/libdmapsharing/index.html">http://[SERVER]/libdmapsharing/</ulink>.
+      <ulink role="online-location" url="http://www.flyn.org/projects/libdmapsharing/docs/">http://www.flyn.org/projects/libdmapsharing/docs/</ulink>.
     </releaseinfo>
   </bookinfo>
+  
+  <chapter>
+    <title>Libdmapsharing Sharing Overview</title>
+    <xi:include href="mediadb.sgml"/>
+    <xi:include href="containerdb.sgml"/>
+    <xi:include href="shareapi.sgml"/>
+  </chapter>
 
   <chapter>
-    <title>[Insert title here]</title>
-        <xi:include href="xml/dmap-container-db.xml"/>
-    <xi:include href="xml/dmap-share.xml"/>
-    <xi:include href="xml/dpap-share.xml"/>
-    <xi:include href="xml/dmap-container-record.xml"/>
-    <xi:include href="xml/daap-share.xml"/>
-    <xi:include href="xml/daap-record.xml"/>
+    <title>Libdmapsharing Browsing Overview</title>
+  </chapter>
+
+  <chapter>
+    <title>Libdmapsharing Objects and Interfaces</title>
     <xi:include href="xml/daap-connection.xml"/>
+    <xi:include href="xml/daap-record.xml"/>
+    <xi:include href="xml/daap-share.xml"/>
+    <xi:include href="xml/dmap-connection.xml"/>
+    <xi:include href="xml/dmap-container-db.xml"/>
+    <xi:include href="xml/dmap-container-record.xml"/>
+    <xi:include href="xml/dmap-db.xml"/>
+    <xi:include href="xml/dmap-mdns-browser.xml"/>
+    <xi:include href="xml/dmap-share.xml"/>
     <xi:include href="xml/dmap-record.xml"/>
-    <xi:include href="xml/dpap-record.xml"/>
     <xi:include href="xml/dmap-record-factory.xml"/>
     <xi:include href="xml/dpap-connection.xml"/>
-    <xi:include href="xml/dmap-connection.xml"/>
-    <xi:include href="xml/dmap-db.xml"/>
-
+    <xi:include href="xml/dpap-record.xml"/>
+    <xi:include href="xml/dpap-share.xml"/>
   </chapter>
+
   <chapter id="object-tree">
     <title>Object Hierarchy</title>
      <xi:include href="xml/tree_index.sgml"/>

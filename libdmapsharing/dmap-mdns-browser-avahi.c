@@ -494,12 +494,10 @@ browse_cb (AvahiServiceBrowser *service_browser,
 #ifdef HAVE_AVAHI_0_6
     local = ((flags & AVAHI_LOOKUP_RESULT_LOCAL) != 0);
 #endif
-    /* FIXME:
     if (local) {
         g_debug ("Ignoring local service %s", name);
         return;
     }
-    */
 
     if (event == AVAHI_BROWSER_NEW) {
         browser_add_service (browser, name, domain);

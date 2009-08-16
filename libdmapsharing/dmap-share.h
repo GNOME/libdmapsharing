@@ -38,15 +38,56 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DMAP_SHARE:
+ *
+ * The type for #DMAPShare.
+ */
 #define TYPE_DMAP_SHARE         (dmap_share_get_type ())
+/**
+ * DMAP_SHARE:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPShare or derived pointer into a (DMAPShare*) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				 TYPE_DMAP_SHARE, DMAPShare))
+/**
+ * DMAP_SHARE_CLASS:
+ * @k: a valid #DMAPShareClass
+ *
+ * Casts a derived #DMAPShareClass structure into a #DMAPShareClass structure.
+ */
 #define DMAP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				 TYPE_DMAP_SHARE, DMAPShareClass))
+/**
+ * IS_DMAP_SHARE:
+ * @o: Instance to check for being a %TYPE_DMAP_SHARE.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DMAP_SHARE.
+ */
+
 #define IS_DMAP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				 TYPE_DMAP_SHARE))
+/**
+ * IS_DMAP_SHARE_CLASS:
+ * @k: a #DMAPShareClass
+ *
+ * Checks whether @k "is a" valid #DMAPShareClass structure of type
+ * %DMAP_SHARE or derived.
+ */
 #define IS_DMAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				 TYPE_DMAP_SHARE))
+/**
+ * DMAP_SHARE_GET_CLASS:
+ * @o: a #DMAPShare instance.
+ *
+ * Get the class structure associated to a #DMAPShare instance.
+ *
+ * Returns: pointer to object class structure.
+ */
 #define DMAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 TYPE_DMAP_SHARE, DMAPShareClass))
 
@@ -110,74 +151,74 @@ struct DMAPMetaDataMap {
 GType    dmap_share_get_type (void);
 
 /* Non-virtual methods */
-guint    dmap_share_get_auth_method (DMAPShare *share);
+guint    _dmap_share_get_auth_method (DMAPShare *share);
 
-guint    dmap_share_get_revision_number (DMAPShare *share);
+guint    _dmap_share_get_revision_number (DMAPShare *share);
 
-gboolean dmap_share_get_revision_number_from_query (GHashTable *query,
+gboolean _dmap_share_get_revision_number_from_query (GHashTable *query,
 						    guint *number);
 
-gboolean dmap_share_session_id_validate (DMAPShare *share,
+gboolean _dmap_share_session_id_validate (DMAPShare *share,
 					 SoupClientContext *context, 
 					 SoupMessage *msg, GHashTable *query,
 					 guint32 *id);
 
-guint32  dmap_share_session_id_create (DMAPShare *share,
+guint32  _dmap_share_session_id_create (DMAPShare *share,
 				       SoupClientContext *ctx);
 
-void     dmap_share_session_id_remove (DMAPShare *share,
+void     _dmap_share_session_id_remove (DMAPShare *share,
 				       SoupClientContext *ctx,
 				       guint32 id);
 
-gboolean dmap_share_client_requested (bitwise bits, gint field);
+gboolean _dmap_share_client_requested (bitwise bits, gint field);
 
-gboolean dmap_share_uri_is_local (const char *text_uri);
+gboolean _dmap_share_uri_is_local (const char *text_uri);
 
-gboolean dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
+gboolean _dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
 				      SoupMessage *msg, gpointer user_data);
 
-gboolean dmap_share_server_start  (DMAPShare *share);
+gboolean _dmap_share_server_start  (DMAPShare *share);
 
-gboolean dmap_share_publish_start (DMAPShare *share);
+gboolean _dmap_share_publish_start (DMAPShare *share);
 
-void     dmap_share_message_set_from_dmap_structure (DMAPShare *share,
+void     _dmap_share_message_set_from_dmap_structure (DMAPShare *share,
 						     SoupMessage *message,
 						     GNode *structure);
 
-bitwise  dmap_share_parse_meta (GHashTable *query,
+bitwise  _dmap_share_parse_meta (GHashTable *query,
 				struct DMAPMetaDataMap *mdm,
 				guint mdmlen);
 
-bitwise  dmap_share_parse_meta_str (const char *attrs,
+bitwise  _dmap_share_parse_meta_str (const char *attrs,
 				    struct DMAPMetaDataMap *mdm,
 				    guint mdmlen);
 
-void dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record,
+void _dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record,
 				      gpointer mlcl);
 
 /* Virtual methods (libsoup callbacks with default implementation): */
-void dmap_share_content_codes (DMAPShare *share,
+void _dmap_share_content_codes (DMAPShare *share,
 		  SoupServer        *server,
 		  SoupMessage       *message,
 		  const char        *path,
 		  GHashTable        *query,
 		  SoupClientContext *context);
 
-void dmap_share_login (DMAPShare *share,
+void _dmap_share_login (DMAPShare *share,
 		  SoupServer        *server,
 		  SoupMessage       *message,
 		  const char        *path,
 		  GHashTable        *query,
 		  SoupClientContext *context);
 
-void dmap_share_logout (DMAPShare *share,
+void _dmap_share_logout (DMAPShare *share,
 		  SoupServer        *server,
 		  SoupMessage       *message,
 		  const char        *path,
 		  GHashTable        *query,
 		  SoupClientContext *context);
 
-void dmap_share_update (DMAPShare *share,
+void _dmap_share_update (DMAPShare *share,
 		  SoupServer        *server,
 		  SoupMessage       *message,
 		  const char        *path,
@@ -186,11 +227,11 @@ void dmap_share_update (DMAPShare *share,
 
 
 /* Virtual methods: MDNS callbacks */
-void dmap_share_published     (DMAPShare         *share,
+void _dmap_share_published     (DMAPShare         *share,
 			       DmapMdnsPublisher *publisher,
 			       const char        *name);
 
-void dmap_share_name_collision(DMAPShare         *share,
+void _dmap_share_name_collision(DMAPShare         *share,
 			       DmapMdnsPublisher *publisher,
 			       const char        *name);
 

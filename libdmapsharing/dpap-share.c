@@ -208,8 +208,8 @@ dpap_share_new (const char *name,
 					     "container-db", container_db,
 					     NULL));
 
-	dmap_share_server_start (DMAP_SHARE (share));
-	dmap_share_publish_start (DMAP_SHARE (share));
+	_dmap_share_server_start (DMAP_SHARE (share));
+	_dmap_share_publish_start (DMAP_SHARE (share));
 
 	return share;
 }
@@ -276,7 +276,7 @@ dpap_share_server_info (DMAPShare *share,
 	dmap_structure_add (msrv, DMAP_CC_MPRO, (gdouble) DMAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_PPRO, (gdouble) DPAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_MINM, nameprop);
-	/*dmap_structure_add (msrv, DMAP_CC_MSAU, dmap_share_get_auth_method (share));*/
+	/*dmap_structure_add (msrv, DMAP_CC_MSAU, _dmap_share_get_auth_method (share));*/
 	/* authentication method
 	 * 0 is nothing
 	 * 1 is name & password
@@ -294,7 +294,7 @@ dpap_share_server_info (DMAPShare *share,
 	/* dmap_structure_add (msrv, DMAP_CC_MSRS, (gchar) 0); */
 	dmap_structure_add (msrv, DMAP_CC_MSDC, (gint32) 1);
 
-	dmap_share_message_set_from_dmap_structure (share, message, msrv);
+	_dmap_share_message_set_from_dmap_structure (share, message, msrv);
 	dmap_structure_destroy (msrv);
 
 	g_free (nameprop);
@@ -379,69 +379,69 @@ add_entry_to_mlcl (gpointer id, DMAPRecord *record, gpointer _mb)
 
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 
-	if (dmap_share_client_requested (mb->bits, ITEM_KIND))
+	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD, (gchar) DPAP_ITEM_KIND_PHOTO);
-	if (dmap_share_client_requested (mb->bits, ITEM_ID))
+	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) GPOINTER_TO_UINT (id));
-	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
+	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
 		dmap_structure_add (mlit, DMAP_CC_MINM, filename);
 	}
-	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID))
+	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) GPOINTER_TO_UINT (id));
 	/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP: */
 	g_object_get (record, "aspect-ratio", &aspect_ratio, NULL);
 	dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
-	if (dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
 		gint creation_date;
 		g_object_get (record, "creation-date", &creation_date, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PICD, creation_date);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILENAME)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILENAME)) {
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PIMF, filename);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
 		gchar *format;
 		g_object_get (record, "format", &format, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PFMT, format);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
 		gint filesize;
 		g_object_get (record, "filesize", &filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PIFS, filesize);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
 		gint large_filesize;
 		g_object_get (record, "large-filesize", &large_filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PLSZ, large_filesize);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELHEIGHT)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELHEIGHT)) {
 		gint pixel_height;
 		g_object_get (record, "pixel-height", &pixel_height, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PHGT, pixel_height);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELWIDTH)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELWIDTH)) {
 		gint pixel_width;
 		g_object_get (record, "pixel-width", &pixel_width, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PWTH, pixel_width);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGERATING)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGERATING)) {
 		gint rating;
 		g_object_get (record, "rating", &rating, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PRAT, rating);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGECOMMENTS)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGECOMMENTS)) {
 		gchar *comments;
 		g_object_get (record, "comments", &comments, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PCMT, comments);
 	}
-	if (dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
+	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
 		unsigned char *data = NULL;
-		if (dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
+		if (_dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
 			g_object_get (record, "thumbnail", &data, NULL);
 			g_object_get (record, "filesize", &size, NULL);
 		} else {
@@ -500,7 +500,7 @@ build_filter (gchar *filterstr)
 			GSList *filter = NULL;
 			gchar **t2;
 
-			t2 = dmap_db_strsplit_using_quotes (t1[i]);
+			t2 = _dmap_db_strsplit_using_quotes (t1[i]);
 
 			for (j = 0; t2[j]; j++) {
 				FilterDefinition *def;
@@ -553,7 +553,7 @@ dpap_share_databases (DMAPShare *share,
 	g_debug ("Path is %s.", path);
 	g_hash_table_foreach (query, debug_param, NULL);
 
-	if (! dmap_share_session_id_validate (share, context, message, query, NULL)) {
+	if (! _dmap_share_session_id_validate (share, context, message, query, NULL)) {
 		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
 		return;
 	}
@@ -594,7 +594,7 @@ dpap_share_databases (DMAPShare *share,
 		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (DPAP_SHARE (share)->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_MCTC, (gint32) 1);
 
-		dmap_share_message_set_from_dmap_structure (share, message, avdb);
+		_dmap_share_message_set_from_dmap_structure (share, message, avdb);
 		dmap_structure_destroy (avdb);
 
 		g_free (nameprop);
@@ -615,7 +615,7 @@ dpap_share_databases (DMAPShare *share,
 		gint32 num_songs = dmap_db_count (DPAP_SHARE (share)->priv->db);
 		struct MLCL_Bits mb = {NULL,0};
 
-		mb.bits = dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
+		mb.bits = _dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
 
 		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
 		dmap_structure_add (adbs, DMAP_CC_MSTT, (gint32) DPAP_STATUS_OK);
@@ -632,14 +632,14 @@ dpap_share_databases (DMAPShare *share,
 
 			/* FIXME: fix memory leaks (DAAP too): */
 			filter_def = build_filter (record_query);
-			records = dmap_db_apply_filter (DMAP_DB (DPAP_SHARE (share)->priv->db), filter_def);
+			records = _dmap_db_apply_filter (DMAP_DB (DPAP_SHARE (share)->priv->db), filter_def);
 			g_hash_table_foreach (records, (GHFunc) add_entry_to_mlcl, &mb);
 			/* FIXME: need to free hash table keys but not records */
 		} else {
 			g_warning ("Missing query parameter");
 		}
 
-		dmap_share_message_set_from_dmap_structure (share, message, adbs);
+		_dmap_share_message_set_from_dmap_structure (share, message, adbs);
 		dmap_structure_destroy (adbs);
 		adbs = NULL;
 	} else if (g_ascii_strcasecmp ("/1/containers", rest_of_path) == 0) {
@@ -679,9 +679,9 @@ dpap_share_databases (DMAPShare *share,
 		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (DPAP_SHARE (share)->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1); /* base album (AKA playlist) */
 
-		dmap_container_db_foreach (DPAP_SHARE (share)->priv->container_db, dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
+		dmap_container_db_foreach (DPAP_SHARE (share)->priv->container_db, _dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
 
-		dmap_share_message_set_from_dmap_structure (share, message, aply);
+		_dmap_share_message_set_from_dmap_structure (share, message, aply);
 		dmap_structure_destroy (aply);
 
 		g_free (nameprop);
@@ -703,7 +703,7 @@ dpap_share_databases (DMAPShare *share,
 		struct MLCL_Bits mb = {NULL,0};
 		gint pl_id = atoi (rest_of_path + 14);
 
-		mb.bits = dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
+		mb.bits = _dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
 
 		apso = dmap_structure_add (NULL, DMAP_CC_APSO);
 		dmap_structure_add (apso, DMAP_CC_MSTT, (gint32) DPAP_STATUS_OK);
@@ -730,9 +730,11 @@ dpap_share_databases (DMAPShare *share,
                         mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
 			dmap_db_foreach (entries, add_entry_to_mlcl, (gpointer) &mb);
+
+			g_object_unref (record);
 		}
 
-		dmap_share_message_set_from_dmap_structure (share, message, apso);
+		_dmap_share_message_set_from_dmap_structure (share, message, apso);
 		dmap_structure_destroy (apso);
 	} else {
 		g_warning ("Unhandled: %s\n", path);

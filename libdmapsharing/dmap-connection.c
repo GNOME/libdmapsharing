@@ -991,7 +991,17 @@ handle_song_listing (DMAPConnection *connection,
 		g_free (uri);
 
 		dmap_db_add (priv->db, record);
+		g_debug ("Got song: %s", title);
+		g_object_unref (record);
+
+		if (i % commit_batch == 0) {
+			connection->priv->progress = ((float) i / (float) returned_count);
+			if (priv->emit_progress_id != 0) {
+				g_source_remove (connection->priv->emit_progress_id);
+			}
+			connection->priv->emit_progress_id = g_idle_add ((GSourceFunc) emit_progress_idle, connection);
 		}
+	}
 
 	dmap_connection_state_done (connection, TRUE);
 }

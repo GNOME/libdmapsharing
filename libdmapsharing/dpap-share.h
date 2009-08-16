@@ -30,14 +30,54 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DPAP_SHARE:
+ *
+ * The type for #DPAPShare.
+ */
 #define TYPE_DPAP_SHARE         (dpap_share_get_type ())
+/**
+ * DPAP_SHARE:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DPAPShare or derived pointer into a (DPAPShare*) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DPAP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				 TYPE_DPAP_SHARE, DPAPShare))
+/**
+ * DPAP_SHARE_CLASS:
+ * @k: a valid #DPAPShareClass
+ *
+ * Casts a derived #DPAPShareClass structure into a #DPAPShareClass structure.
+ */
 #define DPAP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				 TYPE_DPAP_SHARE, DPAPShareClass))
+/**
+ * IS_DPAP_SHARE:
+ * @o: Instance to check for being a %TYPE_DPAP_SHARE.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DPAP_SHARE.
+ */
 #define IS_DPAP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				 TYPE_DPAP_SHARE))
+/**
+ * IS_DPAP_SHARE_CLASS:
+ * @k: a #DPAPShareClass
+ *
+ * Checks whether @k "is a" valid #DPAPShareClass structure of type
+ * %DPAP_SHARE or derived.
+ */
 #define IS_DPAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DPAP_SHARE))
+/**
+ * DPAP_SHARE_GET_CLASS:
+ * @o: a #DPAPShare instance.
+ *
+ * Get the class structure associated to a #DPAPShare instance.
+ *
+ * Returns: pointer to object class structure.
+ */
 #define DPAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 TYPE_DPAP_SHARE, DPAPShareClass))
 
@@ -54,6 +94,18 @@ typedef struct {
 
 GType      dpap_share_get_type (void);
 
+/**
+ * dpap_share_new:
+ * @name: The name that will be published by mDNS.
+ * @password: A share password or NULL.
+ * @db: A media database.
+ * @container_db: A container (album) database.
+ * @transcode_mimetype: A transcode mimetype or NULL.
+ *
+ * Creates a new DPAP share and publishes it using mDNS.
+ *
+ * Returns: a pointer to a DPAPShare.
+ */
 DPAPShare *dpap_share_new      (const char *name, const char *password,
 			        gpointer db, gpointer container_db,
 				gchar *transcode_mimetype);

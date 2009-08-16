@@ -26,11 +26,39 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DMAP_CONTAINER_RECORD:
+ *
+ * The type for #DMAPContainerRecord.
+ */
 #define TYPE_DMAP_CONTAINER_RECORD	     (dmap_container_record_get_type ())
+/**
+ * DMAP_CONTAINER_RECORD:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPContainerRecord or derived pointer into a (DMAPContainerRecord*) 
+ * pointer. Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_CONTAINER_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				      TYPE_DMAP_CONTAINER_RECORD, DMAPContainerRecord))
+/**
+ * IS_DMAP_CONTAINER_RECORD:
+ * @o: Instance to check for being a %TYPE_DMAP_CONTAINER_RECORD.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type
+ * %TYPE_DMAP_CONTAINER_RECORD.
+ */
 #define IS_DMAP_CONTAINER_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      TYPE_DMAP_CONTAINER_RECORD))
+/**
+ * DMAP_CONTAINER_RECORD_GET_INTERFACE:
+ * @o: a #DMAPContainerRecord instance.
+ *
+ * Get the class structure associated to a #DMAPContainerRecord instance.
+ *
+ * Returns: pointer to object interface structure.
+ */
 #define DMAP_CONTAINER_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      TYPE_DMAP_CONTAINER_RECORD, DMAPContainerRecordInterface))
 
@@ -50,13 +78,42 @@ struct _DMAPContainerRecordInterface {
 };
 
 GType       dmap_container_record_get_type         (void);
+
+/**
+ * dmap_container_record_get_id:
+ * @record: A DMAPContainerRecord.
+ *
+ * Returns: the ID for the given record.
+ */
 gint        dmap_container_record_get_id           (DMAPContainerRecord *record);
+
+/**
+ * dmap_container_record_add_entry:
+ * @container_record: A DMAPContainerRecord.
+ * @record: A DMAPRecord.
+ * @id: The record's ID.
+ *
+ * Add a record to the database. It is assumed that the record is placed
+ * directly into the database (not copied) and not freed.
+ */
 void        dmap_container_record_add_entry        (DMAPContainerRecord *container_record,
 						    DMAPRecord *record,
 						    gint id);
 
+/**
+ * dmap_container_record_get_entry_count:
+ * @record: A DMAPContainerRecord.
+ *
+ * Returns: the number of records in the container record.
+ */
 guint64     dmap_container_record_get_entry_count  (DMAPContainerRecord *record);
 
+/**
+ * dmap_container_record_get_entries:
+ * @record: A DMAPContainerRecord.
+ *
+ * Returns: A pointer to a DMAPDb containing the entries contained in record.
+ */
 const DMAPDb *dmap_container_record_get_entries      (DMAPContainerRecord *record);
 
 #endif /* __DMAP_CONTAINER_RECORD_H */

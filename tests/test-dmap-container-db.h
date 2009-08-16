@@ -51,16 +51,6 @@ TestDMAPContainerDb *test_dmap_container_db_new             (DMAPContainerRecord
 
 GType       test_dmap_container_db_get_type        (void);
 
-DMAPContainerRecord *test_dmap_container_db_lookup_by_id    (DMAPContainerDb *db, gint id);
-
-void        test_dmap_container_db_foreach_by_type (DMAPContainerDb *db,
-					  gpointer type,
-					  void (*fn) (DMAPContainerRecord *record,
-					 	      gpointer data),
-					  gpointer data);
-
-gint64      test_dmap_container_db_count_by_type   (DMAPContainerDb *db, gpointer type);
-
 #endif /* __TEST_DMAP_CONTAINER_DB */
 
 G_END_DECLS

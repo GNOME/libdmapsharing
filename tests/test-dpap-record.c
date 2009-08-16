@@ -147,7 +147,7 @@ test_dpap_record_get_property (GObject *object,
         }
 }
 
-GInputStream *test_dpap_record_read (DPAPRecord *record, gchar *transcode_mimetype, GError **error)
+GInputStream *test_dpap_record_read (DPAPRecord *record, GError **error)
 {
 	GFile *file;
 	GInputStream *stream;

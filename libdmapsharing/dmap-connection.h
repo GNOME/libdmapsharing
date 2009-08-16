@@ -36,11 +36,52 @@ typedef struct {
 	GList *uris;
 } DMAPPlaylist;
 
+/**
+ * TYPE_DMAP_CONNECTION:
+ *
+ * The type for #DMAPConnection.
+ */
 #define TYPE_DMAP_CONNECTION		(dmap_connection_get_type ())
+/**
+ * DMAP_CONNECTION:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPConnection or derived pointer into a (DMAPConnection *) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DMAP_CONNECTION, DMAPConnection))
+/**
+ * DMAP_CONNECTION_CLASS:
+ * @k: a valid #DMAPConnectionClass
+ *
+ * Casts a derived #DMAPConnectionClass structure into a #DMAPConnectionClass
+ * structure.
+ */
 #define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), TYPE_DMAP_CONNECTION, DMAPConnectionClass))
+/**
+ * IS_DMAP_CONNECTION:
+ * @o: Instance to check for being a %TYPE_DMAP_CONNECTION.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DMAP_CONNECTION.
+ */
 #define IS_DMAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DMAP_CONNECTION))
+/**
+ * IS_DMAP_CONNECTION_CLASS:
+ * @k: a #DMAPConnectionClass
+ *
+ * Checks whether @k "is a" valid #DMAPConnectionClass structure of type
+ * %DMAP_CONNECTION or derived.
+ */
 #define IS_DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DMAP_CONNECTION))
+/**
+ * DMAP_CONNECTION_GET_CLASS:
+ * @o: a #DMAPConnection instance.
+ *
+ * Get the class structure associated to a #DMAPConnection instance.
+ *
+ * Returns: pointer to object class structure.
+ */
 #define DMAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DMAP_CONNECTION, DMAPConnectionClass))
 
 typedef struct DMAPConnectionPrivate DMAPConnectionPrivate;

@@ -1,8 +1,8 @@
-AC_INIT(libdmapsharing, 1.9.0.10)
+AC_INIT(libdmapsharing, 1.9.0.11)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AS_VERSION(libdmapsharing, LIBDMAPSHARING, 1, 9, 0, 10, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+AS_VERSION(libdmapsharing, LIBDMAPSHARING, 1, 9, 0, 11, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
 
 AM_INIT_AUTOMAKE
 
@@ -29,6 +29,10 @@ AC_PROG_CPP
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_PROG_LIBTOOL
+
+GTK_DOC_CHECK(1.0)
+AC_CONFIG_MACRO_DIR(m4)
+
 
 dnl Test if --enable-debug given
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],[enable debugging mode])])
@@ -315,7 +319,7 @@ AC_SUBST(DMAP_HAVE_UNALIGNED_ACCESS_DEFINE)
 
 AC_OUTPUT([
 Makefile
-common/Makefile
+docs/Makefile
 libdmapsharing.pc
 libdmapsharing/Makefile
 libdmapsharing/dmap-config.h

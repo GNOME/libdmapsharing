@@ -27,11 +27,39 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DMAP_RECORD_FACTORY:
+ *
+ * The type for #DMAPRecordFactory.
+ */
 #define TYPE_DMAP_RECORD_FACTORY (dmap_record_factory_get_type ())
+/**
+ * DMAP_RECORD_FACTORY:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPRecordFactory or derived pointer into a (DMAPRecordFactory *)
+ * pointer. Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_RECORD_FACTORY(o)	 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				  TYPE_DMAP_RECORD_FACTORY, DMAPRecordFactory))
+/**
+ * IS_DMAP_RECORD_FACTORY:
+ * @o: Instance to check for being a %TYPE_DMAP_RECORD_FACTORY.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type
+ * %TYPE_DMAP_RECORD_FACTORY.
+ */
 #define IS_DMAP_RECORD_FACTORY(o)(G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				  TYPE_DMAP_RECORD_FACTORY))
+/**
+ * DMAP_RECORD_FACTORY_GET_INTERFACE:
+ * @o: a #DMAPRecordFactory instance.
+ *
+ * Get the interface structure associated to a #DMAPRecordFactory instance.
+ *
+ * Returns: pointer to object interface structure.
+ */
 #define DMAP_RECORD_FACTORY_GET_INTERFACE(o) \
 				 (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				  TYPE_DMAP_RECORD_FACTORY, \
@@ -48,6 +76,13 @@ struct _DMAPRecordFactoryInterface {
 
 GType dmap_record_factory_get_type (void);
 
+/**
+ * dmap_record_factory_create:
+ * @factory: A DMAPRecordFactory.
+ * @path: A file path.
+ *
+ * Returns: a new DMAPRecord as read from path.
+ */
 DMAPRecord *dmap_record_factory_create (DMAPRecordFactory *factory, const char *path);
 
 #endif /* __DMAP_RECORD_FACTORY_H */

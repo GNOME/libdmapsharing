@@ -61,19 +61,14 @@ libdmapsharinginclude_HEADERS = \
 	daap-record.h \
 	daap-share.h \
 	dmap.h \
-	dmap-config.h \
 	dmap-connection.h \
 	dmap-container-db.h \
 	dmap-container-record.h \
 	dmap-db.h \
-	dmap-md5.h \
 	dmap-mdns-browser.h \
-	dmap-mdns-publisher.h \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
-	dmap-structure.h \
-	dmap-utils.h \
 	dpap-connection.h \
 	dpap-record.h \
 	dpap-share.h
@@ -81,8 +76,11 @@ libdmapsharinginclude_HEADERS = \
 noinst_HEADERS = \
 	dmap-marshal.h \
 	dmap-config.h \
+	dmap-md5.h \
 	dmap-mdns-avahi.h \
-	dmap-mdns-browser.h \
+	dmap-mdns-publisher.h \
+	dmap-structure.h \
+	dmap-utils.h \
 	g-gst-input-stream.h \
 	g-gst-mp3-input-stream.h \
 	g-gst-wav-input-stream.h \

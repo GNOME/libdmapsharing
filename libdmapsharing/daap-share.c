@@ -241,8 +241,8 @@ daap_share_new (const char *name,
 					     "transcode-mimetype", transcode_mimetype,
 					     NULL));
 
-	dmap_share_server_start (DMAP_SHARE (share));
-	dmap_share_publish_start (DMAP_SHARE (share));
+	_dmap_share_server_start (DMAP_SHARE (share));
+	_dmap_share_publish_start (DMAP_SHARE (share));
 
 	transcode_format = mime_to_format (transcode_mimetype);
 
@@ -319,7 +319,7 @@ daap_share_server_info (DMAPShare *share,
 	 * 3.0 is 2/3
 	 */
 	dmap_structure_add (msrv, DMAP_CC_MINM, nameprop);
-	dmap_structure_add (msrv, DMAP_CC_MSAU, dmap_share_get_auth_method (share));
+	dmap_structure_add (msrv, DMAP_CC_MSAU, _dmap_share_get_auth_method (share));
 	/* authentication method
 	 * 0 is nothing
 	 * 1 is name & password
@@ -337,7 +337,7 @@ daap_share_server_info (DMAPShare *share,
 	dmap_structure_add (msrv, DMAP_CC_MSRS, (gchar) 0);
 	dmap_structure_add (msrv, DMAP_CC_MSDC, (gint32) 1);
 
-	dmap_share_message_set_from_dmap_structure (share, message, msrv);
+	_dmap_share_message_set_from_dmap_structure (share, message, msrv);
 	dmap_structure_destroy (msrv);
 
 	g_free (nameprop);
@@ -564,73 +564,73 @@ add_entry_to_mlcl (gpointer id, DMAPRecord *record, gpointer _mb)
 	mb = (struct MLCL_Bits *) _mb;
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 
-	if (dmap_share_client_requested (mb->bits, ITEM_KIND))
+	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD, (gchar) DAAP_ITEM_KIND_AUDIO);
-	if (dmap_share_client_requested (mb->bits, ITEM_ID))
+	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
-	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
+	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		const gchar *title;
 		g_object_get (record, "title", &title, NULL);
 		dmap_structure_add (mlit, DMAP_CC_MINM, title);
 	}
-	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID))
+	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
-	if (dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID))
+	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MCTI, GPOINTER_TO_UINT (id));
-	if (dmap_share_client_requested (mb->bits, SONG_DATA_KIND))
+	if (_dmap_share_client_requested (mb->bits, SONG_DATA_KIND))
 		dmap_structure_add (mlit, DMAP_CC_ASDK, (gchar) DAAP_SONG_DATA_KIND_NONE);
 	/* FIXME: Any use for this?
-	if (dmap_share_client_requested (mb->bits, SONG_DATA_URL))
+	if (_dmap_share_client_requested (mb->bits, SONG_DATA_URL))
 		dmap_structure_add (mlit, DMAP_CC_ASUL, "daap://192.168.0.100:%u/databases/1/items/%d.%s?session-id=%s", data->port, *id, daap_record_get_format (DAAP_RECORD (record)), data->session_id);
 	*/
-	if (dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
 		const gchar *album;
 		g_object_get (record, "album", &album, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAL, album);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_GROUPING))
+	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
-	if (dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
 		const gchar *artist;
 		g_object_get (record, "artist", &artist, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
 		gulong bitrate;
 		g_object_get (record, "bitrate", &bitrate, NULL);
 		if (bitrate != 0)
 			dmap_structure_add (mlit, DMAP_CC_ASBR, (gint32) bitrate);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_BPM))
+	if (_dmap_share_client_requested (mb->bits, SONG_BPM))
 		dmap_structure_add (mlit, DMAP_CC_ASBT, (gint32) 0);
-	if (dmap_share_client_requested (mb->bits, SONG_COMMENT))
+	if (_dmap_share_client_requested (mb->bits, SONG_COMMENT))
 		dmap_structure_add (mlit, DMAP_CC_ASCM, "");
-	if (dmap_share_client_requested (mb->bits, SONG_COMPILATION))
+	if (_dmap_share_client_requested (mb->bits, SONG_COMPILATION))
 		dmap_structure_add (mlit, DMAP_CC_ASCO, (gchar) FALSE);
-	if (dmap_share_client_requested (mb->bits, SONG_COMPOSER))
+	if (_dmap_share_client_requested (mb->bits, SONG_COMPOSER))
 		dmap_structure_add (mlit, DMAP_CC_ASCP, "");
-	if (dmap_share_client_requested (mb->bits, SONG_DATE_ADDED)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_DATE_ADDED)) {
 		gint32 firstseen;
 		g_object_get (record, "firstseen", &firstseen, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDA, firstseen);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_DATE_MODIFIED)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_DATE_MODIFIED)) {
 		gint32 mtime;
 		g_object_get (record, "mtime", &mtime, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDM, mtime);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_DISC_COUNT))
+	if (_dmap_share_client_requested (mb->bits, SONG_DISC_COUNT))
 		dmap_structure_add (mlit, DMAP_CC_ASDC, (gint32) 0);
-	if (dmap_share_client_requested (mb->bits, SONG_DISC_NUMBER)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_DISC_NUMBER)) {
 		gint32 disc;
 		g_object_get (record, "disc", &disc, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDN, disc);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_DISABLED))
+	if (_dmap_share_client_requested (mb->bits, SONG_DISABLED))
 		dmap_structure_add (mlit, DMAP_CC_ASDB, (gchar) FALSE);
-	if (dmap_share_client_requested (mb->bits, SONG_EQ_PRESET))
+	if (_dmap_share_client_requested (mb->bits, SONG_EQ_PRESET))
 		dmap_structure_add (mlit, DMAP_CC_ASEQ, "");
-	if (dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
 		gchar *format;
 		if (transcode_format)
 			format = transcode_format;
@@ -638,49 +638,49 @@ add_entry_to_mlcl (gpointer id, DMAPRecord *record, gpointer _mb)
 			g_object_get (record, "format", &format, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASFM, format);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_GENRE)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre;
 		g_object_get (record, "genre", &genre, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
+	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
 		dmap_structure_add (mlit, DMAP_CC_ASDT, ""); /* FIXME: e.g., wav audio file */
-	if (dmap_share_client_requested (mb->bits, SONG_RELATIVE_VOLUME))
+	if (_dmap_share_client_requested (mb->bits, SONG_RELATIVE_VOLUME))
 		dmap_structure_add (mlit, DMAP_CC_ASRV, 0);
-	if (dmap_share_client_requested (mb->bits, SONG_SAMPLE_RATE))
+	if (_dmap_share_client_requested (mb->bits, SONG_SAMPLE_RATE))
 		dmap_structure_add (mlit, DMAP_CC_ASSR, 0);
-	if (dmap_share_client_requested (mb->bits, SONG_SIZE)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_SIZE)) {
 		guint64 filesize;
 		g_object_get (record, "filesize", &filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASSZ, (gint32) filesize);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_START_TIME))
+	if (_dmap_share_client_requested (mb->bits, SONG_START_TIME))
 		dmap_structure_add (mlit, DMAP_CC_ASST, 0);
-	if (dmap_share_client_requested (mb->bits, SONG_STOP_TIME))
+	if (_dmap_share_client_requested (mb->bits, SONG_STOP_TIME))
 		dmap_structure_add (mlit, DMAP_CC_ASSP, 0);
-	if (dmap_share_client_requested (mb->bits, SONG_TIME)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_TIME)) {
 		gint32 duration;
 		g_object_get (record, "duration", &duration, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASTM, (1000 * duration));
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_TRACK_COUNT))
+	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_COUNT))
 		dmap_structure_add (mlit, DMAP_CC_ASTC, 0);
-	if (dmap_share_client_requested (mb->bits, SONG_TRACK_NUMBER)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_NUMBER)) {
 		gint32 track;
 		g_object_get (record, "track", &track, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASTN, track);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_USER_RATING)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_USER_RATING)) {
 		gint32 rating;
 		g_object_get (record, "rating", &rating, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASUR, rating);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_YEAR)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_YEAR)) {
 		gint32 year;
 		g_object_get (record, "year", &year, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASYR, year);
 	}
-	if (dmap_share_client_requested (mb->bits, SONG_HAS_VIDEO)) {
+	if (_dmap_share_client_requested (mb->bits, SONG_HAS_VIDEO)) {
 		gboolean has_video;
 		g_object_get (record, "has-video", &has_video, NULL);
 		dmap_structure_add (mlit, DMAP_CC_AEHV, has_video);
@@ -773,7 +773,7 @@ build_filter (gchar *filterstr)
 			GSList *filter = NULL;
 			gchar **t2;
 
-			t2 = dmap_db_strsplit_using_quotes (t1[i]);
+			t2 = _dmap_db_strsplit_using_quotes (t1[i]);
 
 			for (j = 0; t2[j]; j++) {
 				FilterDefinition *def;
@@ -861,7 +861,7 @@ daap_share_databases (DMAPShare *share,
 	g_debug ("Path is %s.", path);
 	g_hash_table_foreach (query, debug_param, NULL);
 
-	if (! dmap_share_session_id_validate (share, context, message, query, NULL)) {
+	if (! _dmap_share_session_id_validate (share, context, message, query, NULL)) {
 		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
 		return;
 	}
@@ -902,7 +902,7 @@ daap_share_databases (DMAPShare *share,
 		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (DAAP_SHARE (share)->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_MCTC, (gint32) 1);
 
-		dmap_share_message_set_from_dmap_structure (share, message, avdb);
+		_dmap_share_message_set_from_dmap_structure (share, message, avdb);
 		dmap_structure_destroy (avdb);
 
 		g_free (nameprop);
@@ -928,7 +928,7 @@ daap_share_databases (DMAPShare *share,
 		if (record_query) {
 			GSList *filter_def;
 			filter_def = build_filter (record_query);
-			records = dmap_db_apply_filter (DMAP_DB (DAAP_SHARE (share)->priv->db), filter_def);
+			records = _dmap_db_apply_filter (DMAP_DB (DAAP_SHARE (share)->priv->db), filter_def);
 			g_debug ("Found %d records", g_hash_table_size (records));
 			num_songs = g_hash_table_size (records);
 			free_filter (filter_def);
@@ -936,7 +936,7 @@ daap_share_databases (DMAPShare *share,
 			num_songs = dmap_db_count (DAAP_SHARE (share)->priv->db);
 		}
 
-		mb.bits = dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
+		mb.bits = _dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
 
 		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
 		dmap_structure_add (adbs, DMAP_CC_MSTT, (gint32) DAAP_STATUS_OK);
@@ -953,7 +953,7 @@ daap_share_databases (DMAPShare *share,
 			dmap_db_foreach (DAAP_SHARE (share)->priv->db, add_entry_to_mlcl, &mb);
 		}
 
-		dmap_share_message_set_from_dmap_structure (share, message, adbs);
+		_dmap_share_message_set_from_dmap_structure (share, message, adbs);
 		dmap_structure_destroy (adbs);
 		adbs = NULL;
 	} else if (g_ascii_strcasecmp ("/1/containers", rest_of_path) == 0) {
@@ -994,9 +994,9 @@ daap_share_databases (DMAPShare *share,
 		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (DAAP_SHARE (share)->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1);
 
-		dmap_container_db_foreach (DAAP_SHARE (share)->priv->container_db, dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
+		dmap_container_db_foreach (DAAP_SHARE (share)->priv->container_db, _dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
 
-		dmap_share_message_set_from_dmap_structure (share, message, aply);
+		_dmap_share_message_set_from_dmap_structure (share, message, aply);
 		dmap_structure_destroy (aply);
 
 		g_free (nameprop);
@@ -1018,7 +1018,7 @@ daap_share_databases (DMAPShare *share,
 		struct MLCL_Bits mb = {NULL,0};
 		gint pl_id = atoi (rest_of_path + 14);
 
-		mb.bits = dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
+		mb.bits = _dmap_share_parse_meta (query, meta_data_map, G_N_ELEMENTS (meta_data_map));
 
 		apso = dmap_structure_add (NULL, DMAP_CC_APSO);
 		dmap_structure_add (apso, DMAP_CC_MSTT, (gint32) DAAP_STATUS_OK);
@@ -1045,9 +1045,11 @@ daap_share_databases (DMAPShare *share,
 			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
 			dmap_db_foreach (entries, add_entry_to_mlcl, &mb);
+
+			g_object_unref (record);
 		}
 
-		dmap_share_message_set_from_dmap_structure (share, message, apso);
+		_dmap_share_message_set_from_dmap_structure (share, message, apso);
 		dmap_structure_destroy (apso);
 	} else if (g_ascii_strncasecmp ("/1/browse/", rest_of_path, 9) == 0) {
 	/* ABRO database browse
@@ -1073,7 +1075,7 @@ daap_share_databases (DMAPShare *share,
 
 		filter = g_hash_table_lookup (query, "filter");
 		filter_def = build_filter (filter);
-		filtered = dmap_db_apply_filter (DMAP_DB (DAAP_SHARE (share)->priv->db), filter_def);
+		filtered = _dmap_db_apply_filter (DMAP_DB (DAAP_SHARE (share)->priv->db), filter_def);
 
 		if (g_ascii_strcasecmp (browse_category, "genres") == 0) {
 			g_hash_table_foreach (filtered, (GHFunc) genre_tabulator, category_items);
@@ -1104,7 +1106,7 @@ daap_share_databases (DMAPShare *share,
 				      add_to_category_listing,
 				      node);
 
-		dmap_share_message_set_from_dmap_structure (share, message, abro);
+		_dmap_share_message_set_from_dmap_structure (share, message, abro);
                 dmap_structure_destroy (abro);
 	_bad_category:
 		free_filter (filter_def);
@@ -1149,6 +1151,8 @@ daap_share_databases (DMAPShare *share,
 			soup_message_set_status (message, SOUP_STATUS_OK);
 		}
 		send_chunked_file (server, message, record, filesize, offset, DAAP_SHARE (share)->priv->transcode_mimetype);
+		
+		g_object_unref (record);
 	} else {
 		g_warning ("Unhandled: %s\n", path);
 	}

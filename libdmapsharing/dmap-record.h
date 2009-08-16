@@ -25,11 +25,38 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DMAP_RECORD:
+ *
+ * The type for #DMAPRecord.
+ */
 #define TYPE_DMAP_RECORD	     (dmap_record_get_type ())
+/**
+ * DMAP_RECORD:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPRecord or derived pointer into a (DMAPRecord *) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				      TYPE_DMAP_RECORD, DMAPRecord))
+/**
+ * IS_DMAP_RECORD:
+ * @o: Instance to check for being a %TYPE_DMAP_RECORD.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DMAP_RECORD.
+ */
 #define IS_DMAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      TYPE_DMAP_RECORD))
+/**
+ * DAAP_RECORD_GET_INTERFACE:
+ * @o: a #DAAPRecord instance.
+ *
+ * Get the class structure associated to a #DAAPRecord instance.
+ *
+ * Returns: pointer to object class structure.
+ */
 #define DMAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      TYPE_DMAP_RECORD, DMAPRecordInterface))
 

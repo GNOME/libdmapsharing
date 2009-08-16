@@ -1,5 +1,5 @@
-SUBDIRS = libdmapsharing tests
-DIST_SUBDIRS = common libdmapsharing m4 media tests
+SUBDIRS = docs libdmapsharing tests
+DIST_SUBDIRS = docs libdmapsharing m4 media tests
 
 ### all of the standard pc files we need to generate
 pcfiles = libdmapsharing-@LIBDMAPSHARING_MAJORMINOR@.pc

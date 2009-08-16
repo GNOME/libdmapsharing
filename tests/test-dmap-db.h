@@ -54,14 +54,6 @@ typedef struct {
 TestDMAPDb *test_dmap_db_new (void);
 GType test_dmap_db_get_type (void);
 
-DMAPRecord *test_dmap_db_lookup_by_id     (DMAPDb *db, guint id);
-void test_dmap_db_foreach (const DMAPDb *db,
-			   void (*fn) (gpointer id,
-				       DMAPRecord *record,
-				       gpointer data),
-			   gpointer data);
-gint64 test_dmap_db_count                (const DMAPDb *db);
-
 #endif /* __TEST_DMAP_DB */
 
 G_END_DECLS
