@@ -25,16 +25,16 @@
 struct TestDAAPRecordPrivate {
 	gint filesize;
 	gint rating;
-	const char *location;
-	const char *title;
-	const char *format;
-	const char *album;
-	const char *artist;
+	char *location;
+	char *title;
+	char *format;
+	char *album;
+	char *artist;
 	gulong bitrate;
 	gint32 firstseen;
 	gint32 mtime;
 	gint32 disc;
-	const char *genre;
+	char *genre;
 	gint32 duration;
 	gint32 track;
 	gint32 year;
@@ -208,6 +208,8 @@ test_daap_record_init (TestDAAPRecord *record)
 	record->priv = TEST_DAAP_RECORD_GET_PRIVATE (record);
 }
 
+static void test_daap_record_finalize (GObject *object);
+
 static void
 test_daap_record_class_init (TestDAAPRecordClass *klass)
 {
@@ -217,6 +219,7 @@ test_daap_record_class_init (TestDAAPRecordClass *klass)
 
 	gobject_class->set_property = test_daap_record_set_property;
         gobject_class->get_property = test_daap_record_get_property;
+        gobject_class->finalize     = test_daap_record_finalize;
 
         g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
         g_object_class_override_property (gobject_class, PROP_TITLE, "title");
@@ -265,6 +268,21 @@ G_DEFINE_TYPE_WITH_CODE (TestDAAPRecord, test_daap_record, G_TYPE_OBJECT,
 			G_IMPLEMENT_INTERFACE (TYPE_DAAP_RECORD, test_daap_record_daap_iface_init)
 			G_IMPLEMENT_INTERFACE (TYPE_DMAP_RECORD, test_daap_record_dmap_iface_init))
 
+static void
+test_daap_record_finalize (GObject *object)
+{
+	TestDAAPRecord *record = TEST_DAAP_RECORD (object);
+
+	g_free (record->priv->location);
+	g_free (record->priv->title);
+	g_free (record->priv->format);
+	g_free (record->priv->album);
+	g_free (record->priv->artist);
+	g_free (record->priv->genre);
+
+	G_OBJECT_CLASS (test_daap_record_parent_class)->finalize (object);
+}
+
 
 TestDAAPRecord *test_daap_record_new (void)
 {
@@ -275,11 +293,11 @@ TestDAAPRecord *test_daap_record_new (void)
 
 	record->priv->location = g_strdup_printf ("file://%s/media/test.mp3", g_get_current_dir ());
 
-	record->priv->title = "FIXME";
+	record->priv->title = g_strdup ("Unknown");
 
-	record->priv->album = "FIXME";
+	record->priv->album = g_strdup ("Unknown");
 
-	record->priv->artist = "FIXME";
+	record->priv->artist = g_strdup ("Unknown");
 
 	record->priv->bitrate = 128;
 
@@ -289,7 +307,7 @@ TestDAAPRecord *test_daap_record_new (void)
 
 	record->priv->disc = 1;
 
-	record->priv->genre = "Blues";
+	record->priv->genre = g_strdup ("Unknown");
 
 	ext = strrchr (record->priv->location, '.');
 	if (ext == NULL) {

@@ -27,12 +27,12 @@ struct TestDPAPRecordPrivate {
 	gint pixelwidth;
 	gint rating;
 	gint creationdate;
-	const char *location;
-	const char *title;
-	const char *aspectratio;
-	const char *filename;
-	const char *format;
-	const char *comments;
+	char *location;
+	char *title;
+	char *aspectratio;
+	char *filename;
+	char *format;
+	char *comments;
 	unsigned char *thumbnail;
 };
 
@@ -168,6 +168,8 @@ test_dpap_record_init (TestDPAPRecord *record)
 	record->priv = TEST_DPAP_RECORD_GET_PRIVATE (record);
 }
 
+static void test_dpap_record_finalize (GObject *object);
+
 static void
 test_dpap_record_class_init (TestDPAPRecordClass *klass)
 {
@@ -177,6 +179,7 @@ test_dpap_record_class_init (TestDPAPRecordClass *klass)
 
 	gobject_class->set_property = test_dpap_record_set_property;
         gobject_class->get_property = test_dpap_record_get_property;
+        gobject_class->finalize     = test_dpap_record_finalize;
 
         g_object_class_override_property (gobject_class, PROP_FILESIZE, "filesize");
         g_object_class_override_property (gobject_class, PROP_LARGE_FILESIZE, "large-filesize");
@@ -214,6 +217,22 @@ G_DEFINE_TYPE_WITH_CODE (TestDPAPRecord, test_dpap_record, G_TYPE_OBJECT,
 			 G_IMPLEMENT_INTERFACE (TYPE_DPAP_RECORD, test_dpap_record_dpap_iface_init)
 			 G_IMPLEMENT_INTERFACE (TYPE_DMAP_RECORD, test_dpap_record_dmap_iface_init))
 
+static void
+test_dpap_record_finalize (GObject *object)
+{
+	TestDPAPRecord *record = TEST_DPAP_RECORD (object);
+
+	g_free (record->priv->location);
+	g_free (record->priv->title);
+	g_free (record->priv->aspectratio);
+	g_free (record->priv->filename);
+	g_free (record->priv->format);
+	g_free (record->priv->comments);
+	g_free (record->priv->thumbnail);
+
+	G_OBJECT_CLASS (test_dpap_record_parent_class)->finalize (object);
+}
+
 TestDPAPRecord *
 test_dpap_record_new (void)
 {
@@ -229,16 +248,16 @@ test_dpap_record_new (void)
 	record->priv->location = g_strdup_printf ("file://%s/media/test.jpeg",
 						  g_get_current_dir ());
 
-	record->priv->title = "Title of Photograph";
+	record->priv->title = g_strdup ("Title of Photograph");
 
 	/* Width / Height as a string. */
-	record->priv->aspectratio = "1.333";
+	record->priv->aspectratio = g_strdup ("1.333");
 
-	record->priv->filename = g_basename (record->priv->location);
+	record->priv->filename = g_path_get_basename (record->priv->location);
 
-	record->priv->format = "JPEG";
+	record->priv->format = g_strdup ("JPEG");
 
-	record->priv->comments = "Test comments about an image.";
+	record->priv->comments = g_strdup ("Test comments about an image.");
 
 	record->priv->largefilesize = 13953;
 

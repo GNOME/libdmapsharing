@@ -5,7 +5,9 @@ daap-connection.c:96: note: initialized from here
 
 Ensure client test catches newly shared files?
 
-Ensure D[AP]APRecords are properly freed.
+Do transcode based on client?
+
+Ensure D[AP]APRecord's properly implement finalize.
 
 daap-connection.c
 daap-connection.h

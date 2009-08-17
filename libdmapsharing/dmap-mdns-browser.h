@@ -27,11 +27,51 @@
 
 G_BEGIN_DECLS
 
+/**
+ * TYPE_DMAP_MDNS_BROWSER:
+ *
+ * The type for #DMAPMdnsBrowser.
+ */
 #define TYPE_DMAP_MDNS_BROWSER         (dmap_mdns_browser_get_type ())
+/**
+ * DMAP_MDNS_BROWSER:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DMAPMdnsBrowser or derived pointer into a (DMAPMdnsBrowser *) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
 #define DMAP_MDNS_BROWSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowser))
+/**
+ * DMAP_MDNS_BROWSER_CLASS:
+ * @k: a valid #DMAPMdnsBrowserClass
+ *
+ * Casts a derived #DAAPShareClass structure into a #DAAPShareClass structure.
+ */
 #define DMAP_MDNS_BROWSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowserClass))
+/**
+ * IS_DMAP_MDNS_BROWSER:
+ * @o: Instance to check for being a %TYPE_DMAP_MDNS_BROWSER.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DAAP_SHARE.
+ */
 #define IS_DMAP_MDNS_BROWSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DMAP_MDNS_BROWSER))
+/**
+ * IS_DMAP_MDNS_BROWSER_CLASS:
+ * @k: a #DMAPMdnsBrowserClass
+ *
+ * Checks whether @k "is a" valid #DMAPMdnsBrowserClass structure of type
+ * %DMAP_MDNS_BROWSER or derived.
+ */
 #define IS_DMAP_MDNS_BROWSER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DMAP_MDNS_BROWSER))
+/**
+ * DMAP_MDNS_BROWSER_GET_CLASS:
+ * @o: a #DMAPMdnsBrowser instance.
+ *
+ * Get the class structure associated to a #DMAPMdnsBrowser instance.
+ *
+ * Returns: pointer to object class structure.
+ */
 #define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowserClass))
 
 typedef struct _DMAPMdnsBrowser        DMAPMdnsBrowser;
@@ -85,10 +125,36 @@ GQuark                     dmap_mdns_browser_error_quark      (void);
 
 GType                      dmap_mdns_browser_get_type         (void);
 
+/**
+ * dmap_mdns_browser_new:
+ * @type: The type of service to browse.
+ *
+ * Creates a new mDNS browser.
+ *
+ * Returns: a pointer to a DMAPMdnsBrowser.
+ */
 DMAPMdnsBrowser           *dmap_mdns_browser_new              (DMAPMdnsBrowserServiceType type);
 
+/**
+ * dmap_mdns_browser_start:
+ * @browser: A DMAPMdnsBrowser.
+ * @error: A GError.
+ *
+ * Starts a DMAPMdnsBrowser.
+ *
+ * Returns: TRUE on success, else FALSE.
+ */
 gboolean                   dmap_mdns_browser_start            (DMAPMdnsBrowser *browser,
                                                                GError **error);
+/**
+ * dmap_mdns_browser_stop:
+ * @browser: A DMAPMdnsBrowser.
+ * @error: A GError.
+ *
+ * Stops a DMAPMdnsBrowser.
+ *
+ * Returns: TRUE on success, else FALSE.
+ */
 gboolean                   dmap_mdns_browser_stop             (DMAPMdnsBrowser *browser,
                                                                GError **error);
 
