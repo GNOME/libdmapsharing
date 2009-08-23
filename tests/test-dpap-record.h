@@ -21,7 +21,7 @@
 #ifndef __TEST_DPAP_RECORD
 #define __TEST_DPAP_RECORD
 
-#include <libdmapsharing/dpap-record.h>
+#include <libdmapsharing/dmap.h>
 
 G_BEGIN_DECLS
 

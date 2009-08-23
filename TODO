@@ -1,8 +1,3 @@
-cc1: warnings being treated as errors
-daap-connection.c: In function 'daap_connection_build_message':
-/usr/include/glib-2.0/glib/gthread.h:344: error: dereferencing pointer '_SOUP_METHOD_GET.21' does break strict-aliasing rules
-daap-connection.c:96: note: initialized from here
-
 Ensure client test catches newly shared files?
 
 Do transcode based on client?
@@ -126,8 +121,6 @@ See FIXME's in dmap-share.c, daap-share.c and dpap-share.c.
 
 Comment purpose of each source file and describe interfaces, using test
 programs as examples.
-
-Submit as a GNOME or Freedesktop project (google "gnome new module").
 
 Allow both DPAP and DAAP sharing in one process (using two threads
 instead of two processes).

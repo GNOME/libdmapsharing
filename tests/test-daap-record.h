@@ -21,7 +21,7 @@
 #ifndef __TEST_DAAP_RECORD
 #define __TEST_DAAP_RECORD
 
-#include <libdmapsharing/daap-record.h>
+#include <libdmapsharing/dmap.h>
 
 G_BEGIN_DECLS
 

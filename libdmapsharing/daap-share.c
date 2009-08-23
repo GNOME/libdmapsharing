@@ -482,6 +482,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 		g_warning ("Couldn't open %s: %s.", location, error->message);
 		g_error_free (error);
 		soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+		g_free (cd);
 		return;
 	}
 
@@ -498,11 +499,18 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 		cd->stream = stream;
 	}
 
+	if (cd->stream == NULL) {
+		g_warning ("Could not set up input stream");
+		g_free (cd);
+		return;
+	}
+
 	if (offset != 0) {
 		if (g_seekable_seek (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL, &error) == FALSE) {
 			g_warning ("Error seeking: %s.", error->message);
 			g_input_stream_close (cd->stream, NULL, NULL);
 			soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			g_free (cd);
 			return;
 	 	}
 		filesize -= offset;
@@ -553,6 +561,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 	g_signal_connect (message, "wrote_headers", G_CALLBACK (write_next_chunk), cd);
 	g_signal_connect (message, "wrote_chunk", G_CALLBACK (write_next_chunk), cd);
 	g_signal_connect (message, "finished", G_CALLBACK (chunked_message_finished), cd);
+	/* NOTE: cd g_free'd by chunked_message_finished(). */
 }
 
 static void

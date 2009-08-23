@@ -21,13 +21,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <libdmapsharing/dmap.h>
+
 #include "test-dmap-db.h"
 #include "test-daap-record-factory.h"
 #include "test-dpap-record-factory.h"
-
-#include <libdmapsharing/daap-connection.h>
-#include <libdmapsharing/dpap-connection.h>
-#include <libdmapsharing/dmap-mdns-browser.h>
 
 enum {
     DAAP,

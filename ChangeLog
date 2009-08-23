@@ -1,3 +1,22 @@
+22 August 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Work on dns_sd mDNS backend.
+
+	* Make autogen.sh work with MacPorts.
+
+17 August 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Update tests to include dmap.h.
+
+	* Ensure values g_free'd before set in D[AP]APRecord's
+	set_properties.
+
+	* Add dmap-mdns-publisher.h back to installed headers.
+
+16 August 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Add finalize function for TestDAAPRecord and TestDPAPRecord.
+
 15 August 2009 W. Michael Petullo <mike@flyn.org>
 
 	* Documentation.

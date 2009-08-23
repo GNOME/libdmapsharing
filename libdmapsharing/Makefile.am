@@ -66,6 +66,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-container-record.h \
 	dmap-db.h \
 	dmap-mdns-browser.h \
+	dmap-mdns-publisher.h \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
@@ -78,7 +79,6 @@ noinst_HEADERS = \
 	dmap-config.h \
 	dmap-md5.h \
 	dmap-mdns-avahi.h \
-	dmap-mdns-publisher.h \
 	dmap-structure.h \
 	dmap-utils.h \
 	g-gst-input-stream.h \

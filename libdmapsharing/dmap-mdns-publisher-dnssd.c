@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <glib.h>
 #include <dns_sd.h>
+#include <arpa/inet.h>
 
 #include "dmap-mdns-publisher.h"
 
@@ -30,10 +31,18 @@ struct DmapMdnsPublisherPrivate
 {
 	DNSServiceRef	 sdref;
         char            *name;
-        guint            port;
+        guint16          port;
         char            *type_of_service;
         gboolean         password_required;
 };
+
+enum {
+        PUBLISHED,
+	NAME_COLLISION,
+	LAST_SIGNAL
+};
+
+static guint signals [LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DmapMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
 
@@ -133,30 +142,39 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
                                 gboolean             password_required,
                                 GError             **error)
 {
-	if (DNSServiceRegister (&publisher->priv->sdref,
-		0,
-		0,
-		publisher->priv->name,
-		publisher->priv->type_of_service,
-		NULL,
-		NULL,
-		publisher->priv->port,
-		0,
-		NULL,
-		NULL,
-		NULL) != kDNSServiceErr_NoError) {
-                g_set_error (error,
-                             DMAP_MDNS_PUBLISHER_ERROR,
-                             DMAP_MDNS_PUBLISHER_ERROR_FAILED,
-                             "%s",
-                             "Error publishing via DNSSD");
-                return FALSE;
-        }
+	int dns_err;
 
         publisher_set_name_internal (publisher, name, NULL);
         publisher_set_port_internal (publisher, port, NULL);
         publisher_set_type_of_service_internal (publisher, type_of_service, NULL);
         publisher_set_password_required_internal (publisher, password_required, NULL);
+
+	g_warning ("%s %s %d", publisher->priv->name, publisher->priv->type_of_service, publisher->priv->port);
+	if ((dns_err = DNSServiceRegister (&publisher->priv->sdref,
+		0,
+		0,
+		name,
+		type_of_service,
+		NULL,
+		NULL,
+		//port,
+		(uint16_t) htons (3689),
+		0,
+		NULL,
+		NULL,
+		NULL)) != kDNSServiceErr_NoError) {
+                g_set_error (error,
+                             DMAP_MDNS_PUBLISHER_ERROR,
+                             DMAP_MDNS_PUBLISHER_ERROR_FAILED,
+                             "%s: %d",
+                             "Error publishing via DNSSD", dns_err);
+		if (dns_err == kDNSServiceErr_NameConflict) {
+			g_signal_emit (publisher, signals[NAME_COLLISION], 0, publisher->priv->name);
+		}
+                return FALSE;
+        }
+
+	g_signal_emit (publisher, signals[PUBLISHED], 0, publisher->priv->name);
 
         return TRUE;
 }
@@ -222,6 +240,27 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
         object_class->finalize     = dmap_mdns_publisher_finalize;
         object_class->get_property = dmap_mdns_publisher_get_property;
         object_class->set_property = dmap_mdns_publisher_set_property;
+
+	signals [PUBLISHED] =
+                g_signal_new ("published",
+                              G_TYPE_FROM_CLASS (object_class),
+                              G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (DmapMdnsPublisherClass, published),
+                              NULL,
+                              NULL,
+                              g_cclosure_marshal_VOID__STRING,
+                              G_TYPE_NONE,
+                              1, G_TYPE_STRING);
+        signals [NAME_COLLISION] =
+                g_signal_new ("name-collision",
+                              G_TYPE_FROM_CLASS (object_class),
+                              G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (DmapMdnsPublisherClass, name_collision),
+                              NULL,
+                              NULL,
+                              g_cclosure_marshal_VOID__STRING,
+                              G_TYPE_NONE,
+                              1, G_TYPE_STRING);
 
         g_type_class_add_private (klass, sizeof (DmapMdnsPublisherPrivate));
 }

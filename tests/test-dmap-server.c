@@ -23,9 +23,7 @@
 #include <string.h>
 #include <glib.h>
 
-#include <libdmapsharing/dmap-mdns-browser.h>
-#include <libdmapsharing/daap-share.h>
-#include <libdmapsharing/dpap-share.h>
+#include <libdmapsharing/dmap.h>
 
 #include "test-dmap-container-record.h"
 #include "test-daap-record.h"
@@ -58,8 +56,11 @@ static void
 create_share (guint conn_type)
 {
 	char *name = dmap_sharing_default_share_name ();
-	DMAPContainerRecord *dmap_container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
-	DMAPContainerDb *dmap_container_db = DMAP_CONTAINER_DB (test_dmap_container_db_new (dmap_container_record));
+	DMAPContainerRecord *dmap_container_record = \
+		DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
+	DMAPContainerDb *dmap_container_db = \
+		DMAP_CONTAINER_DB (test_dmap_container_db_new
+					(dmap_container_record));
 	DMAPRecordFactory *factory;
 	DMAPRecord *record;
 	DMAPShare *share;
@@ -80,9 +81,17 @@ create_share (guint conn_type)
 	g_warning ("initialize DAAP sharing");
 
 	if (conn_type == DAAP) {
-		share = DMAP_SHARE (daap_share_new (name, NULL, db, dmap_container_db, NULL));
+		share = DMAP_SHARE (daap_share_new (name,
+						    NULL,
+						    db,
+						    dmap_container_db,
+						    NULL));
 	} else {
-		share = DMAP_SHARE (dpap_share_new (name, NULL, db, dmap_container_db, NULL));
+		share = DMAP_SHARE (dpap_share_new (name,
+						    NULL,
+						    db,
+						    dmap_container_db,
+						    NULL));
 	}
 
 	g_free (name);

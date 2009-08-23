@@ -21,7 +21,7 @@
 #ifndef __TEST_DPAP_RECORD_FACTORY
 #define __TEST_DPAP_RECORD_FACTORY
 
-#include <libdmapsharing/dmap-record-factory.h>
+#include <libdmapsharing/dmap.h>
 
 G_BEGIN_DECLS
 

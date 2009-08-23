@@ -20,7 +20,45 @@
 
 #include "test-dmap-container-record.h"
 
+enum {
+        PROP_0,
+	PROP_NAME
+};
+
 static DMAPDb *entries = NULL;
+
+static void
+test_dmap_container_record_set_property (GObject *object,
+                                         guint prop_id,
+                                         const GValue *value,
+                                         GParamSpec *pspec)
+{
+        switch (prop_id) {
+                case PROP_NAME:
+			/* NOTE: do nothing; test name is always the same. */
+                        break;
+                default:
+                        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                        break;
+        }
+}
+
+static void
+test_dmap_container_record_get_property (GObject *object,
+                                         guint prop_id,
+                                         GValue *value,
+                                         GParamSpec *pspec)
+{
+        switch (prop_id) {
+                case PROP_NAME:
+                        g_value_set_string (value, "Test");
+                        break;
+                default:
+                        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                        break;
+        }
+}
+
 
 gint
 test_dmap_container_record_get_id (DMAPContainerRecord *record)
@@ -56,6 +94,12 @@ test_dmap_container_record_init (TestDMAPContainerRecord *record)
 static void
 test_dmap_container_record_class_init (TestDMAPContainerRecordClass *klass)
 {
+	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+	gobject_class->set_property = test_dmap_container_record_set_property;
+        gobject_class->get_property = test_dmap_container_record_get_property;
+
+        g_object_class_override_property (gobject_class, PROP_NAME, "name");
 }
 
 static void

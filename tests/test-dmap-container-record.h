@@ -21,7 +21,7 @@
 #ifndef __TEST_DMAP_CONTAINER_RECORD
 #define __TEST_DMAP_CONTAINER_RECORD
 
-#include <libdmapsharing/dmap-container-record.h>
+#include <libdmapsharing/dmap.h>
 
 #include "test-dmap-db.h"
 

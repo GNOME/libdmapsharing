@@ -28,6 +28,7 @@ struct TestDAAPRecordPrivate {
 	char *location;
 	char *title;
 	char *format;
+	char *real_format;
 	char *album;
 	char *artist;
 	gulong bitrate;
@@ -72,23 +73,32 @@ test_daap_record_set_property (GObject *object,
 
         switch (prop_id) {
                 case PROP_LOCATION:
-                        /* FIXME: should I free location first? */
+			g_free (record->priv->location);
                         record->priv->location = g_value_dup_string (value);
                         break;
                 case PROP_TITLE:
+			g_free (record->priv->title);
                         record->priv->title = g_value_dup_string (value);
                         break;
                 case PROP_ALBUM:
+			g_free (record->priv->album);
                         record->priv->album = g_value_dup_string (value);
                         break;
                 case PROP_ARTIST:
+			g_free (record->priv->artist);
                         record->priv->artist = g_value_dup_string (value);
                         break;
                 case PROP_GENRE:
+			g_free (record->priv->genre);
                         record->priv->genre = g_value_dup_string (value);
                         break;
                 case PROP_FORMAT:
+			g_free (record->priv->format);
                         record->priv->format = g_value_dup_string (value);
+                        break;
+                case PROP_REAL_FORMAT:
+			g_free (record->priv->real_format);
+                        record->priv->real_format = g_value_dup_string (value);
                         break;
                 case PROP_RATING:
                         record->priv->rating = g_value_get_int (value);

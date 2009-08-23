@@ -78,10 +78,19 @@ GInputStream* g_gst_mp3_input_stream_new (GInputStream *src_stream)
 	stream->priv->pipeline = gst_pipeline_new ("pipeline");
 
 	stream->priv->src     = gst_element_factory_make ("giostreamsrc", "src");
+	g_assert (GST_IS_ELEMENT (stream->priv->src));
+
 	stream->priv->decode  = gst_element_factory_make ("decodebin", "decode");
+	g_assert (GST_IS_ELEMENT (stream->priv->decode));
+
 	stream->priv->convert = gst_element_factory_make ("audioconvert", "convert");
+	g_assert (GST_IS_ELEMENT (stream->priv->convert));
+
 	stream->priv->encode  = gst_element_factory_make ("lame", "encode");
+	g_assert (GST_IS_ELEMENT (stream->priv->encode));
+
 	stream->priv->sink    = gst_element_factory_make ("appsink", "sink");
+	g_assert (GST_IS_ELEMENT (stream->priv->sink));
 
 	gst_bin_add_many (GST_BIN (stream->priv->pipeline),
 			  stream->priv->src,

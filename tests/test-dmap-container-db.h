@@ -21,7 +21,7 @@
 #ifndef __TEST_DMAP_CONTAINER_DB
 #define __TEST_DMAP_CONTAINER_DB
 
-#include <libdmapsharing/dmap-container-db.h>
+#include <libdmapsharing/dmap.h>
 
 G_BEGIN_DECLS
 

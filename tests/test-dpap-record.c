@@ -73,12 +73,15 @@ test_dpap_record_set_property (GObject *object,
                         record->priv->rating = g_value_get_int (value);
                         break;
                 case PROP_LOCATION:
+			g_free (record->priv->location);
                         record->priv->location = g_value_dup_string (value);
                         break;
                 case PROP_FILENAME:
+			g_free (record->priv->filename);
                         record->priv->filename = g_value_dup_string (value);
                         break;
                 case PROP_ASPECT_RATIO:
+			g_free (record->priv->aspectratio);
                         record->priv->aspectratio = g_value_dup_string (value);
                         break;
                 case PROP_PIXEL_HEIGHT:
@@ -87,9 +90,11 @@ test_dpap_record_set_property (GObject *object,
                         record->priv->pixelwidth = g_value_get_int (value);
                         break;
                 case PROP_FORMAT:
+			g_free (record->priv->format);
                         record->priv->format = g_value_dup_string (value);
                         break;
                 case PROP_COMMENTS:
+			g_free (record->priv->comments);
                         record->priv->comments = g_value_dup_string (value);
                         break;
                 default:
