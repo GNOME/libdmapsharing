@@ -59,24 +59,19 @@ DPAPConnection *
 dpap_connection_new (const gchar *name,
                      const gchar *host,
                      gint         port,
-                     const gchar *password,
+                     gboolean     password_protected,
 		     DMAPDb      *db,
 		     DMAPRecordFactory *factory)
 {
-    DPAPConnection *self = DPAP_CONNECTION (g_object_new (TYPE_DPAP_CONNECTION,
+    return DPAP_CONNECTION (g_object_new (TYPE_DPAP_CONNECTION,
             "name", name,
             "host", host,
             "port", port,
+	    "password-protected", password_protected,
             "db",   db,
 	    "factory", factory,
             "need-revision-number", FALSE,
             NULL));
-
-    if (password) {
-        g_object_set (self, "password", password, NULL);
-    }
-
-    return self;
 }
 
 static SoupMessage *

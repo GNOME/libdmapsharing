@@ -35,12 +35,11 @@ test_dmap_container_db_lookup_by_id (DMAPContainerDb *db, gint id)
 
 static void
 test_dmap_container_db_foreach (DMAPContainerDb *db,
-				   void (*fn) (DMAPContainerRecord *record,
-					       gpointer data),
-				   gpointer data)
+				GHFunc func,
+				gpointer data)
 {
-	/* In reality, pull each record from the db and execute fn on it. */
-        fn (record, data);
+	/* In reality, pull each record from the db and execute func on it. */
+        func (record, data, NULL);
 }
 
 static gint64

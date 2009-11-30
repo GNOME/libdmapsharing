@@ -54,7 +54,7 @@ dmap_record_factory_get_type (void)
 }
 
 DMAPRecord *
-dmap_record_factory_create (DMAPRecordFactory *factory, const char *path)
+dmap_record_factory_create (DMAPRecordFactory *factory, gpointer user_data)
 {
-	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory, path);
+	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory, user_data);
 }

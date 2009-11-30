@@ -22,7 +22,7 @@
 #include "test-daap-record.h"
 
 DMAPRecord *
-test_daap_record_factory_create  (DMAPRecordFactory *factory, const char *path)
+test_daap_record_factory_create  (DMAPRecordFactory *factory, gpointer user_data)
 {
 	return DMAP_RECORD (test_daap_record_new ());
 }

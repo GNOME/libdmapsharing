@@ -61,10 +61,10 @@ dmap_container_db_lookup_by_id (DMAPContainerDb *db, gint id)
 
 void
 dmap_container_db_foreach	(DMAPContainerDb *db,
-			 	 void (*fn) (DMAPContainerRecord *record, gpointer data),
+				 GHFunc func,
 			 	 gpointer data)
 {
-	DMAP_CONTAINER_DB_GET_INTERFACE (db)->foreach (db, fn, data);
+	DMAP_CONTAINER_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }
 
 gulong

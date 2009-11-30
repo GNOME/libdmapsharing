@@ -679,7 +679,7 @@ dpap_share_databases (DMAPShare *share,
 		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (DPAP_SHARE (share)->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1); /* base album (AKA playlist) */
 
-		dmap_container_db_foreach (DPAP_SHARE (share)->priv->container_db, _dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
+		dmap_container_db_foreach (DPAP_SHARE (share)->priv->container_db, (GHFunc) _dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
 
 		_dmap_share_message_set_from_dmap_structure (share, message, aply);
 		dmap_structure_destroy (aply);
@@ -715,7 +715,7 @@ dpap_share_databases (DMAPShare *share,
 			dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
 			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
-			dmap_db_foreach (DPAP_SHARE (share)->priv->db, add_entry_to_mlcl, &mb);
+			dmap_db_foreach (DPAP_SHARE (share)->priv->db, (GHFunc) add_entry_to_mlcl, &mb);
 		} else {
 			DMAPContainerRecord *record;
                         const DMAPDb *entries;
@@ -729,7 +729,7 @@ dpap_share_databases (DMAPShare *share,
                         dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
                         mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
-			dmap_db_foreach (entries, add_entry_to_mlcl, (gpointer) &mb);
+			dmap_db_foreach (entries, (GHFunc) add_entry_to_mlcl, (gpointer) &mb);
 
 			g_object_unref (record);
 		}

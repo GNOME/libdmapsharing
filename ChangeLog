@@ -1,3 +1,20 @@
+28 November 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Change configure script to require avahi, howl OR DNS_SD.H.
+
+28 August 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Make dmap_record_factory_create more generic, take gpointer
+	user_data instead of path.
+
+27 August 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Fix daap_connection_new, take password_required.
+
+	* Use typedef's for function arguments.
+
+	* DMAPDb foreach function now takes GHFunc.
+
 22 August 2009 W. Michael Petullo <mike@flyn.org>
 
 	* Work on dns_sd mDNS backend.

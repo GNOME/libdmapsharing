@@ -59,24 +59,19 @@ DAAPConnection *
 daap_connection_new (const gchar *name,
                      const gchar *host,
                      gint port,
-                     const gchar *password,
+                     gboolean password_protected,
 		     DMAPDb *db,
 		     DMAPRecordFactory *factory)
 {
-    DAAPConnection *self = DAAP_CONNECTION (g_object_new (TYPE_DAAP_CONNECTION,
+    return DAAP_CONNECTION (g_object_new (TYPE_DAAP_CONNECTION,
             "name", name,
             "host", host,
             "port", port,
+	    "password-protected", password_protected,
             "db",   db,
 	    "factory", factory,
             "need-revision-number", TRUE,
             NULL));
-
-    if (password) {
-        g_object_set (self, "password", password, NULL);
-    }
-
-    return self;
 }
 
 static SoupMessage *

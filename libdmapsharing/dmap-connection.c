@@ -973,6 +973,7 @@ handle_song_listing (DMAPConnection *connection,
 			g_debug ("cannot create record for daap track %s", uri);
 			continue;
 		}
+		/* FIXME: This is DAAP-specific! */
 		g_object_set (record,
 			     "location", uri,
 			     "year", year,

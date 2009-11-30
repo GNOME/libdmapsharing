@@ -69,12 +69,10 @@ dmap_db_lookup_by_id (DMAPDb *db, guint id)
 
 void
 dmap_db_foreach	(const DMAPDb *db,
-			 void (*fn) (gpointer id,
-			 	     DMAPRecord *record,
-				     gpointer data),
-			 gpointer data)
+		 GHFunc func,
+		 gpointer data)
 {
-	DMAP_DB_GET_INTERFACE (db)->foreach (db, fn, data);
+	DMAP_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }
 
 gint
@@ -191,7 +189,7 @@ _dmap_db_apply_filter (DMAPDb *db, GSList *filter_def)
 	data.filter_def = filter_def;
 	data.ht = ht;
 
-	dmap_db_foreach (db, apply_filter, &data);
+	dmap_db_foreach (db, (GHFunc) apply_filter, &data);
 
 	return data.ht;
 }

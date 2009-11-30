@@ -51,7 +51,7 @@ GType                  test_dpap_record_factory_get_type (void);
 
 TestDPAPRecordFactory *test_dpap_record_factory_new      (void);
 
-DMAPRecord            *test_dpap_record_factory_create   (DMAPRecordFactory *factory, const char *path);
+DMAPRecord            *test_dpap_record_factory_create   (DMAPRecordFactory *factory, gpointer user_data);
 
 #endif /* __TEST_DPAP_RECORD_FACTORY */
 

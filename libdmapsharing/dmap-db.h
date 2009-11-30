@@ -71,9 +71,7 @@ struct _DMAPDbInterface {
 	gint (*add)			(DMAPDb *db, DMAPRecord *record);
 	DMAPRecord *(*lookup_by_id)	(DMAPDb *db, guint id);
 	void (*foreach)			(const DMAPDb *db,
-					 void (*fn) (gpointer id,
-					 	     DMAPRecord *record,
-					 	     gpointer data),
+					 GHFunc func,
 					 gpointer data);
 	gint64 (*count) 		(const DMAPDb *db);
 };
@@ -109,6 +107,17 @@ gint        dmap_db_add		    (DMAPDb *db, DMAPRecord *record);
  *
  * Returns: the database record corresponding to @id. This record should
  * be unrefed by the calling code when no longer required.
+ *
+ * If you are implementing a full database using this API, then you
+ * probably want to increment the reference count before returning a record
+ * pointer.
+ *
+ * On the other hand, if you are implementing an adapter class
+ * and the records are stored elsewhere, then you will probably return a
+ * transient record. That is, once the user is done using it, the returned
+ * record should be free'd because it is a adapter copy of the real record.
+ * In this case, the reference count should not be incremented before
+ * returning a record pointer.
  */
 DMAPRecord *dmap_db_lookup_by_id    (DMAPDb *db, guint id);
 
@@ -121,9 +130,7 @@ DMAPRecord *dmap_db_lookup_by_id    (DMAPDb *db, guint id);
  * Apply a function to each record in a media database.
  */
 void        dmap_db_foreach	    (const DMAPDb *db,
-				     void (*fn) (gpointer id,
-				     		 DMAPRecord *record,
-						 gpointer data),
+				     GHFunc func,
 				     gpointer data);
 
 /**

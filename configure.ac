@@ -1,8 +1,8 @@
-AC_INIT(libdmapsharing, 1.9.0.12)
+AC_INIT(libdmapsharing, 1.9.0.14)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AS_VERSION(libdmapsharing, LIBDMAPSHARING, 1, 9, 0, 12, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+AS_VERSION(libdmapsharing, LIBDMAPSHARING, 1, 9, 0, 14, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
 
 AM_INIT_AUTOMAKE
 
@@ -185,7 +185,7 @@ if test x"$WITH_MDNS" = xauto; then
 
     HAVE_MDNS=yes
   else
-    AC_MSG_ERROR([You need avahi or howl development files installed.])
+    AC_MSG_ERROR([You need avahi, howl or dns_sd.h development files installed.])
   fi
 fi
 

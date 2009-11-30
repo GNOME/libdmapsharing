@@ -35,17 +35,6 @@ enum {
 static GMainLoop *loop;
 static guint conn_type = DAAP;
 
-/*
-static gboolean
-disconnect_cb (DMAPConnection *conn)
-{
-    dmap_connection_disconnect (conn);
-    g_object_unref (conn);
-    g_main_loop_quit (loop);
-    return FALSE;
-}
-*/
-
 static void
 print_record (gpointer id, DMAPRecord *record, gpointer user_data)
 {
@@ -67,7 +56,7 @@ connected_cb (DMAPConnection *connection,
 {
 	g_print ("Connection cb., DB has %lu entries\n", dmap_db_count (db));
 
-	dmap_db_foreach (db, print_record, NULL);
+	dmap_db_foreach (db, (GHFunc) print_record, NULL);
 
 	g_main_loop_quit (loop);
 }

@@ -22,7 +22,7 @@
 #include "test-dpap-record.h"
 
 DMAPRecord *
-test_dpap_record_factory_create  (DMAPRecordFactory *factory, const char *path)
+test_dpap_record_factory_create  (DMAPRecordFactory *factory, gpointer user_data)
 {
 	return DMAP_RECORD (test_dpap_record_new ());
 }

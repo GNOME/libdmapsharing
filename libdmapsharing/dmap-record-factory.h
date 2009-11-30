@@ -71,7 +71,7 @@ typedef struct _DMAPRecordFactoryInterface DMAPRecordFactoryInterface;
 struct _DMAPRecordFactoryInterface {
 	GTypeInterface parent;
 
-	DMAPRecord *(*create) (DMAPRecordFactory *factory, const char *path);
+	DMAPRecord *(*create) (DMAPRecordFactory *factory, gpointer user_data);
 };
 
 GType dmap_record_factory_get_type (void);
@@ -79,11 +79,11 @@ GType dmap_record_factory_get_type (void);
 /**
  * dmap_record_factory_create:
  * @factory: A DMAPRecordFactory.
- * @path: A file path.
+ * @user_data: Some piece of data that may be used to initialize return value.
  *
  * Returns: a new DMAPRecord as read from path.
  */
-DMAPRecord *dmap_record_factory_create (DMAPRecordFactory *factory, const char *path);
+DMAPRecord *dmap_record_factory_create (DMAPRecordFactory *factory, gpointer user_data);
 
 #endif /* __DMAP_RECORD_FACTORY_H */
 

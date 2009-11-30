@@ -72,9 +72,8 @@ struct _DMAPContainerDbInterface {
 	DMAPContainerRecord *(*lookup_by_id)    (DMAPContainerDb *db, gint id);
 
 	void        (*foreach) (DMAPContainerDb *db,
-					void (*fn) (DMAPContainerRecord *record,
-						    gpointer data),
-					gpointer data);
+				GHFunc func,
+				gpointer data);
 
 	gint64 (*count)        (DMAPContainerDb *db);
 };
@@ -100,8 +99,7 @@ DMAPContainerRecord *dmap_container_db_lookup_by_id    (DMAPContainerDb *db, gin
  * Apply a function to each record in a container database.
  */
 void	    dmap_container_db_foreach         (DMAPContainerDb *db,
-				     	       void (*fn) (DMAPContainerRecord *record,
-						 	   gpointer data),
+					       GHFunc func,
 				     	       gpointer data);
 
 /**
