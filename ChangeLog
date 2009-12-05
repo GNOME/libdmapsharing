@@ -1,3 +1,7 @@
+05 December 2009 W. Michael Petullo <mike@flyn.org>
+
+	* Use our own log domain.
+
 28 November 2009 W. Michael Petullo <mike@flyn.org>
 
 	* Change configure script to require avahi, howl OR DNS_SD.H.

@@ -22,6 +22,8 @@
  *
  */
 
+#include <libdmapsharing/dmap-priv.h>
+
 #include "config.h"
 
 #include <time.h>
@@ -43,11 +45,7 @@
 #include <libsoup/soup-uri.h>
 #include <libsoup/soup-server.h>
 
-#include <libdmapsharing/dmap-db.h>
-#include <libdmapsharing/dmap-container-db.h>
-#include <libdmapsharing/dmap-container-record.h>
-#include <libdmapsharing/dpap-record.h>
-#include <libdmapsharing/dpap-share.h>
+#include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-structure.h>
 
 static void dpap_share_set_property  (GObject *object,

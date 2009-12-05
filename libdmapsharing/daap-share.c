@@ -22,6 +22,8 @@
  *
  */
 
+#include <libdmapsharing/dmap-priv.h>
+
 #include "config.h"
 
 #include <time.h>
@@ -36,11 +38,8 @@
 #include <libsoup/soup-uri.h>
 #include <libsoup/soup-server.h>
 
-#include <libdmapsharing/daap-record.h>
-#include <libdmapsharing/daap-share.h>
+#include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-structure.h>
-#include <libdmapsharing/dmap-container-db.h>
-#include <libdmapsharing/dmap-container-record.h>
 
 #ifdef HAVE_GSTREAMERAPP
 #include <libdmapsharing/g-gst-mp3-input-stream.h>

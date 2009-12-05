@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <libdmapsharing/dmap-priv.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -26,9 +28,8 @@
 #include <string.h>
 #include <libsoup/soup.h>
 
-#include "daap-connection.h"
-#include "dmap-md5.h"
-#include "dmap-structure.h"
+#include <libdmapsharing/dmap.h>
+#include <libdmapsharing/dmap-md5.h>
 
 #define DAAP_USER_AGENT "iTunes/4.6 (Macintosh; PPC)"
 

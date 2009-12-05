@@ -22,6 +22,8 @@
  *
  */
 
+#include <libdmapsharing/dmap-priv.h>
+
 #include "config.h"
 
 #include <time.h>
@@ -30,9 +32,8 @@
 
 #include <glib/gi18n.h>
 
-#include <libdmapsharing/dmap-share.h>
+#include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-structure.h>
-#include <libdmapsharing/dmap-mdns-publisher.h>
 
 #define TYPE_OF_SERVICE "_daap._tcp"
 #define STANDARD_DAAP_PORT 3689

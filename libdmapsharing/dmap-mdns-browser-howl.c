@@ -19,12 +19,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
+#include <libdmapsharing/dmap-priv.h>
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
-#include "dmap-mdns-browser.h"
-#include "dmap-marshal.h"
+#include <libdmapsharing/dmap.h>
 
 #include <stdlib.h>
 #include <stdio.h>
