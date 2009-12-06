@@ -76,6 +76,7 @@ libdmapsharinginclude_HEADERS = \
 
 noinst_HEADERS = \
 	dmap-marshal.h \
+	dmap-priv.h \
 	dmap-config.h \
 	dmap-md5.h \
 	dmap-mdns-avahi.h \
