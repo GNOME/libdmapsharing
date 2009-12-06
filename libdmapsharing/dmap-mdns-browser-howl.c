@@ -300,17 +300,10 @@ static void
 browser_remove_service (DMAPMdnsBrowser *browser,
                         const char *service_name)
 {
-    GSList *walk;
-    DMAPMdnsBrowserService *service;
-    for (walk = browser->priv->services; walk; walk = walk->next) {
-        service = (DMAPMdnsBrowserService *) walk->data;
-        if (g_ascii_strcasecmp (service->service_name, service_name) == 0) {
-            g_signal_emit (browser, dmap_mdns_browser_signals [SERVICE_REMOVED], 0, service);
-            free_service (service);
-            browser->priv->services = g_slist_remove_link (browser->priv->services, walk);
-            break;
-        }
-    }
+    g_signal_emit (browser,
+   		   dmap_mdns_browser_signals [SERVICE_REMOVED],
+		   0,
+		   service_name);
 }
 
 static sw_result
