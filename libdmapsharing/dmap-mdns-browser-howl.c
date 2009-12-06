@@ -446,9 +446,9 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass *klass)
                   G_STRUCT_OFFSET (DMAPMdnsBrowserClass, service_removed),
                   NULL,
                   NULL,
-                  g_cclosure_marshal_VOID__POINTER,
+                  g_cclosure_marshal_VOID__STRING,
                   G_TYPE_NONE,
-                  1, G_TYPE_POINTER);
+                  1, G_TYPE_STRING);
 
     g_type_class_add_private (klass, sizeof (DMAPMdnsBrowserPrivate));
 }
