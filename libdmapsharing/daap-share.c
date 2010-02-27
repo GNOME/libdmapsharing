@@ -470,7 +470,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 	g_object_get (record, "location", &location, NULL);
 
 	/* FIXME: This crashes on powerpc-440fp-linux-gnu:
-	 * g_debug ("Sending %s chunked from offset %." G_GUINT64_FORMAT, location, offset);
+	 * g_debug ("Sending %s chunked from offset %" G_GUINT64_FORMAT ".", location, offset);
 	 */
 
 	cd->server = server;
@@ -531,7 +531,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 		g_debug ("Using HTTP 1.1 content length encoding.");
 		soup_message_headers_set_encoding (message->response_headers,
 						  SOUP_ENCODING_CONTENT_LENGTH);
-		g_debug ("Content length is %." G_GUINT64_FORMAT, filesize);
+		g_debug ("Content length is %" G_GUINT64_FORMAT ".", filesize);
 		soup_message_headers_set_content_length (
 			message->response_headers, filesize);
 	} else if (soup_message_get_http_version (message) == SOUP_HTTP_1_0) {

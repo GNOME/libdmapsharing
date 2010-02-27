@@ -105,8 +105,7 @@ libdmapsharing-1.0.la
 libdmapsharing.la
 
 Add a Mac OS X Zeroconf backend as an alternative to avahi?
-	See dns_sd.h
-	Implement dmap-mdns-publisher.h using DNSServiceRegister ().
+	Finish browser side support.
 	Update MacPorts port to no longer require avahi.
 
 Fix seeking.
