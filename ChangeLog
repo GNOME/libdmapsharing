@@ -1,3 +1,9 @@
+27 February 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Change dmap_connection_get_headers so that it no longer takes a
+	bytes argument and returns a SoupMessageHeaders *. This is to remain
+	compatible with Rhythmbox.
+
 12 December 2009 W. Michael Petullo <mike@flyn.org>
 
 	* Fixed debug statement that caused segfaults of MIPS32 and

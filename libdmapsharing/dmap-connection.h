@@ -154,9 +154,8 @@ void               dmap_connection_disconnect      (DMAPConnection        *conne
 						       DMAPConnectionCallback callback,
 						       gpointer                 user_data);
 
-char *             dmap_connection_get_headers     (DMAPConnection         *connection,
-						       const char               *uri,
-						       gint64                    bytes);
+SoupMessageHeaders *dmap_connection_get_headers     (DMAPConnection         *connection,
+						       const char               *uri);
 
 GSList *           dmap_connection_get_playlists   (DMAPConnection         *connection);
 

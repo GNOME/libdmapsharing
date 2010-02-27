@@ -1572,16 +1572,15 @@ dmap_connection_do_something (DMAPConnection *connection)
 	return FALSE;
 }
 
-char *
+SoupMessageHeaders *
 dmap_connection_get_headers (DMAPConnection *connection,
-				const gchar *uri,
-				gint64 bytes)
+				const gchar *uri)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
-	GString *headers;
+	SoupMessageHeaders *headers = NULL;
 	char hash[33] = {0};
 	char *norb_daap_uri = (char *)uri;
-	char *s;
+	char *request_id;
 
 	priv->request_id++;
 
@@ -1594,37 +1593,40 @@ dmap_connection_get_headers (DMAPConnection *connection,
 			       (guchar*)hash,
 			       priv->request_id);
 
-	headers = g_string_new ("Accept: */*\r\n"
-				"Cache-Control: no-cache\r\n"
-				"User-Agent: " DMAP_USER_AGENT "\r\n"
-				"Accept-Language: en-us, en;q=5.0\r\n"
-				"Client-DAAP-Access-Index: 2\r\n"
-				"Client-DAAP-Version: 3.0\r\n");
-	g_string_append_printf (headers,
-				"Client-DAAP-Validation: %s\r\n"
-				"Client-DAAP-Request-ID: %d\r\n"
-				"Connection: close\r\n",
-				hash, priv->request_id);
+	headers = soup_message_headers_new (SOUP_MESSAGE_HEADERS_REQUEST);
+
+	soup_message_headers_append (headers, "Accept", "*/*");
+	soup_message_headers_append (headers, "Cache-Control", "no-cache");
+	soup_message_headers_append (headers, "User-Agent", DMAP_USER_AGENT);
+	soup_message_headers_append (headers, "Accept-Language",
+				    "en-us, en;q=5.0");
+	soup_message_headers_append (headers, "Client-DAAP-Access-Index",
+				    "2");
+	soup_message_headers_append (headers, "Client-DAAP-Version", "3.0");
+	soup_message_headers_append (headers, "Client-DAAP-Validation", hash);
+
+	request_id = g_strdup_printf ("%d", priv->request_id);
+	soup_message_headers_append (headers, "Client-DAAP-Request-ID",
+				     request_id);
+	g_free (request_id);
+
+	soup_message_headers_append (headers, "Connection", "close");
 
 	if (priv->password_protected) {
 		char *user_pass;
 		char *token;
+		char *value;
 
 		user_pass = g_strdup_printf ("%s:%s", priv->username, priv->password);
 		token = g_base64_encode ((guchar *)user_pass, strlen (user_pass));
-		g_string_append_printf (headers, "Authentication: Basic %s\r\n", token);
+		value = g_strconcat ("Basic ", token, NULL);
+		soup_message_headers_append (headers, "Authentication", value);
+		g_free (value);
 		g_free (token);
 		g_free (user_pass);
 	}
 
-	if (bytes != 0) {
-		g_string_append_printf (headers,"Range: bytes=%"G_GINT64_FORMAT"-\r\n", bytes);
-	}
-
-	s = headers->str;
-	g_string_free (headers, FALSE);
-
-	return s;
+	return headers;
 }
 
 GSList *

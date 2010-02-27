@@ -1,4 +1,4 @@
-AC_INIT(libdmapsharing, 1.9.0.15)
+AC_INIT(libdmapsharing, 1.9.0.16)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
