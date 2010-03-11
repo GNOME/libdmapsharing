@@ -4,7 +4,6 @@ BUILT_SOURCES = dmap-marshal.c dmap-marshal.h
 
 libdmapsharing_la_SOURCES = \
 	$(BUILT_SOURCES) \
-	daap-connection.c \
 	daap-record.c \
 	daap-share.c \
 	dmap-connection.c \
@@ -16,7 +15,6 @@ libdmapsharing_la_SOURCES = \
 	dmap-record-factory.c \
 	dmap-share.c \
 	dmap-structure.c \
-	dpap-connection.c \
 	dpap-record.c \
 	dpap-share.c
 
@@ -57,7 +55,6 @@ libdmapsharingincludedir = \
 	$(includedir)/libdmapsharing-@LIBDMAPSHARING_MAJORMINOR@/libdmapsharing
 
 libdmapsharinginclude_HEADERS = \
-	daap-connection.h \
 	daap-record.h \
 	daap-share.h \
 	dmap.h \
@@ -70,7 +67,6 @@ libdmapsharinginclude_HEADERS = \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
-	dpap-connection.h \
 	dpap-record.h \
 	dpap-share.h
 

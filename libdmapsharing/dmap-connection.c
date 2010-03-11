@@ -353,19 +353,75 @@ connection_operation_done (DMAPConnection *connection)
 
 SoupMessage *
 dmap_connection_build_message (DMAPConnection *connection,
-	       		       const char       *path,
-	       		       gboolean          need_hash,
-	       		       gdouble           version,
-	       		       gint              req_id,
-	       		       gboolean          send_close)
+	       const char       *path,
+	       gboolean          need_hash,
+	       gdouble           version,
+	       gint              req_id,
+	       gboolean          send_close)
 {
-	return DMAP_CONNECTION_GET_CLASS (connection)->build_message
-								(connection,
-								 path,
-								 need_hash,
-								 version,
-								 req_id,
-								 send_close);
+	SoupMessage *message = NULL;
+	SoupURI *base_uri = NULL;
+	SoupURI *uri = NULL;
+
+	g_object_get (connection, "base-uri", &base_uri, NULL);
+	if (base_uri == NULL) {
+		return NULL;
+	}
+
+	uri = soup_uri_new_with_base (base_uri, path);
+	if (uri == NULL) {
+		return NULL;
+	}
+
+	message = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
+
+	soup_message_headers_append (message->request_headers, "Client-DAAP-Version", 		"3.0");
+	soup_message_headers_append (message->request_headers, "Accept-Language", 		"en-us, en;q=5.0");
+#ifdef HAVE_LIBZ
+	soup_message_headers_append (message->request_headers, "Accept-Encoding",		"gzip");
+#endif
+	soup_message_headers_append (message->request_headers, "Client-DAAP-Access-Index", 	"2");
+
+	if (connection->priv->password_protected == TRUE
+	    && (connection->priv->username == NULL
+	        || connection->priv->password == NULL)) {
+		g_debug ("No username or no password provided");
+	} else {
+
+		char *h;
+		char *user_pass;
+		char *token;
+
+		user_pass = g_strdup_printf ("%s:%s", connection->priv->username, connection->priv->password);
+		token = g_base64_encode ((guchar *)user_pass, strlen (user_pass));
+		h = g_strdup_printf ("Basic %s", token);
+
+		g_free (token);
+		g_free (user_pass);
+
+		soup_message_headers_append (message->request_headers, "Authorization", h);
+		g_free (h);
+	}
+
+	if (need_hash) {
+		gchar hash[33] = {0};
+		gchar *no_daap_path = (gchar *)path;
+
+		if (g_ascii_strncasecmp (path, "daap://", 7) == 0) {
+			no_daap_path = strstr (path, "/data");
+		}
+
+		dmap_hash_generate ((short)floor (version), (const guchar*)no_daap_path, 2, (guchar*)hash, req_id);
+
+		soup_message_headers_append (message->request_headers, "Client-DAAP-Validation", hash);
+	}
+	if (send_close) {
+		soup_message_headers_append (message->request_headers, "Connection", "close");
+	}
+
+	soup_uri_free (uri);
+
+	return message;
 }
 
 #ifdef HAVE_LIBZ
@@ -1613,17 +1669,19 @@ dmap_connection_get_headers (DMAPConnection *connection,
 	soup_message_headers_append (headers, "Connection", "close");
 
 	if (priv->password_protected) {
+		char *h;
 		char *user_pass;
 		char *token;
-		char *value;
 
 		user_pass = g_strdup_printf ("%s:%s", priv->username, priv->password);
 		token = g_base64_encode ((guchar *)user_pass, strlen (user_pass));
-		value = g_strconcat ("Basic ", token, NULL);
-		soup_message_headers_append (headers, "Authentication", value);
-		g_free (value);
+		h = g_strdup_printf ("Basic %s", token);
+
 		g_free (token);
 		g_free (user_pass);
+
+		soup_message_headers_append (headers, "Authentication", h);
+		g_free (h);
 	}
 
 	return headers;

@@ -389,7 +389,9 @@ resolve_cb (AvahiServiceResolver *service_resolver,
                 if (strcmp (key, "Password") == 0) {
                     if (size >= 4 && strncmp (value, "true", 4) == 0) {
                         pp = TRUE;
-                    }
+                    } else if (size >= 1 && strncmp (value, "1", 1) == 0) {
+                        pp = TRUE;
+		    }
                 } else if (strcmp (key, "Machine Name") == 0) {
                     name = g_strdup (value);
                 }
