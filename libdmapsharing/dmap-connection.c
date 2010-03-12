@@ -375,6 +375,7 @@ dmap_connection_build_message (DMAPConnection *connection,
 
 	message = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
 
+	soup_message_headers_append (message->request_headers, "User-Agent", DMAP_USER_AGENT);
 	soup_message_headers_append (message->request_headers, "Client-DAAP-Version", 		"3.0");
 	soup_message_headers_append (message->request_headers, "Accept-Language", 		"en-us, en;q=5.0");
 #ifdef HAVE_LIBZ
