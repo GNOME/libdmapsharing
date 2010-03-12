@@ -1302,7 +1302,7 @@ dmap_connection_connect (DMAPConnection        *connection,
 
 	connection->priv->session = soup_session_async_new ();
 
-	connection->priv->base_uri = soup_usr_new (NULL);
+	connection->priv->base_uri = soup_uri_new (NULL);
 	soup_uri_set_scheme (connection->priv->base_uri, SOUP_URI_SCHEME_HTTP);
 	soup_uri_set_host (connection->priv->base_uri, connection->priv->host);
 	soup_uri_set_port (connection->priv->base_uri, connection->priv->port);

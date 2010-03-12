@@ -87,13 +87,13 @@ service_added_cb (DMAPMdnsBrowser *browser,
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (daap_connection_new (service->name, service->host, service->port, FALSE, db, factory));
+        conn = DMAP_CONNECTION (dmap_connection_new (service->name, service->host, service->port, FALSE, db, factory));
     } else {
         factory = DMAP_RECORD_FACTORY (test_dpap_record_factory_new ());
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (dpap_connection_new (service->name, service->host, service->port, FALSE, db, factory));
+        conn = DMAP_CONNECTION (dmap_connection_new (service->name, service->host, service->port, FALSE, db, factory));
     }
     dmap_connection_connect (DMAP_CONNECTION (conn), (DMAPConnectionCallback) connected_cb, db);
 }
