@@ -12,7 +12,7 @@ DAAP plugin after it was integrated into the Rhythmbox project.
 
 Later, Andre Magalhaes expanded Charles' code into a general purpose
 DMAP library, libdmapsharing.  This library was used by a product
-called Canola and is available on SourceForge. The Canola project
+called Canola and was available on SourceForge. The Canola project
 dropped support for DMAP before releasing its second version and
 the development of the libdmapsharing library stopped. At this
 point, libdmapsharing supported the client side of the DMAP protocol.
@@ -22,7 +22,8 @@ in December of 2008. He began to add support for the server side of
 the DMAP protocol, pulling the latest DAAP sharing code from Rhythmbox
 and modifying it to support DPAP. Mike's changes were merged back into
 the SourceForge in January of 2009 after he was made a member of the
-libdmapsharing development team.
+libdmapsharing development team. The libdmapsharing project was moved
+from SourceForge to GNOME Git in August of 2009.
 
 The original authors of Rhythmbox's DAAP plugin have endorsed the
 re-licensing of their code in the following two emails:
