@@ -2,6 +2,8 @@
 
 	* Add user agent header to requests (Rhythmbox bug #610440).
 
+	* Fix URI handling when using IPv6 IP address (Rhythmbox bug #584244).
+
 27 February 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Change dmap_connection_get_headers so that it no longer takes a
