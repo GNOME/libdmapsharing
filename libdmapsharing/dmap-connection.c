@@ -1294,7 +1294,6 @@ dmap_connection_connect (DMAPConnection        *connection,
 			    gpointer                 user_data)
 {
 	ConnectionResponseData *rdata;
-	char                   *path;
 
 	g_return_if_fail (IS_DMAP_CONNECTION (connection));
 	g_return_if_fail (connection->priv->state == DMAP_GET_INFO);
@@ -1303,9 +1302,10 @@ dmap_connection_connect (DMAPConnection        *connection,
 
 	connection->priv->session = soup_session_async_new ();
 
-	path = g_strdup_printf ("http://%s:%d", connection->priv->host, connection->priv->port);
-	connection->priv->base_uri = soup_uri_new (path);
-	g_free (path);
+	connection->priv->base_uri = soup_usr_new (NULL);
+	soup_uri_set_scheme (connection->priv->base_uri, SOUP_URI_SCHEME_HTTP);
+	soup_uri_set_host (connection->priv->base_uri, connection->priv->host);
+	soup_uri_set_port (connection->priv->base_uri, connection->priv->port);
 
 	if (connection->priv->base_uri == NULL) {
 		g_debug ("Error parsing http://%s:%d", connection->priv->host, connection->priv->port);
