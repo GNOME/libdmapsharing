@@ -1,3 +1,9 @@
+15 March 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Set def. and min. value of track, year and disc to 0 (not 1) in
+	DAAPRecord.
+
+
 11 March 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add user agent header to requests (Rhythmbox bug #610440).

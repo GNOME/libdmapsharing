@@ -42,6 +42,13 @@ libdmapsharing_la_SOURCES += \
 	gst-util.c
 endif
 
+libdmapsharing_la_CFLAGS = \
+	-DG_LOG_DOMAIN=\"libdmapsharing\" \
+	-I$(top_srcdir) \
+	$(SOUP_CFLAGS) \
+	$(GSTREAMERAPP_CFLAGS) \
+	$(MDNS_CFLAGS)
+
 libdmapsharing_la_LDFLAGS = \
 	-version-info @SO_VERSION@ \
 	$(GLIB_LIBS) \
@@ -72,7 +79,6 @@ libdmapsharinginclude_HEADERS = \
 
 noinst_HEADERS = \
 	dmap-marshal.h \
-	dmap-priv.h \
 	dmap-config.h \
 	dmap-md5.h \
 	dmap-mdns-avahi.h \
@@ -82,12 +88,6 @@ noinst_HEADERS = \
 	g-gst-mp3-input-stream.h \
 	g-gst-wav-input-stream.h \
 	gst-util.h
-
-INCLUDES = \
-	-I$(top_srcdir) \
-	$(SOUP_CFLAGS) \
-	$(GSTREAMERAPP_CFLAGS) \
-	$(MDNS_CFLAGS)
 
 dmap-marshal.c: dmap-marshal.list
 	@glib-genmarshal --prefix=dmap_marshal $(srcdir)/dmap-marshal.list --header --body > dmap-marshal.c

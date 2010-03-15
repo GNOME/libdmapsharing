@@ -22,8 +22,6 @@
  *
  */
 
-#include <libdmapsharing/dmap-priv.h>
-
 #include "config.h"
 
 #include <time.h>
