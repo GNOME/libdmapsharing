@@ -103,18 +103,18 @@ daap_record_init (DAAPRecordInterface *iface)
 			g_param_spec_int ("track",
 					  "Song track number",
 					  "Song track number",
-					  1,
+					  0,
 					  G_MAXINT,
-					  1,
+					  0,
 					  G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
 			g_param_spec_int ("year",
 					  "Song publication year",
 					  "Song publication year",
-					  1,
+					  0,
 					  G_MAXINT,
-					  1,
+					  0,
 					  G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
@@ -139,9 +139,9 @@ daap_record_init (DAAPRecordInterface *iface)
 			g_param_spec_int ("disc",
 					  "Song disc number",
 					  "Song disc number",
-					  1,
+					  0,
 					  G_MAXINT,
-					  1,
+					  0,
 					  G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
