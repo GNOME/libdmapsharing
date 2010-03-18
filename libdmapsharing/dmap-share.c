@@ -995,7 +995,7 @@ _dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm, guint md
 }
 
 void
-_dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record, gpointer mlcl)
+_dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpointer mlcl)
 {
 	/* MLIT listing item
 	 * MIID item id

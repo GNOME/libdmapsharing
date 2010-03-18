@@ -1,8 +1,13 @@
+17 March 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Make _dmap_share_add_playlist_to_mlcl a proper GHashFunc.
+
 15 March 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Set def. and min. value of track, year and disc to 0 (not 1) in
 	DAAPRecord.
 
+	* Use -D instead of dmap-priv.h to define G_LOG_DOMAIN.
 
 11 March 2010 W. Michael Petullo <mike@flyn.org>
 

@@ -193,8 +193,9 @@ bitwise  _dmap_share_parse_meta_str (const char *attrs,
 				    struct DMAPMetaDataMap *mdm,
 				    guint mdmlen);
 
-void _dmap_share_add_playlist_to_mlcl (DMAPContainerRecord *record,
-				      gpointer mlcl);
+void _dmap_share_add_playlist_to_mlcl (gpointer id,
+				       DMAPContainerRecord *record,
+				       gpointer mlcl);
 
 /* Virtual methods (libsoup callbacks with default implementation): */
 void _dmap_share_content_codes (DMAPShare *share,
