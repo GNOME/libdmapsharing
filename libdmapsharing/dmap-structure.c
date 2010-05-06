@@ -111,6 +111,8 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_ASYR, MAKE_CONTENT_CODE('a','s','y','r'), "daap.songyear", "asyr", DMAP_TYPE_SHORT},
     {DMAP_CC_ASDK, MAKE_CONTENT_CODE('a','s','d','k'), "daap.songdatakind", "asdk", DMAP_TYPE_BYTE},
     {DMAP_CC_ASUL, MAKE_CONTENT_CODE('a','s','u','l'), "daap.songdataurl", "asul", DMAP_TYPE_STRING},
+    {DMAP_CC_ASSU, MAKE_CONTENT_CODE('a','s','s','u'), "daap.sortalbum", "assu", DMAP_TYPE_STRING},
+    {DMAP_CC_ASSA, MAKE_CONTENT_CODE('a','s','s','a'), "daap.sortartist", "assa", DMAP_TYPE_STRING},
     {DMAP_CC_APLY, MAKE_CONTENT_CODE('a','p','l','y'), "daap.databaseplaylists", "aply", DMAP_TYPE_CONTAINER},
     {DMAP_CC_ABPL, MAKE_CONTENT_CODE('a','b','p','l'), "daap.baseplaylist", "abpl", DMAP_TYPE_BYTE},
     {DMAP_CC_APSO, MAKE_CONTENT_CODE('a','p','s','o'), "daap.playlistsongs", "apso", DMAP_TYPE_CONTAINER},
@@ -597,6 +599,7 @@ dmap_structure_add (GNode *parent,
 	va_start (list, cc);
 
 	dmap_type = dmap_content_code_dmap_type (cc);
+	g_print ("%d %d %d %d\n\n\n", dmap_type, cc, DMAP_TYPE_SHORT, DMAP_TYPE_STRING);
 	gtype = dmap_content_code_gtype (cc);
 
 	item = g_new0(DMAPStructureItem, 1);

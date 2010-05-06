@@ -32,7 +32,6 @@
 
   <chapter>
     <title>Libdmapsharing Objects and Interfaces</title>
-    <xi:include href="xml/daap-connection.xml"/>
     <xi:include href="xml/daap-record.xml"/>
     <xi:include href="xml/daap-share.xml"/>
     <xi:include href="xml/dmap-connection.xml"/>

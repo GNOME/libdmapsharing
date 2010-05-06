@@ -52,9 +52,23 @@ daap_record_init (DAAPRecordInterface *iface)
 					     G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
+			g_param_spec_string ("sort-album",
+					     "Album sort name",
+					     "Album sort name",
+					     "Unknown",
+					     G_PARAM_READWRITE));
+
+		g_object_interface_install_property (iface,
 			g_param_spec_string ("artist",
 					     "Song artist",
 					     "Song artist",
+					     "Unknown",
+					     G_PARAM_READWRITE));
+
+		g_object_interface_install_property (iface,
+			g_param_spec_string ("sort-artist",
+					     "Song artist sort name",
+					     "Song artist sort name",
 					     "Unknown",
 					     G_PARAM_READWRITE));
 

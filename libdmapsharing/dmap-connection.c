@@ -952,6 +952,8 @@ handle_song_listing (DMAPConnection *connection,
 		const gchar *format = NULL;
 		const gchar *genre = NULL;
 		const gchar *streamURI = NULL;
+		const gchar *sort_artist = NULL;
+		const gchar *sort_album = NULL;
 		gint length = 0;
 		gint track_number = 0;
 		gint disc_number = 0;
@@ -1004,6 +1006,12 @@ handle_song_listing (DMAPConnection *connection,
 				case DMAP_CC_ASUL:
 					streamURI = g_value_get_string (&(meta_item->content));
 					break;
+				case DMAP_CC_ASSA:
+					sort_artist = g_value_get_string (&(meta_item->content));
+					break;
+				case DMAP_CC_ASSU:
+					sort_album = g_value_get_string (&(meta_item->content));
+					break;
 				default:
 					break;
 			}
@@ -1044,6 +1052,8 @@ handle_song_listing (DMAPConnection *connection,
 			     "album", album,
 			     "artist", artist,
 			     "genre", genre,
+			     "sort-artist", sort_artist,
+			     "sort-album", sort_album,
 			      NULL);
 		g_hash_table_insert (priv->item_id_to_uri, GINT_TO_POINTER (item_id), g_strdup (uri));
 		g_free (uri);
@@ -1556,10 +1566,11 @@ dmap_connection_do_something (DMAPConnection *connection)
 		g_debug ("Getting DAAP song listing");
 		path = g_strdup_printf ("/databases/%i/items?session-id=%u&revision-number=%i"
 				        "&meta=dmap.itemid,dmap.itemname,daap.songalbum,"
-					"daap.songartist,daap.daap.songgenre,daap.songsize,"
+					"daap.songartist,daap.songgenre,daap.songsize,"
 					"daap.songtime,daap.songtrackcount,daap.songtracknumber,"
-					"daap.songyear,daap.songformat,daap.songgenre,"
-					"daap.songbitrate,daap.songdiscnumber,daap.songdataurl",
+					"daap.songyear,daap.songformat,"
+					"daap.songbitrate,daap.songdiscnumber,daap.songdataurl,"
+					"daap.sortartist,daap.sortalbum",
 					priv->database_id,
 					priv->session_id,
 					priv->revision_number);

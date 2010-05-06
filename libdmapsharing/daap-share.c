@@ -368,6 +368,8 @@ typedef enum {
 	SONG_RELATIVE_VOLUME,
 	SONG_SAMPLE_RATE,
 	SONG_SIZE,
+	SONG_SORT_ALBUM,
+	SONG_SORT_ARTIST,
 	SONG_START_TIME,
 	SONG_STOP_TIME,
 	SONG_TIME,
@@ -413,6 +415,8 @@ static struct DMAPMetaDataMap meta_data_map[] = {
     	{"daap.songtracknumber",	SONG_TRACK_NUMBER},
     	{"daap.songuserrating",		SONG_USER_RATING},
     	{"daap.songyear",		SONG_YEAR},
+	{"daap.sortalbum",		SONG_SORT_ALBUM},
+	{"daap.sortartist",		SONG_SORT_ARTIST},
 	{"com.apple.itunes.has-video",	SONG_HAS_VIDEO}};
 
 #define DAAP_ITEM_KIND_AUDIO 2
@@ -691,6 +695,17 @@ add_entry_to_mlcl (gpointer id, DMAPRecord *record, gpointer _mb)
 		g_object_get (record, "has-video", &has_video, NULL);
 		dmap_structure_add (mlit, DMAP_CC_AEHV, has_video);
 	}
+	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ARTIST)) {
+		gchar *sort_artist;
+		g_object_get (record, "sort-artist", &sort_artist, NULL);
+		dmap_structure_add (mlit, DMAP_CC_ASSA, sort_artist);
+	}
+	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ALBUM)) {
+		gchar *sort_album;
+		g_object_get (record, "sort-album", &sort_album, NULL);
+		dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
+	}
+
 
 	return;
 }
