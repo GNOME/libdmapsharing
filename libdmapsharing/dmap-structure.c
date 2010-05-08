@@ -599,7 +599,6 @@ dmap_structure_add (GNode *parent,
 	va_start (list, cc);
 
 	dmap_type = dmap_content_code_dmap_type (cc);
-	g_print ("%d %d %d %d\n\n\n", dmap_type, cc, DMAP_TYPE_SHORT, DMAP_TYPE_STRING);
 	gtype = dmap_content_code_gtype (cc);
 
 	item = g_new0(DMAPStructureItem, 1);

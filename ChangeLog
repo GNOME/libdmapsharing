@@ -1,3 +1,7 @@
+07 May 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Send artist and album sort order to DAAP clients.
+
 17 March 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Make _dmap_share_add_playlist_to_mlcl a proper GHashFunc.
