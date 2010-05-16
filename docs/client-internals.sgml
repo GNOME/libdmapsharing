@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="client-internals">
+	<refmeta>
+		<refentrytitle>Libdmapsharing Client Internals</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Libdmapsharing Client Internals</refname>
+		<refpurpose>
+			Detailed decription of libdmapsharing's code for programmers who wish to contribute to libdmapsharing
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Libdmapsharing Client Internals</title>
+		<para>
+The DMAPMdnsBrowser class allows for asynchronous interaction with a DMAP
+server using mDNS.
+		
+		</para>
+		<para>
+The DMAPConnection class's dmap_connection_connect()
+sets up a connection to a DMAP server using libsoup, stores the
+application-provided callback, sets the connection state to DMAP_GET_INFO,
+adds dmap_connection_do_something() as a GLib loop idle function
+and connects the function connected_cb() to the "operation-done"
+signal. The connection state progresses from DMAP_GET_INFO to
+DMAP_GET_PASSWORD then DMAP_LOGIN then DMAP_GET_REVISION_NUMBER then
+DMAP_GET_DB_INFO then DMAP_GET_SONGS then DMAP_GET_PLAYLISTS then
+(possibly) DMAP_GET_PLAYLIST_ENTRIES. Each time the state changes,
+dmap_connection_do_something() executes as an idle function. By the
+time these state transitions are complete, DMAPConnection has populated
+the media database. The
+connected_cb() function, in turn, executes the application-provided
+callback.
+
+		</para>
+	</refsect1>
+</refentry>

@@ -31,6 +31,12 @@
   </chapter>
 
   <chapter>
+    <title>Libdmapsharing Internals</title>
+    <xi:include href="server-internals.sgml"/>
+    <xi:include href="client-internals.sgml"/>
+  </chapter>
+
+  <chapter>
     <title>Libdmapsharing Objects and Interfaces</title>
     <xi:include href="xml/daap-record.xml"/>
     <xi:include href="xml/daap-share.xml"/>

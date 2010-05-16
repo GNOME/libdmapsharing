@@ -28,77 +28,77 @@ from SourceForge to GNOME Git in August of 2009.
 The original authors of Rhythmbox's DAAP plugin have endorsed the
 re-licensing of their code in the following two emails:
 
-Date: Sun, 11 Jan 2009 14:46:35 -0500
-From: Charles Schmidt <cschmidt2[@]gmail.com>
-To: "W. Michael Petullo" <mike[@]flyn.org>
-Subject: Re: LGPL of Rhythmbox DAAP Code
-Cc: "cschmidt2[@]emich.edu" <cschmidt2[@]emich.edu>,
- "jmccann[@]redhat.com" <jmccann[@]redhat.com>,
- "jonathan[@]d14n.org" <jonathan[@]d14n.org>
+	Date: Sun, 11 Jan 2009 14:46:35 -0500
+	From: Charles Schmidt <cschmidt2[@]gmail.com>
+	To: "W. Michael Petullo" <mike[@]flyn.org>
+	Subject: Re: LGPL of Rhythmbox DAAP Code
+	Cc: "cschmidt2[@]emich.edu" <cschmidt2[@]emich.edu>,
+	 "jmccann[@]redhat.com" <jmccann[@]redhat.com>,
+	 "jonathan[@]d14n.org" <jonathan[@]d14n.org>
 
-Totally fine by me.  Is there a website or vcs I can look at?
+	Totally fine by me.  Is there a website or vcs I can look at?
 
-Charlie Schmidt
+	Charlie Schmidt
 
-On Jan 11, 2009, at 2:30 PM, "W. Michael Petullo" <mike[@]flyn.org> wrote:
+	On Jan 11, 2009, at 2:30 PM, "W. Michael Petullo" <mike[@]flyn.org> wrote:
 
-> Charles, Jon & Jonathan,
->
-> I recently began maintaining the libdmapsharing library, a DMAP  
-> library originally based on Rhythmbox's DAAP plugin. The library is  
-> distributed under the LGPL license. Your original work was  
-> distributed under the GPL.
->
-> The original maintainer of libdmapsharing has stated that he  
-> obtained permission from you regarding the relicensing of your code  
-> to the LGPL. If you do not have any objections, would each of you  
-> provide me with a brief statement to this effect that I may formally  
-> distribute with libdmapsharing?
->
-> The following files were used in developing libdmapsharing:
->
-> rb-daap-connection.c
-> rb-daap-connection.h
-> rb-daap-hash.c
-> rb-daap-hash.h
-> rb-daap-mdns-avahi.c
-> rb-daap-mdns-avahi.h
-> rb-daap-mdns-browser-avahi.c
-> rb-daap-mdns-browser.h
-> rb-daap-mdns-publisher-avahi.c
-> rb-daap-mdns-publisher.h
-> rb-daap-share.c
-> rb-daap-share.h
-> rb-daap-structure.c
-> rb-daap-structure.h
->
-> Thank you.
->
-> Sincerely,
->
-> Mike Petullo
+	> Charles, Jon & Jonathan,
+	>
+	> I recently began maintaining the libdmapsharing library, a DMAP  
+	> library originally based on Rhythmbox's DAAP plugin. The library is  
+	> distributed under the LGPL license. Your original work was  
+	> distributed under the GPL.
+	>
+	> The original maintainer of libdmapsharing has stated that he  
+	> obtained permission from you regarding the relicensing of your code  
+	> to the LGPL. If you do not have any objections, would each of you  
+	> provide me with a brief statement to this effect that I may formally  
+	> distribute with libdmapsharing?
+	>
+	> The following files were used in developing libdmapsharing:
+	>
+	> rb-daap-connection.c
+	> rb-daap-connection.h
+	> rb-daap-hash.c
+	> rb-daap-hash.h
+	> rb-daap-mdns-avahi.c
+	> rb-daap-mdns-avahi.h
+	> rb-daap-mdns-browser-avahi.c
+	> rb-daap-mdns-browser.h
+	> rb-daap-mdns-publisher-avahi.c
+	> rb-daap-mdns-publisher.h
+	> rb-daap-share.c
+	> rb-daap-share.h
+	> rb-daap-structure.c
+	> rb-daap-structure.h
+	>
+	> Thank you.
+	>
+	> Sincerely,
+	>
+	> Mike Petullo
 
-Date: Wed, 14 Jan 2009 21:00:45 +1000
-From: Jonathan Matthew <jonathan[@]d14n.org>
-To: "W. Michael Petullo" <mike[@]flyn.org>
-Subject: Re: LGPL of Rhythmbox DAAP Code
+	Date: Wed, 14 Jan 2009 21:00:45 +1000
+	From: Jonathan Matthew <jonathan[@]d14n.org>
+	To: "W. Michael Petullo" <mike[@]flyn.org>
+	Subject: Re: LGPL of Rhythmbox DAAP Code
 
-On Sun, Jan 11, 2009 at 02:30:15PM -0500, W. Michael Petullo wrote:
-> Charles, Jon & Jonathan,
->
-> I recently began maintaining the libdmapsharing library, a DMAP library 
-> originally based on Rhythmbox's DAAP plugin. The library is distributed 
-> under the LGPL license. Your original work was distributed under the GPL.
->
-> The original maintainer of libdmapsharing has stated that he obtained  
-> permission from you regarding the relicensing of your code to the LGPL. 
-> If you do not have any objections, would each of you provide me with a 
-> brief statement to this effect that I may formally distribute with 
-> libdmapsharing?
->
+	On Sun, Jan 11, 2009 at 02:30:15PM -0500, W. Michael Petullo wrote:
+	> Charles, Jon & Jonathan,
+	>
+	> I recently began maintaining the libdmapsharing library, a DMAP library 
+	> originally based on Rhythmbox's DAAP plugin. The library is distributed 
+	> under the LGPL license. Your original work was distributed under the GPL.
+	>
+	> The original maintainer of libdmapsharing has stated that he obtained  
+	> permission from you regarding the relicensing of your code to the LGPL. 
+	> If you do not have any objections, would each of you provide me with a 
+	> brief statement to this effect that I may formally distribute with 
+	> libdmapsharing?
+	>
 
-sure, why not.
+	sure, why not.
 
-enjoy,
+	enjoy,
 
--jonathan
+	-jonathan

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="browserapi">
+	<refmeta>
+		<refentrytitle>mDNS Browser API</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>mDNS Browser API</refname>
+		<refpurpose>
+			Using the mDNS browser API
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>mDNS Browser API</title>
+		<para>
+Create a mDNS browser using dmap_mdns_browser_new. This object emits
+a "service-added" signal for each DMAP service encountered. Add a
+"service-added" callback and call dmap_mdns_browser_start.
+
+		</para>
+	</refsect1>
+</refentry>

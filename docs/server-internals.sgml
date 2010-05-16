@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="server-internals">
+	<refmeta>
+		<refentrytitle>Libdmapsharing Server Internals</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Libdmapsharing Server Internals</refname>
+		<refpurpose>
+			Detailed decription of libdmapsharing's code for programmers who wish to contribute to libdmapsharing
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Libdmapsharing Server Internals</title>
+		<para>
+I will use DAAPShare to document the libdmapsharing internals. DAAPShare
+provides an example appropriate for any implmentation of the
+abstract class DMAPShare, including DPAPShare. DAAPShare calls
+_dmap_share_server_start() and _dmap_share_publish_start() when an
+object is created. The latter function starts a new web server by calling
+soup_server_new() and adds callbacks to the SoupServer object to handle
+the various paths required by the DMAP specification (/server-info,
+/content-codes, /login, etc). These callbacks are implemented in
+DAAPShare and provided to the SoupServer object after being wrapped
+in adapter functions (note that some callbacks are common to all
+DMAP protocols and are implemented in DMAPShare; e.g., the login
+callback). The latter function, _dmap_share_publish_start, starts the
+mDNS subsystem. It does this by using the mDNS implmentation option
+choosen at compile-time (e.g., Avahi, Howl or DNS-SD).
+
+		</para>
+		<para>
+The DMAPStructure class is used to build a representation of the data
+that makes up a DMAP request or response. The array cc_defs defines all
+possible valid entries in a DMAPStructure representation. Likewise,
+the numeric content code used by each node is defined by the enum
+DMAPContentCode. Both the cc_defs array and the DMAPContentCode enum
+must be in the same order. That is, if you add an entry to cc_defs,
+then you must add its corresponding content code to DMAPContentCode in
+the same order.
+
+		</para>
+		<para>
+Assuming DMAPStructure defines all the entries you require, the actual
+protocol-specific structures are built in DAAPShare. Note the use of the
+function dmap_structure_add(). Often, the data dmap_structure_add()
+adds is provided by a DAAPRecord object that exists in a DMAPDb
+object (both interfaces are implemented by the application). Eventually,
+the DAAPShare provides the DMAPStructure to the SoupServer object using
+the _dmap_share_message_set_from_dmap_structure() function.
+
+		</para>
+	</refsect1>
+</refentry>

@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="serviceaddedcb">
+	<refmeta>
+		<refentrytitle>Service Added Callback</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Service Added Callback</refname>
+		<refpurpose>
+			Defining a Service Added Callback
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Service Added Callback</title>
+		<para>
+A "service-added" callback should create a media DB and a record
+factory. Both of these objects will be passed to dmap_connection_new. This
+object will interact with a DMAP share and populate the media DB. In
+order to instruct the object to begin interrogating the DMAP service,
+call the dmap_connection_connect function and pass it a "connected"
+callback. The following is a simple "service-added" callback that creates
+a DAAP connection:
+
+		</para>
+		<screen>
+static void
+service_added_cb (DMAPMdnsBrowser *browser,
+                  DMAPMdnsBrowserService *service,
+                  gpointer user_data)
+{
+	DMAPRecordFactory *factory;
+	DMAPConnection *conn;
+	DMAPDb *db;
+
+	db = DMAP_DB (my_dmap_db_new ());
+	if (db == NULL) {
+		g_error ("Error creating DB");
+	}
+
+	factory = DMAP_RECORD_FACTORY (my_daap_record_factory_new ());
+	if (factory == NULL) {
+		g_error ("Error creating record factory");
+	}
+	conn = DMAP_CONNECTION (dmap_connection_new (service->name,
+						     service->host,
+						     service->port,
+						     FALSE,
+						     db,
+						     factory));
+	dmap_connection_connect (DMAP_CONNECTION (conn),
+				(DMAPConnectionCallback) connected_cb,
+				 db);
+}
+		</screen>
+	</refsect1>
+</refentry>
