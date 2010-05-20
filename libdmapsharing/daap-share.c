@@ -698,12 +698,18 @@ add_entry_to_mlcl (gpointer id, DMAPRecord *record, gpointer _mb)
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ARTIST)) {
 		gchar *sort_artist;
 		g_object_get (record, "sort-artist", &sort_artist, NULL);
-		dmap_structure_add (mlit, DMAP_CC_ASSA, sort_artist);
+		if (sort_artist)
+			dmap_structure_add (mlit, DMAP_CC_ASSA, sort_artist);
+		else
+			g_warning ("Sort artist requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ALBUM)) {
 		gchar *sort_album;
 		g_object_get (record, "sort-album", &sort_album, NULL);
-		dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
+		if (sort_album)
+			dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
+		else
+			g_warning ("Sort album requested but not available");
 	}
 
 

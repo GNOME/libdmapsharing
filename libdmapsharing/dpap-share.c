@@ -481,11 +481,19 @@ build_filter (gchar *filterstr)
          * 'dmap.itemid:1000','dmap:itemid:1001'
 	 * or
 	 * 'daap.songgenre:Foo'+'daap.songartist:Bar'+'daap.songalbum:Baz'
+	 * or (iPhoto '09)
+	 * ('daap.idemid:1000','dmap:itemid:1001')
          */
 
+	size_t len;
 	GSList *list = NULL;
 
 	g_debug ("Filter string is %s.", filterstr);
+
+	len = strlen (filterstr);
+	filterstr = *filterstr == '(' ? filterstr + 1 : filterstr;
+	/* FIXME: I thought this should be -1, but there is a trailing ' ' in iTunes '09: */
+	filterstr[len - 2] = filterstr[len - 2] == ')' ? 0x00 : filterstr[len - 2];
 
 	if (filterstr != NULL) {
 		int i;
