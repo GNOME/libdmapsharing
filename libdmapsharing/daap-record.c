@@ -214,3 +214,15 @@ daap_record_read (DAAPRecord *record, GError **err)
 {
 	return DAAP_RECORD_GET_INTERFACE (record)->read (record, err);
 }
+
+GByteArray *
+daap_record_to_blob (DAAPRecord *record)
+{
+        return DAAP_RECORD_GET_INTERFACE (record)->to_blob (record);
+}
+
+DAAPRecord *
+daap_record_new_from_blob (DAAPRecord *record, GByteArray *blob)
+{
+	return DAAP_RECORD_GET_INTERFACE (record)->new_from_blob (record, blob);
+}

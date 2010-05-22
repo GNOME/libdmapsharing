@@ -454,9 +454,11 @@ _dmap_share_get_property (GObject *object,
 }
 
 static void
-_dmap_share_dispose (GObject *object)
+_dmap_share_finalize (GObject *object)
 {
 	DMAPShare *share = DMAP_SHARE (object);
+
+	g_debug ("Finalizing DMAPShare");
 
 	if (share->priv->published) {
 		_dmap_share_publish_stop (share);
@@ -472,7 +474,7 @@ _dmap_share_dispose (GObject *object)
 		g_object_unref (share->priv->publisher);
 	}
 
-	G_OBJECT_CLASS (dmap_share_parent_class)->dispose (object);
+	G_OBJECT_CLASS (dmap_share_parent_class)->finalize (object);
 }
 
 static void
@@ -482,7 +484,7 @@ dmap_share_class_init (DMAPShareClass *klass)
 
 	object_class->get_property = _dmap_share_get_property;
 	object_class->set_property = _dmap_share_set_property;
-	object_class->dispose = _dmap_share_dispose;
+	object_class->finalize     = _dmap_share_finalize;
 
 	/* Pure virtual methods: */
 	klass->get_desired_port    = NULL;

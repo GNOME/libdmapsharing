@@ -1,3 +1,11 @@
+22 May 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Add new to_blob/new_from_blob interface to D[AP]PRecord.
+
+20 May 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Fix finalize code for DMAPShare.
+
 18 May 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add another case to dpap-share.c:build_filter() in an attempt

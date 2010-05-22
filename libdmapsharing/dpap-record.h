@@ -69,7 +69,9 @@ typedef struct _DPAPRecordInterface DPAPRecordInterface;
 struct _DPAPRecordInterface {
 	GTypeInterface parent;
 
-	GInputStream *  (*read)              (DPAPRecord *record, GError **err);
+	GInputStream *  (*read)          (DPAPRecord *record, GError **err);
+	GByteArray   *  (*to_blob)       (DPAPRecord *record);
+	DPAPRecord   *  (*new_from_blob) (DPAPRecord *record, GByteArray *blob);
 };
 
 GType          dpap_record_get_type          (void);
@@ -83,6 +85,22 @@ GType          dpap_record_get_type          (void);
  * associated with record.
  */
 GInputStream  *dpap_record_read              (DPAPRecord *record, GError **err);
+
+/**
+ * dpap_record_to_blob:
+ * @record: a DPAPRecord.
+ *
+ * Returns: A serialized representation of the record.
+ */
+GByteArray *dpap_record_to_blob (DPAPRecord *record);
+
+/**
+ * dpap_record_new_from_blob:
+ * @blob: a serialized DPAPRecord representation.
+ *
+ * Returns: A DPAPRecord.
+ */
+DPAPRecord *dpap_record_new_from_blob (DPAPRecord *record, GByteArray *blob);
 
 #endif /* __DPAP_RECORD_H */
 
