@@ -179,7 +179,7 @@ apply_filter (gpointer id, DMAPRecord *record, gpointer data)
 }
 
 GHashTable *
-_dmap_db_apply_filter (DMAPDb *db, GSList *filter_def)
+dmap_db_apply_filter (DMAPDb *db, GSList *filter_def)
 {
 	GHashTable *ht;
 	FilterData data;

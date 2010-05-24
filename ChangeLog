@@ -1,3 +1,8 @@
+24 May 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Refactor DMAPShare, DAAPShare and DPAPShare to move code
+	to DMAPShare and increase code reuse.
+
 22 May 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add new to_blob/new_from_blob interface to D[AP]PRecord.

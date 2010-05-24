@@ -92,6 +92,7 @@ G_BEGIN_DECLS
 				 TYPE_DMAP_SHARE, DMAPShareClass))
 
 #define DMAP_SHARE_CHUNK_SIZE 16384
+#define DMAP_STATUS_OK 200
 
 typedef struct DMAPSharePrivate DMAPSharePrivate;
 
@@ -100,13 +101,32 @@ typedef struct {
 	DMAPSharePrivate *priv;
 } DMAPShare;
 
+typedef struct _DMAPMetaDataMap DMAPMetaDataMap;
+
 typedef struct {
 	GObjectClass parent;
 
 	/* Pure virtual methods: */
-	guint        (*get_desired_port)    (DMAPShare *share);
-	const char * (*get_type_of_service) (DMAPShare *share);
-	void         (*message_add_standard_headers) (SoupMessage *message);
+	guint             (*get_desired_port)             (DMAPShare *share);
+	const char *      (*get_type_of_service)          (DMAPShare *share);
+	void              (*message_add_standard_headers) (DMAPShare *share,
+							   SoupMessage *msg);
+	struct DMAPMetaDataMap * (*get_meta_data_map)     (DMAPShare *share);
+	void              (*add_entry_to_mlcl)            (gpointer id,
+							   DMAPRecord *record,
+							   gpointer mb);
+	void		  (*databases_browse_xxx)	  (DMAPShare *share,
+							   SoupServer *server,
+							   SoupMessage *msg,
+							   const char *path,
+							   GHashTable *query,
+							   SoupClientContext *context);
+	void		  (*databases_items_xxx)	  (DMAPShare *share,
+							   SoupServer *server,
+							   SoupMessage *msg,
+							   const char *path,
+							   GHashTable *query,
+							   SoupClientContext *context);
 
 	/* Pure virtual methods: libsoup callbacks */
 	void	  (*server_info)   (DMAPShare *share, SoupServer *server,
@@ -129,10 +149,6 @@ typedef struct {
 				    SoupMessage *message, const char *path,
 				    GHashTable *query, SoupClientContext *ctx);
 
-	void	  (*databases)     (DMAPShare *share, SoupServer *server,
-				    SoupMessage *message, const char *path,
-				    GHashTable *query, SoupClientContext *ctx);
-
 	/* Virtual methods: MDNS callbacks */
 	void	  (*published)	   (DMAPShare         *share,
 				    DmapMdnsPublisher *publisher,
@@ -141,6 +157,14 @@ typedef struct {
 	void	  (*name_collision)(DMAPShare	      *share,
 				    DmapMdnsPublisher *publisher,
 	              		    const char        *name);
+
+	/* Virtual methods: */
+	void	  (*databases)     (DMAPShare	      *share,
+				    SoupServer        *server,
+				    SoupMessage       *message,
+				    const char        *path,
+				    GHashTable        *query,
+				    SoupClientContext *context);
 } DMAPShareClass;
 
 struct DMAPMetaDataMap {
@@ -186,12 +210,10 @@ void     _dmap_share_message_set_from_dmap_structure (DMAPShare *share,
 						     GNode *structure);
 
 bitwise  _dmap_share_parse_meta (GHashTable *query,
-				struct DMAPMetaDataMap *mdm,
-				guint mdmlen);
+				struct DMAPMetaDataMap *mdm);
 
 bitwise  _dmap_share_parse_meta_str (const char *attrs,
-				    struct DMAPMetaDataMap *mdm,
-				    guint mdmlen);
+				    struct DMAPMetaDataMap *mdm);
 
 void _dmap_share_add_playlist_to_mlcl (gpointer id,
 				       DMAPContainerRecord *record,
@@ -235,6 +257,14 @@ void _dmap_share_published     (DMAPShare         *share,
 void _dmap_share_name_collision(DMAPShare         *share,
 			       DmapMdnsPublisher *publisher,
 			       const char        *name);
+
+void
+_dmap_share_databases (DMAPShare *share,
+                       SoupServer        *server,
+		       SoupMessage       *message,
+		       const char        *path,
+		       GHashTable        *query,
+		       SoupClientContext *context);
 
 #endif /* __DMAP_SHARE_H */
 

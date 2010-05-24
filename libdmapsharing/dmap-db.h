@@ -143,7 +143,7 @@ gulong      dmap_db_count	    (const DMAPDb *db);
 
 gchar     **_dmap_db_strsplit_using_quotes (const gchar *str);
 
-GHashTable *_dmap_db_apply_filter    (DMAPDb *db, GSList *filter_def);
+GHashTable *dmap_db_apply_filter    (DMAPDb *db, GSList *filter_def);
 
 #endif /* __DMAP_DB_H */
 

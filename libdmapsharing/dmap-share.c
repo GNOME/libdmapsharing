@@ -36,10 +36,10 @@
 #define TYPE_OF_SERVICE "_daap._tcp"
 #define STANDARD_DAAP_PORT 3689
 #define STANDARD_DPAP_PORT 8770
-#define DMAP_STATUS_OK 200
 #define DMAP_VERSION 2.0
 #define DAAP_VERSION 3.0
 #define DMAP_TIMEOUT 1800
+#define DMAP_STATUS_OK 200
 
 typedef enum {
 	DMAP_SHARE_AUTH_METHOD_NONE              = 0,
@@ -53,23 +53,35 @@ enum {
 	PROP_PASSWORD,
 	PROP_REVISION_NUMBER,
 	PROP_AUTH_METHOD,
+	PROP_DB,
+	PROP_CONTAINER_DB,
+	PROP_TRANSCODE_MIMETYPE
 };
 
 struct DMAPSharePrivate {
 	gchar *name;
 	guint port;
 	char *password;
+
+	/* FIXME: eventually, this should be determined dynamically, based
+	 * on what client has connected and its supported mimetypes.
+	 */
 	char *transcode_mimetype;
+
 	DMAPShareAuthMethod auth_method;
 
-	/* mdns/dns-sd publishing things */
+	/* mDNS/DNS-SD publishing things */
 	gboolean server_active;
 	gboolean published;
 	DmapMdnsPublisher *publisher;
 
-	/* http server things */
+	/* HTTP server things */
 	SoupServer *server;
 	guint revision_number;
+
+	/* The media database */
+	DMAPDb *db;
+	DMAPContainerDb *container_db;
 
 	GHashTable *session_ids;
 };
@@ -416,6 +428,16 @@ _dmap_share_set_property (GObject *object,
 	case PROP_PASSWORD:
 		_dmap_share_set_password (share, g_value_get_string (value));
 		break;
+	case PROP_DB:
+                share->priv->db = (DMAPDb *) g_value_get_pointer (value);
+                break;
+        case PROP_CONTAINER_DB:
+                share->priv->container_db = (DMAPContainerDb *) g_value_get_pointer (value);
+                break;
+        case PROP_TRANSCODE_MIMETYPE:
+		/* FIXME: get or dup? */
+                share->priv->transcode_mimetype = g_value_dup_string (value);
+                break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -447,6 +469,15 @@ _dmap_share_get_property (GObject *object,
 				  _dmap_share_get_auth_method
 					(DMAP_SHARE (object)));
 		break;
+	case PROP_DB:
+                g_value_set_pointer (value, share->priv->db);
+                break;
+        case PROP_CONTAINER_DB:
+                g_value_set_pointer (value, share->priv->container_db);
+                break;
+        case PROP_TRANSCODE_MIMETYPE:
+                g_value_set_string (value, share->priv->transcode_mimetype);
+                break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -487,19 +518,22 @@ dmap_share_class_init (DMAPShareClass *klass)
 	object_class->finalize     = _dmap_share_finalize;
 
 	/* Pure virtual methods: */
-	klass->get_desired_port    = NULL;
-	klass->get_type_of_service = NULL;
+	klass->get_desired_port     = NULL;
+	klass->get_type_of_service  = NULL;
 	klass->message_add_standard_headers = NULL;
-	klass->server_info         = NULL;
-	klass->content_codes       = _dmap_share_content_codes;
-	klass->login               = _dmap_share_login;
-	klass->logout              = _dmap_share_logout;
-	klass->update              = _dmap_share_update;
-	klass->databases           = NULL;
+	klass->get_meta_data_map    = NULL;
+	klass->add_entry_to_mlcl    = NULL;
+	klass->databases_browse_xxx = NULL;
+	klass->databases_items_xxx  = NULL;
+	klass->content_codes        = _dmap_share_content_codes;
+	klass->login                = _dmap_share_login;
+	klass->logout               = _dmap_share_logout;
+	klass->update               = _dmap_share_update;
 
 	/* Virtual methods: */
 	klass->published      = _dmap_share_published;
 	klass->name_collision = _dmap_share_name_collision;
+	klass->databases      = _dmap_share_databases;
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
@@ -535,7 +569,27 @@ dmap_share_class_init (DMAPShareClass *klass)
 						DMAP_SHARE_AUTH_METHOD_PASSWORD,
 						0,
 						G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
+                                         PROP_DB,
+                                         g_param_spec_pointer ("db",
+                                                              "DB",
+                                                              "DB object",
+                                                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
+        g_object_class_install_property (object_class,
+                                         PROP_CONTAINER_DB,
+                                         g_param_spec_pointer ("container-db",
+                                                              "Container DB",
+                                                              "Container DB object",
+                                                               G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+	g_object_class_install_property (object_class,
+                                         PROP_TRANSCODE_MIMETYPE,
+                                         g_param_spec_string ("transcode-mimetype",
+                                                             "Transcode mimetype",
+                                                             "Set mimetype of stream after transcoding",
+                                                             NULL,
+                                                             G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 
 	g_type_class_add_private (klass, sizeof (DMAPSharePrivate));
 }
@@ -736,7 +790,8 @@ _dmap_share_message_set_from_dmap_structure (DMAPShare *share,
 	soup_message_set_response (message, "application/x-dmap-tagged",
 				   SOUP_MEMORY_TAKE, resp, length);
 
-	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (message);
+	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (share,
+								    message);
 
 	soup_message_set_status (message, SOUP_STATUS_OK);
 }
@@ -956,7 +1011,7 @@ _dmap_share_update (DMAPShare *share,
 }
 
 bitwise
-_dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm, guint mdmlen)
+_dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm)
 {
 	guint i;
 	bitwise bits = 0;
@@ -972,7 +1027,7 @@ _dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm, guin
 		for (i = 0; attrsv[i]; i++) {
 			guint j;
 
-			for (j = 0; j < mdmlen; j++) {
+			for (j = 0; mdm[j].tag; j++) {
 				if (strcmp (mdm[j].tag, attrsv[i]) == 0) {
 					bits |= (((bitwise) 1) << mdm[j].md);
 				}
@@ -985,7 +1040,7 @@ _dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm, guin
 }
 
 bitwise
-_dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm, guint mdmlen)
+_dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm)
 {
 	const gchar *attrs;
 
@@ -993,7 +1048,7 @@ _dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm, guint md
 	if (attrs == NULL) {
 		return 0;
 	}
-	return _dmap_share_parse_meta_str (attrs, mdm, mdmlen);
+	return _dmap_share_parse_meta_str (attrs, mdm);
 }
 
 void
@@ -1021,3 +1076,326 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpoi
 
 	return;
 } 
+
+/* FIXME: Handle ('...') and share code with DAAPShare. */
+static GSList *
+build_filter (gchar *filterstr)
+{
+	/* Produces a list of lists, each being a filter definition that may
+	 * be one or more filter criteria.
+	 */
+
+	/* A filter string looks like (iTunes):
+	 * 'daap.songgenre:Other'+'daap.songartist:Band'.
+	 * or (Roku):
+	 * 'daap.songgenre:Other' 'daap.songartist:Band'.
+	 * or
+         * 'dmap.itemid:1000'
+	 * or
+         * 'dmap.itemid:1000','dmap:itemid:1001'
+	 * or
+	 * 'daap.songgenre:Foo'+'daap.songartist:Bar'+'daap.songalbum:Baz'
+	 * or (iPhoto '09)
+	 * ('daap.idemid:1000','dmap:itemid:1001')
+         */
+
+	size_t len;
+	GSList *list = NULL;
+
+	g_debug ("Filter string is %s.", filterstr);
+
+	len = strlen (filterstr);
+	filterstr = *filterstr == '(' ? filterstr + 1 : filterstr;
+	/* FIXME: I thought this should be -1, but there is a trailing ' ' in iTunes '09: */
+	filterstr[len - 2] = filterstr[len - 2] == ')' ? 0x00 : filterstr[len - 2];
+
+	if (filterstr != NULL) {
+		int i;
+		gchar **t1 = g_strsplit (filterstr, ",", 0);
+
+		for (i = 0; t1[i]; i++) {
+			int j;
+			GSList *filter = NULL;
+			gchar **t2;
+
+			t2 = _dmap_db_strsplit_using_quotes (t1[i]);
+
+			for (j = 0; t2[j]; j++) {
+				FilterDefinition *def;
+				gchar **t3;
+
+				t3 = g_strsplit (t2[j], ":", 0);
+
+				if (g_strcasecmp ("dmap.itemid", t3[0]) == 0) {
+					def = g_new0 (FilterDefinition, 1);
+					def->value = g_strdup (t3[1]);
+					def->record_get_value = NULL;
+				} else {
+					g_warning ("Unknown category: %s", t3[0]);
+					def = NULL;
+				}
+
+				if (def != NULL)
+					filter = g_slist_append (filter, def);
+
+				g_strfreev (t3);
+			}
+
+			list = g_slist_append (list, filter);
+
+			g_strfreev (t2);
+		}
+		g_strfreev (t1);
+	}
+
+        return list;
+}
+
+static void
+free_filter (GSList *filter)
+{
+        GSList *ptr1, *ptr2;
+
+        for (ptr1 = filter; ptr1 != NULL; ptr1 = ptr1->next) {
+                for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
+                        g_free (((FilterDefinition *) ptr2->data)->value);
+                        g_free (ptr2->data);
+                }
+        }
+}
+
+static void
+debug_param (gpointer key, gpointer val, gpointer user_data)
+{
+        g_debug ("%s %s", (char *) key, (char *) val);
+}
+
+void
+_dmap_share_databases (DMAPShare *share,
+		       SoupServer        *server,
+		       SoupMessage       *message,
+		       const char        *path,
+		       GHashTable        *query,
+		       SoupClientContext *context)
+
+{
+	const char *rest_of_path;
+
+	g_debug ("Path is %s.", path);
+	g_hash_table_foreach (query, debug_param, NULL);
+
+	if (! _dmap_share_session_id_validate (share, context, message, query, NULL)) {
+		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
+		return;
+	}
+
+	rest_of_path = strchr (path + 1, '/');
+
+	if (rest_of_path == NULL) {
+	/* AVDB server databases
+	 * 	MSTT status
+	 * 	MUTY update type
+	 * 	MTCO specified total count
+	 * 	MRCO returned count
+	 * 	MLCL listing
+	 * 		MLIT listing item
+	 * 			MIID item id
+	 * 			MPER persistent id
+	 * 			MINM item name
+	 * 			MIMC item count
+	 * 			MCTC container count
+	 */
+		gchar *nameprop;
+		GNode *avdb;
+		GNode *mlcl;
+		GNode *mlit;
+
+		g_object_get ((gpointer) share, "name", &nameprop, NULL);
+
+		avdb = dmap_structure_add (NULL, DMAP_CC_AVDB);
+		dmap_structure_add (avdb, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (avdb, DMAP_CC_MUTY, 0);
+		dmap_structure_add (avdb, DMAP_CC_MTCO, (gint32) 1);
+		dmap_structure_add (avdb, DMAP_CC_MRCO, (gint32) 1);
+		mlcl = dmap_structure_add (avdb, DMAP_CC_MLCL);
+		mlit = dmap_structure_add (mlcl, DMAP_CC_MLIT);
+		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) 1);
+		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) 1);
+		dmap_structure_add (mlit, DMAP_CC_MINM, nameprop);
+		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (share->priv->db));
+		dmap_structure_add (mlit, DMAP_CC_MCTC, (gint32) 1);
+
+		_dmap_share_message_set_from_dmap_structure (share, message, avdb);
+		dmap_structure_destroy (avdb);
+
+		g_free (nameprop);
+	} else if (g_ascii_strcasecmp ("/1/items", rest_of_path) == 0) {
+	/* ADBS database songs
+	 * 	MSTT status
+	 * 	MUTY update type
+	 * 	MTCO specified total count
+	 * 	MRCO returned count
+	 * 	MLCL listing
+	 * 		MLIT
+	 * 			attrs
+	 * 		MLIT
+	 * 		...
+	 */
+		GNode *adbs;
+		gchar *record_query;
+		GHashTable *records = NULL;
+		struct DMAPMetaDataMap *map;
+		gint32 num_songs;
+		struct MLCL_Bits mb = {NULL,0};
+
+		record_query = g_hash_table_lookup (query, "query");
+		if (record_query) {
+			GSList *filter_def;
+			filter_def = build_filter (record_query);
+			records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
+			g_debug ("Found %d records", g_hash_table_size (records));
+			num_songs = g_hash_table_size (records);
+			free_filter (filter_def);
+		} else {
+			num_songs = dmap_db_count (share->priv->db);
+		}
+
+		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
+		mb.bits = _dmap_share_parse_meta (query, map);
+
+		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
+		dmap_structure_add (adbs, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (adbs, DMAP_CC_MUTY, 0);
+		dmap_structure_add (adbs, DMAP_CC_MTCO, (gint32) num_songs);
+		dmap_structure_add (adbs, DMAP_CC_MRCO, (gint32) num_songs);
+		mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL);
+
+		if (record_query) {
+			g_hash_table_foreach (records, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+			/* Free hash table but not data: */
+			g_hash_table_destroy (records);
+		} else {
+			dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+		}
+
+		_dmap_share_message_set_from_dmap_structure (share, message, adbs);
+		dmap_structure_destroy (adbs);
+		adbs = NULL;
+	} else if (g_ascii_strcasecmp ("/1/containers", rest_of_path) == 0) {
+	/* APLY database playlists
+	 * 	MSTT status
+	 * 	MUTY update type
+	 * 	MTCO specified total count
+	 * 	MRCO returned count
+	 * 	MLCL listing
+	 * 		MLIT listing item
+	 * 			MIID item id
+	 * 			MPER persistent item id
+	 * 			MINM item name
+	 * 			MIMC item count
+	 * 			ABPL baseplaylist (only for base)
+	 * 		MLIT
+	 * 		...
+	 */
+		gchar *nameprop;
+		GNode *aply;
+		GNode *mlcl;
+		GNode *mlit;
+
+		g_object_get ((gpointer) share, "name", &nameprop, NULL);
+
+		aply = dmap_structure_add (NULL, DMAP_CC_APLY);
+		dmap_structure_add (aply, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (aply, DMAP_CC_MUTY, 0);
+		dmap_structure_add (aply, DMAP_CC_MTCO, (gint32) dmap_container_db_count (share->priv->container_db) + 1);
+		dmap_structure_add (aply, DMAP_CC_MRCO, (gint32) dmap_container_db_count (share->priv->container_db) + 1);
+		mlcl = dmap_structure_add (aply, DMAP_CC_MLCL);
+
+		/* Base playlist: */
+		mlit = dmap_structure_add (mlcl, DMAP_CC_MLIT);
+		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) 1);
+		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) 1);
+		dmap_structure_add (mlit, DMAP_CC_MINM, nameprop);
+		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (share->priv->db));
+		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1);
+
+		dmap_container_db_foreach (share->priv->container_db, (GHFunc) _dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
+
+		_dmap_share_message_set_from_dmap_structure (share, message, aply);
+		dmap_structure_destroy (aply);
+
+		g_free (nameprop);
+	} else if (g_ascii_strncasecmp ("/1/containers/", rest_of_path, 14) == 0) {
+	/* APSO playlist songs
+	 * 	MSTT status
+	 * 	MUTY update type
+	 * 	MTCO specified total count
+	 * 	MRCO returned count
+	 * 	MLCL listing
+	 * 		MLIT listing item
+	 * 			MIKD item kind
+	 * 			MIID item id
+	 * 			MCTI container item id
+	 * 		MLIT
+	 * 		...
+	 */
+		GNode *apso;
+		struct DMAPMetaDataMap *map;
+		struct MLCL_Bits mb = {NULL,0};
+		gint pl_id = atoi (rest_of_path + 14);
+
+		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
+		mb.bits = _dmap_share_parse_meta (query, map);
+
+		apso = dmap_structure_add (NULL, DMAP_CC_APSO);
+		dmap_structure_add (apso, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (apso, DMAP_CC_MUTY, 0);
+
+		if (pl_id == 1) {
+			gint32 num_songs = dmap_db_count (share->priv->db);
+			dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
+			dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
+			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
+
+			dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+		} else {
+			DMAPContainerRecord *record;
+			const DMAPDb *entries;
+			guint num_songs;
+			
+			record = dmap_container_db_lookup_by_id (share->priv->container_db, pl_id);
+			entries = dmap_container_record_get_entries (record);
+			num_songs = dmap_db_count (entries);
+			
+			dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
+			dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
+			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
+
+			dmap_db_foreach (entries, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+
+			g_object_unref (record);
+		}
+
+		_dmap_share_message_set_from_dmap_structure (share, message, apso);
+		dmap_structure_destroy (apso);
+	} else if (g_ascii_strncasecmp ("/1/browse/", rest_of_path, 9) == 0) {
+		 DMAP_SHARE_GET_CLASS (share)->databases_browse_xxx (
+			share,
+			server,
+			message,
+			path,
+			query,
+			context);
+	} else if (g_ascii_strncasecmp ("/1/items/", rest_of_path, 9) == 0) {
+	/* just the file :) */
+		 DMAP_SHARE_GET_CLASS (share)->databases_items_xxx (
+			share,
+			server,
+			message,
+			path,
+			query,
+			context);
+	} else {
+		g_warning ("Unhandled: %s\n", path);
+	}
+}
