@@ -68,7 +68,7 @@ typedef struct _DMAPDbInterface DMAPDbInterface;
 struct _DMAPDbInterface {
 	GTypeInterface parent;
 
-	gint (*add)			(DMAPDb *db, DMAPRecord *record);
+	guint (*add)			(DMAPDb *db, DMAPRecord *record);
 	DMAPRecord *(*lookup_by_id)	(DMAPDb *db, guint id);
 	void (*foreach)			(const DMAPDb *db,
 					 GHFunc func,
@@ -78,9 +78,12 @@ struct _DMAPDbInterface {
 
 typedef const char *(*RecordGetValueFunc) (DMAPRecord *record);
 
+/* FIXME: This is in transition: how to keep this safe when value might 
+ * be compared to a string, int, etc.? */
 typedef struct FilterDefinition {
+	gchar *key;
 	gchar *value;
-	const char *(*record_get_value) (DMAPRecord *record);
+	gboolean is_string;
 } FilterDefinition;
 
 GType dmap_db_get_type		    (void);
@@ -98,7 +101,7 @@ GType dmap_db_get_type		    (void);
  * be placed elsewhere). In all cases, the record should be unrefed by the 
  * calling code.
  */
-gint        dmap_db_add		    (DMAPDb *db, DMAPRecord *record);
+guint        dmap_db_add	    (DMAPDb *db, DMAPRecord *record);
 
 /**
  * dmap_db_lookup_by_id:

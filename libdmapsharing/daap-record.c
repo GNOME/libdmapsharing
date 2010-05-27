@@ -44,8 +44,10 @@ daap_record_init (DAAPRecordInterface *iface)
 					     "Unknown",
 					     G_PARAM_READWRITE));
 
+		/* NOTE: experimenting with matching property name with
+		 * DAAP protocol keyword to make some code simpler. */
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("album",
+			g_param_spec_string ("daap.songalbum",
 					     "Album name",
 					     "Album name",
 					     "Unknown",
@@ -59,7 +61,7 @@ daap_record_init (DAAPRecordInterface *iface)
 					     G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("artist",
+			g_param_spec_string ("daap.songartist",
 					     "Song artist",
 					     "Song artist",
 					     "Unknown",
@@ -73,7 +75,7 @@ daap_record_init (DAAPRecordInterface *iface)
 					     G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("genre",
+			g_param_spec_string ("daap.songgenre",
 					     "Song genre",
 					     "Song genre",
 					     "Unknown",
@@ -159,11 +161,11 @@ daap_record_init (DAAPRecordInterface *iface)
 					  G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_long ("bitrate",
+			g_param_spec_int ("bitrate",
 					   "Song data bitrate in Kb/s",
 					   "Song data bitrate in Kb/s",
 					   0,
-					   G_MAXLONG,
+					   G_MAXINT,
 					   0,
 					   G_PARAM_READWRITE));
 

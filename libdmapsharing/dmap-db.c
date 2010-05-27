@@ -75,7 +75,7 @@ dmap_db_foreach	(const DMAPDb *db,
 	DMAP_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }
 
-gint
+guint
 dmap_db_add (DMAPDb *db, DMAPRecord *record)
 {
 	return DMAP_DB_GET_INTERFACE (db)->add (db, record);
@@ -163,14 +163,27 @@ apply_filter (gpointer id, DMAPRecord *record, gpointer data)
 		gboolean accepted = TRUE;
 		for (ptr1 = fd->filter_def; ptr1 != NULL; ptr1 = ptr1->next) {
 			for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
-				gchar *value = unescape (((FilterDefinition *) ptr2->data)->value);
-				if (((FilterDefinition *) ptr2->data)->record_get_value == NULL) {
-					if (GPOINTER_TO_UINT (id) == atoi (value))
+				gchar *value1 = unescape (((FilterDefinition *) ptr2->data)->value);
+
+				if (((FilterDefinition *) ptr2->data)->is_string == FALSE) {
+					if (GPOINTER_TO_UINT (id) == atoi (value1))
 						g_hash_table_insert (fd->ht, id, dmap_db_lookup_by_id (fd->db, GPOINTER_TO_UINT (id)));
 					accepted = FALSE; /* Not really, but we've already added if required. */
-				} else if (g_strcasecmp (value, ((FilterDefinition *) ptr2->data)->record_get_value (record)) != 0)
-					accepted = FALSE;
-				g_free (value);
+				} else {
+					gchar *value2;
+					GParamSpec *pspec = g_object_class_find_property (G_OBJECT_CLASS (record), ((FilterDefinition *) ptr2->data)->key);
+					if (G_IS_PARAM_SPEC_STRING (pspec)) {
+						g_object_get (record, ((FilterDefinition *) ptr2->data)->key, &value2, NULL); 
+						if (value2 == NULL || g_strcasecmp (value1, value2) != 0) {
+							accepted = FALSE;
+						}
+					} else {
+						/* FIXME: unhandled filter (non-string): */
+						accepted = FALSE;
+					}
+					g_free (value2);
+				}
+				g_free (value1);
 			}
 		}
 		if (accepted == TRUE)

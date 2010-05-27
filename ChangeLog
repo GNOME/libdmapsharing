@@ -1,3 +1,14 @@
+25 May 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Refactor build_filter into dmap_share_build_factor.
+
+	* Begin naming D[AP]APRecord properties after DAAP keywords so
+	that direct use of g_object_get can replace if/else or table
+	lookups.
+
+	* Fix some declarations in dmap-db.c so that record IDs are
+	always guint (vs. gint).
+
 24 May 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Refactor DMAPShare, DAAPShare and DPAPShare to move code

@@ -500,6 +500,10 @@ _dmap_share_finalize (GObject *object)
 	}
 
 	g_free (share->priv->name);
+	g_free (share->priv->password);
+
+	g_object_unref (share->priv->db);
+	g_object_unref (share->priv->container_db);
 
 	if (share->priv->publisher) {
 		g_object_unref (share->priv->publisher);
@@ -525,12 +529,12 @@ dmap_share_class_init (DMAPShareClass *klass)
 	klass->add_entry_to_mlcl    = NULL;
 	klass->databases_browse_xxx = NULL;
 	klass->databases_items_xxx  = NULL;
-	klass->content_codes        = _dmap_share_content_codes;
-	klass->login                = _dmap_share_login;
-	klass->logout               = _dmap_share_logout;
-	klass->update               = _dmap_share_update;
 
 	/* Virtual methods: */
+	klass->content_codes  = _dmap_share_content_codes;
+	klass->login          = _dmap_share_login;
+	klass->logout         = _dmap_share_logout;
+	klass->update         = _dmap_share_update;
 	klass->published      = _dmap_share_published;
 	klass->name_collision = _dmap_share_name_collision;
 	klass->databases      = _dmap_share_databases;
@@ -1077,9 +1081,8 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpoi
 	return;
 } 
 
-/* FIXME: Handle ('...') and share code with DAAPShare. */
-static GSList *
-build_filter (gchar *filterstr)
+GSList *
+dmap_share_build_filter (gchar *filterstr)
 {
 	/* Produces a list of lists, each being a filter definition that may
 	 * be one or more filter criteria.
@@ -1106,7 +1109,7 @@ build_filter (gchar *filterstr)
 
 	len = strlen (filterstr);
 	filterstr = *filterstr == '(' ? filterstr + 1 : filterstr;
-	/* FIXME: I thought this should be -1, but there is a trailing ' ' in iTunes '09: */
+	/* FIXME: I thought this should be -1, but there is a trailing ' ' in iPhoto '09: */
 	filterstr[len - 2] = filterstr[len - 2] == ')' ? 0x00 : filterstr[len - 2];
 
 	if (filterstr != NULL) {
@@ -1126,13 +1129,14 @@ build_filter (gchar *filterstr)
 
 				t3 = g_strsplit (t2[j], ":", 0);
 
+				def = g_new0 (FilterDefinition, 1);
+				def->key   = g_strdup (t3[0]);
+				def->value = g_strdup (t3[1]);
+
 				if (g_strcasecmp ("dmap.itemid", t3[0]) == 0) {
-					def = g_new0 (FilterDefinition, 1);
-					def->value = g_strdup (t3[1]);
-					def->record_get_value = NULL;
+					def->is_string = FALSE;
 				} else {
-					g_warning ("Unknown category: %s", t3[0]);
-					def = NULL;
+					def->is_string = TRUE;
 				}
 
 				if (def != NULL)
@@ -1151,8 +1155,8 @@ build_filter (gchar *filterstr)
         return list;
 }
 
-static void
-free_filter (GSList *filter)
+void
+dmap_share_free_filter (GSList *filter)
 {
         GSList *ptr1, *ptr2;
 
@@ -1251,11 +1255,11 @@ _dmap_share_databases (DMAPShare *share,
 		record_query = g_hash_table_lookup (query, "query");
 		if (record_query) {
 			GSList *filter_def;
-			filter_def = build_filter (record_query);
+			filter_def = dmap_share_build_filter (record_query);
 			records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
 			g_debug ("Found %d records", g_hash_table_size (records));
 			num_songs = g_hash_table_size (records);
-			free_filter (filter_def);
+			dmap_share_free_filter (filter_def);
 		} else {
 			num_songs = dmap_db_count (share->priv->db);
 		}

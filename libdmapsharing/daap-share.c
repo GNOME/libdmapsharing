@@ -556,18 +556,18 @@ add_entry_to_mlcl (gpointer id,
 	*/
 	if (_dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
 		const gchar *album;
-		g_object_get (record, "album", &album, NULL);
+		g_object_get (record, "daap.songalbum", &album, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAL, album);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
 		const gchar *artist;
-		g_object_get (record, "artist", &artist, NULL);
+		g_object_get (record, "daap.songartist", &artist, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
-		gulong bitrate;
+		gint32 bitrate;
 		g_object_get (record, "bitrate", &bitrate, NULL);
 		if (bitrate != 0)
 			dmap_structure_add (mlit, DMAP_CC_ASBR, (gint32) bitrate);
@@ -611,7 +611,7 @@ add_entry_to_mlcl (gpointer id,
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre;
-		g_object_get (record, "genre", &genre, NULL);
+		g_object_get (record, "daap.songgenre", &genre, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
@@ -680,7 +680,7 @@ static void
 genre_tabulator (gpointer id, DMAPRecord *record, GHashTable *ht)
 {
 	const gchar *genre;
-	g_object_get (record, "genre", &genre, NULL);
+	g_object_get (record, "daap.songgenre", &genre, NULL);
 	if (! g_hash_table_lookup (ht, genre))
 		g_hash_table_insert (ht, (gchar *) genre, NULL);
 }
@@ -689,7 +689,7 @@ static void
 artist_tabulator (gpointer id, DMAPRecord *record, GHashTable *ht)
 {
 	const gchar *artist;
-	g_object_get (record, "artist", &artist, NULL);
+	g_object_get (record, "daap.songartist", &artist, NULL);
 	if (! g_hash_table_lookup (ht, artist))
 		g_hash_table_insert (ht, (gchar *) artist, NULL);
 }
@@ -698,7 +698,7 @@ static void
 album_tabulator (gpointer id, DMAPRecord *record, GHashTable *ht)
 {
 	const gchar *album;
-	g_object_get (record, "album", &album, NULL);
+	g_object_get (record, "daap.songalbum", &album, NULL);
 	if (! g_hash_table_lookup (ht, album))
 		g_hash_table_insert (ht, (gchar *) album, NULL);
 }
@@ -711,121 +711,6 @@ add_to_category_listing (gpointer key, gpointer value, gpointer user_data)
 
 	mlit = dmap_structure_add (node, DMAP_CC_MLIT);
 	dmap_structure_add (mlit, DMAP_RAW, (char *) key);
-}
-
-static gchar *
-get_album (DAAPRecord *record)
-{
-	gchar *album;
-	g_object_get (record, "album", &album, NULL);
-	return album;
-}
-
-static gchar *
-get_genre (DAAPRecord *record)
-{
-	gchar *genre;
-	g_object_get (record, "genre", &genre, NULL);
-	return genre;
-}
-
-static gchar *
-get_artist (DAAPRecord *record)
-{
-	gchar *artist;
-	g_object_get (record, "artist", &artist, NULL);
-	return artist;
-}
-
-/* FIXME: Handle ('...') and share code with DPAPShare. */
-static GSList *
-build_filter (gchar *filterstr)
-{
-	/* Produces a list of lists, each being a filter definition that may
-	 * be one or more filter criteria.
-	 */
-
-	/* A filter string looks like (iTunes):
-	 * 'daap.songgenre:Other'+'daap.songartist:Band'.
-	 * or (Roku):
-	 * 'daap.songgenre:Other' 'daap.songartist:Band'.
-	 * or
-         * 'dmap.itemid:1000'
-	 * or
-         * 'dmap.itemid:1000','dmap:itemid:1001'
-	 * or
-	 * 'daap.songgenre:Foo'+'daap.songartist:Bar'+'daap.songalbum:Baz'
-         */
-
-	GSList *list = NULL;
-
-	g_debug ("Filter string is %s.", filterstr);
-
-	if (filterstr != NULL) {
-		int i;
-		gchar **t1 = g_strsplit (filterstr, ",", 0);
-
-		for (i = 0; t1[i]; i++) {
-			int j;
-			GSList *filter = NULL;
-			gchar **t2;
-
-			t2 = _dmap_db_strsplit_using_quotes (t1[i]);
-
-			for (j = 0; t2[j]; j++) {
-				FilterDefinition *def;
-				gchar **t3;
-
-				t3 = g_strsplit (t2[j], ":", 0);
-
-				if (g_strcasecmp ("dmap.itemid", t3[0]) == 0) {
-					def = g_new0 (FilterDefinition, 1);
-					def->value = g_strdup (t3[1]);
-					def->record_get_value = NULL;
-				} else if (g_strcasecmp ("daap.songgenre", t3[0]) == 0) {
-					def = g_new0 (FilterDefinition, 1);
-					def->value = g_strdup (t3[1]);
-					def->record_get_value = (RecordGetValueFunc) get_genre;
-				} else if (g_strcasecmp ("daap.songartist", t3[0]) == 0) {
-					def = g_new0 (FilterDefinition, 1);
-					def->value = g_strdup (t3[1]);
-					def->record_get_value = (RecordGetValueFunc) get_artist;
-				} else if (g_strcasecmp ("daap.songalbum", t3[0]) == 0) {
-					def = g_new0 (FilterDefinition, 1);
-					def->value = g_strdup (t3[1]);
-					def->record_get_value = (RecordGetValueFunc) get_album;
-				} else {
-					g_warning ("Unknown category: %s", t3[0]);
-					def = NULL;
-				}
-
-				if (def != NULL)
-					filter = g_slist_append (filter, def);
-
-				g_strfreev (t3);
-			}
-
-			list = g_slist_append (list, filter);
-
-			g_strfreev (t2);
-		}
-		g_strfreev (t1);
-	}
-
-        return list;
-}
-
-static void
-free_filter (GSList *filter)
-{
-	GSList *ptr1, *ptr2;
-
-	for (ptr1 = filter; ptr1 != NULL; ptr1 = ptr1->next) {
-		for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
-			g_free (((FilterDefinition *) ptr2->data)->value);
-			g_free (ptr2->data);
-		}
-	}
 }
 
 static void
@@ -861,7 +746,7 @@ databases_browse_xxx (DMAPShare *share,
 	category_items = g_hash_table_new (g_str_hash, g_str_equal);
 
 	filter = g_hash_table_lookup (query, "filter");
-	filter_def = build_filter (filter);
+	filter_def = dmap_share_build_filter (filter);
 	g_object_get (share, "db", &db, NULL);
 	filtered = dmap_db_apply_filter (db, filter_def);
 
@@ -897,7 +782,7 @@ databases_browse_xxx (DMAPShare *share,
 	_dmap_share_message_set_from_dmap_structure (share, msg, abro);
 	dmap_structure_destroy (abro);
 _bad_category:
-	free_filter (filter_def);
+	dmap_share_free_filter (filter_def);
 	/* Free's hash table but not data (points into real DB): */
 	g_hash_table_destroy (filtered);
 	g_hash_table_destroy (category_items);
@@ -916,7 +801,6 @@ databases_items_xxx (DMAPShare *share,
 	const gchar *rest_of_path;
 	const gchar *id_str;
 	gint id;
-	const gchar *location;
 	const gchar *range_header;
 	guint64 filesize;
 	guint64 offset = 0;
@@ -928,7 +812,6 @@ databases_items_xxx (DMAPShare *share,
 
 	g_object_get (share, "db", &db, NULL);
 	record = DAAP_RECORD (dmap_db_lookup_by_id (db, id));
-	g_object_get (record, "location", &location, NULL);
 	g_object_get (record, "filesize", &filesize, NULL);
 
 	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers
