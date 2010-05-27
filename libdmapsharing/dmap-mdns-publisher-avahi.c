@@ -337,7 +337,6 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
 	avahi_entry_group_reset (publisher->priv->entry_group);
 	avahi_entry_group_free (publisher->priv->entry_group);
 	publisher->priv->entry_group = NULL;
-	dmap_mdns_avahi_set_entry_group (NULL);
 
 	return TRUE;
 }
@@ -423,7 +422,7 @@ dmap_mdns_publisher_finalize (GObject *object)
 
 	if (publisher->priv->entry_group) {
 		avahi_entry_group_free (publisher->priv->entry_group);
-		dmap_mdns_avahi_set_entry_group (NULL);
+		publisher->priv->entry_group = NULL;
 	}
 
 	g_free (publisher->priv->name);
