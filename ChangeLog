@@ -3,6 +3,13 @@
 	* Fix crash upon finalizing DMAPShare that was caused by misuse of
 	avahi_entry_group_free().
 
+	* Increase the reference count of the databases passed to
+	d[ap]ap_share_new().
+
+	* dmap_db_lookup_by_id now takes a const DMAPDb *.
+
+	* Add a _dmap_share_build_filter() prototype.
+
 25 May 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Refactor build_filter into dmap_share_build_factor.

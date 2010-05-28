@@ -272,7 +272,7 @@ _dmap_share_server_start (DMAPShare *share)
 static gboolean
 _dmap_share_server_stop (DMAPShare *share)
 {
-	g_warning ("Stopping music sharing server on port %d", share->priv->port);
+	g_debug ("Stopping music sharing server on port %d", share->priv->port);
 
 	if (share->priv->server) {
 		soup_server_quit (share->priv->server);
@@ -1082,7 +1082,7 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpoi
 } 
 
 GSList *
-dmap_share_build_filter (gchar *filterstr)
+_dmap_share_build_filter (gchar *filterstr)
 {
 	/* Produces a list of lists, each being a filter definition that may
 	 * be one or more filter criteria.
@@ -1255,7 +1255,7 @@ _dmap_share_databases (DMAPShare *share,
 		record_query = g_hash_table_lookup (query, "query");
 		if (record_query) {
 			GSList *filter_def;
-			filter_def = dmap_share_build_filter (record_query);
+			filter_def = _dmap_share_build_filter (record_query);
 			records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
 			g_debug ("Found %d records", g_hash_table_size (records));
 			num_songs = g_hash_table_size (records);

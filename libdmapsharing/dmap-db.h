@@ -69,7 +69,7 @@ struct _DMAPDbInterface {
 	GTypeInterface parent;
 
 	guint (*add)			(DMAPDb *db, DMAPRecord *record);
-	DMAPRecord *(*lookup_by_id)	(DMAPDb *db, guint id);
+	DMAPRecord *(*lookup_by_id)	(const DMAPDb *db, guint id);
 	void (*foreach)			(const DMAPDb *db,
 					 GHFunc func,
 					 gpointer data);
@@ -122,7 +122,7 @@ guint        dmap_db_add	    (DMAPDb *db, DMAPRecord *record);
  * In this case, the reference count should not be incremented before
  * returning a record pointer.
  */
-DMAPRecord *dmap_db_lookup_by_id    (DMAPDb *db, guint id);
+DMAPRecord *dmap_db_lookup_by_id    (const DMAPDb *db, guint id);
 
 /**
  * dmap_db_foreach:

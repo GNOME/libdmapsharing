@@ -219,6 +219,8 @@ void _dmap_share_add_playlist_to_mlcl (gpointer id,
 				       DMAPContainerRecord *record,
 				       gpointer mlcl);
 
+GSList * _dmap_share_build_filter (gchar *filterstr);
+
 /* Virtual methods (libsoup callbacks with default implementation): */
 void _dmap_share_content_codes (DMAPShare *share,
 		  SoupServer        *server,

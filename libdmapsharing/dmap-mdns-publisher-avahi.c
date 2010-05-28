@@ -425,6 +425,8 @@ dmap_mdns_publisher_finalize (GObject *object)
 		publisher->priv->entry_group = NULL;
 	}
 
+	avahi_client_free (publisher->priv->client);
+
 	g_free (publisher->priv->name);
 	g_free (publisher->priv->type_of_service);
 

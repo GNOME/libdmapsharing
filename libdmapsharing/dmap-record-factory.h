@@ -83,7 +83,8 @@ GType dmap_record_factory_get_type (void);
  *
  * Returns: a new DMAPRecord as read from path.
  */
-DMAPRecord *dmap_record_factory_create (DMAPRecordFactory *factory, gpointer user_data);
+DMAPRecord *dmap_record_factory_create (DMAPRecordFactory *factory,
+					gpointer user_data);
 
 #endif /* __DMAP_RECORD_FACTORY_H */
 

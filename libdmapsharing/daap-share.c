@@ -191,6 +191,9 @@ daap_share_new (const char *name,
 {
 	DAAPShare *share;
 
+	g_object_ref (db);
+	g_object_ref (container_db);
+
 	share = DAAP_SHARE (g_object_new (TYPE_DAAP_SHARE,
 					     "name", name,
 					     "password", password,
@@ -746,7 +749,7 @@ databases_browse_xxx (DMAPShare *share,
 	category_items = g_hash_table_new (g_str_hash, g_str_equal);
 
 	filter = g_hash_table_lookup (query, "filter");
-	filter_def = dmap_share_build_filter (filter);
+	filter_def = _dmap_share_build_filter (filter);
 	g_object_get (share, "db", &db, NULL);
 	filtered = dmap_db_apply_filter (db, filter_def);
 

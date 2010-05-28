@@ -62,7 +62,7 @@ dmap_db_get_type (void)
 }
 
 DMAPRecord *
-dmap_db_lookup_by_id (DMAPDb *db, guint id)
+dmap_db_lookup_by_id (const DMAPDb *db, guint id)
 {
 	return DMAP_DB_GET_INTERFACE (db)->lookup_by_id (db, id);
 }
