@@ -140,7 +140,7 @@ daap_share_set_property (GObject *object,
 			    const GValue *value,
 			    GParamSpec *pspec)
 {
-	DAAPShare *share = DAAP_SHARE (object);
+	// DAAPShare *share = DAAP_SHARE (object);
 
 	switch (prop_id) {
 	default:
@@ -155,7 +155,7 @@ daap_share_get_property (GObject *object,
 			    GValue *value,
 			    GParamSpec *pspec)
 {
-	DAAPShare *share = DAAP_SHARE (object);
+	// DAAPShare *share = DAAP_SHARE (object);
 
 	switch (prop_id) {
 	default:

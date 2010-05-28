@@ -137,7 +137,7 @@ dpap_share_set_property (GObject *object,
 			    const GValue *value,
 			    GParamSpec *pspec)
 {
-	DPAPShare *share = DPAP_SHARE (object);
+	// DPAPShare *share = DPAP_SHARE (object);
 
 	switch (prop_id) {
 	/* FIXME: */
@@ -153,7 +153,7 @@ dpap_share_get_property (GObject *object,
 			    GValue *value,
 			    GParamSpec *pspec)
 {
-	DPAPShare *share = DPAP_SHARE (object);
+	// DPAPShare *share = DPAP_SHARE (object);
 
 	switch (prop_id) {
 	default:
@@ -444,12 +444,6 @@ add_entry_to_mlcl (gpointer id,
 		dmap_structure_add (mlit, DMAP_CC_PFDT, data, size);
 	}
 	return;
-}
-
-static void
-debug_param (gpointer key, gpointer val, gpointer user_data)
-{
-        g_debug ("%s %s", (char *) key, (char *) val);
 }
 
 static void
