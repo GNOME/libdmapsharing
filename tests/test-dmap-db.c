@@ -28,7 +28,7 @@ struct TestDMAPDbPrivate {
 };
 
 static DMAPRecord *
-test_dmap_db_lookup_by_id (DMAPDb *db, guint id)
+test_dmap_db_lookup_by_id (const DMAPDb *db, guint id)
 {
 	DMAPRecord *record;
 	record = g_hash_table_lookup (TEST_DMAP_DB (db)->priv->db, GUINT_TO_POINTER (id));
@@ -50,7 +50,7 @@ test_dmap_db_count (const DMAPDb *db)
 	return g_hash_table_size (TEST_DMAP_DB (db)->priv->db);
 }
 
-gint
+guint
 test_dmap_db_add (DMAPDb *db, DMAPRecord *record)
 {
         guint id;
