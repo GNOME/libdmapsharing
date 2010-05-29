@@ -65,6 +65,9 @@ typedef struct _DMAPRecordInterface DMAPRecordInterface;
 
 struct _DMAPRecordInterface {
 	GTypeInterface parent;
+
+	GByteArray * (*to_blob)	      (DMAPRecord *record);
+	DMAPRecord * (*set_from_blob) (DMAPRecord *record, GByteArray *blob);
 };
 
 typedef unsigned long long bitwise;
@@ -76,6 +79,22 @@ struct MLCL_Bits {
 };
 
 GType       dmap_record_get_type      (void);
+
+/**
+ * dmap_record_to_blob:
+ * @record: A DMAPRecord.
+ *
+ * Returns: A byte array representation of the record.
+ */
+GByteArray *dmap_record_to_blob (DMAPRecord *record);
+
+/**
+ * dmap_record_from_blob:
+ * @blob: A byte array representation of a record.
+ *
+ * Returns: The record.
+ */
+DMAPRecord *dmap_record_set_from_blob (DMAPRecord *record, GByteArray *blob);
 
 #endif /* __DMAP_RECORD_H */
 

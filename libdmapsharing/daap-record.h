@@ -71,8 +71,6 @@ struct _DAAPRecordInterface {
 
 	gboolean	(*itunes_compat) (DAAPRecord *record);
 	GInputStream *	(*read)	         (DAAPRecord *record, GError **err);
-	GByteArray   *  (*to_blob)       (DAAPRecord *record);
-	DAAPRecord   *  (*new_from_blob) (DAAPRecord *record, GByteArray *blob);
 };
 
 GType         daap_record_get_type      (void);
@@ -94,22 +92,6 @@ gboolean      daap_record_itunes_compat (DAAPRecord *record);
  * associated with record.
  */
 GInputStream *daap_record_read          (DAAPRecord *record, GError **err);
-
-/**
- * daap_record_to_blob:
- * @record: a DAAPRecord.
- *
- * Returns: A serialized representation of the record.
- */
-GByteArray *daap_record_to_blob (DAAPRecord *record);
-
-/**
- * daap_record_new_from_blob:
- * @blob: a serialized DAAPRecord representation.
- *
- * Returns: A DAAPRecord.
- */
-DAAPRecord *daap_record_new_from_blob (DAAPRecord *record, GByteArray *blob);
 
 #endif /* __DAAP_RECORD_H */
 
