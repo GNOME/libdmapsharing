@@ -67,6 +67,12 @@ dmap_db_lookup_by_id (const DMAPDb *db, guint id)
 	return DMAP_DB_GET_INTERFACE (db)->lookup_by_id (db, id);
 }
 
+DMAPRecord *
+dmap_db_lookup_by_path (const DMAPDb *db, const gchar *path)
+{
+	return DMAP_DB_GET_INTERFACE (db)->lookup_by_path (db, path);
+}
+
 void
 dmap_db_foreach	(const DMAPDb *db,
 		 GHFunc func,
@@ -79,6 +85,12 @@ guint
 dmap_db_add (DMAPDb *db, DMAPRecord *record)
 {
 	return DMAP_DB_GET_INTERFACE (db)->add (db, record);
+}
+
+guint
+dmap_db_add_path (DMAPDb *db, const gchar *path)
+{
+	return DMAP_DB_GET_INTERFACE (db)->add_path (db, path);
 }
 
 gulong

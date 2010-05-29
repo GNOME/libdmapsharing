@@ -2,6 +2,14 @@
 
 	* Add blob functions to DMAPRecord interface.
 
+	* Add lookup_by_path() to DMAPDb.
+
+	* Add add_path() to DMAPDb.
+
+	* Ensure dmap_container_db_lookup_by_id(),
+	dmap_container_record_get_id() and dmap_db_lookup_by_id() all
+	deal with guint ids.
+
 28 May 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Install dmap-md5.h.

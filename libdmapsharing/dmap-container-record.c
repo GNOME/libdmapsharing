@@ -66,7 +66,7 @@ dmap_container_record_get_type (void)
 	return object_type;
 }
 
-gint
+guint
 dmap_container_record_get_id (DMAPContainerRecord *record)
 {
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->get_id (record);

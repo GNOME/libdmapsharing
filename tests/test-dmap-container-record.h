@@ -55,7 +55,7 @@ GType test_dmap_container_record_get_type (void);
 
 TestDMAPContainerRecord *test_dmap_container_record_new           (void);
 
-gint            test_dmap_container_record_get_id        (DMAPContainerRecord *record);
+guint            test_dmap_container_record_get_id        (DMAPContainerRecord *record);
 
 const DMAPDb   *test_dmap_container_record_get_entries   (DMAPContainerRecord *record);
 

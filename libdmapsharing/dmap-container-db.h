@@ -69,7 +69,7 @@ typedef struct _DMAPContainerDbInterface DMAPContainerDbInterface;
 struct _DMAPContainerDbInterface {
 	GTypeInterface parent;
 
-	DMAPContainerRecord *(*lookup_by_id)    (DMAPContainerDb *db, gint id);
+	DMAPContainerRecord *(*lookup_by_id)    (DMAPContainerDb *db, guint id);
 
 	void        (*foreach) (DMAPContainerDb *db,
 				GHFunc func,
@@ -88,7 +88,7 @@ GType	    dmap_container_db_get_type        (void);
  * Returns: the database record corresponding to @id. This record should
  * be unrefed when no longer required.
  */
-DMAPContainerRecord *dmap_container_db_lookup_by_id    (DMAPContainerDb *db, gint id);
+DMAPContainerRecord *dmap_container_db_lookup_by_id    (DMAPContainerDb *db, guint id);
 
 /**
  * dmap_container_db_foreach:

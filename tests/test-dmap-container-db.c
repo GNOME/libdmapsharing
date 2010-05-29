@@ -27,7 +27,7 @@
 static DMAPContainerRecord *record = NULL;
 
 static DMAPContainerRecord *
-test_dmap_container_db_lookup_by_id (DMAPContainerDb *db, gint id)
+test_dmap_container_db_lookup_by_id (DMAPContainerDb *db, guint id)
 {
 	/* In reality, lookup the proper record and return it. */
 	return record;

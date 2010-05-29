@@ -69,7 +69,9 @@ struct _DMAPDbInterface {
 	GTypeInterface parent;
 
 	guint (*add)			(DMAPDb *db, DMAPRecord *record);
+	guint (*add_path)		(DMAPDb *db, const gchar *path);
 	DMAPRecord *(*lookup_by_id)	(const DMAPDb *db, guint id);
+	DMAPRecord *(*lookup_by_path)	(const DMAPDb *db, const gchar *path);
 	void (*foreach)			(const DMAPDb *db,
 					 GHFunc func,
 					 gpointer data);
@@ -104,6 +106,19 @@ GType dmap_db_get_type		    (void);
 guint        dmap_db_add	    (DMAPDb *db, DMAPRecord *record);
 
 /**
+ * dmap_db_add_path:
+ * @db: A media database.
+ * @path: A path to an appropriate media file.
+ *
+ * Create a record and add it to the database. 
+ *
+ * Returns: The ID for the newly added record.
+ *
+ * See also the notes for dmap_db_add regarding reference counting.
+ */
+guint        dmap_db_add_path	    (DMAPDb *db, const gchar *path);
+
+/**
  * dmap_db_lookup_by_id:
  * @db: A media database. 
  * @id: A record ID.
@@ -123,6 +138,18 @@ guint        dmap_db_add	    (DMAPDb *db, DMAPRecord *record);
  * returning a record pointer.
  */
 DMAPRecord *dmap_db_lookup_by_id    (const DMAPDb *db, guint id);
+
+/**
+ * dmap_db_lookup_by_path:
+ * @db: A media database. 
+ * @path: A record path.
+ *
+ * Returns: the database record corresponding to @path. This record should
+ * be unrefed by the calling code when no longer required.
+ *
+ * See also the notes for dmap_db_lookup_by_id regarding reference counting.
+ */
+DMAPRecord *dmap_db_lookup_by_path  (const DMAPDb *db, const gchar *path);
 
 /**
  * dmap_db_foreach:

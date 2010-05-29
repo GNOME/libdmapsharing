@@ -60,7 +60,7 @@ test_dmap_container_record_get_property (GObject *object,
 }
 
 
-gint
+guint
 test_dmap_container_record_get_id (DMAPContainerRecord *record)
 {
 	return 2;

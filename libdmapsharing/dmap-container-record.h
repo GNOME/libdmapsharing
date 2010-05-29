@@ -68,7 +68,7 @@ typedef struct _DMAPContainerRecordInterface DMAPContainerRecordInterface;
 struct _DMAPContainerRecordInterface {
 	GTypeInterface parent;
 	
-	gint		(*get_id)	    (DMAPContainerRecord *record);
+	guint		(*get_id)	    (DMAPContainerRecord *record);
 
 	void (*add_entry) (DMAPContainerRecord *container_record, DMAPRecord *record, gint id);
 
@@ -85,7 +85,7 @@ GType       dmap_container_record_get_type         (void);
  *
  * Returns: the ID for the given record.
  */
-gint        dmap_container_record_get_id           (DMAPContainerRecord *record);
+guint       dmap_container_record_get_id           (DMAPContainerRecord *record);
 
 /**
  * dmap_container_record_add_entry:

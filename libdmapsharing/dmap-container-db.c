@@ -54,7 +54,7 @@ dmap_container_db_get_type (void)
 }
 
 DMAPContainerRecord *
-dmap_container_db_lookup_by_id (DMAPContainerDb *db, gint id)
+dmap_container_db_lookup_by_id (DMAPContainerDb *db, guint id)
 {
 	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->lookup_by_id (db, id);
 }
