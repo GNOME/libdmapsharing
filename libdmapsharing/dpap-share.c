@@ -366,12 +366,14 @@ add_entry_to_mlcl (gpointer id,
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
 		dmap_structure_add (mlit, DMAP_CC_MINM, filename);
+		g_free (filename);
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) GPOINTER_TO_UINT (id));
 	/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP: */
 	g_object_get (record, "aspect-ratio", &aspect_ratio, NULL);
 	dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
+	g_free (aspect_ratio);
 	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
 		gint creation_date;
 		g_object_get (record, "creation-date", &creation_date, NULL);
@@ -381,11 +383,13 @@ add_entry_to_mlcl (gpointer id,
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PIMF, filename);
+		g_free (filename);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
 		gchar *format;
 		g_object_get (record, "format", &format, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PFMT, format);
+		g_free (format);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
 		gint filesize;
@@ -416,6 +420,7 @@ add_entry_to_mlcl (gpointer id,
 		gchar *comments;
 		g_object_get (record, "comments", &comments, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PCMT, comments);
+		g_free (comments);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
@@ -425,7 +430,7 @@ add_entry_to_mlcl (gpointer id,
 			g_object_get (record, "filesize", &size, NULL);
 		} else {
 			/* Should be PHOTO_HIRES */
-			const char *location;
+			char *location;
 			g_object_get (record, "location", &location, NULL);
 			if (mapped_file) {
 				/* Free any previously mapped image */
@@ -440,6 +445,7 @@ add_entry_to_mlcl (gpointer id,
 				data = (unsigned char *) g_mapped_file_get_contents (mapped_file);
 				size = g_mapped_file_get_length (mapped_file);
 			}
+			g_free (location);
 		}
 		dmap_structure_add (mlit, DMAP_CC_PFDT, data, size);
 	}

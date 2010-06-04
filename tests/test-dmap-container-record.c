@@ -79,10 +79,10 @@ test_dmap_container_record_get_entry_count (DMAPContainerRecord *record)
         return 1;
 }
 
-const DMAPDb *
+DMAPDb *
 test_dmap_container_record_get_entries (DMAPContainerRecord *record)
 {
-	return entries;
+	return g_object_ref (entries);
 }
 
 static void

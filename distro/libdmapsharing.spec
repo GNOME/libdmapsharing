@@ -1,5 +1,5 @@
 Name: libdmapsharing
-Version: 1.9.0.16
+Version: 1.9.0.19
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://downloads.sourceforge.net/%name/%{name}-%{version}.tar.gz
@@ -58,10 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
-* Sun Apr 04 2010 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.16-1
-- New upstream version.
-
-* Sun Nov 29 2009 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.14-1
+* Fri Aug 28 2009 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.18-1
 - New upstream version.
 
 * Fri Aug 28 2009 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.13-1

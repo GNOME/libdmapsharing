@@ -74,7 +74,7 @@ struct _DMAPContainerRecordInterface {
 
 	guint64 (*get_entry_count) (DMAPContainerRecord *record);
 
-	const DMAPDb *(*get_entries) (DMAPContainerRecord *record);
+	DMAPDb *(*get_entries) (DMAPContainerRecord *record);
 };
 
 GType       dmap_container_record_get_type         (void);
@@ -114,7 +114,7 @@ guint64     dmap_container_record_get_entry_count  (DMAPContainerRecord *record)
  *
  * Returns: A pointer to a DMAPDb containing the entries contained in record.
  */
-const DMAPDb *dmap_container_record_get_entries      (DMAPContainerRecord *record);
+DMAPDb *dmap_container_record_get_entries      (DMAPContainerRecord *record);
 
 #endif /* __DMAP_CONTAINER_RECORD_H */
 

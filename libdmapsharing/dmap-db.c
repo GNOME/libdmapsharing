@@ -67,10 +67,10 @@ dmap_db_lookup_by_id (const DMAPDb *db, guint id)
 	return DMAP_DB_GET_INTERFACE (db)->lookup_by_id (db, id);
 }
 
-DMAPRecord *
-dmap_db_lookup_by_path (const DMAPDb *db, const gchar *path)
+guint
+dmap_db_lookup_id_by_location (const DMAPDb *db, const gchar *location)
 {
-	return DMAP_DB_GET_INTERFACE (db)->lookup_by_path (db, path);
+	return DMAP_DB_GET_INTERFACE (db)->lookup_id_by_location (db, location);
 }
 
 void
@@ -85,6 +85,12 @@ guint
 dmap_db_add (DMAPDb *db, DMAPRecord *record)
 {
 	return DMAP_DB_GET_INTERFACE (db)->add (db, record);
+}
+
+guint
+dmap_db_add_with_id (DMAPDb *db, DMAPRecord *record, guint id)
+{
+	return DMAP_DB_GET_INTERFACE (db)->add_with_id (db, record, id);
 }
 
 guint

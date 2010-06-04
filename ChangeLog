@@ -1,3 +1,20 @@
+04 June 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Add dmap_db_add_with_id() to DMAPDb interface.
+
+	* dmap_container_record_get_entries() must not return a const
+	because the return value should be free'd.
+
+01 June 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Unref value returned by dmap_container_record_get_entries().
+
+	* Free strings returned by g_object_get().
+
+30 May 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Change lookup_by_path() to lookup_by_location().
+
 29 May 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add blob functions to DMAPRecord interface.

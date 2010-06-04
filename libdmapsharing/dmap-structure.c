@@ -314,15 +314,6 @@ dmap_buffer_read_string (const gchar *buf, gssize size)
     }
 }
 
-//#define PARSE_DEBUG
-#define PARSE_DEBUG_FILE "dmapbuffer"
-
-#ifdef PARSE_DEBUG
-#include <unistd.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
-
 static void 
 dmap_structure_parse_container_buffer (GNode *parent, 
                       const guchar *buf, 
@@ -337,23 +328,17 @@ dmap_structure_parse_container_buffer (GNode *parent,
         GNode *node = NULL;
         GType gtype;
         
-#ifdef PARSE_DEBUG
-        g_print ("l is %d and buf_length is %d\n", l, buf_length);
-#endif        
+        g_debug ("l is %d and buf_length is %d\n", l, buf_length);
 
         /* we need at least 8 bytes, 4 of content_code and 4 of size */
         if (buf_length - l < 8) {
-#ifdef PARSE_DEBUG
-            g_print ("Malformed response recieved\n");
-#endif
+            g_debug ("Malformed response recieved\n");
             return;
         }
         
         cc = dmap_content_code_read_from_buffer ((const gchar*)&(buf[l]));
         if (cc == DMAP_CC_INVALID) {
-#ifdef PARSE_DEBUG
-            g_print ("Invalid/Unknown content_code recieved\n");
-#endif
+            g_debug ("Invalid/Unknown content_code recieved\n");
             return;
         }
         l += 4;
@@ -366,16 +351,12 @@ dmap_structure_parse_container_buffer (GNode *parent,
          * then get out before we start processing it
          */
         if (codesize > buf_length - l - 4 || codesize < 0) {
-#ifdef PARSE_DEBUG
-            g_print ("Invalid codesize %d recieved in buf_length %d\n", codesize, buf_length);
-#endif
+            g_debug ("Invalid codesize %d recieved in buf_length %d\n", codesize, buf_length);
             return;
         }
         l += 4;
 
-#ifdef PARSE_DEBUG
-        g_print ("content_code = %d, codesize is %d, l is %d\n", cc, codesize, l);
-#endif
+        g_debug ("content_code = %d, codesize is %d, l is %d\n", cc, codesize, l);
         
         item = g_new0 (DMAPStructureItem, 1);
         item->content_code = cc;
@@ -387,16 +368,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
         if (gtype != G_TYPE_NONE) {
             g_value_init (&(item->content), gtype);
         }
-        
-#ifdef PARSE_DEBUG 
-        {
-            guint i;
-
-            for (i = 2; i < g_node_depth (node); i++) {
-                g_print ("\t");
-            }
-        }
-#endif
         
 // FIXME USE THE G_TYPE CONVERTOR FUNCTION dmap_type_to_gtype
         switch (dmap_content_code_dmap_type (item->content_code)) {
@@ -410,9 +381,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 1;
                 g_value_set_char (&(item->content), c);
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, content (%d): \"%c\"\n", dmap_content_code_string (item->content_code), codesize, (gchar)c);
-#endif
+                g_debug ("Code: %s, content (%d): \"%c\"\n", dmap_content_code_string (item->content_code), codesize, (gchar)c);
 
                 break;
             }
@@ -425,9 +394,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
 
                 item->size = 2;
                 g_value_set_int (&(item->content),(gint32)s);
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, content (%d): %hi\n", dmap_content_code_string (item->content_code), codesize, s);
-#endif
+                g_debug ("Code: %s, content (%d): %hi\n", dmap_content_code_string (item->content_code), codesize, s);
 
                 break;
             }
@@ -441,9 +408,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 4;
                 g_value_set_int (&(item->content), i);
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, content (%d): %d\n", dmap_content_code_string (item->content_code), codesize, i);
-#endif
+                g_debug ("Code: %s, content (%d): %d\n", dmap_content_code_string (item->content_code), codesize, i);
                 break;
             }
             case DMAP_TYPE_INT64: {
@@ -455,9 +420,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 8;
                 g_value_set_int64 (&(item->content), i);
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, content (%d): %"G_GINT64_FORMAT"\n", dmap_content_code_string (item->content_code), codesize, i);
-#endif
+                g_debug ("Code: %s, content (%d): %"G_GINT64_FORMAT"\n", dmap_content_code_string (item->content_code), codesize, i);
 
                 break;
             }
@@ -466,9 +429,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
 
                 item->size = strlen (s);
                 g_value_set_string (&(item->content), s);
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, content (%d): \"%s\"\n", dmap_content_code_string (item->content_code), codesize, s);
-#endif
+                g_debug ("Code: %s, content (%d): \"%s\"\n", dmap_content_code_string (item->content_code), codesize, s);
 
                 break;
             }
@@ -498,16 +459,12 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 4;
                 g_value_set_double (&(item->content), v);
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, content: %f\n", dmap_content_code_string (item->content_code), v);
-#endif
+                g_debug ("Code: %s, content: %f\n", dmap_content_code_string (item->content_code), v);
 
                 break;
             }
             case DMAP_TYPE_CONTAINER: {
-#ifdef PARSE_DEBUG
-                g_print ("Code: %s, container\n", dmap_content_code_string (item->content_code));
-#endif
+                g_debug ("Code: %s, container\n", dmap_content_code_string (item->content_code));
                 dmap_structure_parse_container_buffer (node,&(buf[l]), codesize);
                 break;
             }
@@ -526,16 +483,6 @@ dmap_structure_parse (const gchar *buf,
     GNode *root = NULL;
     GNode *child = NULL;
 
-#ifdef PARSE_DEBUG
-    {
-        gint fd;
-
-        fd = open (PARSE_DEBUG_FILE, O_WRONLY | O_CREAT);
-        write (fd, (const void *)buf, (size_t)buf_length);
-        close (fd);
-    }
-#endif
-    
     root = g_node_new (NULL);
 
     dmap_structure_parse_container_buffer (root, (guchar *)buf, buf_length);

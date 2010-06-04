@@ -57,8 +57,6 @@ TestDMAPContainerRecord *test_dmap_container_record_new           (void);
 
 guint            test_dmap_container_record_get_id        (DMAPContainerRecord *record);
 
-const DMAPDb   *test_dmap_container_record_get_entries   (DMAPContainerRecord *record);
-
 #endif /* __TEST_DMAP_CONTAINER_RECORD */
 
 G_END_DECLS

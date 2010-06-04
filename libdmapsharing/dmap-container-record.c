@@ -86,7 +86,7 @@ dmap_container_record_get_entry_count (DMAPContainerRecord *record)
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->get_entry_count (record);
 }
 
-const DMAPDb *
+DMAPDb *
 dmap_container_record_get_entries (DMAPContainerRecord *record)
 {
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->get_entries (record);

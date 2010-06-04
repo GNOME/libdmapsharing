@@ -2,14 +2,11 @@ iTunes '09, segfault:
 	dmap_container_record_get_entry_count:86
 	_dmap_share_add_playlist_to_mlcl:1016
 
-Combine daap- and dpap-share.c filter parser (see filterstr). USE DPAP's
-BECUASE IT IS NEWER!
+Replace dmap-md5.[ch] with GChecksum.
 
 Ensure client test catches newly shared files?
 
 Do transcode based on client?
-
-Ensure D[AP]APRecord's properly implement finalize.
 
 daap-music.c
 daap-music.h
@@ -86,7 +83,6 @@ Fix seeking.
 Documentation, see README (put documentation in test code?).
 
 Clean up test_dmap_server.
-
 	Fix code that determines path of test.jpeg.
 
 See FIXME's in dmap-share.c, daap-share.c and dpap-share.c.

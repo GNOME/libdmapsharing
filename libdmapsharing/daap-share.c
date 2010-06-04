@@ -543,9 +543,10 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
-		const gchar *title;
+		gchar *title;
 		g_object_get (record, "title", &title, NULL);
 		dmap_structure_add (mlit, DMAP_CC_MINM, title);
+		g_free (title);
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
@@ -558,16 +559,18 @@ add_entry_to_mlcl (gpointer id,
 		dmap_structure_add (mlit, DMAP_CC_ASUL, "daap://192.168.0.100:%u/databases/1/items/%d.%s?session-id=%s", data->port, *id, daap_record_get_format (DAAP_RECORD (record)), data->session_id);
 	*/
 	if (_dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
-		const gchar *album;
+		gchar *album;
 		g_object_get (record, "daap.songalbum", &album, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAL, album);
+		g_free (album);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
-		const gchar *artist;
+		gchar *artist;
 		g_object_get (record, "daap.songartist", &artist, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
+		g_free (artist);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
 		gint32 bitrate;
@@ -607,15 +610,17 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
 		gchar *format;
 		if (transcode_format)
-			format = transcode_format;
+			format = g_strdup (transcode_format);
 		else
 			g_object_get (record, "format", &format, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASFM, format);
+		g_free (format);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre;
 		g_object_get (record, "daap.songgenre", &genre, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
+		g_free (genre);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
 		dmap_structure_add (mlit, DMAP_CC_ASDT, ""); /* FIXME: e.g., wav audio file */

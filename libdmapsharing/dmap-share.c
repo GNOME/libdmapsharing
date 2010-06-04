@@ -1078,6 +1078,8 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpoi
 	dmap_structure_add (mlit, DMAP_CC_MINM, name);
 	dmap_structure_add (mlit, DMAP_CC_MIMC, (gint32) num_songs);
 
+	g_free (name);
+
 	return;
 } 
 
@@ -1364,7 +1366,7 @@ _dmap_share_databases (DMAPShare *share,
 			dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
 		} else {
 			DMAPContainerRecord *record;
-			const DMAPDb *entries;
+			DMAPDb *entries;
 			guint num_songs;
 			
 			record = dmap_container_db_lookup_by_id (share->priv->container_db, pl_id);
@@ -1377,6 +1379,7 @@ _dmap_share_databases (DMAPShare *share,
 
 			dmap_db_foreach (entries, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
 
+			g_object_unref (entries);
 			g_object_unref (record);
 		}
 
