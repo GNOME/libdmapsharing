@@ -14,7 +14,8 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(pcfiles)
 
 EXTRA_DIST =				\
-	autogen.sh				\
-	libdmapsharing.pc.in
+	autogen.sh			\
+	libdmapsharing.pc.in		\
+	README-Memory
 
 CLEANFILES = $(pcfiles)

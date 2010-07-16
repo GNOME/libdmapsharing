@@ -1,0 +1,48 @@
+This documents the effort to make dmapd and libdmapsharing more memory
+efficient.
+
+I found that dmapd used a significant amount of heap space while trying to
+port dmapd to OpenWRT on a WRT160NL router with 32 Megabytes of RAM. A
+2,419-song library caused dmapd on x86_64 to use 7,413,760 bytes of heap
+space after reading the library into memory. Furthermore, connecting to
+dmapd using a DAAP client and receiving a list of songs caused heap usage
+to increase to over 10 Megabytes. Note that this memory usage might be
+smaller on the WRT160NL due to its 32-bit architecture, but it is still
+significant in size.
+
+I use the following tools to troubleshoot memory issues:
+
+	grep heap /proc/PID/maps	(current heap size)
+	valgrind / memcheck		(memory leaks)
+	valgrind / massif		(max heap size and memory over time)
+	gdb
+	objdump -t OBJECT-FILE | grep -e "\.bss" -e "\.data" | sort -k5 
+		| c++filt | tail
+
+I have made the following changes in order to make dmapd more memory
+efficient:
+
+1. Replace the hash table-based DMAPDb implementation with a Berkeley
+Database implementation. This has not resulted in any improvement,
+so the hash table implementation is once again the default.
+
+2. Fixed several memory leaks after analysing with valgrind.
+
+	Heap without client connection: 3,940,352 bytes
+
+3. Implement database cache so that dmapd does not need to use GStreamer
+to read media metadata each time it is run.
+
+	Heap without client connection using DB cache: 3,346,432 bytes
+
+4. Replace the DMAPDb in the DMAPContainerRecord implementation with a
+GSList of ID's.
+
+	Heap without client connection using DB cache: 4,759,552 bytes
+
+5. Implement "stringletons" and fix errors in 4) above.
+
+	Heap without client connection using DB cache: 2,854,912 bytes
+	Heap without client connection: 3,518,464 bytes
+	Heap after client connection and song list: 6,864,896 bytes
+	Max heap usages (massif): 8,945,760 bytes

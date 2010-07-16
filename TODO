@@ -1,3 +1,5 @@
+Reduce the memory usage while building response to media list query.
+
 iTunes '09, segfault:
 	dmap_container_record_get_entry_count:86
 	_dmap_share_add_playlist_to_mlcl:1016
