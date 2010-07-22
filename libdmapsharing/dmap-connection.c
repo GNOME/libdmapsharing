@@ -362,6 +362,7 @@ dmap_connection_build_message (DMAPConnection *connection,
 	SoupMessage *message = NULL;
 	SoupURI *base_uri = NULL;
 	SoupURI *uri = NULL;
+	char *uri_str = NULL;
 
 	g_object_get (connection, "base-uri", &base_uri, NULL);
 	if (base_uri == NULL) {
@@ -375,52 +376,14 @@ dmap_connection_build_message (DMAPConnection *connection,
 
 	message = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
 
-	soup_message_headers_append (message->request_headers, "User-Agent", DMAP_USER_AGENT);
-	soup_message_headers_append (message->request_headers, "Client-DAAP-Version", 		"3.0");
-	soup_message_headers_append (message->request_headers, "Accept-Language", 		"en-us, en;q=5.0");
-#ifdef HAVE_LIBZ
-	soup_message_headers_append (message->request_headers, "Accept-Encoding",		"gzip");
-#endif
-	soup_message_headers_append (message->request_headers, "Client-DAAP-Access-Index", 	"2");
-
-	if (connection->priv->password_protected == TRUE
-	    && (connection->priv->username == NULL
-	        || connection->priv->password == NULL)) {
-		g_debug ("No username or no password provided");
-	} else {
-
-		char *h;
-		char *user_pass;
-		char *token;
-
-		user_pass = g_strdup_printf ("%s:%s", connection->priv->username, connection->priv->password);
-		token = g_base64_encode ((guchar *)user_pass, strlen (user_pass));
-		h = g_strdup_printf ("Basic %s", token);
-
-		g_free (token);
-		g_free (user_pass);
-
-		soup_message_headers_append (message->request_headers, "Authorization", h);
-		g_free (h);
-	}
-
-	if (need_hash) {
-		gchar hash[33] = {0};
-		gchar *no_daap_path = (gchar *)path;
-
-		if (g_ascii_strncasecmp (path, "daap://", 7) == 0) {
-			no_daap_path = strstr (path, "/data");
-		}
-
-		dmap_hash_generate ((short)floor (version), (const guchar*)no_daap_path, 2, (guchar*)hash, req_id);
-
-		soup_message_headers_append (message->request_headers, "Client-DAAP-Validation", hash);
-	}
-	if (send_close) {
-		soup_message_headers_append (message->request_headers, "Connection", "close");
-	}
+	/* FIXME: only set Client-DAAP-Validation if need_hash? */
+	/* FIXME: only set Connection if send_close? */
+	uri_str = soup_uri_to_string (uri, FALSE);
+	message->request_headers =
+		dmap_connection_get_headers (connection, uri_str);
 
 	soup_uri_free (uri);
+	g_free (uri_str);
 
 	return message;
 }
@@ -1685,15 +1648,20 @@ dmap_connection_get_headers (DMAPConnection *connection,
 		char *user_pass;
 		char *token;
 
-		user_pass = g_strdup_printf ("%s:%s", priv->username, priv->password);
-		token = g_base64_encode ((guchar *)user_pass, strlen (user_pass));
-		h = g_strdup_printf ("Basic %s", token);
+		if (priv->username == NULL || priv->password == NULL) {
+			g_debug ("No username or no password provided");
+		} else {
 
-		g_free (token);
-		g_free (user_pass);
+			user_pass = g_strdup_printf ("%s:%s", priv->username, priv->password);
+			token = g_base64_encode ((guchar *)user_pass, strlen (user_pass));
+			h = g_strdup_printf ("Basic %s", token);
 
-		soup_message_headers_append (headers, "Authentication", h);
-		g_free (h);
+			g_free (token);
+			g_free (user_pass);
+
+			soup_message_headers_append (headers, "Authentication", h);
+			g_free (h);
+		}
 	}
 
 	return headers;

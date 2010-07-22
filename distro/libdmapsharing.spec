@@ -1,5 +1,5 @@
 Name: libdmapsharing
-Version: 1.9.0.19
+Version: 2.0.0
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://downloads.sourceforge.net/%name/%{name}-%{version}.tar.gz

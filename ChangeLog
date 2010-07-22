@@ -1,3 +1,8 @@
+22 July 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Remove redundancy between dmap_connection_build_message()
+	and dmap_connection_build_message().
+
 04 June 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add dmap_db_add_with_id() to DMAPDb interface.
