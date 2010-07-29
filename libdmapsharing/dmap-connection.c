@@ -382,6 +382,11 @@ dmap_connection_build_message (DMAPConnection *connection,
 	message->request_headers =
 		dmap_connection_get_headers (connection, uri_str);
 
+	soup_message_headers_append (message->request_headers,
+				    "User-Agent", DMAP_USER_AGENT);
+	soup_message_headers_append (message->request_headers,
+				    "Connection", "close");
+
 	soup_uri_free (uri);
 	g_free (uri_str);
 
@@ -1628,7 +1633,6 @@ dmap_connection_get_headers (DMAPConnection *connection,
 
 	soup_message_headers_append (headers, "Accept", "*/*");
 	soup_message_headers_append (headers, "Cache-Control", "no-cache");
-	soup_message_headers_append (headers, "User-Agent", DMAP_USER_AGENT);
 	soup_message_headers_append (headers, "Accept-Language",
 				    "en-us, en;q=5.0");
 	soup_message_headers_append (headers, "Client-DAAP-Access-Index",
@@ -1640,8 +1644,6 @@ dmap_connection_get_headers (DMAPConnection *connection,
 	soup_message_headers_append (headers, "Client-DAAP-Request-ID",
 				     request_id);
 	g_free (request_id);
-
-	soup_message_headers_append (headers, "Connection", "close");
 
 	if (priv->password_protected) {
 		char *h;
