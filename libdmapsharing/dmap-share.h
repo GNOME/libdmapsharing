@@ -148,6 +148,10 @@ typedef struct {
 	void	  (*update)        (DMAPShare *share, SoupServer *server,
 				    SoupMessage *message, const char *path,
 				    GHashTable *query, SoupClientContext *ctx);
+				    
+	void	  (*ctrl_int)        (DMAPShare *share, SoupServer *server,
+				    SoupMessage *message, const char *path,
+				    GHashTable *query, SoupClientContext *ctx);
 
 	/* Virtual methods: MDNS callbacks */
 	void	  (*published)	   (DMAPShare         *share,
@@ -252,6 +256,20 @@ void _dmap_share_update (DMAPShare *share,
 		  GHashTable        *query,
 		  SoupClientContext *context);
 
+void
+_dmap_share_databases (DMAPShare *share,
+                       SoupServer        *server,
+		       SoupMessage       *message,
+		       const char        *path,
+		       GHashTable        *query,
+		       SoupClientContext *context);
+
+void _dmap_share_ctrl_int (DMAPShare         *share,
+		           SoupServer        *server,
+		           SoupMessage       *message,
+		           const char        *path,
+		           GHashTable        *query,
+		           SoupClientContext *context);
 
 /* Virtual methods: MDNS callbacks */
 void _dmap_share_published     (DMAPShare         *share,
@@ -262,13 +280,6 @@ void _dmap_share_name_collision(DMAPShare         *share,
 			       DmapMdnsPublisher *publisher,
 			       const char        *name);
 
-void
-_dmap_share_databases (DMAPShare *share,
-                       SoupServer        *server,
-		       SoupMessage       *message,
-		       const char        *path,
-		       GHashTable        *query,
-		       SoupClientContext *context);
 
 #endif /* __DMAP_SHARE_H */
 

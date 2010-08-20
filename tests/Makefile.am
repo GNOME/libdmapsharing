@@ -13,6 +13,7 @@ test_dmap_client_LDADD = \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GOBJECT_LIBS) \
+	$(GDKPIXBUF_LIBS) \
 	$(SOUP_LIBS) \
 	$(IMAGEMAGICK_LIBS) \
 	$(MDNS_LIBS)
@@ -32,6 +33,7 @@ test_dmap_server_LDADD = \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GOBJECT_LIBS) \
+	$(GDKPIXBUF_LIBS) \
 	$(SOUP_LIBS) \
 	$(IMAGEMAGICK_LIBS) \
 	$(MDNS_LIBS)
@@ -41,6 +43,7 @@ AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GTHREAD_CFLAGS) \
 	$(GOBJECT_CFLAGS) \
+	$(GDKPIXBUF_CFLAGS) \
 	$(SOUP_CFLAGS) \
 	$(MDNS_CFLAGS)
 

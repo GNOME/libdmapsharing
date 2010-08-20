@@ -135,7 +135,8 @@ typedef gboolean (* DMAPConnectionCallback)  (DMAPConnection *connection,
 
 typedef void (* DMAPResponseHandler) (DMAPConnection *connection,
                                       guint status,
-				      GNode *structure);
+                                      GNode *structure,
+                                      gpointer user_data);
 
 GType              dmap_connection_get_type        (void);
 
@@ -147,6 +148,7 @@ DMAPConnection * dmap_connection_new             (const char              *name,
 						       DMAPRecordFactory *factory);
 
 gboolean           dmap_connection_is_connected    (DMAPConnection        *connection);
+void               dmap_connection_setup           (DMAPConnection        *connection);
 void               dmap_connection_connect         (DMAPConnection        *connection,
 						       DMAPConnectionCallback callback,
 						       gpointer                 user_data);

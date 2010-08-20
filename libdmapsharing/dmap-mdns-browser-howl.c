@@ -210,6 +210,7 @@ resolve_cb (sw_discovery discovery,
 {
     char                   *host;
     char                   *name;
+    char                   *pair;
     sw_text_record_iterator it;
     gboolean                pp = FALSE;
     DMAPMdnsBrowserService *service;
@@ -239,6 +240,16 @@ resolve_cb (sw_discovery discovery,
                 if (name != NULL)
                     g_free (name);
                 name = g_strdup ((char *)val);
+            } else if (strcmp ((char *)key, "DvNm") == 0) {
+                if (name != NULL)
+                    g_free (name);
+                /* Remote's name is presented as DvNm in DACP */
+                name = g_strdup ((char *)val);
+            } else if (strcmp ((char *)key, "Pair") == 0) {
+                if (pair != NULL)
+                    g_free (pair);
+                /* Pair is used when first connecting to a DACP remote */
+                pair = g_strdup ((char *)val);
             }
         }
 
@@ -255,6 +266,7 @@ resolve_cb (sw_discovery discovery,
     service->host = g_strdup (host);
     service->port = port;
     service->password_protected = pp;
+    service->pair = pair;
     browser->priv->services = g_slist_append (browser->priv->services, service);
 
     g_signal_emit (browser,

@@ -1,8 +1,15 @@
-AC_INIT(libdmapsharing, 2.0.0)
+AC_INIT(libdmapsharing, 2.1.0)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AS_VERSION(libdmapsharing, LIBDMAPSHARING, 2, 0, 0, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+AS_VERSION(libdmapsharing, LIBDMAPSHARING, 2, 1, 0, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+
+dnl FIXME:
+dnl would like to automate this off the above definitions, but API might be 2.2 with version 2.1.
+dnl see also Makefile.am, libdmapsharing/Makefile.am and libdmapsharing.pc.in
+API_VERSION=2.2
+#AC_DEFINE(API_VERSION, $API_VERSION, [library API version])
+AC_SUBST(API_VERSION)
 
 AM_INIT_AUTOMAKE
 
@@ -104,6 +111,22 @@ fi
 dnl make GOBJECT_CFLAGS and GOBJECT_LIBS available
 AC_SUBST(GOBJECT_CFLAGS)
 AC_SUBST(GOBJECT_LIBS)
+
+dnl Check for gdk-pixbuf, needed for DACP Now Playing Artwork
+PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0,
+  HAVE_GDKPIXBUF=yes,
+  HAVE_GDKPIXBUF=no)
+
+if test x"$HAVE_GDKPIXBUF" = "xyes"; then
+  AC_DEFINE(HAVE_GDKPIXBUF, 1, [Define if gdk-pixbuf support is enabled])
+else
+  AC_WARN(Gdk-pixbuf library not present, Now Playing artwork might be affected.)
+fi
+
+AM_CONDITIONAL(USE_GDKPIXBUF, test x"$HAVE_GDKPIXBUF" = "xyes")
+
+AC_SUBST(GDKPIXBUF_CFLAGS)
+AC_SUBST(GDKPIXBUF_LIBS)
 
 AC_ARG_WITH(mdns,
    AC_HELP_STRING([--with-mdns=auto|howl|avahi|dns_sd],

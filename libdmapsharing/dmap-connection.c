@@ -90,7 +90,6 @@ struct DMAPConnectionPrivate {
 	DMAPRecordFactory *record_factory;
 
 	DMAPConnectionState state;
-	DMAPResponseHandler response_handler;
 	gboolean use_response_handler_thread;
 	float progress;
 
@@ -430,6 +429,9 @@ typedef struct {
 	SoupMessage *message;
 	int status;
 	DMAPConnection *connection;
+
+	DMAPResponseHandler response_handler;
+	gpointer user_data;
 } DAAPResponseData;
 
 static void
@@ -556,14 +558,15 @@ actual_http_response_handler (DAAPResponseData *data)
 		} else {
 			int dmap_status = 0;
 			item = dmap_structure_find_item (structure, DMAP_CC_MSTT);
-			if (item)
+			if (item) {
 				dmap_status = g_value_get_int (&(item->content));
 
-			if (dmap_status != 200) {
-				g_debug ("Error, dmap.status is not 200 in response from %s",
-					  message_path);
+				if (dmap_status != 200) {
+					g_debug ("Error, dmap.status is not 200 in response from %s",
+						  message_path);
 
-				data->status = SOUP_STATUS_MALFORMED;
+					data->status = SOUP_STATUS_MALFORMED;
+				}
 			}
 		}
 		if (/* FIXME: ! rb_is_main_thread () */ TRUE) {
@@ -581,10 +584,8 @@ actual_http_response_handler (DAAPResponseData *data)
 		connection_set_error_message (data->connection, data->message->reason_phrase);
 	}
 
-	if (priv->response_handler) {
-		DMAPResponseHandler h = priv->response_handler;
-		priv->response_handler = NULL;
-		(*h) (data->connection, data->status, structure);
+	if (data->response_handler) {
+		(*(data->response_handler)) (data->connection, data->status, structure, data->user_data);
 	}
 
 	if (structure) {
@@ -601,22 +602,18 @@ actual_http_response_handler (DAAPResponseData *data)
 static void
 http_response_handler (SoupSession      *session,
 		       SoupMessage      *message,
-		       DMAPConnection *connection)
+		       DAAPResponseData *data)
 {
-	DAAPResponseData *data;
 	int response_length;
 
 	if (message->status_code == SOUP_STATUS_CANCELLED) {
 		g_debug ("Message cancelled");
+		g_free (data);
 		return;
 	}
 
-	data = g_new0 (DAAPResponseData, 1);
 	data->status = message->status_code;
 	response_length = message->response_body->length;
-
-	g_object_ref (G_OBJECT (connection));
-	data->connection = connection;
 
 	g_object_ref (G_OBJECT (message));
 	data->message = message;
@@ -629,7 +626,7 @@ http_response_handler (SoupSession      *session,
 	}
 
 	/* to avoid blocking the UI, handle big responses in a separate thread */
-	if (SOUP_STATUS_IS_SUCCESSFUL (data->status) && connection->priv->use_response_handler_thread) {
+	if (SOUP_STATUS_IS_SUCCESSFUL (data->status) && data->connection->priv->use_response_handler_thread) {
 		GError *error = NULL;
 		g_debug ("creating thread to handle daap response");
 		g_thread_create ((GThreadFunc) actual_http_response_handler,
@@ -651,10 +648,12 @@ http_get (DMAPConnection     *connection,
 	  gdouble               version,
 	  gint                  req_id,
 	  gboolean              send_close,
-	  DMAPResponseHandler handler,
+	  DMAPResponseHandler   handler,
+	  gpointer              user_data,
 	  gboolean              use_thread)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
+	DAAPResponseData *data;
 	SoupMessage *message;
 
 	message = dmap_connection_build_message (connection, path, need_hash, version, req_id, send_close);
@@ -667,10 +666,17 @@ http_get (DMAPConnection     *connection,
 	}
 
 	priv->use_response_handler_thread = use_thread;
-	priv->response_handler = handler;
+	
+	data = g_new0 (DAAPResponseData, 1);
+	data->response_handler = handler;
+	data->user_data = user_data;
+	
+	g_object_ref (G_OBJECT (connection));
+	data->connection = connection;
+	
 	soup_session_queue_message (priv->session, message,
 				    (SoupSessionCallback) http_response_handler,
-				    connection);
+				    data);
 	g_debug ("Queued message for http://%s:%d/%s",
 		  priv->base_uri->host,
 		  priv->base_uri->port,
@@ -685,10 +691,9 @@ dmap_connection_get (DMAPConnection *self,
                      DMAPResponseHandler handler,
                      gpointer user_data)
 {
-    /* FIXME: used to pass user_data as 8th argument, but this is not right. */
     return http_get (self, path, need_hash,
             self->priv->dmap_version, 0, FALSE,
-            (DMAPResponseHandler) handler, FALSE);
+            (DMAPResponseHandler) handler, user_data, FALSE);
 }
 
 static gboolean
@@ -708,7 +713,8 @@ emit_progress_idle (DMAPConnection *connection)
 static void
 handle_server_info (DMAPConnection *connection,
 		    guint             status,
-		    GNode            *structure)
+		    GNode            *structure,
+		    gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -732,7 +738,8 @@ handle_server_info (DMAPConnection *connection,
 static void
 handle_login (DMAPConnection *connection,
 	      guint             status,
-	      GNode            *structure)
+	      GNode            *structure,
+	      gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -769,7 +776,8 @@ handle_login (DMAPConnection *connection,
 static void
 handle_update (DMAPConnection *connection,
 	       guint             status,
-	       GNode            *structure)
+	       GNode            *structure,
+	       gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item;
@@ -794,7 +802,8 @@ handle_update (DMAPConnection *connection,
 static void
 handle_database_info (DMAPConnection *connection,
 		      guint             status,
-		      GNode            *structure)
+		      GNode            *structure,
+		      gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -841,7 +850,8 @@ handle_database_info (DMAPConnection *connection,
 static void
 handle_song_listing (DMAPConnection *connection,
 		     guint             status,
-		     GNode            *structure)
+		     GNode            *structure,
+		     gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -1061,7 +1071,8 @@ compare_playlists_by_name(gconstpointer a, gconstpointer b)
 static void
 handle_playlists (DMAPConnection *connection,
 		  guint             status,
-		  GNode            *structure)
+		  GNode            *structure,
+		  gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	GNode *listing_node;
@@ -1126,7 +1137,8 @@ handle_playlists (DMAPConnection *connection,
 static void
 handle_playlist_entries (DMAPConnection *connection,
 			 guint             status,
-			 GNode            *structure)
+			 GNode            *structure,
+			 gpointer          user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPPlaylist *playlist;
@@ -1183,7 +1195,8 @@ handle_playlist_entries (DMAPConnection *connection,
 static void
 handle_logout (DMAPConnection *connection,
 	       guint             status,
-	       GNode            *structure)
+	       GNode            *structure,
+	       gpointer          user_data)
 {
 	connection_disconnected (connection);
 
@@ -1266,6 +1279,17 @@ connected_cb (DMAPConnection       *connection,
 	}
 }
 
+void 
+dmap_connection_setup (DMAPConnection *connection) 
+{
+	connection->priv->session = soup_session_async_new ();
+
+	connection->priv->base_uri = soup_uri_new (NULL);
+	soup_uri_set_scheme (connection->priv->base_uri, SOUP_URI_SCHEME_HTTP);
+	soup_uri_set_host (connection->priv->base_uri, connection->priv->host);
+	soup_uri_set_port (connection->priv->base_uri, connection->priv->port);
+}
+
 void
 dmap_connection_connect (DMAPConnection        *connection,
 			    DMAPConnectionCallback callback,
@@ -1278,12 +1302,7 @@ dmap_connection_connect (DMAPConnection        *connection,
 
 	g_debug ("Creating new DAAP connection to %s:%d", connection->priv->host, connection->priv->port);
 
-	connection->priv->session = soup_session_async_new ();
-
-	connection->priv->base_uri = soup_uri_new (NULL);
-	soup_uri_set_scheme (connection->priv->base_uri, SOUP_URI_SCHEME_HTTP);
-	soup_uri_set_host (connection->priv->base_uri, connection->priv->host);
-	soup_uri_set_port (connection->priv->base_uri, connection->priv->port);
+	dmap_connection_setup (connection);
 
 	if (connection->priv->base_uri == NULL) {
 		g_debug ("Error parsing http://%s:%d", connection->priv->host, connection->priv->port);
@@ -1464,7 +1483,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 	case DMAP_GET_INFO:
 		g_debug ("Getting DAAP server info");
 		if (! http_get (connection, "/server-info", FALSE, 0.0, 0, FALSE,
-				(DMAPResponseHandler) handle_server_info, FALSE)) {
+				(DMAPResponseHandler) handle_server_info, NULL, FALSE)) {
 			g_debug ("Could not get DAAP connection info");
 			dmap_connection_state_done (connection, FALSE);
 		}
@@ -1499,7 +1518,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 	case DMAP_LOGIN:
 		g_debug ("Logging into DAAP server");
 		if (! http_get (connection, "/login", FALSE, 0.0, 0, FALSE,
-			       (DMAPResponseHandler) handle_login, FALSE)) {
+			       (DMAPResponseHandler) handle_login, NULL, FALSE)) {
 			g_debug ("Could not login to DAAP server");
 			/* FIXME: set state back to GET_PASSWORD to try again */
 			dmap_connection_state_done (connection, FALSE);
@@ -1511,7 +1530,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 		g_debug ("Getting DAAP server database revision number");
 		path = g_strdup_printf ("/update?session-id=%u&revision-number=1", priv->session_id);
 		if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
-			       (DMAPResponseHandler) handle_update, FALSE)) {
+			       (DMAPResponseHandler) handle_update, NULL, FALSE)) {
 			g_debug ("Could not get server database revision number");
 			dmap_connection_state_done (connection, FALSE);
 		}
@@ -1523,7 +1542,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 		path = g_strdup_printf ("/databases?session-id=%u&revision-number=%d",
 					priv->session_id, priv->revision_number);
 		if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
-			       (DMAPResponseHandler) handle_database_info, FALSE)) {
+			       (DMAPResponseHandler) handle_database_info, NULL, FALSE)) {
 			g_debug ("Could not get DAAP database info");
 			dmap_connection_state_done (connection, FALSE);
 		}
@@ -1543,7 +1562,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 					priv->session_id,
 					priv->revision_number);
 		if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
-			       (DMAPResponseHandler) handle_song_listing, TRUE)) {
+			       (DMAPResponseHandler) handle_song_listing, NULL, TRUE)) {
 			g_debug ("Could not get DAAP song listing");
 			dmap_connection_state_done (connection, FALSE);
 		}
@@ -1557,7 +1576,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 					priv->session_id,
 					priv->revision_number);
 		if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
-			       (DMAPResponseHandler) handle_playlists, TRUE)) {
+			       (DMAPResponseHandler) handle_playlists, NULL, TRUE)) {
 			g_debug ("Could not get DAAP playlists");
 			dmap_connection_state_done (connection, FALSE);
 		}
@@ -1576,7 +1595,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 						playlist->id,
 						priv->session_id, priv->revision_number);
 			if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
-				       (DMAPResponseHandler) handle_playlist_entries, TRUE)) {
+				       (DMAPResponseHandler) handle_playlist_entries, NULL, TRUE)) {
 				g_debug ("Could not get entries for DAAP playlist %d",
 					  priv->reading_playlist);
 				dmap_connection_state_done (connection, FALSE);
@@ -1589,7 +1608,7 @@ dmap_connection_do_something (DMAPConnection *connection)
 		g_debug ("Logging out of DAAP server");
 		path = g_strdup_printf ("/logout?session-id=%u", priv->session_id);
 		if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
-			       (DMAPResponseHandler) handle_logout, FALSE)) {
+			       (DMAPResponseHandler) handle_logout, NULL, FALSE)) {
 			g_debug ("Could not log out of DAAP server");
 			dmap_connection_state_done (connection, FALSE);
 		}

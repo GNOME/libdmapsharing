@@ -49,13 +49,15 @@ typedef enum {
 
 enum {
 	PROP_0,
+	PROP_SERVER,
 	PROP_NAME,
 	PROP_PASSWORD,
 	PROP_REVISION_NUMBER,
 	PROP_AUTH_METHOD,
 	PROP_DB,
 	PROP_CONTAINER_DB,
-	PROP_TRANSCODE_MIMETYPE
+	PROP_TRANSCODE_MIMETYPE,
+	PROP_TXT_RECORDS
 };
 
 struct DMAPSharePrivate {
@@ -82,6 +84,9 @@ struct DMAPSharePrivate {
 	/* The media database */
 	DMAPDb *db;
 	DMAPContainerDb *container_db;
+	
+	/* TXT-RECORDS published by mDNS */
+	gchar **txt_records;
 
 	GHashTable *session_ids;
 };
@@ -203,6 +208,21 @@ static void databases_adapter (SoupServer *server,
 						 context);
 }
 
+static void ctrl_int_adapter (SoupServer *server,
+                              SoupMessage *message,
+                              const char *path,
+                              GHashTable *query,
+                              SoupClientContext *context,
+                              DMAPShare *share)
+{
+	DMAP_SHARE_GET_CLASS (share)->ctrl_int (share,
+	                                        server,
+	                                        message,
+	                                        path,
+	                                        query,
+	                                        context);
+}
+
 gboolean
 _dmap_share_server_start (DMAPShare *share)
 {
@@ -259,6 +279,9 @@ _dmap_share_server_start (DMAPShare *share)
 	soup_server_add_handler (share->priv->server, "/databases",
 				 (SoupServerCallback) databases_adapter,
 				 share, NULL);
+	soup_server_add_handler (share->priv->server, "/ctrl-int",
+				 (SoupServerCallback) ctrl_int_adapter,
+				 share, NULL);
 	soup_server_run_async (share->priv->server);
 
 	/* using direct since there is no g_uint_hash or g_uint_equal */
@@ -309,6 +332,7 @@ _dmap_share_publish_start (DMAPShare *share)
 					      share->priv->port,
 					      DMAP_SHARE_GET_CLASS (share)->get_type_of_service (share),
 					      password_required,
+					      share->priv->txt_records,
 					      &error);
 
 	if (res == FALSE) {
@@ -438,6 +462,9 @@ _dmap_share_set_property (GObject *object,
 		/* FIXME: get or dup? */
                 share->priv->transcode_mimetype = g_value_dup_string (value);
                 break;
+        case PROP_TXT_RECORDS:
+                share->priv->txt_records = g_value_dup_boxed (value);
+                break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -453,6 +480,9 @@ _dmap_share_get_property (GObject *object,
 	DMAPShare *share = DMAP_SHARE (object);
 
 	switch (prop_id) {
+	case PROP_SERVER:
+		g_value_set_object (value, share->priv->server);
+		return;
 	case PROP_NAME:
 		g_value_set_string (value, share->priv->name);
 		break;
@@ -477,6 +507,9 @@ _dmap_share_get_property (GObject *object,
                 break;
         case PROP_TRANSCODE_MIMETYPE:
                 g_value_set_string (value, share->priv->transcode_mimetype);
+                break;
+        case PROP_TXT_RECORDS:
+                g_value_set_boxed (value, share->priv->txt_records);
                 break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -504,6 +537,8 @@ _dmap_share_finalize (GObject *object)
 
 	g_object_unref (share->priv->db);
 	g_object_unref (share->priv->container_db);
+	
+	g_strfreev (share->priv->txt_records);
 
 	if (share->priv->publisher) {
 		g_object_unref (share->priv->publisher);
@@ -538,7 +573,16 @@ dmap_share_class_init (DMAPShareClass *klass)
 	klass->published      = _dmap_share_published;
 	klass->name_collision = _dmap_share_name_collision;
 	klass->databases      = _dmap_share_databases;
+	klass->ctrl_int       = _dmap_share_ctrl_int;
 
+	g_object_class_install_property (object_class,
+					 PROP_SERVER,
+					 g_param_spec_object ("server",
+							      "Soup Server",
+							      "Soup server",
+							      SOUP_TYPE_SERVER,
+							      G_PARAM_READABLE));
+	
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
 					 g_param_spec_string ("name",
@@ -594,6 +638,15 @@ dmap_share_class_init (DMAPShareClass *klass)
                                                              "Set mimetype of stream after transcoding",
                                                              NULL,
                                                              G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+                                                             
+
+	g_object_class_install_property (object_class,
+                                         PROP_TXT_RECORDS,
+                                         g_param_spec_boxed ("txt-records",
+                                                             "TXT-Records",
+                                                             "Set TXT-Records used for MDNS publishing",
+                                                             G_TYPE_STRV,
+                                                             G_PARAM_READWRITE));
 
 	g_type_class_add_private (klass, sizeof (DMAPSharePrivate));
 }
@@ -1102,57 +1155,179 @@ _dmap_share_build_filter (gchar *filterstr)
 	 * 'daap.songgenre:Foo'+'daap.songartist:Bar'+'daap.songalbum:Baz'
 	 * or (iPhoto '09)
 	 * ('daap.idemid:1000','dmap:itemid:1001')
+	 * or (DACP):
+	 * ('com.apple.itunes.mediakind:1','com.apple.itunes.mediakind:32') 'daap.songartist!:'
          */
 
-	size_t len;
+	gchar *next_char;
+	GString *value;
+	//gboolean save_value;
+	gboolean is_key;
+	gboolean is_value;
+	gboolean new_group;
+	gboolean accept;
+	gboolean negate;
+	gint parentheses_count;
+	gint quotes_count;
+	FilterDefinition *def;
+	
 	GSList *list = NULL;
+	GSList *filter = NULL;
 
 	g_debug ("Filter string is %s.", filterstr);
 
-	len = strlen (filterstr);
-	filterstr = *filterstr == '(' ? filterstr + 1 : filterstr;
-	/* FIXME: I thought this should be -1, but there is a trailing ' ' in iPhoto '09: */
-	filterstr[len - 2] = filterstr[len - 2] == ')' ? 0x00 : filterstr[len - 2];
-
-	if (filterstr != NULL) {
-		int i;
-		gchar **t1 = g_strsplit (filterstr, ",", 0);
-
-		for (i = 0; t1[i]; i++) {
-			int j;
-			GSList *filter = NULL;
-			gchar **t2;
-
-			t2 = _dmap_db_strsplit_using_quotes (t1[i]);
-
-			for (j = 0; t2[j]; j++) {
-				FilterDefinition *def;
-				gchar **t3;
-
-				t3 = g_strsplit (t2[j], ":", 0);
-
-				def = g_new0 (FilterDefinition, 1);
-				def->key   = g_strdup (t3[0]);
-				def->value = g_strdup (t3[1]);
-
-				if (g_strcasecmp ("dmap.itemid", t3[0]) == 0) {
-					def->is_string = FALSE;
-				} else {
-					def->is_string = TRUE;
-				}
-
-				if (def != NULL)
-					filter = g_slist_append (filter, def);
-
-				g_strfreev (t3);
+	if (filterstr == NULL)
+		return NULL;
+	
+	next_char = filterstr;
+	
+	parentheses_count = 0;
+	quotes_count = 0;
+	is_key = TRUE;
+	is_value = FALSE;
+	new_group = FALSE;
+	negate = FALSE;
+	value = NULL;
+	def = NULL;
+	
+	// The query string is divided in groups of AND separated by a space,
+	// each group containing queries of OR separated by comma enclosed in
+	// parentheses. Queries are key, value pairs separated by ':' enclosed 
+	// in quotes or not.
+	// The result from this is a list of lists. Here is an example:
+	// String is ('com.apple.itunes.mediakind:1','com.apple.itunes.mediakind:32') 'daap.songartist!:'
+	// list:
+	// |-> filter1: -> com.apple.itunes.mediakind = 1
+	// |   |        -> com.apple.itunes.mediakind = 32
+	// |-> filter1: -> daap.songartist! = (null)
+	// This basically means that the query is (filter1 AND filter2), and
+	// filter1 is (com.apple.itunes.mediakind = 1) OR (com.apple.itunes.mediakind = 32)
+	while (TRUE) {
+		// We check each character to see if it should be included in
+		// the current value (the current value will become the query key
+		// or the query value). Anything that is not a special character
+		// handled below will be accepted (this means weird characters
+		// might appear in names).
+		// Handling of unicode characters is unknown, but as long it 
+		// doesn't appear as a character handled below, it will be
+		// included.
+		// This parser will result in unknown behaviour on bad-formatted
+		// queries (it does not check for syntax errors), but should not 
+		// crash. In this way it may accept much more syntaxes then
+		// other parsers.
+		accept = FALSE;
+		// A slash can escape characters such as ', so add the character
+		// after the slash.
+		if (*next_char == '\\') {
+			accept = TRUE;
+			next_char++;
+		} else {
+			switch (*next_char) {
+				case '(':
+					parentheses_count++;
+					break;
+				case ')':
+					parentheses_count--;
+					break;
+				case '\'':
+					if (quotes_count > 0) {
+						quotes_count = 0;
+					} else {
+						quotes_count = 1;
+					}
+					break;
+				case ' ':
+					if (quotes_count > 0) {
+						accept = TRUE;
+					} else {
+						new_group = TRUE;
+					}
+					break;
+				case ':':
+					// Inside values, they will be included in the 
+					// query string, otherwise it indicates there
+					// will be a value next.
+					if (is_value) {
+						accept = TRUE;
+					} else if (is_key) {
+						is_value = TRUE;
+					}
+					break;
+				case ',':
+				case '+':
+				case '\0':
+					// Don't accept these caracters
+					break;
+				case '!':
+					if (is_key && value) {
+						negate = TRUE;
+						break;
+					}
+				default:
+					accept = TRUE;
 			}
-
-			list = g_slist_append (list, filter);
-
-			g_strfreev (t2);
 		}
-		g_strfreev (t1);
+		//g_debug ("Char: %c, Accept: %s", *next_char, accept?"TRUE":"FALSE");
+		//Is the next character to be accepted?
+		if (accept) {
+			if (!value) {
+				value = g_string_new ("");
+			}
+			g_string_append_c (value, *next_char);
+		} else if (value != NULL && *next_char != '!') {
+			// If we won't accept this character, we are ending a 
+			// query key or value, so we should save them in a new
+			// FilterDefinition. If is_value is TRUE, we will still
+			// parse the query value, so we must keep our def around.
+			// Otherwise, save it in the list of filters.
+			if (!def) {
+				def = g_new0 (FilterDefinition, 1);
+			}
+			if (is_key) {
+				def->key = value->str;
+				g_string_free (value, FALSE);
+				def->negate = negate;
+				negate = FALSE;
+				is_key = FALSE;
+			} else {
+				def->value = value->str;
+				g_string_free (value, FALSE);
+				is_value = FALSE;
+				is_key = TRUE;
+			}
+			value = NULL;
+			if (!is_value) {
+				filter = g_slist_append (filter, def);
+				def = NULL;
+			}
+		}
+		if (new_group && filter) {
+			list = g_slist_append (list, filter);
+			filter = NULL;
+			new_group = FALSE;
+		}
+		// Only handle \0 here so we can handle remaining values above.
+		if (*next_char == '\0')
+			break;
+		next_char++;
+	};
+
+	// Any remaining def or filter must still be handled here.
+	if (def) {
+		filter = g_slist_append (filter, def);
 	}
+	
+	if (filter) {
+		list = g_slist_append (list, filter);
+	}	
+
+	GSList *ptr1, *ptr2;
+
+        for (ptr1 = list; ptr1 != NULL; ptr1 = ptr1->next) {
+                for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
+                	g_debug ("%s = %s", ((FilterDefinition *) ptr2->data)->key, ((FilterDefinition *) ptr2->data)->value);
+                }
+        }
 
         return list;
 }
@@ -1170,10 +1345,66 @@ dmap_share_free_filter (GSList *filter)
         }
 }
 
+typedef struct {
+	gchar *name;
+	gint64 group_id;
+	gchar *artist;
+	int count;
+} GroupInfo;
+
+static void
+group_items (gpointer key, DMAPRecord *record, GHashTable *groups)
+{
+	gchar *album, *artist;
+	GroupInfo *group_info;
+	gint64 group_id;
+	
+	g_object_get (record, "songartist", &artist, "songalbum", &album, "songalbumid", &group_id, NULL);
+	if (!album) {
+		g_free (artist);
+		return;
+	}
+	group_info = g_hash_table_lookup (groups, album);
+	if (!group_info) {
+		group_info = g_new0 (GroupInfo, 1);
+		g_hash_table_insert (groups, album, group_info);
+		// They will be freed when the hash table is freed.
+		group_info->name = album;
+		group_info->artist = artist;
+		group_info->group_id = group_id;
+	} else {
+		g_free (album);
+		g_free (artist);
+	}
+	(group_info->count)++;
+}
+
+static gint
+group_info_cmp (gconstpointer group1, gconstpointer group2) 
+{
+	return g_ascii_strcasecmp (((GroupInfo*)group1)->name, ((GroupInfo*)group2)->name);
+}
+
 static void
 debug_param (gpointer key, gpointer val, gpointer user_data)
 {
         g_debug ("%s %s", (char *) key, (char *) val);
+}
+
+void
+_dmap_share_ctrl_int (DMAPShare *share,
+		      SoupServer        *server,
+		      SoupMessage       *message,
+		      const char        *path,
+		      GHashTable        *query,
+		      SoupClientContext *context)
+{
+	g_debug ("Path is %s.", path);
+	if (query) {
+		g_hash_table_foreach (query, debug_param, NULL);
+	}
+	
+	g_debug ("ctrl-int not implemented");
 }
 
 void
@@ -1235,6 +1466,87 @@ _dmap_share_databases (DMAPShare *share,
 		dmap_structure_destroy (avdb);
 
 		g_free (nameprop);
+	} else if (g_ascii_strcasecmp ("/1/groups", rest_of_path) == 0) {
+	/* ADBS database songs
+	 * 	MSTT status
+	 * 	MUTY update type
+	 * 	MTCO specified total count
+	 * 	MRCO returned count
+	 * 	MLCL listing
+	 * 		MLIT
+	 * 			attrs
+	 * 		MLIT
+	 * 		...
+	 */		 
+
+		GSList *filter_def;
+		gchar *record_query;
+		GHashTable *records = NULL;
+		GHashTable *groups;
+		GList *values;
+		GList *value;
+		gchar *sort_by;
+		GroupInfo *group_info;
+		GNode *agal;
+		GNode *mlcl;
+		GNode *mlit;
+		gint num;
+
+		if (g_strcmp0 (g_hash_table_lookup (query, "group-type"), "albums") != 0) {
+			g_warning ("Unsupported grouping");
+			soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			return;
+		}
+
+		record_query = g_hash_table_lookup (query, "query");
+		filter_def = _dmap_share_build_filter (record_query);
+		records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
+
+		groups = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+		g_hash_table_foreach (records, (GHFunc) group_items, groups);
+		
+		agal = dmap_structure_add (NULL, DMAP_CC_AGAL);
+		dmap_structure_add (agal, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (agal, DMAP_CC_MUTY, 0);
+		
+		num = g_hash_table_size (groups);
+		dmap_structure_add (agal, DMAP_CC_MTCO, (gint32) num);
+		dmap_structure_add (agal, DMAP_CC_MRCO, (gint32) num);
+		
+		mlcl = dmap_structure_add (agal, DMAP_CC_MLCL);
+
+		values = g_hash_table_get_values (groups);
+		if (g_hash_table_lookup (query, "include-sort-headers")) {
+			sort_by = g_hash_table_lookup (query, "sort");
+			if (g_strcmp0 (sort_by, "album") == 0) {
+				values = g_list_sort (values, group_info_cmp);
+			} else {
+				g_warning ("Unknown sort column: %s", sort_by);
+			}
+		}
+
+		for (value = values; value; value = g_list_next (value)) {
+			group_info = (GroupInfo*) value->data;
+			mlit = dmap_structure_add (mlcl, DMAP_CC_MLIT);
+			dmap_structure_add (mlit, DMAP_CC_MIID, (gint) group_info->group_id);
+			dmap_structure_add (mlit, DMAP_CC_MPER, group_info->group_id);
+			dmap_structure_add (mlit, DMAP_CC_MINM, group_info->name);
+			dmap_structure_add (mlit, DMAP_CC_ASAA, group_info->artist);
+			dmap_structure_add (mlit, DMAP_CC_MIMC, (gint32) group_info->count);
+
+			// Free this now, since the hash free func won't.
+			// Name will be freed when the hash table keys are freed.
+			g_free (group_info->artist);
+		}
+
+		g_list_free (values);
+		dmap_share_free_filter (filter_def);
+
+		_dmap_share_message_set_from_dmap_structure (share, message, agal);
+
+		g_hash_table_destroy (records);
+		g_hash_table_destroy (groups);
+		dmap_structure_destroy (agal);
 	} else if (g_ascii_strcasecmp ("/1/items", rest_of_path) == 0) {
 	/* ADBS database songs
 	 * 	MSTT status
@@ -1262,6 +1574,7 @@ _dmap_share_databases (DMAPShare *share,
 			g_debug ("Found %d records", g_hash_table_size (records));
 			num_songs = g_hash_table_size (records);
 			dmap_share_free_filter (filter_def);
+			g_hash_table_destroy (records);
 		} else {
 			num_songs = dmap_db_count (share->priv->db);
 		}
@@ -1278,7 +1591,6 @@ _dmap_share_databases (DMAPShare *share,
 
 		if (record_query) {
 			g_hash_table_foreach (records, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
-			/* Free hash table but not data: */
 			g_hash_table_destroy (records);
 		} else {
 			dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
@@ -1348,7 +1660,12 @@ _dmap_share_databases (DMAPShare *share,
 		GNode *apso;
 		struct DMAPMetaDataMap *map;
 		struct MLCL_Bits mb = {NULL,0};
-		gint pl_id = atoi (rest_of_path + 14);
+		gint pl_id;
+		gchar *record_query;
+		gchar *sort_by;
+		GSList *filter_def;
+		GHashTable *records;
+		GList *sorted_records;
 
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
@@ -1356,31 +1673,62 @@ _dmap_share_databases (DMAPShare *share,
 		apso = dmap_structure_add (NULL, DMAP_CC_APSO);
 		dmap_structure_add (apso, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
 		dmap_structure_add (apso, DMAP_CC_MUTY, 0);
+		
+		if (g_ascii_strcasecmp ("/1/items", rest_of_path + 13) == 0) {
+			record_query = g_hash_table_lookup (query, "query");
+			filter_def = _dmap_share_build_filter (record_query);
+			records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
+			g_debug ("Found %d records", g_hash_table_size (records));
+			gint32 num_songs = g_hash_table_size (records);
+			dmap_share_free_filter (filter_def);
 
-		if (pl_id == 1) {
-			gint32 num_songs = dmap_db_count (share->priv->db);
 			dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
 			dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
 			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
-			dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+			sorted_records = g_hash_table_get_values (records);
+			sort_by = g_hash_table_lookup (query, "sort");
+			if (g_strcmp0 (sort_by, "album") == 0) {
+				sorted_records = g_list_sort (sorted_records, (GCompareFunc) daap_record_cmp_by_album);
+			} else if (sort_by != NULL) {
+				g_warning ("Unknown sort column: %s", sort_by);
+			}
+
+			GList *record;
+			for (record = sorted_records; record; record = record->next) {
+				(*(DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl)) (0, record->data, &mb);
+			}
+
+			//g_hash_table_foreach (records, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+			g_list_free (sorted_records);
+			g_hash_table_destroy (records);
 		} else {
-			DMAPContainerRecord *record;
-			DMAPDb *entries;
-			guint num_songs;
-			
-			record = dmap_container_db_lookup_by_id (share->priv->container_db, pl_id);
-			entries = dmap_container_record_get_entries (record);
-			num_songs = dmap_db_count (entries);
-			
-			dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
-			dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
-			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
+			pl_id = atoi (rest_of_path + 14);
+			if (pl_id == 1) {
+				gint32 num_songs = dmap_db_count (share->priv->db);
+				dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
+				dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
+				mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
-			dmap_db_foreach (entries, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+				dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+			} else {
+				DMAPContainerRecord *record;
+				DMAPDb *entries;
+				guint num_songs;
+			
+				record = dmap_container_db_lookup_by_id (share->priv->container_db, pl_id);
+				entries = dmap_container_record_get_entries (record);
+				num_songs = dmap_db_count (entries);
+			
+				dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
+				dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
+				mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
-			g_object_unref (entries);
-			g_object_unref (record);
+				dmap_db_foreach (entries, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+
+				g_object_unref (entries);
+				g_object_unref (record);
+			}
 		}
 
 		_dmap_share_message_set_from_dmap_structure (share, message, apso);

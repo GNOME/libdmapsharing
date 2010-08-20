@@ -51,6 +51,7 @@
     <xi:include href="xml/dpap-connection.xml"/>
     <xi:include href="xml/dpap-record.xml"/>
     <xi:include href="xml/dpap-share.xml"/>
+    <xi:include href="xml/dacp-share.xml"/>
   </chapter>
 
   <chapter id="object-tree">

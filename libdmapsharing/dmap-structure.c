@@ -76,6 +76,8 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_MUSR, MAKE_CONTENT_CODE('m','u','s','r'), "dmap.serverrevision", "musr", DMAP_TYPE_INT},
     {DMAP_CC_MUTY, MAKE_CONTENT_CODE('m','u','t','y'), "dmap.updatetype", "muty", DMAP_TYPE_BYTE},
     {DMAP_CC_MUDL, MAKE_CONTENT_CODE('m','u','d','l'), "dmap.deletedidlisting", "mudl", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_MSMA, MAKE_CONTENT_CODE('m','s','m','a'), "dmap.speakermachineaddress", "msma", DMAP_TYPE_INT},
+
     {DMAP_CC_APRO, MAKE_CONTENT_CODE('a','p','r','o'), "daap.protocolversion", "apro", DMAP_TYPE_VERSION},
     {DMAP_CC_AVDB, MAKE_CONTENT_CODE('a','v','d','b'), "daap.serverdatabases", "avdb", DMAP_TYPE_CONTAINER},
     {DMAP_CC_ABRO, MAKE_CONTENT_CODE('a','b','r','o'), "daap.databasebrowse", "abro", DMAP_TYPE_CONTAINER},
@@ -85,6 +87,8 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_ABGN, MAKE_CONTENT_CODE('a','b','g','n'), "daap.browsegenrelisting", "abgn", DMAP_TYPE_CONTAINER},
     {DMAP_CC_ADBS, MAKE_CONTENT_CODE('a','d','b','s'), "daap.returndatabasesongs", "adbs", DMAP_TYPE_CONTAINER},
     {DMAP_CC_ASAL, MAKE_CONTENT_CODE('a','s','a','l'), "daap.songalbum", "asal", DMAP_TYPE_STRING},
+    {DMAP_CC_ASAI, MAKE_CONTENT_CODE('a','s','a','i'), "daap.songalbumid", "asai", DMAP_TYPE_INT},
+    {DMAP_CC_ASAA, MAKE_CONTENT_CODE('a','s','a','a'), "daap.songalbumartist", "asaa", DMAP_TYPE_STRING},
     {DMAP_CC_ASAR, MAKE_CONTENT_CODE('a','s','a','r'), "daap.songartist", "asar", DMAP_TYPE_STRING},
     {DMAP_CC_ASBT, MAKE_CONTENT_CODE('a','s','b','t'), "daap.songsbeatsperminute", "asbt", DMAP_TYPE_SHORT},
     {DMAP_CC_ASBR, MAKE_CONTENT_CODE('a','s','b','r'), "daap.songbitrate", "asbr", DMAP_TYPE_SHORT},
@@ -121,6 +125,7 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_AESV, MAKE_CONTENT_CODE('a','e','S','V'), "com.applie.itunes.music-sharing-version", "aesv", DMAP_TYPE_INT},
     {DMAP_CC_MSAS, MAKE_CONTENT_CODE('m','s','a','s'), "daap.authentication.schemes", "msas", DMAP_TYPE_BYTE},
     {DMAP_CC_AGRP, MAKE_CONTENT_CODE('a','g','r','p'), "daap.songgrouping", "agrp", DMAP_TYPE_STRING},
+    {DMAP_CC_AGAL, MAKE_CONTENT_CODE('a','g','a','l'), "daap.albumgrouping", "agal", DMAP_TYPE_CONTAINER},
     {DMAP_CC_ASCP, MAKE_CONTENT_CODE('a','s','c','p'), "daap.songcomposer", "ascp", DMAP_TYPE_STRING},
     {DMAP_CC_PPRO, MAKE_CONTENT_CODE('p','p','r','o'), "dpap.protocolversion", "ppro", DMAP_TYPE_VERSION},
     {DMAP_CC_PASP, MAKE_CONTENT_CODE('p','a','s','p'), "dpap.aspectratio", "pasp", DMAP_TYPE_STRING},
@@ -135,7 +140,44 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_PRAT, MAKE_CONTENT_CODE('p','r','a','t'), "dpap.imagerating", "prat", DMAP_TYPE_INT},
     {DMAP_CC_PCMT, MAKE_CONTENT_CODE('p','c','m','t'), "dpap.imagecomments", "pcmt", DMAP_TYPE_STRING},
     {DMAP_CC_PRET, MAKE_CONTENT_CODE('p','r','e','t'), "dpap.pret", "pret", DMAP_TYPE_STRING},
-    {DMAP_CC_AEHV, MAKE_CONTENT_CODE('a','e','H','V'), "com.apple.itunes.has-video", "aeHV", DMAP_TYPE_BYTE}
+    {DMAP_CC_AEHV, MAKE_CONTENT_CODE('a','e','H','V'), "com.apple.itunes.has-video", "aeHV", DMAP_TYPE_BYTE},
+    
+    /* DACP */
+    {DMAP_CC_CMPA, MAKE_CONTENT_CODE('c','m','p','a'), "dacp.contentcontainer", "cmpa", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_CMNM, MAKE_CONTENT_CODE('c','m','n','m'), "dacp.contentname", "cmnm", DMAP_TYPE_STRING},
+    {DMAP_CC_CMTY, MAKE_CONTENT_CODE('c','m','t','y'), "dacp.contentvalue", "cmty", DMAP_TYPE_STRING},
+    {DMAP_CC_CMPG, MAKE_CONTENT_CODE('c','m','p','g'), "dacp.passguid", "cmpy", DMAP_TYPE_INT64},
+    
+    {DMAP_CC_CACI, MAKE_CONTENT_CODE('c','a','c','i'), "dacp.controlint", "caci", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_CAPS, MAKE_CONTENT_CODE('c','a','p','s'), "dacp.playstatus", "caci", DMAP_TYPE_BYTE},
+    {DMAP_CC_CASH, MAKE_CONTENT_CODE('c','a','s','h'), "dacp.shufflestate", "caci", DMAP_TYPE_BYTE},
+    {DMAP_CC_CARP, MAKE_CONTENT_CODE('c','a','r','p'), "dacp.repeatstate", "caci", DMAP_TYPE_BYTE},
+    {DMAP_CC_CAAS, MAKE_CONTENT_CODE('c','a','a','s'), "dacp.albumshuffle", "caas", DMAP_TYPE_INT},
+    {DMAP_CC_CAAR, MAKE_CONTENT_CODE('c','a','a','r'), "dacp.albumrepeat", "caci", DMAP_TYPE_INT},    
+    {DMAP_CC_CAIA, MAKE_CONTENT_CODE('c','a','i','a'), "dacp.isavailiable", "caia", DMAP_TYPE_BYTE},
+    {DMAP_CC_CANP, MAKE_CONTENT_CODE('c','a','n','p'), "dacp.nowplaying", "canp", DMAP_TYPE_INT64},
+    {DMAP_CC_CANN, MAKE_CONTENT_CODE('c','a','n','n'), "dacp.nowplayingtrack", "cann", DMAP_TYPE_STRING},
+    {DMAP_CC_CANA, MAKE_CONTENT_CODE('c','a','n','a'), "dacp.nowplayingartist", "cana", DMAP_TYPE_STRING},
+    {DMAP_CC_CANL, MAKE_CONTENT_CODE('c','a','n','l'), "dacp.nowplayingalbum", "canl", DMAP_TYPE_STRING},
+    {DMAP_CC_CANG, MAKE_CONTENT_CODE('c','a','n','g'), "dacp.nowplayinggenre", "cang", DMAP_TYPE_STRING},
+    {DMAP_CC_CANT, MAKE_CONTENT_CODE('c','a','n','t'), "dacp.remainingtime", "cant", DMAP_TYPE_INT},
+    {DMAP_CC_CASP, MAKE_CONTENT_CODE('c','a','s','p'), "dacp.speakers", "casp", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_CASS, MAKE_CONTENT_CODE('c','a','s','s'), "dacp.ss", "cass", DMAP_TYPE_BYTE},
+    {DMAP_CC_CAST, MAKE_CONTENT_CODE('c','a','s','t'), "dacp.tracklength", "cast", DMAP_TYPE_INT},
+    {DMAP_CC_CASU, MAKE_CONTENT_CODE('c','a','s','u'), "dacp.su", "casu", DMAP_TYPE_BYTE},
+    {DMAP_CC_CASG, MAKE_CONTENT_CODE('c','a','s','g'), "dacp.sg", "caSG", DMAP_TYPE_BYTE},
+    {DMAP_CC_CACR, MAKE_CONTENT_CODE('c','a','c','r'), "dacp.cacr", "cacr", DMAP_TYPE_CONTAINER},
+    
+    {DMAP_CC_CMCP, MAKE_CONTENT_CODE('c','m','c','p'), "dmcp.controlprompt", "cmcp", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_CMGT, MAKE_CONTENT_CODE('c','m','g','t'), "dmcp.getpropertyresponse", "cmgt", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_CMIK, MAKE_CONTENT_CODE('c','m','i','k'), "dmcp.ik", "cmik", DMAP_TYPE_BYTE},
+    {DMAP_CC_CMSP, MAKE_CONTENT_CODE('c','m','s','p'), "dmcp.ik", "cmsp", DMAP_TYPE_BYTE},
+    {DMAP_CC_CMST, MAKE_CONTENT_CODE('c','m','s','t'), "dmcp.status", "cmst", DMAP_TYPE_CONTAINER},
+    {DMAP_CC_CMSV, MAKE_CONTENT_CODE('c','m','s','v'), "dmcp.sv", "cmsv", DMAP_TYPE_BYTE},
+    {DMAP_CC_CMSR, MAKE_CONTENT_CODE('c','m','s','r'), "dmcp.mediarevision", "cmsr", DMAP_TYPE_INT},
+    {DMAP_CC_CMMK, MAKE_CONTENT_CODE('c','m','m','k'), "dmcp.mediakind", "cmmk", DMAP_TYPE_INT},
+    {DMAP_CC_CMVO, MAKE_CONTENT_CODE('c','m','v','o'), "dmcp.volume", "cmvo", DMAP_TYPE_INT},
+    
 };
 
 const gchar * 
@@ -300,6 +342,8 @@ dmap_content_code_read_from_buffer (const gchar *buf)
             return cc_defs[i].code;
         }
     }
+    
+    g_warning ("Content code %4s is invalid.", buf);
 
     return DMAP_CC_INVALID;
 }
@@ -338,7 +382,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
         
         cc = dmap_content_code_read_from_buffer ((const gchar*)&(buf[l]));
         if (cc == DMAP_CC_INVALID) {
-            g_debug ("Invalid/Unknown content_code recieved\n");
+            //g_debug ("Invalid/Unknown content_code recieved\n");
             return;
         }
         l += 4;
@@ -415,7 +459,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 gint64 i = 0;
         
                 if (codesize == 8) {
-                    i = DMAP_READ_UINT16_BE(&(buf[l]));
+                    i = DMAP_READ_UINT64_BE(&(buf[l]));
                 }
                 
                 item->size = 8;

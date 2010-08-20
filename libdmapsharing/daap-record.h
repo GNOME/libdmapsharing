@@ -93,6 +93,15 @@ gboolean      daap_record_itunes_compat (DAAPRecord *record);
  */
 GInputStream *daap_record_read          (DAAPRecord *record, GError **err);
 
+/**
+ * daap_record_cmp_by_album:
+ * @a: first DAAPRecord.
+ * @b: second DAAPRecord.
+ *
+ * Compares two records according to album. Suitable to sort lists of albums.
+ */ 
+gint daap_record_cmp_by_album (DAAPRecord *a, DAAPRecord *b);
+
 #endif /* __DAAP_RECORD_H */
 
 G_END_DECLS

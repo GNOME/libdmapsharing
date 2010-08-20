@@ -105,24 +105,6 @@ dmap_db_count (const DMAPDb *db)
 	return DMAP_DB_GET_INTERFACE (db)->count (db);
 }
 
-/* Change "\'" to "'". */
-static gchar *
-unescape (const gchar *str)
-{
-	gchar *fnval;
-	gsize j, i, size;
-
-	size = strlen (str) + 1;
-	fnval = g_new0 (gchar, size);
-
-	j = 0;
-	for (i = 0; i < size; i++)
-		if (str[i] != '\\' || str[i+1] != '\'')
-			fnval[j++] = str[i];
-
-	return fnval;
-}
-
 gchar **
 _dmap_db_strsplit_using_quotes (const gchar *str)
 {
@@ -168,44 +150,142 @@ _dmap_db_strsplit_using_quotes (const gchar *str)
         return fnval;
 }
 
+static gboolean
+compare_record_property (DMAPRecord *record, const gchar *property_name, const gchar *property_value)
+{
+	GParamSpec *pspec;
+	GValue value = {0,};
+	/* Note that this string belongs to value and will not be freed explicitely.*/
+	const gchar *str_value;
+	gboolean accept;
+	
+	pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (record), property_name);
+
+	if (pspec == NULL)
+		// Can't find the property in this record, so don't accept it.
+		return FALSE;
+
+	// Get the property value as a GValue set to the type of this
+	// property.
+	g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+	g_object_get_property (G_OBJECT (record), property_name, &value);
+
+	if (G_VALUE_HOLDS_STRING (&value)) {
+		str_value = g_value_get_string (&value);
+	} else if (G_VALUE_HOLDS_BOOLEAN (&value)) {
+		accept = (g_value_get_boolean (&value) && \
+		          g_strcmp0 (property_value, "1") == 0);
+		g_value_unset (&value);
+		return accept;
+	} else if (g_value_type_transformable (G_VALUE_TYPE (&value), G_TYPE_LONG)) {
+		// Prefer integer conversion.
+		GValue dest = {0,};
+		g_value_init (&dest, G_TYPE_LONG);
+		if (!g_value_transform (&value, &dest)) {
+			g_warning ("Failed to convert value into long for property %s", property_name);
+			g_value_unset (&value);
+			return FALSE;
+		}
+		accept = (g_value_get_long (&dest) == atoi (property_value));
+		g_value_unset (&value);
+		return accept;
+	} else if (g_value_type_transformable (G_VALUE_TYPE (&value), G_TYPE_STRING)) {
+		// Use standard transform functions from GLib (note that these
+		// functions are unreliable and known cases should be handled
+		// above).
+		GValue dest;
+		g_value_init (&dest, G_TYPE_STRING);
+		if (!g_value_transform (&value, &dest)) {
+			g_warning ("Failed to convert value into string for property %s", property_name);
+			g_value_unset (&value);
+			return FALSE;
+		}
+		str_value = g_value_dup_string (&dest);
+		g_value_reset (&value);
+		//Sets the string to value so that it will be freed later.
+		g_value_take_string (&value, (gchar *)str_value);
+		g_value_unset (&dest);
+	} else {
+		g_value_unset (&value);
+		return FALSE;
+	}
+
+	// Only arrive here if we are handling strings.
+	if (str_value != NULL && property_value != NULL && \
+	    g_ascii_strcasecmp (str_value, property_value) == 0) {
+		accept = TRUE;
+	} else if (str_value == NULL && property_value == NULL) {
+		accept = TRUE;
+	} else {
+		accept = FALSE;
+	}
+
+	// This will destroy str_value since it belongs to value.
+	g_value_unset (&value);
+
+	return accept;
+}
+
 static void
 apply_filter (gpointer id, DMAPRecord *record, gpointer data)
 {
 	FilterData *fd;
+	gboolean accept = FALSE;
+
+	const gchar *query_key;
+	const gchar *query_value;
+
+	g_return_if_fail (record != NULL);
+	g_return_if_fail (G_IS_OBJECT (record));
 	
 	fd = data;
 	if (fd->filter_def == NULL) {
-		g_hash_table_insert (fd->ht, GUINT_TO_POINTER (id), record);
-	} else {
-		GSList *ptr1, *ptr2;
-		gboolean accepted = TRUE;
-		for (ptr1 = fd->filter_def; ptr1 != NULL; ptr1 = ptr1->next) {
-			for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
-				gchar *value1 = unescape (((FilterDefinition *) ptr2->data)->value);
+		g_hash_table_insert (fd->ht, GUINT_TO_POINTER (id), g_object_ref (record));
+		return;
+	} 
+	
+	GSList *list, *filter;
+	for (list = fd->filter_def; list != NULL; list = list->next) {
+		for (filter = list->data; filter != NULL; filter = filter->next) {
+			FilterDefinition *def = filter->data;
+			const gchar *property_name;
 
-				if (((FilterDefinition *) ptr2->data)->is_string == FALSE) {
-					if (GPOINTER_TO_UINT (id) == atoi (value1))
-						g_hash_table_insert (fd->ht, id, dmap_db_lookup_by_id (fd->db, GPOINTER_TO_UINT (id)));
-					accepted = FALSE; /* Not really, but we've already added if required. */
-				} else {
-					gchar *value2;
-					GParamSpec *pspec = g_object_class_find_property (G_OBJECT_CLASS (record), ((FilterDefinition *) ptr2->data)->key);
-					if (G_IS_PARAM_SPEC_STRING (pspec)) {
-						g_object_get (record, ((FilterDefinition *) ptr2->data)->key, &value2, NULL); 
-						if (value2 == NULL || g_strcasecmp (value1, value2) != 0) {
-							accepted = FALSE;
-						}
-					} else {
-						/* FIXME: unhandled filter (non-string): */
-						accepted = FALSE;
-					}
-					g_free (value2);
+			query_key   = def->key;
+			query_value = def->value;
+
+			if (g_strcmp0 (query_key, "dmap.itemid") == 0) {
+				if (GPOINTER_TO_UINT (id) == atoi (query_value)) {
+					accept = TRUE;
+					continue;
 				}
-				g_free (value1);
-			}
+			};
+
+			// Use only the part after the last dot.
+			// For instance, dmap.songgenre becomes songgenre.
+			property_name = strrchr (query_key, '.');
+			if (property_name == NULL)
+				property_name = query_key;
+			else
+				//Don't include the dot in the property name.
+				property_name++;
+
+			accept = compare_record_property (record, property_name, query_value);
+			
+			if (def->negate)
+				accept = !accept;
+			
+			// If we accept this value, then quit looking at this 
+			// group (groups are always OR)
+			if (accept)
+				break;
 		}
-		if (accepted == TRUE)
-			g_hash_table_insert (fd->ht, GUINT_TO_POINTER (id), record);
+		// Don't look any further, because groups are AND between 
+		// each other, the first FALSE means FALSE at the end.
+		if (!accept)
+			break;
+	}
+	if (accept) {
+		g_hash_table_insert (fd->ht, GUINT_TO_POINTER (id), g_object_ref (record));
 	}
 }
 
@@ -215,7 +295,7 @@ dmap_db_apply_filter (DMAPDb *db, GSList *filter_def)
 	GHashTable *ht;
 	FilterData data;
 
-	ht = g_hash_table_new (g_direct_hash, g_direct_equal);
+	ht = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
 	data.db = db;
 	data.filter_def = filter_def;
 	data.ht = ht;

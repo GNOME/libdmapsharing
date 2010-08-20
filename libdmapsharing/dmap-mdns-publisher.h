@@ -75,6 +75,7 @@ gboolean             dmap_mdns_publisher_publish                (DmapMdnsPublish
 								    guint                port,
 								    const char          *type_of_service,
 								    gboolean             password_required,
+								    gchar              **txt_records,
 								    GError             **error);
 gboolean             dmap_mdns_publisher_set_name               (DmapMdnsPublisher *publisher,
 								    const char          *name,
@@ -85,6 +86,9 @@ gboolean             dmap_mdns_publisher_set_port               (DmapMdnsPublish
 gboolean             dmap_mdns_publisher_set_password_required  (DmapMdnsPublisher *publisher,
 								    gboolean             required,
 								    GError             **error);
+gboolean             dmap_mdns_publisher_set_txt_records        (DmapMdnsPublisher *publisher,
+								    gchar          **txt_records,
+								    GError         **error);
 gboolean             dmap_mdns_publisher_withdraw               (DmapMdnsPublisher *publisher,
 								    GError             **error);
 

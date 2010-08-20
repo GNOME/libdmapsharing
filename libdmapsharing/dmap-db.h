@@ -84,12 +84,10 @@ struct _DMAPDbInterface {
 
 typedef const char *(*RecordGetValueFunc) (DMAPRecord *record);
 
-/* FIXME: This is in transition: how to keep this safe when value might 
- * be compared to a string, int, etc.? */
 typedef struct FilterDefinition {
 	gchar *key;
 	gchar *value;
-	gboolean is_string;
+	gboolean negate;
 } FilterDefinition;
 
 GType dmap_db_get_type		    (void);

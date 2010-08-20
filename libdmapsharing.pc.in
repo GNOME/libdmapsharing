@@ -8,4 +8,4 @@ Description: libdmapsharing
 Version: @VERSION@
 Requires: glib-2.0 libsoup-2.4
 Libs: -L${libdir} -ldmapsharing
-Cflags: -I${includedir}/libdmapsharing-@LIBDMAPSHARING_MAJORMINOR@
+Cflags: -I${includedir}/libdmapsharing-@API_VERSION@

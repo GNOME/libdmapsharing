@@ -540,18 +540,27 @@ add_entry_to_mlcl (gpointer id,
 
 	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD, (gchar) DAAP_ITEM_KIND_AUDIO);
-	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
-		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
+	if (_dmap_share_client_requested (mb->bits, ITEM_ID)) {
+		gint itemid;
+		g_object_get (record, "itemid", &itemid, NULL);
+		dmap_structure_add (mlit, DMAP_CC_MIID, (guint) itemid);
+	}
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *title;
 		g_object_get (record, "title", &title, NULL);
 		dmap_structure_add (mlit, DMAP_CC_MINM, title);
 		g_free (title);
 	}
-	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
-		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
-	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID))
-		dmap_structure_add (mlit, DMAP_CC_MCTI, GPOINTER_TO_UINT (id));
+	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
+		gint itemid;
+		g_object_get (record, "itemid", &itemid, NULL);
+		dmap_structure_add (mlit, DMAP_CC_MPER, (guint) itemid);
+	}
+	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID)) {
+		gint itemid;
+		g_object_get (record, "itemid", &itemid, NULL);
+		dmap_structure_add (mlit, DMAP_CC_MCTI, (guint) itemid);
+	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DATA_KIND))
 		dmap_structure_add (mlit, DMAP_CC_ASDK, (gchar) DAAP_SONG_DATA_KIND_NONE);
 	/* FIXME: Any use for this?
@@ -560,7 +569,7 @@ add_entry_to_mlcl (gpointer id,
 	*/
 	if (_dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
 		gchar *album;
-		g_object_get (record, "daap.songalbum", &album, NULL);
+		g_object_get (record, "songalbum", &album, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAL, album);
 		g_free (album);
 	}
@@ -568,7 +577,7 @@ add_entry_to_mlcl (gpointer id,
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
 		gchar *artist;
-		g_object_get (record, "daap.songartist", &artist, NULL);
+		g_object_get (record, "songartist", &artist, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
 		g_free (artist);
 	}
@@ -618,7 +627,7 @@ add_entry_to_mlcl (gpointer id,
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre;
-		g_object_get (record, "daap.songgenre", &genre, NULL);
+		g_object_get (record, "songgenre", &genre, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
 		g_free (genre);
 	}
@@ -688,7 +697,9 @@ static void
 genre_tabulator (gpointer id, DMAPRecord *record, GHashTable *ht)
 {
 	const gchar *genre;
-	g_object_get (record, "daap.songgenre", &genre, NULL);
+	g_object_get (record, "songgenre", &genre, NULL);
+	if (!genre)
+		return;
 	if (! g_hash_table_lookup (ht, genre))
 		g_hash_table_insert (ht, (gchar *) genre, NULL);
 }
@@ -697,7 +708,9 @@ static void
 artist_tabulator (gpointer id, DMAPRecord *record, GHashTable *ht)
 {
 	const gchar *artist;
-	g_object_get (record, "daap.songartist", &artist, NULL);
+	g_object_get (record, "songartist", &artist, NULL);
+	if (!artist)
+		return;
 	if (! g_hash_table_lookup (ht, artist))
 		g_hash_table_insert (ht, (gchar *) artist, NULL);
 }
@@ -706,13 +719,15 @@ static void
 album_tabulator (gpointer id, DMAPRecord *record, GHashTable *ht)
 {
 	const gchar *album;
-	g_object_get (record, "daap.songalbum", &album, NULL);
+	g_object_get (record, "songalbum", &album, NULL);
+	if (!album)
+		return;
 	if (! g_hash_table_lookup (ht, album))
 		g_hash_table_insert (ht, (gchar *) album, NULL);
 }
 
 static void
-add_to_category_listing (gpointer key, gpointer value, gpointer user_data)
+add_to_category_listing (gpointer key, gpointer user_data)
 {
 	GNode *mlit;
 	GNode *node = (GNode *) user_data;
@@ -748,6 +763,7 @@ databases_browse_xxx (DMAPShare *share,
 	const gchar *browse_category;
 	GHashTable *category_items;
 	DMAPContentCode category_cc;
+	GList *values;
 
 	rest_of_path = strchr (path + 1, '/');
 	browse_category = rest_of_path + 10;
@@ -783,9 +799,15 @@ databases_browse_xxx (DMAPShare *share,
 
 	node = dmap_structure_add (abro, category_cc);
 
-	g_hash_table_foreach (category_items,
-			      add_to_category_listing,
-			      node);
+	values = g_hash_table_get_keys (category_items);
+	if (g_hash_table_lookup (query, "include-sort-headers")) {
+		g_debug ("Sorting...");
+		values = g_list_sort (values, (GCompareFunc) g_ascii_strcasecmp);
+	}
+
+	g_list_foreach (values, add_to_category_listing, node);
+	
+	g_list_free (values);
 
 	_dmap_share_message_set_from_dmap_structure (share, msg, abro);
 	dmap_structure_destroy (abro);

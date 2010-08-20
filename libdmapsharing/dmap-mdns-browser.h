@@ -84,7 +84,8 @@ typedef enum
     DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID = 0,
     DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP,
     DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP,
-    DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST = DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP
+    DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP,
+    DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST = DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP
 } DMAPMdnsBrowserServiceType;
 
 typedef enum
@@ -100,6 +101,7 @@ struct _DMAPMdnsBrowserService
     gchar *host;
     guint port;
     gboolean password_protected;
+    gchar *pair;
 };
 
 struct _DMAPMdnsBrowserClass

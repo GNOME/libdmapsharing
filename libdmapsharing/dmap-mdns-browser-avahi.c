@@ -109,6 +109,13 @@ static guint dmap_mdns_browser_signals [LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT)
 
+static gchar *service_type_name [] = {
+	NULL,
+	"_daap._tcp",
+	"_dpap._tcp",
+	"_touch-remote._tcp"
+};
+
 GQuark
 dmap_mdns_browser_error_quark (void)
 {
@@ -236,7 +243,7 @@ dmap_mdns_browser_start (DMAPMdnsBrowser *browser,
     browser->priv->service_browser = avahi_service_browser_new (browser->priv->client,
             AVAHI_IF_UNSPEC,
             AVAHI_PROTO_UNSPEC,
-            (browser->priv->service_type == DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP ? "_daap._tcp" :  "_dpap._tcp"),
+            service_type_name [browser->priv->service_type],
             NULL,
 #ifdef HAVE_AVAHI_0_6
             0,
@@ -366,6 +373,7 @@ resolve_cb (AvahiServiceResolver *service_resolver,
 {
     if (event == AVAHI_RESOLVER_FOUND) {
         gchar *name = NULL;
+        gchar *pair = NULL;
         gchar host[AVAHI_ADDRESS_STR_MAX];
         gboolean pp = FALSE;
         DMAPMdnsBrowserService *service;
@@ -391,7 +399,16 @@ resolve_cb (AvahiServiceResolver *service_resolver,
                         pp = TRUE;
 		    }
                 } else if (strcmp (key, "Machine Name") == 0) {
-                    name = g_strdup (value);
+                    if (name == NULL)
+                        name = g_strdup (value);
+                } else if (strcmp (key, "DvNm") == 0) {
+                    if (name != NULL)
+                        g_free (name);
+                    /* Remote's name is presented as DvNm in DACP */
+                    name = g_strdup(value);
+                } else if (strcmp (key, "Pair") == 0) {
+                    /* Pair is used when first connecting to a DACP remote */
+                    pair = g_strdup(value);
                 }
 
                 g_free (key);
@@ -410,6 +427,7 @@ resolve_cb (AvahiServiceResolver *service_resolver,
         service->name = name;
         service->host = g_strdup (host);
         service->port = port;
+        service->pair = pair;
         service->password_protected = pp;
         browser->priv->services = g_slist_append (browser->priv->services, service);
         g_signal_emit (browser,
@@ -431,7 +449,7 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser *browser,
             AVAHI_IF_UNSPEC,
             AVAHI_PROTO_INET,
             name,
-            (browser->priv->service_type == DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP ? "_daap._tcp" :  "_dpap._tcp"),
+            service_type_name [browser->priv->service_type],
             domain,
             AVAHI_PROTO_UNSPEC,
 #ifdef HAVE_AVAHI_0_6
@@ -506,5 +524,6 @@ free_service (DMAPMdnsBrowserService *service)
     g_free (service->service_name);
     g_free (service->name);
     g_free (service->host);
+	g_free (service->pair);
     g_free (service);
 }

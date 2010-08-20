@@ -31,6 +31,7 @@ G_BEGIN_DECLS
 #define _DMAP_GET(__data, __size, __end) \
     (GUINT##__size##_FROM_##__end (* ((guint##__size *) (__data))))
 
+#define DMAP_READ_UINT64_BE(data) _DMAP_GET (data, 64, BE)
 #define DMAP_READ_UINT32_BE(data) _DMAP_GET (data, 32, BE)
 #define DMAP_READ_UINT16_BE(data) _DMAP_GET (data, 16, BE)
 #define DMAP_READ_UINT8(data)     (* ((guint8 *) (data)))
@@ -40,6 +41,15 @@ G_BEGIN_DECLS
 #define _DMAP_GET(__data, __idx, __size, __shift) \
     (((guint##__size) (((guint8 *) (__data))[__idx])) << __shift)
 
+#define DMAP_READ_UINT64_BE(data)  \
+    (_DMAP_GET (data, 0, 64, 56) | \
+     _DMAP_GET (data, 1, 64, 48) | \
+     _DMAP_GET (data, 2, 64, 40) | \
+     _DMAP_GET (data, 3, 64, 32) | \
+     _DMAP_GET (data, 4, 64, 24) | \
+     _DMAP_GET (data, 5, 64, 16) | \
+     _DMAP_GET (data, 6, 64,  8) | \
+     _DMAP_GET (data, 7, 64,  0))
 #define DMAP_READ_UINT32_BE(data) \
     (_DMAP_GET (data, 0, 32, 24) | \
      _DMAP_GET (data, 1, 32, 16) | \

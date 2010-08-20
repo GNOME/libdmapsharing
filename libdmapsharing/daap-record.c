@@ -30,6 +30,17 @@ daap_record_init (DAAPRecordInterface *iface)
         daap_record_init_count++;
 
 	if (! is_initialized) {
+
+		g_object_interface_install_property (iface,
+			g_param_spec_int ("itemid",
+			                  "Item ID",
+			                  "Item ID",
+			                  0,
+			                  G_MAXINT,
+			                  0,
+			                  G_PARAM_READWRITE));
+
+		
 		g_object_interface_install_property (iface,
 			g_param_spec_string ("location",
 					     "URI pointing to song data",
@@ -44,14 +55,33 @@ daap_record_init (DAAPRecordInterface *iface)
 					     "Unknown",
 					     G_PARAM_READWRITE));
 
-		/* NOTE: experimenting with matching property name with
-		 * DAAP protocol keyword to make some code simpler. */
+		//FIXME: This is actually an enum
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("daap.songalbum",
+			g_param_spec_int ("mediakind",
+			                  "Media kind",
+			                  "Media kind",
+			                  0,
+			                  G_MAXINT,
+			                  1,
+			                  G_PARAM_READWRITE));
+
+		/* NOTE: the name must match the part after the last dot of the
+		   DAAP name, so daap.songalbum becomes songalbum and so on.*/
+		g_object_interface_install_property (iface,
+			g_param_spec_string ("songalbum",
 					     "Album name",
 					     "Album name",
 					     "Unknown",
 					     G_PARAM_READWRITE));
+
+		g_object_interface_install_property (iface,
+			g_param_spec_int64 ("songalbumid",
+			                    "Album id",
+			                    "Album id",
+			                    G_MININT64,
+			                    G_MAXINT64,
+			                    0,
+			                    G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
 			g_param_spec_string ("sort-album",
@@ -61,7 +91,7 @@ daap_record_init (DAAPRecordInterface *iface)
 					     G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("daap.songartist",
+			g_param_spec_string ("songartist",
 					     "Song artist",
 					     "Song artist",
 					     "Unknown",
@@ -75,7 +105,7 @@ daap_record_init (DAAPRecordInterface *iface)
 					     G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("daap.songgenre",
+			g_param_spec_string ("songgenre",
 					     "Song genre",
 					     "Song genre",
 					     "Unknown",
@@ -215,4 +245,30 @@ GInputStream *
 daap_record_read (DAAPRecord *record, GError **err)
 {
 	return DAAP_RECORD_GET_INTERFACE (record)->read (record, err);
+}
+
+gint 
+daap_record_cmp_by_album (DAAPRecord *a, DAAPRecord *b) 
+{
+	gchar *album_a, *album_b;
+	gchar *sort_album_a, *sort_album_b;
+	gint track_a, track_b;
+	gint ret;
+	g_object_get (a, "songalbum", &album_a, "sort-album", &sort_album_a, "track", &track_a, NULL);
+	g_object_get (b, "songalbum", &album_b, "sort-album", &sort_album_b, "track", &track_b, NULL);
+	if (sort_album_a && sort_album_b)
+		ret = g_strcmp0 (sort_album_a, sort_album_b);
+	else
+		ret = g_strcmp0 (album_a, album_b);
+	if (ret == 0) {
+		if (track_a < track_b) 
+			ret = -1;
+		else 
+			ret = (track_a == track_b) ? 0 : 1;
+	}
+	g_free (album_a);
+	g_free (album_b);
+	g_free (sort_album_a);
+	g_free (sort_album_b);
+	return ret;
 }

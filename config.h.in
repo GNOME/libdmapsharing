@@ -15,6 +15,9 @@
 /* Define if libsoup supports SOUP_ENCODING_EOF */
 #undef HAVE_ENCODING_EOF
 
+/* Define if gdk-pixbuf support is enabled */
+#undef HAVE_GDKPIXBUF
+
 /* Defined when glib-2.0 was found */
 #undef HAVE_GLIB
 
@@ -81,6 +84,9 @@
 
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
