@@ -540,27 +540,18 @@ add_entry_to_mlcl (gpointer id,
 
 	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD, (gchar) DAAP_ITEM_KIND_AUDIO);
-	if (_dmap_share_client_requested (mb->bits, ITEM_ID)) {
-		gint itemid;
-		g_object_get (record, "itemid", &itemid, NULL);
-		dmap_structure_add (mlit, DMAP_CC_MIID, (guint) itemid);
-	}
+	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
+		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *title;
 		g_object_get (record, "title", &title, NULL);
 		dmap_structure_add (mlit, DMAP_CC_MINM, title);
 		g_free (title);
 	}
-	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
-		gint itemid;
-		g_object_get (record, "itemid", &itemid, NULL);
-		dmap_structure_add (mlit, DMAP_CC_MPER, (guint) itemid);
-	}
-	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID)) {
-		gint itemid;
-		g_object_get (record, "itemid", &itemid, NULL);
-		dmap_structure_add (mlit, DMAP_CC_MCTI, (guint) itemid);
-	}
+	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
+		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
+	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID))
+		dmap_structure_add (mlit, DMAP_CC_MCTI, GPOINTER_TO_UINT (id));
 	if (_dmap_share_client_requested (mb->bits, SONG_DATA_KIND))
 		dmap_structure_add (mlit, DMAP_CC_ASDK, (gchar) DAAP_SONG_DATA_KIND_NONE);
 	/* FIXME: Any use for this?

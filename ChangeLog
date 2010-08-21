@@ -1,3 +1,8 @@
+20 August 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Back out Alexandre's addition of itemid property from
+	DAAPRecord. The itemid is the DMAPDb ID.
+
 20 August 2010 Alexandre Rosenfeld <alexandre.rosenfeld@gmail.com>
 
 	* Apply Alexandre Rosenfeld's DACP patch from Google Summer of

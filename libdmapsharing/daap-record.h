@@ -25,6 +25,7 @@
 #include <gio/gio.h>
 
 #include <libdmapsharing/dmap-record.h>
+#include <libdmapsharing/dmap-db.h>
 
 G_BEGIN_DECLS
 
@@ -95,12 +96,14 @@ GInputStream *daap_record_read          (DAAPRecord *record, GError **err);
 
 /**
  * daap_record_cmp_by_album:
- * @a: first DAAPRecord.
- * @b: second DAAPRecord.
+ * @a: first ID.
+ * @b: second ID.
+ * @db: A DMAPDb for which a and b are valid ID's.
  *
- * Compares two records according to album. Suitable to sort lists of albums.
+ * Compares the two records associated with the provided keys according
+ * to album. Suitable to sort lists of albums.
  */ 
-gint daap_record_cmp_by_album (DAAPRecord *a, DAAPRecord *b);
+gint daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb *db);
 
 #endif /* __DAAP_RECORD_H */
 

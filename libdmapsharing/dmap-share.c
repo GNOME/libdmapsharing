@@ -1571,10 +1571,9 @@ _dmap_share_databases (DMAPShare *share,
 			GSList *filter_def;
 			filter_def = _dmap_share_build_filter (record_query);
 			records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
-			g_debug ("Found %d records", g_hash_table_size (records));
 			num_songs = g_hash_table_size (records);
+			g_debug ("Found %d records", num_songs);
 			dmap_share_free_filter (filter_def);
-			g_hash_table_destroy (records);
 		} else {
 			num_songs = dmap_db_count (share->priv->db);
 		}
@@ -1662,10 +1661,8 @@ _dmap_share_databases (DMAPShare *share,
 		struct MLCL_Bits mb = {NULL,0};
 		gint pl_id;
 		gchar *record_query;
-		gchar *sort_by;
 		GSList *filter_def;
 		GHashTable *records;
-		GList *sorted_records;
 
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
@@ -1675,32 +1672,33 @@ _dmap_share_databases (DMAPShare *share,
 		dmap_structure_add (apso, DMAP_CC_MUTY, 0);
 		
 		if (g_ascii_strcasecmp ("/1/items", rest_of_path + 13) == 0) {
+			GList *id;
+			gchar *sort_by;
+			GList *keys;
 			record_query = g_hash_table_lookup (query, "query");
 			filter_def = _dmap_share_build_filter (record_query);
 			records = dmap_db_apply_filter (DMAP_DB (share->priv->db), filter_def);
-			g_debug ("Found %d records", g_hash_table_size (records));
 			gint32 num_songs = g_hash_table_size (records);
+			g_debug ("Found %d records", num_songs);
 			dmap_share_free_filter (filter_def);
 
 			dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
 			dmap_structure_add (apso, DMAP_CC_MRCO, (gint32) num_songs);
 			mb.mlcl = dmap_structure_add (apso, DMAP_CC_MLCL);
 
-			sorted_records = g_hash_table_get_values (records);
 			sort_by = g_hash_table_lookup (query, "sort");
+			keys = g_hash_table_get_keys (records);
 			if (g_strcmp0 (sort_by, "album") == 0) {
-				sorted_records = g_list_sort (sorted_records, (GCompareFunc) daap_record_cmp_by_album);
+				keys = g_list_sort_with_data (keys, (GCompareDataFunc) daap_record_cmp_by_album, records);
 			} else if (sort_by != NULL) {
 				g_warning ("Unknown sort column: %s", sort_by);
 			}
 
-			GList *record;
-			for (record = sorted_records; record; record = record->next) {
-				(*(DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl)) (0, record->data, &mb);
+			for (id = keys; id; id = id->next) {
+				(*(DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl)) (id->data, g_hash_table_lookup(records, id->data), &mb);
 			}
 
-			//g_hash_table_foreach (records, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
-			g_list_free (sorted_records);
+			g_list_free (keys);
 			g_hash_table_destroy (records);
 		} else {
 			pl_id = atoi (rest_of_path + 14);

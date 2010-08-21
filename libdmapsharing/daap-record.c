@@ -30,17 +30,6 @@ daap_record_init (DAAPRecordInterface *iface)
         daap_record_init_count++;
 
 	if (! is_initialized) {
-
-		g_object_interface_install_property (iface,
-			g_param_spec_int ("itemid",
-			                  "Item ID",
-			                  "Item ID",
-			                  0,
-			                  G_MAXINT,
-			                  0,
-			                  G_PARAM_READWRITE));
-
-		
 		g_object_interface_install_property (iface,
 			g_param_spec_string ("location",
 					     "URI pointing to song data",
@@ -248,14 +237,22 @@ daap_record_read (DAAPRecord *record, GError **err)
 }
 
 gint 
-daap_record_cmp_by_album (DAAPRecord *a, DAAPRecord *b) 
+daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb *db) 
 {
+	DAAPRecord *record_a, *record_b;
 	gchar *album_a, *album_b;
 	gchar *sort_album_a, *sort_album_b;
 	gint track_a, track_b;
 	gint ret;
-	g_object_get (a, "songalbum", &album_a, "sort-album", &sort_album_a, "track", &track_a, NULL);
-	g_object_get (b, "songalbum", &album_b, "sort-album", &sort_album_b, "track", &track_b, NULL);
+
+	record_a = DAAP_RECORD (dmap_db_lookup_by_id (db, GPOINTER_TO_UINT(a)));
+	record_b = DAAP_RECORD (dmap_db_lookup_by_id (db, GPOINTER_TO_UINT(b)));
+
+	g_assert (record_a);
+	g_assert (record_b);
+
+	g_object_get (record_a, "songalbum", &album_a, "sort-album", &sort_album_a, "track", &track_a, NULL);
+	g_object_get (record_b, "songalbum", &album_b, "sort-album", &sort_album_b, "track", &track_b, NULL);
 	if (sort_album_a && sort_album_b)
 		ret = g_strcmp0 (sort_album_a, sort_album_b);
 	else
@@ -266,6 +263,8 @@ daap_record_cmp_by_album (DAAPRecord *a, DAAPRecord *b)
 		else 
 			ret = (track_a == track_b) ? 0 : 1;
 	}
+	g_object_unref (record_a);
+	g_object_unref (record_b);
 	g_free (album_a);
 	g_free (album_b);
 	g_free (sort_album_a);
