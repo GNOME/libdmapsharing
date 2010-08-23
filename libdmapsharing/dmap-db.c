@@ -256,7 +256,7 @@ apply_filter (gpointer id, DMAPRecord *record, gpointer data)
 			if (g_strcmp0 (query_key, "dmap.itemid") == 0) {
 				if (GPOINTER_TO_UINT (id) == atoi (query_value)) {
 					accept = TRUE;
-					continue;
+					break;
 				}
 			};
 
