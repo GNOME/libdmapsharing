@@ -534,8 +534,7 @@ add_entry_to_mlcl (gpointer id,
 		   gpointer _mb)
 {
 	GNode *mlit;
-	struct MLCL_Bits *mb;
-	mb = (struct MLCL_Bits *) _mb;
+	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 
 	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))

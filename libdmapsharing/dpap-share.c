@@ -351,17 +351,14 @@ add_entry_to_mlcl (gpointer id,
 		   DMAPRecord *record,
 		   gpointer _mb)
 {
-	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
-
 	GNode *mlit;
-	gchar *aspect_ratio;
-
+	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 
 	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD, (gchar) DPAP_ITEM_KIND_PHOTO);
 	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
-		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) GPOINTER_TO_UINT (id));
+		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
@@ -369,11 +366,15 @@ add_entry_to_mlcl (gpointer id,
 		g_free (filename);
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
-		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) GPOINTER_TO_UINT (id));
-	/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP: */
-	g_object_get (record, "aspect-ratio", &aspect_ratio, NULL);
-	dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
-	g_free (aspect_ratio);
+		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
+	if (TRUE) {
+		/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP
+		 * and this does seem to be the case when testing. */
+		gchar *aspect_ratio;
+		g_object_get (record, "aspect-ratio", &aspect_ratio, NULL);
+		dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
+		g_free (aspect_ratio);
+	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
 		gint creation_date;
 		g_object_get (record, "creation-date", &creation_date, NULL);
