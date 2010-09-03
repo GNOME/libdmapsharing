@@ -3,6 +3,7 @@ Jonathan Matthew <jonathan[@]d14n.org>
 William Jon McCann  <jmccann[@]redhat.com>
 W. Michael Petullo <mike[@]flyn.org>
 Charles Schmidt <cschmidt2[@]gmail.com>
+Alexandre Rosenfeld <alexandre.rosenfeld[@]gmail.com>
 
 A GObject-based DAAP library was first written as a plugin for
 Rhythmbox by Charles Schmidt. This work was done as a part of the
@@ -24,6 +25,9 @@ and modifying it to support DPAP. Mike's changes were merged back into
 the SourceForge in January of 2009 after he was made a member of the
 libdmapsharing development team. The libdmapsharing project was moved
 from SourceForge to GNOME Git in August of 2009.
+
+Alexandre Rosenfeld added initial DACP support to libdmapsharing while
+working on his 2010 Google Summer of Code project.
 
 The original authors of Rhythmbox's DAAP plugin have endorsed the
 re-licensing of their code in the following two emails:
