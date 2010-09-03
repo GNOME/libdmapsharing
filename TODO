@@ -1,8 +1,7 @@
-Reduce the memory usage while building response to media list query.
+Allow both DPAP and DAAP sharing in one process (using two threads
+instead of two processes).
 
-iTunes '09, segfault:
-	dmap_container_record_get_entry_count:86
-	_dmap_share_add_playlist_to_mlcl:1016
+Reduce the memory usage while building response to media list query.
 
 Replace dmap-md5.[ch] with GChecksum.
 
@@ -76,7 +75,7 @@ gst-util.h
 libdmapsharing-1.0.la
 libdmapsharing.la
 
-Add a Mac OS X Zeroconf backend as an alternative to avahi?
+Complete Mac OS X Zeroconf backend as an alternative to avahi
 	Finish browser side support.
 	Update MacPorts port to no longer require avahi.
 
@@ -91,6 +90,3 @@ See FIXME's in dmap-share.c, daap-share.c and dpap-share.c.
 
 Comment purpose of each source file and describe interfaces, using test
 programs as examples.
-
-Allow both DPAP and DAAP sharing in one process (using two threads
-instead of two processes).
