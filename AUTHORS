@@ -106,3 +106,19 @@ re-licensing of their code in the following two emails:
 	enjoy,
 
 	-jonathan
+
+Alexandre Rosenfeld also confirmed that the GPL notice on dacp-player.[ch]
+was not intentional:
+
+	Sure, sorry about that, I used a template for that code, it was never my
+	intention to make it GPL....
+
+	*Alexandre Rosenfeld*
+
+	On Fri, Sep 3, 2010 at 14:46, W. Michael Petullo <mike@flyn.org> wrote:
+
+	> Alexandre,
+	>
+	> I just noticed that dacp-player.[ch] are licensed as GPL. This should
+	> be LGPL because libdmapsharing is LGPL. May I have your permission to
+	> change the license of these files to LGPLv2.1+?
