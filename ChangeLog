@@ -2,6 +2,9 @@
 
 	* Fix license notice on several source files.
 
+	* Fix license on dacp-player.[ch] after receiving confirmation
+	from Alexandre.
+
 20 August 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Back out Alexandre's addition of itemid property from
