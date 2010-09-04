@@ -122,3 +122,21 @@ was not intentional:
 	> I just noticed that dacp-player.[ch] are licensed as GPL. This should
 	> be LGPL because libdmapsharing is LGPL. May I have your permission to
 	> change the license of these files to LGPLv2.1+?
+
+Andre Moreira Magalhaes approved the use of LGPL for test-dmap-client.c.
+
+	Please do it, no problem at all
+
+	BR
+	Andre
+
+	> Andre,
+	>
+	> I have been maintaining libdmapsharing and recently noticed that
+	> tests/test-dmap-client.c and test-dmap-server.c are licensed as
+	> GPL and you are the copyright holder. May I change this to LGPLv2.1+ in
+	> order to match the rest of libdmapsharing? This will make distribution
+	> easier as packages may be licensed at LGPLv2.1+ only.
+	>
+	> --
+	> Mike

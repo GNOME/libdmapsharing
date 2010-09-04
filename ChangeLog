@@ -5,6 +5,9 @@
 	* Fix license on dacp-player.[ch] after receiving confirmation
 	from Alexandre.
 
+	* Fix license on test-dmap-client.c after receiving confirmation
+	from Andre.
+
 20 August 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Back out Alexandre's addition of itemid property from
