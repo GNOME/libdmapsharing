@@ -1083,12 +1083,17 @@ _dmap_share_parse_meta_str (const char *attrs, struct DMAPMetaDataMap *mdm)
 
 		for (i = 0; attrsv[i]; i++) {
 			guint j;
+			gboolean found = FALSE;
 
 			for (j = 0; mdm[j].tag; j++) {
 				if (strcmp (mdm[j].tag, attrsv[i]) == 0) {
 					bits |= (((bitwise) 1) << mdm[j].md);
+					found = TRUE;
 				}
 			}
+
+			if (found == FALSE)
+				g_debug ("Unknown meta request: %s", attrsv[i]);
 		}
 		g_strfreev (attrsv);
 	}	
