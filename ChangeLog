@@ -1,3 +1,7 @@
+06 September 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Fix serving to iTunes 10.
+
 04 June 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add dmap_db_add_with_id() to DMAPDb interface.

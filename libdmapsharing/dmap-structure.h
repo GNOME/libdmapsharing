@@ -75,6 +75,7 @@ typedef enum {
 	DMAP_CC_MUSR,
 	DMAP_CC_MUTY, 
 	DMAP_CC_MUDL,
+	DMAP_CC_FQUESCH,
 	DMAP_CC_APRO,
 	DMAP_CC_AVDB,
 	DMAP_CC_ABRO,
@@ -136,7 +137,12 @@ typedef enum {
 	DMAP_CC_PRET,
         
 	/* iTunes 6.02+ */
-	DMAP_CC_AEHV
+	DMAP_CC_AEHV,
+	DMAP_CC_AESP,
+	DMAP_CC_AEPP,
+	DMAP_CC_AEPS,
+	DMAP_CC_AESG,
+	DMAP_CC_AEMK,
 } DMAPContentCode;
 
 typedef struct _DMAPStructureItem DMAPStructureItem;
