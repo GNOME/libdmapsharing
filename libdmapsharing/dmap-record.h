@@ -78,6 +78,11 @@ struct MLCL_Bits {
 	gpointer pointer;
 };
 
+typedef enum {
+	DMAP_MEDIA_KIND_MUSIC = 1,
+	DMAP_MEDIA_KIND_MOVIE = 2
+} DMAPMediaKind;
+
 GType       dmap_record_get_type      (void);
 
 /**
