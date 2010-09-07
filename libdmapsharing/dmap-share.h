@@ -221,7 +221,7 @@ bitwise  _dmap_share_parse_meta_str (const char *attrs,
 
 void _dmap_share_add_playlist_to_mlcl (gpointer id,
 				       DMAPContainerRecord *record,
-				       gpointer mlcl);
+				       gpointer mb);
 
 GSList * _dmap_share_build_filter (gchar *filterstr);
 

@@ -1114,7 +1114,7 @@ _dmap_share_parse_meta (GHashTable *query, struct DMAPMetaDataMap *mdm)
 }
 
 void
-_dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpointer mlcl)
+_dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpointer _mb)
 {
 	/* MLIT listing item
 	 * MIID item id
@@ -1125,11 +1125,16 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpoi
 	GNode *mlit;
 	guint num_songs;
 	gchar *name;
+	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
 
 	num_songs = dmap_container_record_get_entry_count (record);
 	g_object_get (record, "name", &name, NULL);
 
-	mlit = dmap_structure_add ((GNode *) mlcl, DMAP_CC_MLIT);
+	/* FIXME: ITEM_ID, etc. is defined in DAAPShare, so I can't use
+	 * with _dmap_share_client_requested() here (see add_entry_to_mlcl())
+	 */
+
+	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 	dmap_structure_add (mlit, DMAP_CC_MIID, dmap_container_record_get_id (record));
 	/* we don't have a persistant ID for playlists, unfortunately */
 	dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) dmap_container_record_get_id (record));
@@ -1621,8 +1626,12 @@ _dmap_share_databases (DMAPShare *share,
 	 */
 		gchar *nameprop;
 		GNode *aply;
-		GNode *mlcl;
 		GNode *mlit;
+		struct DMAPMetaDataMap *map;
+		struct MLCL_Bits mb = {NULL,0};
+
+		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
+		mb.bits = _dmap_share_parse_meta (query, map);
 
 		g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
@@ -1631,17 +1640,17 @@ _dmap_share_databases (DMAPShare *share,
 		dmap_structure_add (aply, DMAP_CC_MUTY, 0);
 		dmap_structure_add (aply, DMAP_CC_MTCO, (gint32) dmap_container_db_count (share->priv->container_db) + 1);
 		dmap_structure_add (aply, DMAP_CC_MRCO, (gint32) dmap_container_db_count (share->priv->container_db) + 1);
-		mlcl = dmap_structure_add (aply, DMAP_CC_MLCL);
+		mb.mlcl = dmap_structure_add (aply, DMAP_CC_MLCL);
 
 		/* Base playlist: */
-		mlit = dmap_structure_add (mlcl, DMAP_CC_MLIT);
+		mlit = dmap_structure_add (mb.mlcl, DMAP_CC_MLIT);
 		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) 1);
 		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) 1);
 		dmap_structure_add (mlit, DMAP_CC_MINM, nameprop);
 		dmap_structure_add (mlit, DMAP_CC_MIMC, dmap_db_count (share->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1);
 
-		dmap_container_db_foreach (share->priv->container_db, (GHFunc) _dmap_share_add_playlist_to_mlcl, (gpointer) mlcl);
+		dmap_container_db_foreach (share->priv->container_db, (GHFunc) _dmap_share_add_playlist_to_mlcl, &mb);
 
 		_dmap_share_message_set_from_dmap_structure (share, message, aply);
 		dmap_structure_destroy (aply);
