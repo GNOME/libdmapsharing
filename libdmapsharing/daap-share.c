@@ -339,7 +339,14 @@ typedef enum {
 	SONG_TRACK_NUMBER,
 	SONG_USER_RATING,
 	SONG_YEAR,
-	SONG_HAS_VIDEO
+	SONG_HAS_VIDEO,
+	SONG_SMART_PLAYLIST,
+	SONG_IS_PODCAST_PLAYLIST,
+	SONG_SPECIAL_PLAYLIST,
+	SONG_SAVED_GENIUS,
+	SONG_MEDIAKIND,
+	HAS_CHILD_CONTAINERS,
+	PARENT_CONTAINER_ID
 } DAAPMetaData;
 
 static struct DMAPMetaDataMap meta_data_map[] = {
@@ -380,6 +387,13 @@ static struct DMAPMetaDataMap meta_data_map[] = {
 	{"daap.sortalbum",		SONG_SORT_ALBUM},
 	{"daap.sortartist",		SONG_SORT_ARTIST},
 	{"com.apple.itunes.has-video",	SONG_HAS_VIDEO},
+	{"com.apple.itunes.smart-playlist",		SONG_SMART_PLAYLIST},
+	{"com.apple.itunes.is-podcast-playlist",	SONG_IS_PODCAST_PLAYLIST},
+	{"com.apple.itunes.special-playlist",		SONG_SPECIAL_PLAYLIST},
+	{"com.apple.itunes.saved-genius",		SONG_SAVED_GENIUS},
+	{"com.apple.itunes.mediakind",			SONG_MEDIAKIND},
+	{"dmap.haschildcontainers",			HAS_CHILD_CONTAINERS},
+	{"dmap.parentcontainerid",			PARENT_CONTAINER_ID},
 	{ NULL,				0}};
 
 #define DAAP_ITEM_KIND_AUDIO 2
@@ -678,6 +692,11 @@ add_entry_to_mlcl (gpointer id,
 			dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
 		else
 			g_warning ("Sort album requested but not available");
+	}
+	if (_dmap_share_client_requested (mb->bits, SONG_MEDIAKIND)) {
+		gint mediakind;
+		g_object_get (record, "mediakind", &mediakind, NULL);
+		dmap_structure_add (mlit, DMAP_CC_AEMK, mediakind);
 	}
 
 	return;

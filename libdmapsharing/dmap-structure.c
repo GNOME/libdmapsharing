@@ -77,6 +77,7 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_MUTY, MAKE_CONTENT_CODE('m','u','t','y'), "dmap.updatetype", "muty", DMAP_TYPE_BYTE},
     {DMAP_CC_MUDL, MAKE_CONTENT_CODE('m','u','d','l'), "dmap.deletedidlisting", "mudl", DMAP_TYPE_CONTAINER},
     {DMAP_CC_MSMA, MAKE_CONTENT_CODE('m','s','m','a'), "dmap.speakermachineaddress", "msma", DMAP_TYPE_INT},
+    {DMAP_CC_FQUESCH, MAKE_CONTENT_CODE('f','?','c','h'), "dmap.haschildcontainers", "f?ch", DMAP_TYPE_BYTE},
 
     {DMAP_CC_APRO, MAKE_CONTENT_CODE('a','p','r','o'), "daap.protocolversion", "apro", DMAP_TYPE_VERSION},
     {DMAP_CC_AVDB, MAKE_CONTENT_CODE('a','v','d','b'), "daap.serverdatabases", "avdb", DMAP_TYPE_CONTAINER},
@@ -122,7 +123,6 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_APSO, MAKE_CONTENT_CODE('a','p','s','o'), "daap.playlistsongs", "apso", DMAP_TYPE_CONTAINER},
     {DMAP_CC_PRSV, MAKE_CONTENT_CODE('p','r','s','v'), "daap.resolve", "prsv", DMAP_TYPE_CONTAINER},
     {DMAP_CC_ARIF, MAKE_CONTENT_CODE('a','r','i','f'), "daap.resolveinfo", "arif", DMAP_TYPE_CONTAINER},
-    {DMAP_CC_AESV, MAKE_CONTENT_CODE('a','e','S','V'), "com.applie.itunes.music-sharing-version", "aesv", DMAP_TYPE_INT},
     {DMAP_CC_MSAS, MAKE_CONTENT_CODE('m','s','a','s'), "daap.authentication.schemes", "msas", DMAP_TYPE_BYTE},
     {DMAP_CC_AGRP, MAKE_CONTENT_CODE('a','g','r','p'), "daap.songgrouping", "agrp", DMAP_TYPE_STRING},
     {DMAP_CC_AGAL, MAKE_CONTENT_CODE('a','g','a','l'), "daap.albumgrouping", "agal", DMAP_TYPE_CONTAINER},
@@ -140,7 +140,13 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_PRAT, MAKE_CONTENT_CODE('p','r','a','t'), "dpap.imagerating", "prat", DMAP_TYPE_INT},
     {DMAP_CC_PCMT, MAKE_CONTENT_CODE('p','c','m','t'), "dpap.imagecomments", "pcmt", DMAP_TYPE_STRING},
     {DMAP_CC_PRET, MAKE_CONTENT_CODE('p','r','e','t'), "dpap.pret", "pret", DMAP_TYPE_STRING},
+    {DMAP_CC_AESV, MAKE_CONTENT_CODE('a','e','S','V'), "com.apple.itunes.music-sharing-version", "aesv", DMAP_TYPE_INT},
     {DMAP_CC_AEHV, MAKE_CONTENT_CODE('a','e','H','V'), "com.apple.itunes.has-video", "aeHV", DMAP_TYPE_BYTE},
+    {DMAP_CC_AESP, MAKE_CONTENT_CODE('a','e','S','P'), "com.apple.itunes.smart-playlist", "aeSP", DMAP_TYPE_BYTE},
+    {DMAP_CC_AEPP, MAKE_CONTENT_CODE('a','e','P','P'), "com.apple.itunes.is-podcast-playlist", "aePP", DMAP_TYPE_BYTE},
+    {DMAP_CC_AEPS, MAKE_CONTENT_CODE('a','e','P','S'), "com.apple.itunes.special-playlist", "aePS", DMAP_TYPE_BYTE},
+    {DMAP_CC_AESG, MAKE_CONTENT_CODE('a','e','S','G'), "com.apple.itunes.saved-genius", "aeSG", DMAP_TYPE_BYTE},
+    {DMAP_CC_AEMK, MAKE_CONTENT_CODE('a','e','M','K'), "com.apple.itunes.mediakind", "aeMK", DMAP_TYPE_BYTE},
     
     /* DACP */
     {DMAP_CC_CMPA, MAKE_CONTENT_CODE('c','m','p','a'), "dacp.contentcontainer", "cmpa", DMAP_TYPE_CONTAINER},

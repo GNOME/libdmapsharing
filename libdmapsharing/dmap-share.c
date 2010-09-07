@@ -1141,6 +1141,14 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DMAPContainerRecord *record, gpoi
 	dmap_structure_add (mlit, DMAP_CC_MINM, name);
 	dmap_structure_add (mlit, DMAP_CC_MIMC, (gint32) num_songs);
 
+	/* FIXME: Is this getting music-specific? */
+	dmap_structure_add (mlit, DMAP_CC_FQUESCH, 0);
+	dmap_structure_add (mlit, DMAP_CC_MPCO, 0);
+	dmap_structure_add (mlit, DMAP_CC_AESP, 0);
+	dmap_structure_add (mlit, DMAP_CC_AEPP, 0);
+	dmap_structure_add (mlit, DMAP_CC_AEPS, 0);
+	dmap_structure_add (mlit, DMAP_CC_AESG, 0);
+
 	g_free (name);
 
 	return;

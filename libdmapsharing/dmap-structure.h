@@ -76,6 +76,7 @@ typedef enum {
 	DMAP_CC_MUTY, 
 	DMAP_CC_MUDL,
 	DMAP_CC_MSMA,
+	DMAP_CC_FQUESCH,
 	
 	DMAP_CC_APRO,
 	DMAP_CC_AVDB,
@@ -142,6 +143,12 @@ typedef enum {
         
 	/* iTunes 6.02+ */
 	DMAP_CC_AEHV,
+
+	DMAP_CC_AESP,
+	DMAP_CC_AEPP,
+	DMAP_CC_AEPS,
+	DMAP_CC_AESG,
+	DMAP_CC_AEMK,
 	
 	/* DACP */
 	DMAP_CC_CMPA,
