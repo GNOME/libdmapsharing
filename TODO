@@ -1,3 +1,5 @@
+Complete DACP code and push Rhythmbox patch
+
 Allow both DPAP and DAAP sharing in one process (using two threads
 instead of two processes).
 
@@ -8,72 +10,6 @@ Replace dmap-md5.[ch] with GChecksum.
 Ensure client test catches newly shared files?
 
 Do transcode based on client?
-
-daap-music.c
-daap-music.h
-daap-playlist.c
-daap-playlist.h
-daap-record.c
-daap-record.h
-daap-root-item.c
-daap-root-item.h
-daap-share.c
-daap-share.h
-dmap-config.h
-dmap-config.h.in
-dmap-connection.c
-dmap-connection.h
-dmap-container-db.c
-dmap-container-db.h
-dmap-container-record.c
-dmap-container-record.h
-dmap-db.c
-dmap-db.h
-dmap-item.c
-dmap-item.h
-dmap-marshal.c
-dmap-marshal.h
-dmap-marshal.list
-dmap-md5.c
-dmap-md5.h
-dmap-mdns-avahi.c
-dmap-mdns-avahi.h
-dmap-mdns-browser-avahi.c
-dmap-mdns-browser-dnssd.c
-dmap-mdns-browser-howl.c
-dmap-mdns-browser.h
-dmap-mdns-publisher-avahi.c
-dmap-mdns-publisher-dnssd.c
-dmap-mdns-publisher.h
-dmap-record-factory.c
-dmap-record-factory.h
-dmap-record.c
-dmap-record.h
-dmap-share.c
-dmap-share.h
-dmap-structure.c
-dmap-structure.h
-dmap-utils.h
-dpap-album.c
-dpap-album.h
-dpap-photo.c
-dpap-photo.h
-dpap-record.c
-dpap-record.h
-dpap-root-item.c
-dpap-root-item.h
-dpap-share.c
-dpap-share.h
-g-gst-input-stream.c
-g-gst-input-stream.h
-g-gst-mp3-input-stream.c
-g-gst-mp3-input-stream.h
-g-gst-wav-input-stream.c
-g-gst-wav-input-stream.h
-gst-util.c
-gst-util.h
-libdmapsharing-1.0.la
-libdmapsharing.la
 
 Complete Mac OS X Zeroconf backend as an alternative to avahi
 	Finish browser side support.
@@ -86,7 +22,7 @@ Documentation, see README (put documentation in test code?).
 Clean up test_dmap_server.
 	Fix code that determines path of test.jpeg.
 
-See FIXME's in dmap-share.c, daap-share.c and dpap-share.c.
+See FIXME's in dmap-share.c, daap-share.c, daap-record.c and dpap-share.c.
 
 Comment purpose of each source file and describe interfaces, using test
 programs as examples.
