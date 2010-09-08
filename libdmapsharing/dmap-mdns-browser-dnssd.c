@@ -38,3 +38,11 @@ dmap_mdns_browser_start (DMAPMdnsBrowser *browser,
 	g_error ("Not implemented");
 	return FALSE;
 }
+
+gboolean
+dmap_mdns_browser_stop (DMAPMdnsBrowser *browser,
+                        GError **error)
+{
+	g_error ("Not implemented");
+	return FALSE;
+}

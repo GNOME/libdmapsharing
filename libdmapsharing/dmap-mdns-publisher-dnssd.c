@@ -136,13 +136,18 @@ dmap_mdns_publisher_set_password_required (DmapMdnsPublisher *publisher,
 
 gboolean
 dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
-                                const char          *name,
-                                guint                port,
-                                const char          *type_of_service,
-                                gboolean             password_required,
-                                GError             **error)
+                             const char          *name,
+                             guint                port,
+                             const char          *type_of_service,
+                             gboolean             password_required,
+			     gchar              **txt_records,
+                             GError             **error)
 {
 	int dns_err;
+
+	/* FIXME: does not do anything with txt_records yet */
+	if (txt_records != NULL)
+		g_error ("dmap_mdns_publisher_publish() can not handle txt_records yet");
 
         publisher_set_name_internal (publisher, name, NULL);
         publisher_set_port_internal (publisher, port, NULL);
