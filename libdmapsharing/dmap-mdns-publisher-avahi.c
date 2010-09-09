@@ -217,20 +217,30 @@ refresh_services (DmapMdnsPublisher *publisher,
 	return create_services (publisher, error);
 }
 
+static struct DmapMdnsPublisherService *
+find_service_by_port (GSList *list, guint port)
+{
+	GSList *ptr;
+
+	for (ptr = list; ptr; ptr = g_slist_next (ptr)) {
+		if (port == ((struct DmapMdnsPublisherService *) ptr->data)->port)
+			break;
+	}
+
+	return ptr ? ptr->data : NULL;
+}
+
 gboolean
 dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
 				    guint	       port,
 				    const char        *name,
 				    GError           **error)
 {
-	GSList *ptr;
+	struct DmapMdnsPublisherService *ptr;
 
         g_return_val_if_fail (publisher != NULL, FALSE);
 
-	for (ptr = publisher->priv->service; ptr; ptr = g_slist_next (ptr)) {
-		if (port == ((struct DmapMdnsPublisherService *) ptr->data)->port)
-			break;
-	}
+	ptr = find_service_by_port (publisher->priv->service, port);
 
 	if (ptr == NULL) {
                 g_set_error (error,
@@ -241,8 +251,8 @@ dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
 		return FALSE;
 	}
 
-	g_free (((struct DmapMdnsPublisherService *) ptr->data)->name);
-	((struct DmapMdnsPublisherService *) ptr->data)->name = g_strdup (name);
+	g_free (ptr->name);
+	ptr->name = g_strdup (name);
 
 	if (publisher->priv->entry_group) {
 		refresh_services (publisher, error);
@@ -285,10 +295,21 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 	return create_services (publisher, error);
 }
 
+static void
+free_service (struct DmapMdnsPublisherService *service, gpointer user_data)
+{
+	g_free (service->name);
+	g_free (service->type_of_service);
+	g_strfreev (service->txt_records);
+}
+
 gboolean
 dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
-				 GError             **error)
+			      guint port,
+			      GError             **error)
 {
+	struct DmapMdnsPublisherService *ptr;
+
 	if (publisher->priv->client == NULL) {
                 g_set_error (error,
 			     DMAP_MDNS_PUBLISHER_ERROR,
@@ -298,7 +319,8 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
 		return FALSE;
 	}
 
-	if (publisher->priv->entry_group == NULL) {
+	if (publisher->priv->entry_group == NULL
+	    || ! (ptr = find_service_by_port (publisher->priv->service, port))) {
                 g_set_error (error,
 			     DMAP_MDNS_PUBLISHER_ERROR,
 			     DMAP_MDNS_PUBLISHER_ERROR_FAILED,
@@ -307,9 +329,18 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
 		return FALSE;
 	}
 
-	avahi_entry_group_reset (publisher->priv->entry_group);
-	avahi_entry_group_free (publisher->priv->entry_group);
-	publisher->priv->entry_group = NULL;
+	free_service (ptr, NULL);
+	publisher->priv->service = g_slist_remove (publisher->priv->service, ptr);
+
+	if (publisher->priv->service == NULL) {
+		avahi_entry_group_reset (publisher->priv->entry_group);
+		avahi_entry_group_free (publisher->priv->entry_group);
+		publisher->priv->entry_group = NULL;
+	} else {
+		create_services (publisher, error);
+		if (error != NULL)
+			return FALSE;
+	}
 
 	return TRUE;
 }
@@ -400,14 +431,6 @@ dmap_mdns_publisher_init (DmapMdnsPublisher *publisher)
 	publisher->priv->client      = dmap_mdns_avahi_get_client ();
 	publisher->priv->entry_group = NULL;
 	publisher->priv->service     = NULL;
-}
-
-static void
-free_service (struct DmapMdnsPublisherService *service, gpointer user_data)
-{
-	g_free (service->name);
-	g_free (service->type_of_service);
-	g_strfreev (service->txt_records);
 }
 
 static void

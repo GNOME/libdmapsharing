@@ -359,7 +359,7 @@ _dmap_share_publish_stop (DMAPShare *share)
 		gboolean res;
 		GError  *error;
 		error = NULL;
-		res = dmap_mdns_publisher_withdraw (share->priv->publisher, &error);
+		res = dmap_mdns_publisher_withdraw (share->priv->publisher, share->priv->port, &error);
 		if (error != NULL) {
 			g_warning ("Unable to withdraw music sharing service: %s", error->message);
 			g_error_free (error);

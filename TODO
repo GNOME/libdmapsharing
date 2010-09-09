@@ -1,3 +1,5 @@
+Fix DNSSD on Mac OS X
+
 Complete DACP code and push Rhythmbox patch
 
 Reduce the memory usage while building response to media list query.

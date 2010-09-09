@@ -82,7 +82,8 @@ gboolean             dmap_mdns_publisher_rename_at_port         (DmapMdnsPublish
 								    const char          *name,
 								    GError             **error);
 gboolean             dmap_mdns_publisher_withdraw               (DmapMdnsPublisher *publisher,
-								    GError             **error);
+								 guint port,
+								 GError             **error);
 
 G_END_DECLS
 
