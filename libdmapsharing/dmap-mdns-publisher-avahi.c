@@ -46,16 +46,20 @@ static void	dmap_mdns_publisher_finalize   (GObject	            *object);
 
 #define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_MDNS_PUBLISHER, DmapMdnsPublisherPrivate))
 
-struct DmapMdnsPublisherPrivate
+struct DmapMdnsPublisherService
 {
-	AvahiClient     *client;
-	AvahiEntryGroup *entry_group;
-
 	char            *name;
 	guint            port;
 	char		*type_of_service;
 	gboolean         password_required;
 	gchar          **txt_records;
+};
+
+struct DmapMdnsPublisherPrivate
+{
+	AvahiClient     *client;
+	AvahiEntryGroup *entry_group;
+	GSList		*service;
 };
 
 enum {
@@ -85,28 +89,86 @@ dmap_mdns_publisher_error_quark (void)
 }
 
 static void
+emit_published (char *name, DmapMdnsPublisher *publisher)
+{
+	g_signal_emit (publisher, signals [PUBLISHED], 0, name);
+}
+
+static void
 entry_group_cb (AvahiEntryGroup     *group,
 		AvahiEntryGroupState state,
 		DmapMdnsPublisher *publisher)
 {
 	if (state == AVAHI_ENTRY_GROUP_ESTABLISHED) {
-
-		g_signal_emit (publisher, signals [PUBLISHED], 0, publisher->priv->name);
-
+		g_slist_foreach (publisher->priv->service, (GFunc) emit_published, publisher);
 	} else if (state == AVAHI_ENTRY_GROUP_COLLISION) {
 		g_warning ("MDNS name collision");
 
+		/* FIXME: how to know which name collided?
 		g_signal_emit (publisher, signals [NAME_COLLISION], 0, publisher->priv->name);
+		*/
+		g_signal_emit (publisher, signals [NAME_COLLISION], 0, "unknown");
 	}
 }
 
 static gboolean
-create_service (DmapMdnsPublisher *publisher,
-		GError             **error)
+create_service (struct DmapMdnsPublisherService *service,
+		DmapMdnsPublisher *publisher,
+		GError **error)
 {
-	int         ret;
+	int ret;
 	const char *password_record;
 	AvahiStringList *txt_records;
+
+	if (service->password_required) {
+		password_record = "Password=true";
+	} else {
+		password_record = "Password=false";
+	}
+	
+	txt_records = avahi_string_list_new(password_record, NULL);
+	
+	if (service->txt_records) {
+		//g_debug("Number of txt records: %d", service->txt_records);
+		gchar **txt_record = service->txt_records;
+		while (*txt_record) {
+			txt_records = avahi_string_list_add(txt_records, *txt_record);
+			txt_record++;
+		}
+	}
+
+	ret = avahi_entry_group_add_service_strlst (publisher->priv->entry_group,
+					     AVAHI_IF_UNSPEC,
+					     AVAHI_PROTO_UNSPEC,
+					     0,
+					     service->name,
+					     service->type_of_service,
+					     NULL,
+					     NULL,
+					     service->port,
+					     txt_records);
+					     
+	avahi_string_list_free(txt_records);
+
+	if (ret < 0) {
+		g_set_error (error,
+			     DMAP_MDNS_PUBLISHER_ERROR,
+			     DMAP_MDNS_PUBLISHER_ERROR_FAILED,
+			     "%s: %s",
+			     _("Could not add service"),
+			     avahi_strerror (ret));
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
+static gboolean
+create_services (DmapMdnsPublisher *publisher,
+		 GError             **error)
+{
+	GSList     *ptr;
+	int         ret;
 
 	if (publisher->priv->entry_group == NULL) {
 		publisher->priv->entry_group = avahi_entry_group_new (publisher->priv->client,
@@ -127,51 +189,10 @@ create_service (DmapMdnsPublisher *publisher,
 		return FALSE;
 	}
 
-#if 0
-	g_message ("Service name:%s port:%u password:%d",
-		   publisher->priv->name,
-		   publisher->priv->port,
-		   publisher->priv->password_required);
-#endif
-
-	if (publisher->priv->password_required) {
-		password_record = "Password=true";
-	} else {
-		password_record = "Password=false";
-	}
-	
-	txt_records = avahi_string_list_new(password_record, NULL);
-	
-	if (publisher->priv->txt_records) {
-		//g_debug("Number of txt records: %d", publisher->priv->txt_records);
-		gchar **txt_record = publisher->priv->txt_records;
-		while (*txt_record) {
-			txt_records = avahi_string_list_add(txt_records, *txt_record);
-			txt_record++;
+	for (ptr = publisher->priv->service; ptr; ptr = g_slist_next (ptr)) {
+		if (! create_service (ptr->data, publisher, error)) {
+			return FALSE;
 		}
-	}
-
-	ret = avahi_entry_group_add_service_strlst (publisher->priv->entry_group,
-					     AVAHI_IF_UNSPEC,
-					     AVAHI_PROTO_UNSPEC,
-					     0,
-					     publisher->priv->name,
-					     publisher->priv->type_of_service,
-					     NULL,
-					     NULL,
-					     publisher->priv->port,
-					     txt_records);
-					     
-	avahi_string_list_free(txt_records);
-
-	if (ret < 0) {
-		g_set_error (error,
-			     DMAP_MDNS_PUBLISHER_ERROR,
-			     DMAP_MDNS_PUBLISHER_ERROR_FAILED,
-			     "%s: %s",
-			     _("Could not add service"),
-			     avahi_strerror (ret));
-		return FALSE;
 	}
 
 	ret = avahi_entry_group_commit (publisher->priv->entry_group);
@@ -190,139 +211,41 @@ create_service (DmapMdnsPublisher *publisher,
 }
 
 static gboolean
-refresh_service (DmapMdnsPublisher *publisher,
-		 GError             **error)
+refresh_services (DmapMdnsPublisher *publisher,
+		  GError             **error)
 {
-	return create_service (publisher, error);
-}
-
-static gboolean
-publisher_set_name_internal (DmapMdnsPublisher *publisher,
-			     const char          *name,
-			     GError             **error)
-{
-	g_free (publisher->priv->name);
-	publisher->priv->name = g_strdup (name);
-
-	return TRUE;
+	return create_services (publisher, error);
 }
 
 gboolean
-dmap_mdns_publisher_set_name (DmapMdnsPublisher *publisher,
-				 const char          *name,
-				 GError             **error)
+dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
+				    guint	       port,
+				    const char        *name,
+				    GError           **error)
 {
+	GSList *ptr;
+
         g_return_val_if_fail (publisher != NULL, FALSE);
 
-	publisher_set_name_internal (publisher, name, error);
-
-	if (publisher->priv->entry_group) {
-		refresh_service (publisher, error);
+	for (ptr = publisher->priv->service; ptr; ptr = g_slist_next (ptr)) {
+		if (port == ((struct DmapMdnsPublisherService *) ptr->data)->port)
+			break;
 	}
 
-	return TRUE;
-}
-
-static gboolean
-publisher_set_port_internal (DmapMdnsPublisher *publisher,
-			     guint                port,
-			     GError             **error)
-{
-	publisher->priv->port = port;
-
-	return TRUE;
-}
-
-gboolean
-dmap_mdns_publisher_set_port (DmapMdnsPublisher *publisher,
-				 guint                port,
-				 GError             **error)
-{
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-	publisher_set_port_internal (publisher, port, error);
-
-	if (publisher->priv->entry_group) {
-		refresh_service (publisher, error);
+	if (ptr == NULL) {
+                g_set_error (error,
+			     DMAP_MDNS_PUBLISHER_ERROR,
+			     DMAP_MDNS_PUBLISHER_ERROR_FAILED,
+                             "%s",
+                             _("No service at port"));
+		return FALSE;
 	}
 
-	return TRUE;
-}
-
-static gboolean
-publisher_set_type_of_service_internal (DmapMdnsPublisher *publisher,
-			     const char          *type_of_service,
-			     GError             **error)
-{
-	g_free (publisher->priv->type_of_service);
-	publisher->priv->type_of_service = g_strdup (type_of_service);
-
-	return TRUE;
-}
-
-gboolean
-dmap_mdns_publisher_set_type_of_service (DmapMdnsPublisher *publisher,
-				 const char          *type_of_service,
-				 GError             **error)
-{
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-	publisher_set_type_of_service_internal (publisher, type_of_service, error);
+	g_free (((struct DmapMdnsPublisherService *) ptr->data)->name);
+	((struct DmapMdnsPublisherService *) ptr->data)->name = g_strdup (name);
 
 	if (publisher->priv->entry_group) {
-		refresh_service (publisher, error);
-	}
-
-	return TRUE;
-}
-
-static gboolean
-publisher_set_password_required_internal (DmapMdnsPublisher *publisher,
-					  gboolean             required,
-					  GError             **error)
-{
-	publisher->priv->password_required = required;
-	return TRUE;
-}
-
-gboolean
-dmap_mdns_publisher_set_password_required (DmapMdnsPublisher *publisher,
-					      gboolean             required,
-					      GError             **error)
-{
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-	publisher_set_password_required_internal (publisher, required, error);
-
-	if (publisher->priv->entry_group) {
-		refresh_service (publisher, error);
-	}
-
-	return TRUE;
-}
-
-
-static gboolean
-publisher_set_txt_records_internal (DmapMdnsPublisher *publisher,
-					  gchar              **txt_records,
-					  GError             **error)
-{
-	g_strfreev (publisher->priv->txt_records);
-	publisher->priv->txt_records = g_strdupv (txt_records);
-	return TRUE;
-}
-
-gboolean
-dmap_mdns_publisher_set_txt_records (DmapMdnsPublisher *publisher,
-					      gchar              **txt_records,
-					      GError             **error)
-{
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-	publisher_set_txt_records_internal (publisher, txt_records, error);
-
-	if (publisher->priv->entry_group) {
-		refresh_service (publisher, error);
+		refresh_services (publisher, error);
 	}
 
 	return TRUE;
@@ -337,6 +260,8 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 				gchar              **txt_records,
 				GError             **error)
 {
+	struct DmapMdnsPublisherService *service;
+
 	if (publisher->priv->client == NULL) {
                 g_set_error (error,
 			     DMAP_MDNS_PUBLISHER_ERROR,
@@ -346,13 +271,18 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 		return FALSE;
 	}
 
-	publisher_set_name_internal (publisher, name, NULL);
-	publisher_set_port_internal (publisher, port, NULL);
-	publisher_set_type_of_service_internal (publisher, type_of_service, NULL);
-	publisher_set_password_required_internal (publisher, password_required, NULL);
-	publisher_set_txt_records_internal (publisher, txt_records, NULL);
+	
+	service = g_new (struct DmapMdnsPublisherService, 1);
 
-	return create_service (publisher, error);
+	service->name = g_strdup(name);
+	service->port = port;
+	service->type_of_service = g_strdup (type_of_service);
+	service->password_required = password_required;
+	service->txt_records = g_strdupv (txt_records);
+
+	publisher->priv->service = g_slist_append (publisher->priv->service, service);
+
+	return create_services (publisher, error);
 }
 
 gboolean
@@ -410,11 +340,30 @@ dmap_mdns_publisher_get_property (GObject	 *object,
 	}
 }
 
+static GObject *
+dmap_mdns_publisher_constructor (GType type,
+				 guint n_construct_params,
+				 GObjectConstructParam *construct_params)
+{
+	/* This class is a singleton. */
+	static GObject *self = NULL;
+
+	if (self == NULL) {
+		self = G_OBJECT_CLASS (dmap_mdns_publisher_parent_class)->constructor (
+			type, n_construct_params, construct_params);
+		g_object_add_weak_pointer (self, (gpointer) &self);
+		return self;
+	}
+
+	return g_object_ref (self);
+}
+
 static void
 dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+	object_class->constructor  = dmap_mdns_publisher_constructor;
 	object_class->finalize	   = dmap_mdns_publisher_finalize;
 	object_class->get_property = dmap_mdns_publisher_get_property;
 	object_class->set_property = dmap_mdns_publisher_set_property;
@@ -448,7 +397,17 @@ dmap_mdns_publisher_init (DmapMdnsPublisher *publisher)
 {
 	publisher->priv = DMAP_MDNS_PUBLISHER_GET_PRIVATE (publisher);
 
-	publisher->priv->client = dmap_mdns_avahi_get_client ();
+	publisher->priv->client      = dmap_mdns_avahi_get_client ();
+	publisher->priv->entry_group = NULL;
+	publisher->priv->service     = NULL;
+}
+
+static void
+free_service (struct DmapMdnsPublisherService *service, gpointer user_data)
+{
+	g_free (service->name);
+	g_free (service->type_of_service);
+	g_strfreev (service->txt_records);
 }
 
 static void
@@ -470,10 +429,8 @@ dmap_mdns_publisher_finalize (GObject *object)
 
 	avahi_client_free (publisher->priv->client);
 
-	g_free (publisher->priv->name);
-	g_free (publisher->priv->type_of_service);
-	
-	g_strfreev (publisher->priv->txt_records);
+	g_slist_foreach (publisher->priv->service, (GFunc) free_service, NULL);
+	g_slist_free (publisher->priv->service);
 
 	G_OBJECT_CLASS (dmap_mdns_publisher_parent_class)->finalize (object);
 }

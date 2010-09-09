@@ -405,14 +405,17 @@ _dmap_share_set_name (DMAPShare *share, const char  *name)
 	g_free (share->priv->name);
 	share->priv->name = g_strdup (name);
 
-	error = NULL;
-	res = dmap_mdns_publisher_set_name (share->priv->publisher,
-					    name,
-					    &error);
-	if (error != NULL) {
-		g_warning ("Unable to change MDNS service name: %s",
-			   error->message);
-		g_error_free (error);
+	if (share->priv->published) {
+		error = NULL;
+		res = dmap_mdns_publisher_rename_at_port (share->priv->publisher,
+							  share->priv->port,
+							  name,
+							 &error);
+		if (error != NULL) {
+			g_warning ("Unable to change MDNS service name: %s",
+				   error->message);
+			g_error_free (error);
+		}
 	}
 }
 

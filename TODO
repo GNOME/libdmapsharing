@@ -1,8 +1,5 @@
 Complete DACP code and push Rhythmbox patch
 
-Allow both DPAP and DAAP sharing in one process (using two threads
-instead of two processes).
-
 Reduce the memory usage while building response to media list query.
 
 Replace dmap-md5.[ch] with GChecksum.

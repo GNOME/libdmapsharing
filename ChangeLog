@@ -1,3 +1,8 @@
+09 September 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Allow two sub-DMAP protocols (e.g., DAAP and DPAP) in one
+	process.
+
 07 September 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Allow dmap-mdns-*-dnssd.c to compile.

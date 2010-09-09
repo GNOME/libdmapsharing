@@ -77,18 +77,10 @@ gboolean             dmap_mdns_publisher_publish                (DmapMdnsPublish
 								    gboolean             password_required,
 								    gchar              **txt_records,
 								    GError             **error);
-gboolean             dmap_mdns_publisher_set_name               (DmapMdnsPublisher *publisher,
+gboolean             dmap_mdns_publisher_rename_at_port         (DmapMdnsPublisher *publisher,
+								    guint		 port,
 								    const char          *name,
 								    GError             **error);
-gboolean             dmap_mdns_publisher_set_port               (DmapMdnsPublisher *publisher,
-								    guint                port,
-								    GError             **error);
-gboolean             dmap_mdns_publisher_set_password_required  (DmapMdnsPublisher *publisher,
-								    gboolean             required,
-								    GError             **error);
-gboolean             dmap_mdns_publisher_set_txt_records        (DmapMdnsPublisher *publisher,
-								    gchar          **txt_records,
-								    GError         **error);
 gboolean             dmap_mdns_publisher_withdraw               (DmapMdnsPublisher *publisher,
 								    GError             **error);
 
