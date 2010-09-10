@@ -31,9 +31,6 @@ struct DmapMdnsPublisherPrivate
 {
 	DNSServiceRef	 sdref;
         char            *name;
-        guint16          port;
-        char            *type_of_service;
-        gboolean         password_required;
 };
 
 enum {
@@ -57,79 +54,13 @@ dmap_mdns_publisher_error_quark (void)
         return quark;
 }
 
-static gboolean
-publisher_set_name_internal (DmapMdnsPublisher *publisher,
-                             const char          *name,
-                             GError             **error)
-{
-        g_free (publisher->priv->name);
-        publisher->priv->name = g_strdup (name);
-
-        return TRUE;
-}
-
-static gboolean
-publisher_set_port_internal (DmapMdnsPublisher *publisher,
-                             gint               port,
-                             GError             **error)
-{
-        publisher->priv->port = port;
-
-	return TRUE;
-}
-
 gboolean
-dmap_mdns_publisher_set_name (DmapMdnsPublisher *publisher,
-                                 const char          *name,
-                                 GError             **error)
+dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
+				    guint	       port,
+                                    const char        *name,
+                                    GError           **error)
 {
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-        publisher_set_name_internal (publisher, name, error);
-
-        return TRUE;
-}
-
-static gboolean
-publisher_set_type_of_service_internal (DmapMdnsPublisher *publisher,
-                             const char          *type_of_service,
-                             GError             **error)
-{
-        g_free (publisher->priv->type_of_service);
-        publisher->priv->type_of_service = g_strdup (type_of_service);
-
-        return TRUE;
-}
-
-gboolean
-dmap_mdns_publisher_set_type_of_service (DmapMdnsPublisher *publisher,
-                                 const char          *type_of_service,
-                                 GError             **error)
-{
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-        publisher_set_type_of_service_internal (publisher, type_of_service, error);
-
-        return TRUE;
-}
-
-static gboolean
-publisher_set_password_required_internal (DmapMdnsPublisher *publisher,
-                                          gboolean             required,
-                                          GError             **error)
-{
-        publisher->priv->password_required = required;
-        return TRUE;
-}
-
-gboolean
-dmap_mdns_publisher_set_password_required (DmapMdnsPublisher *publisher,
-                                              gboolean             required,
-                                              GError             **error)
-{
-        g_return_val_if_fail (publisher != NULL, FALSE);
-
-        publisher_set_password_required_internal (publisher, required, error);
+	g_error ("Not implemented");
 
         return TRUE;
 }
@@ -149,12 +80,7 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 	if (txt_records != NULL)
 		g_error ("dmap_mdns_publisher_publish() can not handle txt_records yet");
 
-        publisher_set_name_internal (publisher, name, NULL);
-        publisher_set_port_internal (publisher, port, NULL);
-        publisher_set_type_of_service_internal (publisher, type_of_service, NULL);
-        publisher_set_password_required_internal (publisher, password_required, NULL);
-
-	g_warning ("%s %s %d", publisher->priv->name, publisher->priv->type_of_service, publisher->priv->port);
+	g_warning ("%s %s %d", name, type_of_service, port);
 	if ((dns_err = DNSServiceRegister (&publisher->priv->sdref,
 		0,
 		0,
@@ -185,7 +111,8 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 
 gboolean
 dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
-                                 GError             **error)
+			      guint port,
+                              GError             **error)
 {
 	g_error ("Not implemented");
 
@@ -231,7 +158,6 @@ dmap_mdns_publisher_finalize (GObject *object)
         g_return_if_fail (publisher->priv != NULL);
 
         g_free (publisher->priv->name);
-        g_free (publisher->priv->type_of_service);
 
         G_OBJECT_CLASS (dmap_mdns_publisher_parent_class)->finalize (object);
 }
