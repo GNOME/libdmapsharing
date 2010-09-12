@@ -186,7 +186,7 @@ compare_record_property (DMAPRecord *record, const gchar *property_name, const g
 			g_value_unset (&value);
 			return FALSE;
 		}
-		accept = (g_value_get_long (&dest) == atoi (property_value));
+		accept = (g_value_get_long (&dest) == strtol (property_value, NULL, 10));
 		g_value_unset (&value);
 		return accept;
 	} else if (g_value_type_transformable (G_VALUE_TYPE (&value), G_TYPE_STRING)) {
@@ -254,7 +254,7 @@ apply_filter (gpointer id, DMAPRecord *record, gpointer data)
 			query_value = def->value;
 
 			if (g_strcmp0 (query_key, "dmap.itemid") == 0) {
-				if (GPOINTER_TO_UINT (id) == atoi (query_value)) {
+				if (GPOINTER_TO_UINT (id) == strtoul (query_value, NULL, 10)) {
 					accept = TRUE;
 					break;
 				}

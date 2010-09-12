@@ -1684,7 +1684,7 @@ _dmap_share_databases (DMAPShare *share,
 		GNode *apso;
 		struct DMAPMetaDataMap *map;
 		struct MLCL_Bits mb = {NULL,0};
-		gint pl_id;
+		guint pl_id;
 		gchar *record_query;
 		GSList *filter_def;
 		GHashTable *records;
@@ -1726,7 +1726,7 @@ _dmap_share_databases (DMAPShare *share,
 			g_list_free (keys);
 			g_hash_table_destroy (records);
 		} else {
-			pl_id = atoi (rest_of_path + 14);
+			pl_id = strtoul (rest_of_path + 14, NULL, 10);
 			if (pl_id == 1) {
 				gint32 num_songs = dmap_db_count (share->priv->db);
 				dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);
@@ -1741,6 +1741,7 @@ _dmap_share_databases (DMAPShare *share,
 			
 				record = dmap_container_db_lookup_by_id (share->priv->container_db, pl_id);
 				entries = dmap_container_record_get_entries (record);
+				/* FIXME: what if entries is NULL (handled in dmapd but should be [also] handled here)? */
 				num_songs = dmap_db_count (entries);
 			
 				dmap_structure_add (apso, DMAP_CC_MTCO, (gint32) num_songs);

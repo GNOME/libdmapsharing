@@ -839,7 +839,7 @@ databases_items_xxx (DMAPShare *share,
 	const gchar *transcode_mimetype;
 	const gchar *rest_of_path;
 	const gchar *id_str;
-	gint id;
+	guint id;
 	const gchar *range_header;
 	guint64 filesize;
 	guint64 offset = 0;
@@ -847,7 +847,7 @@ databases_items_xxx (DMAPShare *share,
 
 	rest_of_path = strchr (path + 1, '/');
 	id_str = rest_of_path + 9;
-	id = atoi (id_str);
+	id = strtoul (id_str, NULL, 10);
 
 	g_object_get (share, "db", &db, NULL);
 	record = DAAP_RECORD (dmap_db_lookup_by_id (db, id));
