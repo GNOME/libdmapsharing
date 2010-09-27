@@ -122,7 +122,6 @@ typedef enum {
 	DMAP_CC_APSO,
 	DMAP_CC_PRSV,
 	DMAP_CC_ARIF, 
-	DMAP_CC_AESV,
 	DMAP_CC_MSAS,
 	DMAP_CC_AGRP,
 	DMAP_CC_AGAL,
@@ -142,6 +141,7 @@ typedef enum {
 	DMAP_CC_PRET,
         
 	/* iTunes 6.02+ */
+	DMAP_CC_AESV,
 	DMAP_CC_AEHV,
 
 	DMAP_CC_AESP,
