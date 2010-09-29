@@ -1,3 +1,8 @@
+29 September 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Fix some bugs related to the recent DmapMdnsPublisher singleton
+	change.
+
 09 September 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Allow two sub-DMAP protocols (e.g., DAAP and DPAP) in one
