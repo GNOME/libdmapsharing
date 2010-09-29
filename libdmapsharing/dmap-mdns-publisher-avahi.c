@@ -450,10 +450,20 @@ dmap_mdns_publisher_finalize (GObject *object)
 		publisher->priv->entry_group = NULL;
 	}
 
-	avahi_client_free (publisher->priv->client);
+	/* FIXME: dmap_mdns_avahi_get_client() ensures that a client is initialized only
+	 * once during the lifetime of a program. This needs to be changed so that the
+	 * following call works. Otherwise, an application like Rhythmbox will crash if 
+	 * a user deactivates and then activates the DAAP plugin. In this case,
+	 * publisher->priv->client will be free'd but will not be allocated in a
+	 * successive call to dmap_mdns_avahi_get_client().
+	 *
+	 * avahi_client_free (publisher->priv->client);
+	 */
 
 	g_slist_foreach (publisher->priv->service, (GFunc) free_service, NULL);
 	g_slist_free (publisher->priv->service);
+
+	publisher_object = NULL;
 
 	G_OBJECT_CLASS (dmap_mdns_publisher_parent_class)->finalize (object);
 }
