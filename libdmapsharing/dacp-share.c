@@ -384,7 +384,7 @@ mdns_remote_added (DMAPMdnsBrowser *browser,
                    DACPShare *share) 
 {
 	DACPRemoteInfo *remote_info;
-	
+       
 	remote_info = g_new (DACPRemoteInfo, 1);
 	remote_info->host = g_strdup (service->host);
 	remote_info->port = service->port;

@@ -506,7 +506,7 @@ browse_cb (AvahiServiceBrowser *service_browser,
 #ifdef HAVE_AVAHI_0_6
     local = ((flags & AVAHI_LOOKUP_RESULT_LOCAL) != 0);
 #endif
-    if (local) {
+    if (local && getenv ("LIBDMAPSHARING_ENABLE_LOCAL") == NULL) {
         g_debug ("Ignoring local service %s", name);
         return;
     }
