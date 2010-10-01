@@ -44,7 +44,7 @@ daap_record_init (DAAPRecordInterface *iface)
 					     "Unknown",
 					     G_PARAM_READWRITE));
 
-		//FIXME: This is actually an enum
+		/* FIXME: This is actually an enum */
 		g_object_interface_install_property (iface,
 			g_param_spec_int ("mediakind",
 			                  "Media kind",

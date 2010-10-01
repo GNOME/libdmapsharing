@@ -809,7 +809,7 @@ databases_browse_xxx (DMAPShare *share,
 	node = dmap_structure_add (abro, category_cc);
 
 	values = g_hash_table_get_keys (category_items);
-	if (g_hash_table_lookup (query, "include-sort-headers")) {
+	if (values && g_hash_table_lookup (query, "include-sort-headers")) {
 		g_debug ("Sorting...");
 		values = g_list_sort (values, (GCompareFunc) g_ascii_strcasecmp);
 	}

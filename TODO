@@ -1,5 +1,15 @@
 Fix DNSSD on Mac OS X
 
+Audit remaining GSoC patch:
+--- dmap-db.c
+--- dmap-share.c
+--- dacp-player.c
+--- dacp-player.h
+--- dacp-share.c
+--- dacp-share.h
+
+Does, e.g., handle_server_info need user_data parameter?
+
 Complete DACP code and push Rhythmbox patch
 
 Reduce the memory usage while building response to media list query.

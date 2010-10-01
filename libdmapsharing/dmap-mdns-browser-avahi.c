@@ -373,7 +373,7 @@ resolve_cb (AvahiServiceResolver *service_resolver,
 {
     if (event == AVAHI_RESOLVER_FOUND) {
         gchar *name = NULL;
-        gchar *pair = NULL;
+        gchar *pair = NULL; /* FIXME: extract DACP-specific items into sub-class? See also howl code. */
         gchar host[AVAHI_ADDRESS_STR_MAX];
         gboolean pp = FALSE;
         DMAPMdnsBrowserService *service;

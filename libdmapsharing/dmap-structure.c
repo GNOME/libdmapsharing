@@ -389,7 +389,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
         
         cc = dmap_content_code_read_from_buffer ((const gchar*)&(buf[l]));
         if (cc == DMAP_CC_INVALID) {
-            //g_debug ("Invalid/Unknown content_code recieved\n");
             return;
         }
         l += 4;
