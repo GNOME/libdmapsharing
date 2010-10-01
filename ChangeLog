@@ -1,3 +1,7 @@
+01 October 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Fix missed "daap.songX" to "songX" change.
+
 29 September 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Fix some bugs related to the recent DmapMdnsPublisher singleton
