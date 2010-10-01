@@ -149,6 +149,7 @@ typedef enum {
 	DMAP_CC_AEPS,
 	DMAP_CC_AESG,
 	DMAP_CC_AEMK,
+	DMAP_CC_AEFP,
 	
 	/* DACP */
 	DMAP_CC_CMPA,

@@ -147,6 +147,7 @@ static const DMAPContentCodeDefinition cc_defs[] = {
     {DMAP_CC_AEPS, MAKE_CONTENT_CODE('a','e','P','S'), "com.apple.itunes.special-playlist", "aePS", DMAP_TYPE_BYTE},
     {DMAP_CC_AESG, MAKE_CONTENT_CODE('a','e','S','G'), "com.apple.itunes.saved-genius", "aeSG", DMAP_TYPE_BYTE},
     {DMAP_CC_AEMK, MAKE_CONTENT_CODE('a','e','M','K'), "com.apple.itunes.mediakind", "aeMK", DMAP_TYPE_BYTE},
+    {DMAP_CC_AEFP, MAKE_CONTENT_CODE('a','e','F','P'), "com.apple.itunes.req-fplay", "aeFP", DMAP_TYPE_BYTE},
     
     /* DACP */
     {DMAP_CC_CMPA, MAKE_CONTENT_CODE('c','m','p','a'), "dacp.contentcontainer", "cmpa", DMAP_TYPE_CONTAINER},
