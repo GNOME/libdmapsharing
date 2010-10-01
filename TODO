@@ -8,6 +8,22 @@ Audit remaining GSoC patch:
 --- dacp-share.c
 --- dacp-share.h
 
+Functions that could be simplified:
+	compare_record_property()
+	apply_filter()/_dmap_share_build_filter()
+
+Something odd (as best as I can remember):
+	TunesRemote+ on Android emulator
+	Ryhthmbox on same machine
+	Two network interfaces (_touch-remote._tcp listed twice by avahi-browse)
+	Rhythmbox:
+		Remote listed twice
+		If "wrong" remote selected:
+			entry_insert_text_cb has service_name set to garbled value
+			mdns_remote_added has service_name set to correct value
+
+Where to handle DACP-specific stuff in dmap-mdns-browser-avahi.c?
+
 Does, e.g., handle_server_info need user_data parameter?
 
 Complete DACP code and push Rhythmbox patch
