@@ -15,7 +15,7 @@ Functions that could be simplified:
 Something odd (as best as I can remember):
 	TunesRemote+ on Android emulator
 	Ryhthmbox on same machine
-	Two network interfaces (_touch-remote._tcp listed twice by avahi-browse)
+	Two network interfaces (i.e., _touch-remote._tcp listed twice by avahi-browse)
 	Rhythmbox:
 		Remote listed twice
 		If "wrong" remote selected:
