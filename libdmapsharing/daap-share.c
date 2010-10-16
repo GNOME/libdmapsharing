@@ -558,8 +558,11 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *title;
 		g_object_get (record, "title", &title, NULL);
-		dmap_structure_add (mlit, DMAP_CC_MINM, title);
-		g_free (title);
+		if (title) {
+			dmap_structure_add (mlit, DMAP_CC_MINM, title);
+			g_free (title);
+		} else
+			g_warning ("Title requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
@@ -574,16 +577,22 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
 		gchar *album;
 		g_object_get (record, "songalbum", &album, NULL);
-		dmap_structure_add (mlit, DMAP_CC_ASAL, album);
-		g_free (album);
+		if (album) {
+			dmap_structure_add (mlit, DMAP_CC_ASAL, album);
+			g_free (album);
+		} else
+			g_warning ("Album requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
 		gchar *artist;
 		g_object_get (record, "songartist", &artist, NULL);
-		dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
-		g_free (artist);
+		if (artist) {
+			dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
+			g_free (artist);
+		} else
+			g_warning ("Artist requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
 		gint32 bitrate;
@@ -626,14 +635,20 @@ add_entry_to_mlcl (gpointer id,
 			format = g_strdup (transcode_format);
 		else
 			g_object_get (record, "format", &format, NULL);
-		dmap_structure_add (mlit, DMAP_CC_ASFM, format);
-		g_free (format);
+		if (format) {
+			dmap_structure_add (mlit, DMAP_CC_ASFM, format);
+			g_free (format);
+		} else
+			g_warning ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre;
 		g_object_get (record, "songgenre", &genre, NULL);
-		dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
-		g_free (genre);
+		if (genre) {
+			dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
+			g_free (genre);
+		} else
+			g_warning ("Genre requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
 		dmap_structure_add (mlit, DMAP_CC_ASDT, ""); /* FIXME: e.g., wav audio file */

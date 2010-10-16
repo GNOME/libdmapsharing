@@ -363,8 +363,11 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
-		dmap_structure_add (mlit, DMAP_CC_MINM, filename);
-		g_free (filename);
+		if (filename) {
+			dmap_structure_add (mlit, DMAP_CC_MINM, filename);
+			g_free (filename);
+		} else
+			g_warning ("Filename requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
@@ -373,8 +376,11 @@ add_entry_to_mlcl (gpointer id,
 		 * and this does seem to be the case when testing. */
 		gchar *aspect_ratio;
 		g_object_get (record, "aspect-ratio", &aspect_ratio, NULL);
-		dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
-		g_free (aspect_ratio);
+		if (aspect_ratio) {
+			dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
+			g_free (aspect_ratio);
+		} else
+			g_warning ("Aspect ratio requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
 		gint creation_date;
@@ -384,14 +390,20 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILENAME)) {
 		gchar *filename;
 		g_object_get (record, "filename", &filename, NULL);
-		dmap_structure_add (mlit, DMAP_CC_PIMF, filename);
-		g_free (filename);
+		if (filename) {
+			dmap_structure_add (mlit, DMAP_CC_PIMF, filename);
+			g_free (filename);
+		} else
+			g_warning ("Filename requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
 		gchar *format;
 		g_object_get (record, "format", &format, NULL);
-		dmap_structure_add (mlit, DMAP_CC_PFMT, format);
-		g_free (format);
+		if (format) {
+			dmap_structure_add (mlit, DMAP_CC_PFMT, format);
+			g_free (format);
+		} else
+			g_warning ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
 		gint filesize;
@@ -421,8 +433,11 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGECOMMENTS)) {
 		gchar *comments;
 		g_object_get (record, "comments", &comments, NULL);
-		dmap_structure_add (mlit, DMAP_CC_PCMT, comments);
-		g_free (comments);
+		if (comments) {
+			dmap_structure_add (mlit, DMAP_CC_PCMT, comments);
+			g_free (comments);
+		} else
+			g_warning ("Comments requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
