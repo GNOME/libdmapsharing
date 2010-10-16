@@ -316,7 +316,8 @@ static struct DMAPMetaDataMap meta_data_map[] = {
 	{"dpap.thumb",			PHOTO_THUMB},
 	{"dpap.hires",			PHOTO_HIRES},
 	{"dpap.filedata",		PHOTO_FILEDATA},
-	{"dpap.imagecomments",		PHOTO_IMAGECOMMENTS}};
+	{"dpap.imagecomments",		PHOTO_IMAGECOMMENTS},
+	{ NULL,				0}};
 
 #define DPAP_ITEM_KIND_PHOTO 3 /* This is the constant that dpap-sharp uses. */
 

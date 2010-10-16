@@ -1,3 +1,7 @@
+16 October 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Add terminating record to meta_data_map in dpap-share.c.
+
 01 October 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Fix missed "daap.songX" to "songX" change.
