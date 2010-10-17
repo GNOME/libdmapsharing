@@ -556,7 +556,7 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
-		gchar *title;
+		gchar *title = NULL;
 		g_object_get (record, "title", &title, NULL);
 		if (title) {
 			dmap_structure_add (mlit, DMAP_CC_MINM, title);
@@ -575,7 +575,7 @@ add_entry_to_mlcl (gpointer id,
 		dmap_structure_add (mlit, DMAP_CC_ASUL, "daap://192.168.0.100:%u/databases/1/items/%d.%s?session-id=%s", data->port, *id, daap_record_get_format (DAAP_RECORD (record)), data->session_id);
 	*/
 	if (_dmap_share_client_requested (mb->bits, SONG_ALBUM)) {
-		gchar *album;
+		gchar *album = NULL;
 		g_object_get (record, "songalbum", &album, NULL);
 		if (album) {
 			dmap_structure_add (mlit, DMAP_CC_ASAL, album);
@@ -586,7 +586,7 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
-		gchar *artist;
+		gchar *artist = NULL;
 		g_object_get (record, "songartist", &artist, NULL);
 		if (artist) {
 			dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
@@ -595,7 +595,7 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Artist requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
-		gint32 bitrate;
+		gint32 bitrate = 0;
 		g_object_get (record, "bitrate", &bitrate, NULL);
 		if (bitrate != 0)
 			dmap_structure_add (mlit, DMAP_CC_ASBR, (gint32) bitrate);
@@ -609,19 +609,19 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_COMPOSER))
 		dmap_structure_add (mlit, DMAP_CC_ASCP, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_DATE_ADDED)) {
-		gint32 firstseen;
+		gint32 firstseen = 0;
 		g_object_get (record, "firstseen", &firstseen, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDA, firstseen);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DATE_MODIFIED)) {
-		gint32 mtime;
+		gint32 mtime = 0;
 		g_object_get (record, "mtime", &mtime, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDM, mtime);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DISC_COUNT))
 		dmap_structure_add (mlit, DMAP_CC_ASDC, (gint32) 0);
 	if (_dmap_share_client_requested (mb->bits, SONG_DISC_NUMBER)) {
-		gint32 disc;
+		gint32 disc = 0;
 		g_object_get (record, "disc", &disc, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDN, disc);
 	}
@@ -630,7 +630,7 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_EQ_PRESET))
 		dmap_structure_add (mlit, DMAP_CC_ASEQ, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
-		gchar *format;
+		gchar *format = NULL;
 		if (transcode_format)
 			format = g_strdup (transcode_format);
 		else
@@ -642,7 +642,7 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
-		gchar *genre;
+		gchar *genre = NULL;
 		g_object_get (record, "songgenre", &genre, NULL);
 		if (genre) {
 			dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
@@ -657,7 +657,7 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_SAMPLE_RATE))
 		dmap_structure_add (mlit, DMAP_CC_ASSR, 0);
 	if (_dmap_share_client_requested (mb->bits, SONG_SIZE)) {
-		guint64 filesize;
+		guint64 filesize = 0;
 		g_object_get (record, "filesize", &filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASSZ, (gint32) filesize);
 	}
@@ -673,27 +673,27 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_COUNT))
 		dmap_structure_add (mlit, DMAP_CC_ASTC, 0);
 	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_NUMBER)) {
-		gint32 track;
+		gint32 track = 0;
 		g_object_get (record, "track", &track, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASTN, track);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_USER_RATING)) {
-		gint32 rating;
+		gint32 rating = 0;
 		g_object_get (record, "rating", &rating, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASUR, rating);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_YEAR)) {
-		gint32 year;
+		gint32 year = 0;
 		g_object_get (record, "year", &year, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASYR, year);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_HAS_VIDEO)) {
-		gboolean has_video;
+		gboolean has_video = 0;
 		g_object_get (record, "has-video", &has_video, NULL);
 		dmap_structure_add (mlit, DMAP_CC_AEHV, has_video);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ARTIST)) {
-		gchar *sort_artist;
+		gchar *sort_artist = NULL;
 		g_object_get (record, "sort-artist", &sort_artist, NULL);
 		if (sort_artist)
 			dmap_structure_add (mlit, DMAP_CC_ASSA, sort_artist);
@@ -701,7 +701,7 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Sort artist requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ALBUM)) {
-		gchar *sort_album;
+		gchar *sort_album = NULL;
 		g_object_get (record, "sort-album", &sort_album, NULL);
 		if (sort_album)
 			dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
@@ -709,7 +709,7 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Sort album requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_MEDIAKIND)) {
-		gint mediakind;
+		gint mediakind = 0;
 		g_object_get (record, "mediakind", &mediakind, NULL);
 		dmap_structure_add (mlit, DMAP_CC_AEMK, mediakind);
 	}

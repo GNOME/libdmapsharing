@@ -10,6 +10,17 @@ to increase to over 10 Megabytes. Note that this memory usage might be
 smaller on the WRT160NL due to its 32-bit architecture, but it is still
 significant in size.
 
+After attempting to optimize memory use, I measured the following on
+OpenWrt / WRT160NL (*** BUT WITH NO METADATA READ! ***):
+
+Heap, after music is loaded:		0xf5000  (1,003,520)
+Heap, after client received song list:	0x926000 (9,592,832)
+
+SOME METADATA (MP3 ONLY):
+
+Heap, after music is loaded:		0x2d3000 (2,961,408)
+Heap, after client received song list:	0xafa000 (11,509,760)
+
 I use the following tools to troubleshoot memory issues:
 
 	grep heap /proc/PID/maps	(current heap size)

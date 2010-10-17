@@ -361,7 +361,7 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT (id));
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
-		gchar *filename;
+		gchar *filename = NULL;
 		g_object_get (record, "filename", &filename, NULL);
 		if (filename) {
 			dmap_structure_add (mlit, DMAP_CC_MINM, filename);
@@ -374,7 +374,7 @@ add_entry_to_mlcl (gpointer id,
 	if (TRUE) {
 		/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP
 		 * and this does seem to be the case when testing. */
-		gchar *aspect_ratio;
+		gchar *aspect_ratio = NULL;
 		g_object_get (record, "aspect-ratio", &aspect_ratio, NULL);
 		if (aspect_ratio) {
 			dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
@@ -383,12 +383,12 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Aspect ratio requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
-		gint creation_date;
+		gint creation_date = 0;
 		g_object_get (record, "creation-date", &creation_date, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PICD, creation_date);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILENAME)) {
-		gchar *filename;
+		gchar *filename = NULL;
 		g_object_get (record, "filename", &filename, NULL);
 		if (filename) {
 			dmap_structure_add (mlit, DMAP_CC_PIMF, filename);
@@ -397,7 +397,7 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Filename requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
-		gchar *format;
+		gchar *format = NULL;
 		g_object_get (record, "format", &format, NULL);
 		if (format) {
 			dmap_structure_add (mlit, DMAP_CC_PFMT, format);
@@ -406,32 +406,32 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
-		gint filesize;
+		gint filesize = 0;
 		g_object_get (record, "filesize", &filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PIFS, filesize);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
-		gint large_filesize;
+		gint large_filesize = 0;
 		g_object_get (record, "large-filesize", &large_filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PLSZ, large_filesize);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELHEIGHT)) {
-		gint pixel_height;
+		gint pixel_height = 0;
 		g_object_get (record, "pixel-height", &pixel_height, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PHGT, pixel_height);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELWIDTH)) {
-		gint pixel_width;
+		gint pixel_width = 0;
 		g_object_get (record, "pixel-width", &pixel_width, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PWTH, pixel_width);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGERATING)) {
-		gint rating;
+		gint rating = 0;
 		g_object_get (record, "rating", &rating, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PRAT, rating);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGECOMMENTS)) {
-		gchar *comments;
+		gchar *comments = NULL;
 		g_object_get (record, "comments", &comments, NULL);
 		if (comments) {
 			dmap_structure_add (mlit, DMAP_CC_PCMT, comments);
@@ -447,7 +447,7 @@ add_entry_to_mlcl (gpointer id,
 			g_object_get (record, "filesize", &size, NULL);
 		} else {
 			/* Should be PHOTO_HIRES */
-			char *location;
+			char *location = NULL;
 			g_object_get (record, "location", &location, NULL);
 			if (mapped_file) {
 				/* Free any previously mapped image */
