@@ -1714,7 +1714,7 @@ _dmap_share_databases (DMAPShare *share,
 			sort_by = g_hash_table_lookup (query, "sort");
 			keys = g_hash_table_get_keys (records);
 			if (g_strcmp0 (sort_by, "album") == 0) {
-				keys = g_list_sort_with_data (keys, (GCompareDataFunc) daap_record_cmp_by_album, records);
+				keys = g_list_sort_with_data (keys, (GCompareDataFunc) daap_record_cmp_by_album, share->priv->db);
 			} else if (sort_by != NULL) {
 				g_warning ("Unknown sort column: %s", sort_by);
 			}

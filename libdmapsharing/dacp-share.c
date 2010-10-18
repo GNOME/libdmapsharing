@@ -882,7 +882,7 @@ dacp_share_ctrl_int (DMAPShare *share,
 			sorted_records = g_hash_table_get_values (records);
 			sort_by = g_hash_table_lookup (query, "sort");
 			if (g_strcmp0 (sort_by, "album") == 0) {
-				sorted_records = g_list_sort (sorted_records, (GCompareFunc) daap_record_cmp_by_album);
+				sorted_records = g_list_sort_with_data (sorted_records, (GCompareDataFunc) daap_record_cmp_by_album, db);
 			} else if (sort_by != NULL) {
 				g_warning ("Unknown sort column: %s", sort_by);
 			}
