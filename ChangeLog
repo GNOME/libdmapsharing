@@ -1,3 +1,9 @@
+21 October 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Advertise support for dmap.supportsupdate even though we don't
+	support it. This should fix DACP interaction with Apple Remote
+	v2.0.1 (229). Add real support for dmap.supportsupdate to TODO.
+
 16 October 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Add terminating record to meta_data_map in dpap-share.c.

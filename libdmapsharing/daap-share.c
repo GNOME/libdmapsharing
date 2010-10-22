@@ -287,7 +287,7 @@ daap_share_server_info (DMAPShare *share,
 	dmap_structure_add (msrv, DMAP_CC_MSLR, 0);
 	dmap_structure_add (msrv, DMAP_CC_MSTM, (gint32) DAAP_TIMEOUT);
 	dmap_structure_add (msrv, DMAP_CC_MSAL, (gchar) 0);
-	dmap_structure_add (msrv, DMAP_CC_MSUP, (gchar) 0);
+	dmap_structure_add (msrv, DMAP_CC_MSUP, (gchar) 1);
 	dmap_structure_add (msrv, DMAP_CC_MSPI, (gchar) 0);
 	dmap_structure_add (msrv, DMAP_CC_MSEX, (gchar) 0);
 	dmap_structure_add (msrv, DMAP_CC_MSBR, (gchar) 0);

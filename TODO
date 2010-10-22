@@ -12,6 +12,8 @@ Functions that could be simplified:
 	compare_record_property()
 	apply_filter()/_dmap_share_build_filter()
 
+Add support for DMAP_CC_MSUP, dmap.supportsupdate
+
 Something odd (as best as I can remember):
 	TunesRemote+ on Android emulator
 	Ryhthmbox on same machine
