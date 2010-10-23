@@ -1,3 +1,8 @@
+23 October 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Provide a configuration-time warning if libsoup < 2.32; this
+	is required to interact with Apple Remote App.
+
 21 October 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Advertise support for dmap.supportsupdate even though we don't
