@@ -1,3 +1,7 @@
+24 October 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Fix _dmap_share_build_filter to support commas in values.
+
 23 October 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Provide a configuration-time warning if libsoup < 2.32; this

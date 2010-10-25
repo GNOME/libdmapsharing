@@ -1245,10 +1245,18 @@ _dmap_share_build_filter (gchar *filterstr)
 		} else {
 			switch (*next_char) {
 				case '(':
-					parentheses_count++;
+					if (is_value) {
+						accept = TRUE;
+					} else {
+						parentheses_count++;
+					}
 					break;
 				case ')':
-					parentheses_count--;
+					if (is_value) {
+						accept = TRUE;
+					} else {
+						parentheses_count--;
+					}
 					break;
 				case '\'':
 					if (quotes_count > 0) {
@@ -1258,7 +1266,7 @@ _dmap_share_build_filter (gchar *filterstr)
 					}
 					break;
 				case ' ':
-					if (quotes_count > 0) {
+					if (is_value) {
 						accept = TRUE;
 					} else {
 						new_group = TRUE;
@@ -1274,18 +1282,26 @@ _dmap_share_build_filter (gchar *filterstr)
 						is_value = TRUE;
 					}
 					break;
+				case '!':
+					if (is_value) {
+						accept = TRUE;
+					} else if (is_key && value) {
+						negate = TRUE;
+					}
+					break;
 				case ',':
 				case '+':
-				case '\0':
-					// Don't accept these caracters
-					break;
-				case '!':
-					if (is_key && value) {
-						negate = TRUE;
-						break;
+					// Accept these characters only if inside quotes
+					if (is_value) {
+						accept = TRUE;
 					}
+					break;
+				case '\0':
+					// Never accept
+					break;
 				default:
 					accept = TRUE;
+					break;
 			}
 		}
 		//g_debug ("Char: %c, Accept: %s", *next_char, accept?"TRUE":"FALSE");
