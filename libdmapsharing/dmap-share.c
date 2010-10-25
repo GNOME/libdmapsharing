@@ -1790,6 +1790,11 @@ _dmap_share_databases (DMAPShare *share,
 			path,
 			query,
 			context);
+	} else if (g_str_has_prefix(rest_of_path, "/1/groups/") &&
+		g_str_has_suffix(rest_of_path, "/extra_data/artwork")) {
+		/* We don't yet implement cover requests here, say no cover */
+		g_debug ("Assuming no artwork for requested group/album");
+		soup_message_set_status (message, SOUP_STATUS_NOT_FOUND);
 	} else {
 		g_warning ("Unhandled: %s\n", path);
 	}
