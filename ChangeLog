@@ -1,3 +1,7 @@
+31 October 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Bump version number.
+
 24 October 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Fix _dmap_share_build_filter to support commas in values.
