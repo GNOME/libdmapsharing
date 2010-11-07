@@ -1,3 +1,20 @@
+Reduce memory needed to send entire listing to client:
+	Can we predict length of mlcl?
+		dmapd-structure.c: what does this mean in the case of MLCL: guint32 size = GINT32_TO_BE (item->size);
+
+	dmap-share.c.../1/items use chunked response see daap-share.c:databases_items_xxx() / send_chunked_file()
+		collect ID's into list
+		header-complete callback, send preamble
+		chunk-complete callback (modify add_entry_to_mlcl into callback) take ID list as user_data
+			for each callback, pull an ID off list and write it
+			once list is empty, done
+	
+	SHOULD THIS STUFF BE USED IN NEW SCHEME? HOW TO HANDLE SERIALIZING MLCL?
+	eventually, get rid of?
+		dmap_structure_serialize
+		dmap_structure_serialize_node
+		dmap_structure_add
+
 Fix DNSSD on Mac OS X
 
 Audit remaining GSoC patch:
