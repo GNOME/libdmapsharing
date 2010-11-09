@@ -78,7 +78,7 @@ static void databases_items_xxx (DMAPShare *share,
 				 GHashTable *query,
 				 SoupClientContext *context);
 static struct DMAPMetaDataMap *get_meta_data_map (DMAPShare *share);
-static void add_entry_to_mlcl (gpointer id,
+static guint32 add_entry_to_mlcl (gpointer id,
 			       DMAPRecord *record,
 			       gpointer mb);
 
@@ -347,7 +347,7 @@ file_to_mmap (const char *location)
 	return mapped_file;
 }
 
-static void
+static guint32
 add_entry_to_mlcl (gpointer id,
 		   DMAPRecord *record,
 		   gpointer _mb)
@@ -466,7 +466,8 @@ add_entry_to_mlcl (gpointer id,
 		}
 		dmap_structure_add (mlit, DMAP_CC_PFDT, data, size);
 	}
-	return;
+
+	return ((DMAPStructureItem *) mlit->data)->size;
 }
 
 static void

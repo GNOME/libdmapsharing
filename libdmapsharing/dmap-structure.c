@@ -785,3 +785,16 @@ dmap_structure_print (GNode *structure)
         g_node_traverse (structure, G_PRE_ORDER, G_TRAVERSE_ALL, -1, (GNodeTraverseFunc)print_dmap_item, NULL);
     }
 }
+
+guint
+dmap_structure_get_size (GNode *structure)
+{
+	return ((DMAPStructureItem *) structure->data)->size;
+}
+
+
+void
+dmap_structure_set_predicted_size (GNode *structure, guint size)
+{
+        ((DMAPStructureItem *) structure->data)->size = size;
+}

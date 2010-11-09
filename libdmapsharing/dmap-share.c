@@ -91,6 +91,11 @@ struct DMAPSharePrivate {
 	GHashTable *session_ids;
 };
 
+struct share_bitwise_t {
+	DMAPShare *share;
+	bitwise bits;
+};
+
 static void dmap_share_init       (DMAPShare *share);
 static void dmap_share_class_init (DMAPShareClass *klass);
 
@@ -1444,6 +1449,81 @@ _dmap_share_ctrl_int (DMAPShare *share,
 	g_debug ("ctrl-int not implemented");
 }
 
+static void
+accumulate_mlcl_size (gpointer id,
+		      DMAPRecord *record,
+		      gpointer mb)
+{
+	/* Make copy and set mlcl to NULL so real MLCL does not get changed */
+	struct MLCL_Bits mb_copy = *((struct MLCL_Bits *) mb);
+	mb_copy.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);;
+
+	*((guint *) ((struct MLCL_Bits *) mb)->user_data1) += DMAP_SHARE_GET_CLASS (((struct MLCL_Bits *) mb)->user_data2)->add_entry_to_mlcl (id, record, &mb_copy);
+
+	/* Destroy created structures as we go. */
+	dmap_structure_destroy (mb_copy.mlcl);
+}
+
+static void
+accumulate_ids (gpointer id,
+		DMAPRecord *record,
+		GSList **list)
+{
+	*list = g_slist_append (*list, id);
+}
+
+static void
+write_daap_preamble (SoupMessage *message, GNode *node)
+{
+	guint length;
+	gchar *data = dmap_structure_serialize (node, &length);
+	soup_message_body_append (message->response_body,
+				  SOUP_MEMORY_TAKE,
+				  data,
+				  length);
+	dmap_structure_destroy (node);
+}
+
+static void
+write_next_mlit (SoupMessage *message, struct share_bitwise_t *share_bitwise)
+{
+	gchar *data;
+	guint length;
+	DMAPRecord *record;
+	static GSList *id_list = NULL;
+	struct MLCL_Bits mb = {NULL,0};
+
+	if (id_list == NULL) {
+		g_debug ("Initializing ID list.");
+		dmap_db_foreach (share_bitwise->share->priv->db, (GHFunc) accumulate_ids, &id_list);
+	}
+
+	record = dmap_db_lookup_by_id (share_bitwise->share->priv->db, GPOINTER_TO_UINT (id_list->data));
+
+	mb.bits = share_bitwise->bits;
+	mb.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);
+
+	DMAP_SHARE_GET_CLASS (share_bitwise->share)->add_entry_to_mlcl (id_list->data, record, &mb);
+	data = dmap_structure_serialize (g_node_first_child(mb.mlcl), &length);
+
+	soup_message_body_append (message->response_body,
+				 SOUP_MEMORY_TAKE,
+				 data,
+				 length);
+	g_debug ("Sending ID %u.", GPOINTER_TO_UINT (id_list->data));
+	dmap_structure_destroy (mb.mlcl);
+
+	id_list = g_slist_remove (id_list, id_list->data);
+	if (id_list == NULL) {
+		g_debug ("No more ID's, sending message complete.");
+		soup_message_body_complete (message->response_body);
+		g_free (share_bitwise);
+	}
+
+	g_object_unref (record);
+	soup_server_unpause_message (share_bitwise->share->priv->server, message);
+}
+
 void
 _dmap_share_databases (DMAPShare *share,
 		       SoupServer        *server,
@@ -1623,18 +1703,64 @@ _dmap_share_databases (DMAPShare *share,
 		dmap_structure_add (adbs, DMAP_CC_MUTY, 0);
 		dmap_structure_add (adbs, DMAP_CC_MTCO, (gint32) num_songs);
 		dmap_structure_add (adbs, DMAP_CC_MRCO, (gint32) num_songs);
-		mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL);
 
 		if (record_query) {
+			/* NOTE: still uses old technique: */
+			mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL); // Was shared with else before
 			g_hash_table_foreach (records, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
 			g_hash_table_destroy (records);
+			_dmap_share_message_set_from_dmap_structure (share, message, adbs); // Was shared with else before
+			dmap_structure_destroy (adbs); // Was shared with else before
 		} else {
-			dmap_db_foreach (share->priv->db, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
+			/* NOTE:
+			 * We previously simply called foreach...add_entry_to_mlcl and later serialized the entire
+			 * structure. This has the disadvantage that the entire response must be in memory before
+			 * libsoup sends it to the client.
+			 *
+			 * Now, we go through the database in multiple passes (as an interim solution):
+			 *
+			 * 1. Accumulate the eventual size of the MLCL by creating and then free'ing each MLIT.
+			 * 2. Generate the DAAP preamble ending with the MLCL (with size fudged for ADBS and MLCL).
+			 * 3. Setup libsoup response headers, etc.
+			 * 4. Setup callback to transmit DAAP preamble (write_daap_preamble)
+			 * 5. Setup callback to transmit MLIT's (write_next_mlit)
+			 *    NOTE: write_next_mlit uses some tricks to iterate through all record ID's
+			 */
+
+			struct share_bitwise_t *share_bitwise;
+
+			/* 1: */
+			/* FIXME: user_data1/2 is ugly: */
+			guint32 size = 0;
+			mb.user_data1 = &size;
+			mb.user_data2 = share;
+			dmap_db_foreach (share->priv->db, (GHFunc) accumulate_mlcl_size, &mb);
+
+			/* 2: */
+			mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL);
+			dmap_structure_set_predicted_size (adbs, dmap_structure_get_size(adbs) + size);
+			dmap_structure_set_predicted_size (mb.mlcl, dmap_structure_get_size(mb.mlcl) + size);
+
+			/* 3: */
+			soup_message_set_status (message, SOUP_STATUS_OK);
+			soup_message_headers_set_content_length (message->response_headers, dmap_structure_get_size(adbs) + 8);
+			/* Free memory after each chunk sent out over network. */
+			soup_message_body_set_accumulate (message->response_body, FALSE);
+
+			soup_message_headers_append (message->response_headers, "Connection", "Close");
+			soup_message_headers_append (message->response_headers, "Content-Type", "application/x-daap-tagged");
+			DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (share, message);
+
+			/* 4: */
+			g_signal_connect (message, "wrote_headers", G_CALLBACK (write_daap_preamble), adbs);
+
+			/* 5: */
+			share_bitwise = g_new (struct share_bitwise_t, 1);
+			share_bitwise->share = share;
+			share_bitwise->bits = mb.bits;
+			g_signal_connect (message, "wrote_chunk", G_CALLBACK (write_next_mlit), share_bitwise);
 		}
 
-		_dmap_share_message_set_from_dmap_structure (share, message, adbs);
-		dmap_structure_destroy (adbs);
-		adbs = NULL;
 	} else if (g_ascii_strcasecmp ("/1/containers", rest_of_path) == 0) {
 	/* APLY database playlists
 	 * 	MSTT status

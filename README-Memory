@@ -1,5 +1,7 @@
 This documents the effort to make dmapd and libdmapsharing more memory
-efficient.
+efficient. This document describes work done in both libdmapsharing and
+dmapd, because dmapd is the primary application of libdmapsharing's
+server-side functionality.
 
 I found that dmapd used a significant amount of heap space while trying to
 port dmapd to OpenWRT on a WRT160NL router with 32 Megabytes of RAM. A
@@ -37,7 +39,7 @@ efficient:
 Database implementation. This has not resulted in any improvement,
 so the hash table implementation is once again the default.
 
-2. Fixed several memory leaks after analysing with valgrind.
+2. Fixed several memory leaks after analyzing with valgrind.
 
 	Heap without client connection: 3,940,352 bytes
 
@@ -57,3 +59,24 @@ GSList of ID's.
 	Heap without client connection: 3,518,464 bytes
 	Heap after client connection and song list: 6,864,896 bytes
 	Max heap usages (massif): 8,945,760 bytes
+
+6. Modify libdmapsharing so that it responds to "/1/items" requests in
+chunks, avoiding the need to build the entire response in memory.
+
+	The effectiveness of this can be measured by observing the
+	maximum heap usage after a client has asked for a full media
+	list. Previous to this change, dmapd would use 7,811,072 bytes
+	of heap to describe a 2,232-song library. After this change,
+	dmapd's usage was 3,665,920 bytes, a very small increase over
+	the memory used by dmapd immediately after starting.
+
+7. Write a disk-based database for dmapd.
+
+	In order to minimize the memory used by a newly started dmapd,
+	I wrote a disk-based DMAPDb backend. This backend stores all
+	database data in files and avoids storing the entire database
+	in memory. To measure the effectiveness, I measured the memory
+	usage of dmapd after loading a 3,276-photograph library (note
+	that thumbnails are especially problematic). The GHashTable-based
+	database used 35,885,056 bytes of heap space. The disk-based
+	database used 4,763,648 bytes.

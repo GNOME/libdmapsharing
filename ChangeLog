@@ -1,3 +1,12 @@
+07 November 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Significant work on an interim solution for the problem
+	of memory usage while building the "/1/items" response. We
+	previously simply called foreach...add_entry_to_mlcl and later
+	serialized the entire structure. This has the disadvantage that
+	the entire response must be in memory before libsoup sends it
+	to the client. Now, we transmit portions at a time.
+
 31 October 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Bump version number.

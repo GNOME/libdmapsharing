@@ -233,9 +233,9 @@ test_daap_record_class_init (TestDAAPRecordClass *klass)
 
         g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
         g_object_class_override_property (gobject_class, PROP_TITLE, "title");
-        g_object_class_override_property (gobject_class, PROP_ALBUM, "album");
-        g_object_class_override_property (gobject_class, PROP_ARTIST, "artist");
-        g_object_class_override_property (gobject_class, PROP_GENRE, "genre");
+        g_object_class_override_property (gobject_class, PROP_ALBUM, "songalbum");
+        g_object_class_override_property (gobject_class, PROP_ARTIST, "songartist");
+        g_object_class_override_property (gobject_class, PROP_GENRE, "songgenre");
         g_object_class_override_property (gobject_class, PROP_FORMAT, "format");
         g_object_class_override_property (gobject_class, PROP_RATING, "rating");
         g_object_class_override_property (gobject_class, PROP_FILESIZE, "filesize");

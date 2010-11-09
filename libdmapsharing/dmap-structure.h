@@ -196,19 +196,21 @@ struct _DMAPStructureItem {
 	guint size;
 };
 
-GNode             *dmap_structure_add       (GNode *parent, 
-                                             DMAPContentCode cc, 
-                                             ...);
-gchar             *dmap_structure_serialize (GNode *structure, 
-                                             guint *length);
-GNode             *dmap_structure_parse     (const gchar *buf, 
-                                             gint buf_length);
-DMAPStructureItem *dmap_structure_find_item (GNode *structure, 
-                                             DMAPContentCode code);
-GNode             *dmap_structure_find_node (GNode *structure, 
-                                             DMAPContentCode code);
-void               dmap_structure_print     (GNode *structure);
-void               dmap_structure_destroy   (GNode *structure);
+GNode             *dmap_structure_add		     (GNode *parent,
+						      DMAPContentCode cc,
+						      ...);
+gchar             *dmap_structure_serialize	     (GNode *structure, 
+						      guint *length);
+GNode             *dmap_structure_parse		     (const gchar *buf, 
+						      gint buf_length);
+DMAPStructureItem *dmap_structure_find_item	     (GNode *structure, 
+						      DMAPContentCode code);
+GNode             *dmap_structure_find_node	     (GNode *structure, 
+						      DMAPContentCode code);
+void               dmap_structure_print		     (GNode *structure);
+void               dmap_structure_destroy	     (GNode *structure);
+guint		   dmap_structure_get_size	     (GNode *structure);
+void		   dmap_structure_set_predicted_size (GNode *structure, guint size);
 
 typedef enum {
 	DMAP_TYPE_BYTE = 0x0001,
