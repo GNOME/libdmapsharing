@@ -1738,8 +1738,8 @@ _dmap_share_databases (DMAPShare *share,
 
 			/* 2: */
 			mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL);
-			dmap_structure_set_predicted_size (adbs, dmap_structure_get_size(adbs) + size);
-			dmap_structure_set_predicted_size (mb.mlcl, dmap_structure_get_size(mb.mlcl) + size);
+			dmap_structure_increase_by_predicted_size (adbs, size);
+			dmap_structure_increase_by_predicted_size (mb.mlcl, size);
 
 			/* 3: */
 			soup_message_set_status (message, SOUP_STATUS_OK);

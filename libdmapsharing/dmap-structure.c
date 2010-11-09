@@ -794,7 +794,7 @@ dmap_structure_get_size (GNode *structure)
 
 
 void
-dmap_structure_set_predicted_size (GNode *structure, guint size)
+dmap_structure_increase_by_predicted_size (GNode *structure, guint size)
 {
-        ((DMAPStructureItem *) structure->data)->size = size;
+        ((DMAPStructureItem *) structure->data)->size += size;
 }

@@ -210,7 +210,7 @@ GNode             *dmap_structure_find_node	     (GNode *structure,
 void               dmap_structure_print		     (GNode *structure);
 void               dmap_structure_destroy	     (GNode *structure);
 guint		   dmap_structure_get_size	     (GNode *structure);
-void		   dmap_structure_set_predicted_size (GNode *structure, guint size);
+void		   dmap_structure_increase_by_predicted_size (GNode *structure, guint size);
 
 typedef enum {
 	DMAP_TYPE_BYTE = 0x0001,
