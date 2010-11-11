@@ -94,6 +94,7 @@ struct DMAPSharePrivate {
 struct share_bitwise_t {
 	DMAPShare *share;
 	bitwise bits;
+	GSList *id_list;
 };
 
 static void dmap_share_init       (DMAPShare *share);
@@ -1487,41 +1488,43 @@ write_daap_preamble (SoupMessage *message, GNode *node)
 static void
 write_next_mlit (SoupMessage *message, struct share_bitwise_t *share_bitwise)
 {
-	gchar *data;
-	guint length;
-	DMAPRecord *record;
-	static GSList *id_list = NULL;
-	struct MLCL_Bits mb = {NULL,0};
-
-	if (id_list == NULL) {
-		g_debug ("Initializing ID list.");
-		dmap_db_foreach (share_bitwise->share->priv->db, (GHFunc) accumulate_ids, &id_list);
-	}
-
-	record = dmap_db_lookup_by_id (share_bitwise->share->priv->db, GPOINTER_TO_UINT (id_list->data));
-
-	mb.bits = share_bitwise->bits;
-	mb.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);
-
-	DMAP_SHARE_GET_CLASS (share_bitwise->share)->add_entry_to_mlcl (id_list->data, record, &mb);
-	data = dmap_structure_serialize (g_node_first_child(mb.mlcl), &length);
-
-	soup_message_body_append (message->response_body,
-				 SOUP_MEMORY_TAKE,
-				 data,
-				 length);
-	g_debug ("Sending ID %u.", GPOINTER_TO_UINT (id_list->data));
-	dmap_structure_destroy (mb.mlcl);
-
-	id_list = g_slist_remove (id_list, id_list->data);
-	if (id_list == NULL) {
+	if (share_bitwise->id_list == NULL) {
 		g_debug ("No more ID's, sending message complete.");
 		soup_message_body_complete (message->response_body);
-		g_free (share_bitwise);
+	} else {
+		gchar *data;
+		guint length;
+		DMAPRecord *record;
+		struct MLCL_Bits mb = {NULL,0};
+
+		record = dmap_db_lookup_by_id (share_bitwise->share->priv->db, GPOINTER_TO_UINT (share_bitwise->id_list->data));
+
+		mb.bits = share_bitwise->bits;
+		mb.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);
+
+		DMAP_SHARE_GET_CLASS (share_bitwise->share)->add_entry_to_mlcl (share_bitwise->id_list->data, record, &mb);
+		data = dmap_structure_serialize (g_node_first_child(mb.mlcl), &length);
+
+		soup_message_body_append (message->response_body,
+					  SOUP_MEMORY_TAKE,
+					  data,
+					  length);
+		g_debug ("Sending ID %u.", GPOINTER_TO_UINT (share_bitwise->id_list->data));
+		dmap_structure_destroy (mb.mlcl);
+
+		share_bitwise->id_list = g_slist_remove (share_bitwise->id_list, share_bitwise->id_list->data);
+
+		g_object_unref (record);
 	}
 
-	g_object_unref (record);
 	soup_server_unpause_message (share_bitwise->share->priv->server, message);
+}
+
+static void
+chunked_message_finished (SoupMessage *message, struct share_bitwise_t *share_bitwise)
+{
+	g_debug ("Finished sending chunked data.");
+	g_free (share_bitwise);
 }
 
 void
@@ -1758,7 +1761,10 @@ _dmap_share_databases (DMAPShare *share,
 			share_bitwise = g_new (struct share_bitwise_t, 1);
 			share_bitwise->share = share;
 			share_bitwise->bits = mb.bits;
+			share_bitwise->id_list = NULL;
+			dmap_db_foreach (share->priv->db, (GHFunc) accumulate_ids, &(share_bitwise->id_list));
 			g_signal_connect (message, "wrote_chunk", G_CALLBACK (write_next_mlit), share_bitwise);
+			g_signal_connect (message, "finished", G_CALLBACK (chunked_message_finished), share_bitwise);
 		}
 
 	} else if (g_ascii_strcasecmp ("/1/containers", rest_of_path) == 0) {

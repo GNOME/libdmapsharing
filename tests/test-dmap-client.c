@@ -41,7 +41,7 @@ print_record (gpointer id, DMAPRecord *record, gpointer user_data)
 	gchar *artist, *title;
 
 	g_object_get (record,
-		     "artist", &artist,
+		     "songartist", &artist,
 		     "title",  &title,
 		     NULL);
 
