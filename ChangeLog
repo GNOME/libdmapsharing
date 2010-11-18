@@ -2,6 +2,8 @@
 
 	* Fix problem sharing to iTunes due to incorrect Content-Length
 
+	* Bump version number.
+
 11 November 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Bump version number.
