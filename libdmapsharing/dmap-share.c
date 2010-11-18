@@ -1459,7 +1459,13 @@ accumulate_mlcl_size (gpointer id,
 	struct MLCL_Bits mb_copy = *((struct MLCL_Bits *) mb);
 	mb_copy.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);;
 
-	*((guint *) ((struct MLCL_Bits *) mb)->user_data1) += DMAP_SHARE_GET_CLASS (((struct MLCL_Bits *) mb)->user_data2)->add_entry_to_mlcl (id, record, &mb_copy) + 8 /* FIXME: sizeof MLIT */;
+	DMAP_SHARE_GET_CLASS (((struct MLCL_Bits *) mb)->user_data2)->add_entry_to_mlcl (id, record, &mb_copy);
+	*((guint *) ((struct MLCL_Bits *) mb)->user_data1) += dmap_structure_get_size(mb_copy.mlcl);
+
+	/* Minus eight because we do not want to add size of MLCL CC field + size field n times,
+	 * where n == number of records.
+	 */
+	*((guint *) ((struct MLCL_Bits *) mb)->user_data1) -= 8;
 
 	/* Destroy created structures as we go. */
 	dmap_structure_destroy (mb_copy.mlcl);
@@ -1746,7 +1752,7 @@ _dmap_share_databases (DMAPShare *share,
 
 			/* 3: */
 			soup_message_set_status (message, SOUP_STATUS_OK);
-			soup_message_headers_set_content_length (message->response_headers, dmap_structure_get_size(adbs) + 8 /* FIXME: sizeof MLCL */);
+			soup_message_headers_set_content_length (message->response_headers, dmap_structure_get_size(adbs));
 			/* Free memory after each chunk sent out over network. */
 			soup_message_body_set_accumulate (message->response_body, FALSE);
 

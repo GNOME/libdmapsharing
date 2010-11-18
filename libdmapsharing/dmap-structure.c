@@ -789,7 +789,7 @@ dmap_structure_print (GNode *structure)
 guint
 dmap_structure_get_size (GNode *structure)
 {
-	return ((DMAPStructureItem *) structure->data)->size;
+	return ((DMAPStructureItem *) structure->data)->size + 8 /* FIXME: 8 = actual CC field + size field */;
 }
 
 

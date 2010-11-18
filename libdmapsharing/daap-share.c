@@ -76,7 +76,7 @@ static void databases_items_xxx (DMAPShare *share,
 				 GHashTable *query,
 				 SoupClientContext *context);
 static struct DMAPMetaDataMap *get_meta_data_map (DMAPShare *share);
-static guint32 add_entry_to_mlcl (gpointer id,
+static void add_entry_to_mlcl (gpointer id,
 			       DMAPRecord *record,
 			       gpointer mb);
 
@@ -542,7 +542,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
 }
 
-static guint32
+static void
 add_entry_to_mlcl (gpointer id,
 		   DMAPRecord *record,
 		   gpointer _mb)
@@ -713,8 +713,6 @@ add_entry_to_mlcl (gpointer id,
 		g_object_get (record, "mediakind", &mediakind, NULL);
 		dmap_structure_add (mlit, DMAP_CC_AEMK, mediakind);
 	}
-
-	return ((DMAPStructureItem *) mlit->data)->size;
 }
 
 static void
