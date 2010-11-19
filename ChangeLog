@@ -4,6 +4,8 @@
 
 	* Bump version number.
 
+	* Don't set Connection: Close header in response to /databases/1/items (iTunes)
+
 11 November 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Bump version number.
