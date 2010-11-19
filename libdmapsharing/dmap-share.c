@@ -1756,7 +1756,6 @@ _dmap_share_databases (DMAPShare *share,
 			/* Free memory after each chunk sent out over network. */
 			soup_message_body_set_accumulate (message->response_body, FALSE);
 
-			soup_message_headers_append (message->response_headers, "Connection", "Close");
 			soup_message_headers_append (message->response_headers, "Content-Type", "application/x-daap-tagged");
 			DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (share, message);
 
