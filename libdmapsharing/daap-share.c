@@ -534,7 +534,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 	}
 
 	soup_message_headers_append (message->response_headers, "Connection", "Close");
-	soup_message_headers_append (message->response_headers, "Content-Type", "application/x-daap-tagged");
+	soup_message_headers_append (message->response_headers, "Content-Type", "application/x-dmap-tagged");
 
 	g_signal_connect (message, "wrote_headers", G_CALLBACK (write_next_chunk), cd);
 	g_signal_connect (message, "wrote_chunk", G_CALLBACK (write_next_chunk), cd);

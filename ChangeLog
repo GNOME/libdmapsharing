@@ -1,3 +1,13 @@
+19 November 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Change Content-Type to consistently be application/x-dmap-tagged
+	after getting a bug report from Michael Miceli. I confirmed that
+	iTunes uses this content type (not application/x-daap-tagged)
+	when sharing music.
+
+	* Move over-anxious g_object_unref in _dmap_share_databases that
+	resulted in corrupt DPAP thumbnails when using DmapdDMAPDbDisk.
+
 18 November 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Fix problem sharing to iTunes due to incorrect Content-Length

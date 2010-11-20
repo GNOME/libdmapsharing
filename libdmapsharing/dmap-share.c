@@ -1717,8 +1717,8 @@ _dmap_share_databases (DMAPShare *share,
 			/* NOTE: still uses old technique: */
 			mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL); // Was shared with else before
 			g_hash_table_foreach (records, (GHFunc) DMAP_SHARE_GET_CLASS (share)->add_entry_to_mlcl, &mb);
-			g_hash_table_destroy (records);
 			_dmap_share_message_set_from_dmap_structure (share, message, adbs); // Was shared with else before
+			g_hash_table_destroy (records);
 			dmap_structure_destroy (adbs); // Was shared with else before
 		} else {
 			/* NOTE:
@@ -1756,7 +1756,7 @@ _dmap_share_databases (DMAPShare *share,
 			/* Free memory after each chunk sent out over network. */
 			soup_message_body_set_accumulate (message->response_body, FALSE);
 
-			soup_message_headers_append (message->response_headers, "Content-Type", "application/x-daap-tagged");
+			soup_message_headers_append (message->response_headers, "Content-Type", "application/x-dmap-tagged");
 			DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (share, message);
 
 			/* 4: */
