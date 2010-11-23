@@ -1,3 +1,10 @@
+22 November 2010 W. Michael Petullo <mike@flyn.org>
+
+	* Fix bug that caused two MLIT's to be sent when responding to
+	"/1/items".
+
+	* Bump version number.
+
 19 November 2010 W. Michael Petullo <mike@flyn.org>
 
 	* Change Content-Type to consistently be application/x-dmap-tagged
