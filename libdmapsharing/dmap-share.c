@@ -1728,13 +1728,6 @@ _dmap_share_databases (DMAPShare *share,
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
 
-		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
-		dmap_structure_add (adbs, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
-		dmap_structure_add (adbs, DMAP_CC_MUTY, 0);
-		dmap_structure_add (adbs, DMAP_CC_MTCO, (gint32) num_songs);
-		dmap_structure_add (adbs, DMAP_CC_MRCO, (gint32) num_songs);
-		mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL); // Was shared with else before
-
 		/* NOTE:
 		 * We previously simply called foreach...add_entry_to_mlcl and later serialized the entire
 		 * structure. This has the disadvantage that the entire response must be in memory before
@@ -1747,7 +1740,6 @@ _dmap_share_databases (DMAPShare *share,
 		 * 3. Setup libsoup response headers, etc.
 		 * 4. Setup callback to transmit DAAP preamble (write_dmap_preamble)
 		 * 5. Setup callback to transmit MLIT's (write_next_mlit)
-		 *    NOTE: write_next_mlit uses some tricks to iterate through all record ID's
 		 */
 
 		/* 1: */
@@ -1775,18 +1767,22 @@ _dmap_share_databases (DMAPShare *share,
 		}
 
 		/* 2: */
+		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
+		dmap_structure_add (adbs, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (adbs, DMAP_CC_MUTY, 0);
+		dmap_structure_add (adbs, DMAP_CC_MTCO, (gint32) num_songs);
+		dmap_structure_add (adbs, DMAP_CC_MRCO, (gint32) num_songs);
 		mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL);
 		dmap_structure_increase_by_predicted_size (adbs, size);
 		dmap_structure_increase_by_predicted_size (mb.mlcl, size);
 
 		/* 3: */
-		soup_message_set_status (message, SOUP_STATUS_OK);
-		soup_message_headers_set_content_length (message->response_headers, dmap_structure_get_size(adbs));
 		/* Free memory after each chunk sent out over network. */
 		soup_message_body_set_accumulate (message->response_body, FALSE);
-
 		soup_message_headers_append (message->response_headers, "Content-Type", "application/x-dmap-tagged");
 		DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (share, message);
+		soup_message_headers_set_content_length (message->response_headers, dmap_structure_get_size(adbs));
+		soup_message_set_status (message, SOUP_STATUS_OK);
 
 		/* 4: */
 		g_signal_connect (message, "wrote_headers", G_CALLBACK (write_dmap_preamble), adbs);

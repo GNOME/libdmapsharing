@@ -80,3 +80,16 @@ chunks, avoiding the need to build the entire response in memory.
 	that thumbnails are especially problematic). The GHashTable-based
 	database used 35,885,056 bytes of heap space. The disk-based
 	database used 4,763,648 bytes.
+
+8. Decompressing multiple scan JPEG's.
+
+	VIPS must decompress multiple scan JPEG's fully in memory due
+	to the way libjpeg works. Either 1) use embedded EXIF thumbnail
+	or 2) skip. Currently adding the following to VIPS im_jpeg2vips.c
+	to skip:
+
+	Right below jpeg_start_decompress:
+	if (jpeg_had_multiple_scans(cinfo)) {
+		printf ("MULTISCAN, SKIPPING\n");
+		return -1;
+	}
