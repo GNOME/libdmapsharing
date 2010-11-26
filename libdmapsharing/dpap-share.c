@@ -457,7 +457,9 @@ add_entry_to_mlcl (gpointer id,
 
 			mapped_file = file_to_mmap (location);
 			if (mapped_file == NULL) {
-				g_error ("Error opening %s", location);
+				g_warning ("Error opening %s", location);
+				data = NULL;
+				size = 0;
 			} else {
 				data = (unsigned char *) g_mapped_file_get_contents (mapped_file);
 				size = g_mapped_file_get_length (mapped_file);
