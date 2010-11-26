@@ -75,9 +75,6 @@ typedef unsigned long long bitwise;
 struct MLCL_Bits {
 	GNode *mlcl;
 	bitwise bits;
-	/* FIXME: yuck, used for accumulater: */
-	gpointer user_data1;
-	gpointer user_data2;
 };
 
 typedef enum {

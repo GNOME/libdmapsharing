@@ -94,8 +94,9 @@ struct DMAPSharePrivate {
 /* FIXME: name this something else, as it is more than just share/bitwise now */
 struct share_bitwise_t {
 	DMAPShare *share;
-	bitwise bits;
+	struct MLCL_Bits mb;
 	GSList *id_list;
+	guint32 size;
 
 	/* FIXME: ick, void * is DMAPDDb * or GHashTable * 
 	 * in next two fields:*/
@@ -1459,32 +1460,26 @@ _dmap_share_ctrl_int (DMAPShare *share,
 }
 
 static void
-accumulate_mlcl_size (gpointer id,
-		      DMAPRecord *record,
-		      gpointer mb)
+accumulate_mlcl_size_and_ids (gpointer id,
+			      DMAPRecord *record,
+			      struct share_bitwise_t *share_bitwise)
 {
+	share_bitwise->id_list = g_slist_append (share_bitwise->id_list, id);
+
 	/* Make copy and set mlcl to NULL so real MLCL does not get changed */
-	struct MLCL_Bits mb_copy = *((struct MLCL_Bits *) mb);
+	struct MLCL_Bits mb_copy = share_bitwise->mb;
 	mb_copy.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);;
 
-	DMAP_SHARE_GET_CLASS (((struct MLCL_Bits *) mb)->user_data2)->add_entry_to_mlcl (id, record, &mb_copy);
-	*((guint *) ((struct MLCL_Bits *) mb)->user_data1) += dmap_structure_get_size(mb_copy.mlcl);
+	DMAP_SHARE_GET_CLASS (share_bitwise->share)->add_entry_to_mlcl (id, record, &mb_copy);
+	share_bitwise->size += dmap_structure_get_size(mb_copy.mlcl);
 
 	/* Minus eight because we do not want to add size of MLCL CC field + size field n times,
 	 * where n == number of records.
 	 */
-	*((guint *) ((struct MLCL_Bits *) mb)->user_data1) -= 8;
+	share_bitwise->size -= 8;
 
 	/* Destroy created structures as we go. */
 	dmap_structure_destroy (mb_copy.mlcl);
-}
-
-static void
-accumulate_ids (gpointer id,
-		DMAPRecord *record,
-		GSList **list)
-{
-	*list = g_slist_append (*list, id);
 }
 
 static void
@@ -1513,7 +1508,7 @@ write_next_mlit (SoupMessage *message, struct share_bitwise_t *share_bitwise)
 
 		record = share_bitwise->lookup_by_id (share_bitwise->db, GPOINTER_TO_UINT (share_bitwise->id_list->data));
 
-		mb.bits = share_bitwise->bits;
+		mb.bits = share_bitwise->mb.bits;
 		mb.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);
 
 		DMAP_SHARE_GET_CLASS (share_bitwise->share)->add_entry_to_mlcl (share_bitwise->id_list->data, record, &mb);
@@ -1743,27 +1738,21 @@ _dmap_share_databases (DMAPShare *share,
 		 */
 
 		/* 1: */
-		/* FIXME: user_data1/2 is ugly: */
-		guint32 size = 0;
-		mb.user_data1 = &size;
-		mb.user_data2 = share;
-
 		share_bitwise = g_new (struct share_bitwise_t, 1);
 		share_bitwise->share = share;
-		share_bitwise->bits = mb.bits;
+		share_bitwise->mb = mb;
 		share_bitwise->id_list = NULL;
+		share_bitwise->size = 0;
 		if (record_query) {
 			share_bitwise->db = records;
 			share_bitwise->lookup_by_id = g_hash_table_lookup_adapter;
 			share_bitwise->destroy = g_hash_table_destroy;
-			g_hash_table_foreach (records, (GHFunc) accumulate_ids, &(share_bitwise->id_list));
-			g_hash_table_foreach (records, (GHFunc) accumulate_mlcl_size, &mb);
+			g_hash_table_foreach (records, (GHFunc) accumulate_mlcl_size_and_ids, share_bitwise);
 		} else {
 			share_bitwise->db = share->priv->db;
 			share_bitwise->lookup_by_id = dmap_db_lookup_by_id;
 			share_bitwise->destroy = NULL;
-			dmap_db_foreach (share->priv->db, (GHFunc) accumulate_ids, &(share_bitwise->id_list));
-			dmap_db_foreach (share->priv->db, (GHFunc) accumulate_mlcl_size, &mb);
+			dmap_db_foreach (share->priv->db, (GHFunc) accumulate_mlcl_size_and_ids, share_bitwise);
 		}
 
 		/* 2: */
@@ -1773,8 +1762,8 @@ _dmap_share_databases (DMAPShare *share,
 		dmap_structure_add (adbs, DMAP_CC_MTCO, (gint32) num_songs);
 		dmap_structure_add (adbs, DMAP_CC_MRCO, (gint32) num_songs);
 		mb.mlcl = dmap_structure_add (adbs, DMAP_CC_MLCL);
-		dmap_structure_increase_by_predicted_size (adbs, size);
-		dmap_structure_increase_by_predicted_size (mb.mlcl, size);
+		dmap_structure_increase_by_predicted_size (adbs, share_bitwise->size);
+		dmap_structure_increase_by_predicted_size (mb.mlcl, share_bitwise->size);
 
 		/* 3: */
 		/* Free memory after each chunk sent out over network. */
