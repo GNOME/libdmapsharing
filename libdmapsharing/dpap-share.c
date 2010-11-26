@@ -330,6 +330,10 @@ file_to_mmap (const char *location)
         GError *error = NULL;
 
         file = g_file_new_for_uri (location);
+	/* NOTE: this is broken if original filename contains "%20" etc. This
+	 * is because g_file_get_path() will translate this to " ", etc. But
+	 * the filename really may have used "%20" (not " ").
+	 */
         path = g_file_get_path (file);
         if (path == NULL) {
                 g_warning ("Couldn't mmap %s: couldn't get path", path);
