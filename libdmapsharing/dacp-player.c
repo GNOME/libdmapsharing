@@ -27,10 +27,6 @@ dacp_player_init (DACPPlayerInterface *iface)
 {
 	static gboolean initialized = FALSE;
 
-	
-	//FIXME Remove debug message
-	g_debug ("DACPPlayer initializing: %d", initialized);
-
 	if (!initialized) {
 		initialized = TRUE;
 
@@ -80,8 +76,6 @@ dacp_player_init (DACPPlayerInterface *iface)
 static void
 dacp_player_finalize (DACPPlayerInterface *iface)
 {
-	//FIXME Remove debug message
-	g_debug ("DACPPlayer finalizing");
 }
 
 GType
