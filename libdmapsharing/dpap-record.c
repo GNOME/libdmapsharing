@@ -165,15 +165,3 @@ dpap_record_read (DPAPRecord *record, GError **err)
 {
 	return DPAP_RECORD_GET_INTERFACE (record)->read (record, err);
 }
-
-GByteArray *
-dpap_record_to_blob (DPAPRecord *record)
-{
-	return DPAP_RECORD_GET_INTERFACE (record)->to_blob (record);
-}
-
-DPAPRecord *
-dpap_record_new_from_blob (DPAPRecord *record, GByteArray *blob)
-{
-	return DPAP_RECORD_GET_INTERFACE (record)->new_from_blob (record, blob);
-}
