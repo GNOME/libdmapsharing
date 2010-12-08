@@ -29,11 +29,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DPAP_RECORD:
+ * DPAP_TYPE_RECORD:
  *
  * The type for #DPAPRecord.
  */
-#define TYPE_DPAP_RECORD	     (dpap_record_get_type ())
+#define DPAP_TYPE_RECORD	     (dpap_record_get_type ())
 /**
  * DPAP_RECORD:
  * @o: Object which is subject to casting.
@@ -43,15 +43,15 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DPAP_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				      TYPE_DPAP_RECORD, DPAPRecord))
+				      DPAP_TYPE_RECORD, DPAPRecord))
 /**
  * IS_DPAP_RECORD:
- * @o: Instance to check for being a %TYPE_DPAP_RECORD.
+ * @o: Instance to check for being a %DPAP_TYPE_RECORD.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DPAP_RECORD.
+ * Checks whether a valid #GTypeInstance pointer is of type %DPAP_TYPE_RECORD.
  */
 #define IS_DPAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				      TYPE_DPAP_RECORD))
+				      DPAP_TYPE_RECORD))
 /**
  * DPAP_RECORD_GET_INTERFACE:
  * @o: a #DPAPRecord instance.
@@ -61,12 +61,12 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DPAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      TYPE_DPAP_RECORD, DPAPRecordInterface))
+				      DPAP_TYPE_RECORD, DPAPRecordIface))
 
 typedef struct _DPAPRecord DPAPRecord;
-typedef struct _DPAPRecordInterface DPAPRecordInterface;
+typedef struct _DPAPRecordIface DPAPRecordIface;
 
-struct _DPAPRecordInterface {
+struct _DPAPRecordIface {
 	GTypeInterface parent;
 
 	GInputStream *  (*read)          (DPAPRecord *record, GError **err);

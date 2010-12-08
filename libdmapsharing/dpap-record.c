@@ -24,7 +24,7 @@
 static gint dpap_record_init_count = 0;
 
 static void
-dpap_record_init (DPAPRecordInterface *iface)
+dpap_record_init (DPAPRecordIface *iface)
 {
 	static gboolean is_initialized = FALSE;
 
@@ -136,7 +136,7 @@ dpap_record_init (DPAPRecordInterface *iface)
 }
 
 static void
-dpap_record_finalize (DPAPRecordInterface *iface)
+dpap_record_finalize (DPAPRecordIface *iface)
 {
 	dpap_record_init_count--;
 }
@@ -148,7 +148,7 @@ dpap_record_get_type (void)
 	static GType object_type = 0;
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DPAPRecordInterface),
+			sizeof(DPAPRecordIface),
 			(GBaseInitFunc) dpap_record_init,
 			(GBaseFinalizeFunc) dpap_record_finalize
 		};
