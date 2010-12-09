@@ -23,7 +23,7 @@
 static gint daap_record_init_count = 0;
 
 static void
-daap_record_init (DAAPRecordInterface *iface)
+daap_record_init (DAAPRecordIface *iface)
 {
 	static gboolean is_initialized = FALSE;
 
@@ -200,7 +200,7 @@ daap_record_init (DAAPRecordInterface *iface)
 }
 
 static void
-daap_record_finalize (DAAPRecordInterface *iface)
+daap_record_finalize (DAAPRecordIface *iface)
 {
 	daap_record_init_count--;
 }
@@ -212,7 +212,7 @@ daap_record_get_type (void)
 	static GType object_type = 0;
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DAAPRecordInterface),
+			sizeof(DAAPRecordIface),
 			(GBaseInitFunc) daap_record_init,
 			(GBaseFinalizeFunc) daap_record_finalize
 		};

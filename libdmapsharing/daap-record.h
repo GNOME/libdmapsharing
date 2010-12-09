@@ -30,11 +30,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DAAP_RECORD:
+ * DAAP_TYPE_RECORD:
  *
  * The type for #DAAPRecord.
  */
-#define TYPE_DAAP_RECORD	     (daap_record_get_type ())
+#define DAAP_TYPE_RECORD	     (daap_record_get_type ())
 /**
  * DAAP_RECORD:
  * @o: Object which is subject to casting.
@@ -44,15 +44,15 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DAAP_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				      TYPE_DAAP_RECORD, DAAPRecord))
+				      DAAP_TYPE_RECORD, DAAPRecord))
 /**
  * IS_DAAP_RECORD:
- * @o: Instance to check for being a %TYPE_DAAP_RECORD.
+ * @o: Instance to check for being a %DAAP_TYPE_RECORD.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DAAP_RECORD.
+ * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_RECORD.
  */
 #define IS_DAAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				      TYPE_DAAP_RECORD))
+				      DAAP_TYPE_RECORD))
 /**
  * DAAP_RECORD_GET_INTERFACE:
  * @o: a #DAAPRecord instance.
@@ -62,12 +62,12 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DAAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      TYPE_DAAP_RECORD, DAAPRecordInterface))
+				      DAAP_TYPE_RECORD, DAAPRecordIface))
 
 typedef struct _DAAPRecord DAAPRecord;
-typedef struct _DAAPRecordInterface DAAPRecordInterface;
+typedef struct _DAAPRecordIface DAAPRecordIface;
 
-struct _DAAPRecordInterface {
+struct _DAAPRecordIface {
 	GTypeInterface parent;
 
 	gboolean	(*itunes_compat) (DAAPRecord *record);
