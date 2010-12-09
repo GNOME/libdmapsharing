@@ -31,13 +31,13 @@ typedef struct FilterData {
 static gint dmap_db_init_count = 0;
 
 static void
-dmap_db_init (DMAPDbInterface *iface)
+dmap_db_init (DMAPDbIface *iface)
 {
 	dmap_db_init_count++;
 }
 
 static void
-dmap_db_finalize (DMAPDbInterface *iface)
+dmap_db_finalize (DMAPDbIface *iface)
 {
 	dmap_db_init_count--;
 }
@@ -49,7 +49,7 @@ dmap_db_get_type (void)
 	static GType object_type = 0;
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DMAPDbInterface),
+			sizeof(DMAPDbIface),
 			(GBaseInitFunc) dmap_db_init,
 			(GBaseFinalizeFunc) dmap_db_finalize
 		};

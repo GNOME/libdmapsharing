@@ -28,11 +28,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DMAP_DB:
+ * DMAP_TYPE_DB:
  *
  * The type for #DMAPDb.
  */
-#define TYPE_DMAP_DB		 (dmap_db_get_type ())
+#define DMAP_TYPE_DB		 (dmap_db_get_type ())
 /**
  * DMAP_DB:
  * @o: Object which is subject to casting.
@@ -42,15 +42,15 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_DB(o)		 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				  TYPE_DMAP_DB, DMAPDb))
+				  DMAP_TYPE_DB, DMAPDb))
 /**
  * IS_DMAP_DB:
- * @o: Instance to check for being a %TYPE_DMAP_DB.
+ * @o: Instance to check for being a %DMAP_TYPE_DB.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DMAP_DB.
+ * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_DB.
  */
 #define IS_DMAP_DB(o)		 (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				  TYPE_DMAP_DB))
+				  DMAP_TYPE_DB))
 /**
  * DMAP_DB_GET_INTERFACE:
  * @o: a #DMAPDb instance.
@@ -60,12 +60,12 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DMAP_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				  TYPE_DMAP_DB, DMAPDbInterface))
+				  DMAP_TYPE_DB, DMAPDbIface))
 
 typedef struct _DMAPDb DMAPDb;
-typedef struct _DMAPDbInterface DMAPDbInterface;
+typedef struct _DMAPDbIface DMAPDbIface;
 
-struct _DMAPDbInterface {
+struct _DMAPDbIface {
 	GTypeInterface parent;
 
 	guint (*add)		       (DMAPDb *db, DMAPRecord *record);

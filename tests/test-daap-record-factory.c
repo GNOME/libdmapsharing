@@ -40,15 +40,15 @@ test_daap_record_factory_class_init (TestDAAPRecordFactoryClass *klass)
 static void
 test_daap_record_factory_interface_init (gpointer iface, gpointer data)
 {
-	DMAPRecordFactoryInterface *factory = iface;
+	DMAPRecordFactoryIface *factory = iface;
 
-	g_assert (G_TYPE_FROM_INTERFACE (factory) == TYPE_DMAP_RECORD_FACTORY);
+	g_assert (G_TYPE_FROM_INTERFACE (factory) == DMAP_TYPE_RECORD_FACTORY);
 
 	factory->create = test_daap_record_factory_create;
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDAAPRecordFactory, test_daap_record_factory, G_TYPE_OBJECT, 
-			 G_IMPLEMENT_INTERFACE (TYPE_DMAP_RECORD_FACTORY,
+			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD_FACTORY,
 					        test_daap_record_factory_interface_init))
 
 TestDAAPRecordFactory *

@@ -28,11 +28,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DMAP_RECORD_FACTORY:
+ * DMAP_TYPE_RECORD_FACTORY:
  *
  * The type for #DMAPRecordFactory.
  */
-#define TYPE_DMAP_RECORD_FACTORY (dmap_record_factory_get_type ())
+#define DMAP_TYPE_RECORD_FACTORY (dmap_record_factory_get_type ())
 /**
  * DMAP_RECORD_FACTORY:
  * @o: Object which is subject to casting.
@@ -42,16 +42,16 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_RECORD_FACTORY(o)	 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				  TYPE_DMAP_RECORD_FACTORY, DMAPRecordFactory))
+				  DMAP_TYPE_RECORD_FACTORY, DMAPRecordFactory))
 /**
  * IS_DMAP_RECORD_FACTORY:
- * @o: Instance to check for being a %TYPE_DMAP_RECORD_FACTORY.
+ * @o: Instance to check for being a %DMAP_TYPE_RECORD_FACTORY.
  *
  * Checks whether a valid #GTypeInstance pointer is of type
- * %TYPE_DMAP_RECORD_FACTORY.
+ * %DMAP_TYPE_RECORD_FACTORY.
  */
 #define IS_DMAP_RECORD_FACTORY(o)(G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				  TYPE_DMAP_RECORD_FACTORY))
+				  DMAP_TYPE_RECORD_FACTORY))
 /**
  * DMAP_RECORD_FACTORY_GET_INTERFACE:
  * @o: a #DMAPRecordFactory instance.
@@ -62,13 +62,13 @@ G_BEGIN_DECLS
  */
 #define DMAP_RECORD_FACTORY_GET_INTERFACE(o) \
 				 (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				  TYPE_DMAP_RECORD_FACTORY, \
-				  DMAPRecordFactoryInterface))
+				  DMAP_TYPE_RECORD_FACTORY, \
+				  DMAPRecordFactoryIface))
 
 typedef struct _DMAPRecordFactory DMAPRecordFactory;
-typedef struct _DMAPRecordFactoryInterface DMAPRecordFactoryInterface;
+typedef struct _DMAPRecordFactoryIface DMAPRecordFactoryIface;
 
-struct _DMAPRecordFactoryInterface {
+struct _DMAPRecordFactoryIface {
 	GTypeInterface parent;
 
 	DMAPRecord *(*create) (DMAPRecordFactory *factory, gpointer user_data);

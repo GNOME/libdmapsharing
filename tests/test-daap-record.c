@@ -269,14 +269,14 @@ test_daap_record_daap_iface_init (gpointer iface, gpointer data)
 static void
 test_daap_record_dmap_iface_init (gpointer iface, gpointer data)
 {
-	DMAPRecordInterface *dmap_record = iface;
+	DMAPRecordIface *dmap_record = iface;
 
-	g_assert (G_TYPE_FROM_INTERFACE (dmap_record) == TYPE_DMAP_RECORD);
+	g_assert (G_TYPE_FROM_INTERFACE (dmap_record) == DMAP_TYPE_RECORD);
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDAAPRecord, test_daap_record, G_TYPE_OBJECT, 
 			G_IMPLEMENT_INTERFACE (TYPE_DAAP_RECORD, test_daap_record_daap_iface_init)
-			G_IMPLEMENT_INTERFACE (TYPE_DMAP_RECORD, test_daap_record_dmap_iface_init))
+			G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, test_daap_record_dmap_iface_init))
 
 static void
 test_daap_record_finalize (GObject *object)

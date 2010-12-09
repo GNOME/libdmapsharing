@@ -81,9 +81,9 @@ test_dmap_db_class_init (TestDMAPDbClass *klass)
 static void
 test_dmap_db_interface_init (gpointer iface, gpointer data)
 {
-	DMAPDbInterface *dmap_db = iface;
+	DMAPDbIface *dmap_db = iface;
 
-	g_assert (G_TYPE_FROM_INTERFACE (dmap_db) == TYPE_DMAP_DB);
+	g_assert (G_TYPE_FROM_INTERFACE (dmap_db) == DMAP_TYPE_DB);
 
 	dmap_db->add = test_dmap_db_add;
 	dmap_db->lookup_by_id = test_dmap_db_lookup_by_id;
@@ -92,7 +92,7 @@ test_dmap_db_interface_init (gpointer iface, gpointer data)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDMAPDb, test_dmap_db, G_TYPE_OBJECT, 
-			 G_IMPLEMENT_INTERFACE (TYPE_DMAP_DB,
+			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_DB,
 					        test_dmap_db_interface_init))
 
 TestDMAPDb *

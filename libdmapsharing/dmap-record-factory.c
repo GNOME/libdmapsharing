@@ -23,13 +23,13 @@
 static gint dmap_record_factory_init_count = 0;
 
 static void
-dmap_record_factory_init (DMAPRecordFactoryInterface *iface)
+dmap_record_factory_init (DMAPRecordFactoryIface *iface)
 {
 	dmap_record_factory_init_count++;
 }
 
 static void
-dmap_record_factory_finalize (DMAPRecordFactoryInterface *iface)
+dmap_record_factory_finalize (DMAPRecordFactoryIface *iface)
 {
 	dmap_record_factory_init_count--;
 }
@@ -41,7 +41,7 @@ dmap_record_factory_get_type (void)
 	static GType object_type = 0;
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DMAPRecordFactoryInterface),
+			sizeof(DMAPRecordFactoryIface),
 			(GBaseInitFunc) dmap_record_factory_init,
 			(GBaseFinalizeFunc) dmap_record_factory_finalize
 		};
