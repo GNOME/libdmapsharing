@@ -149,6 +149,10 @@ dmap_connection_class_init (DMAPConnectionClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
+	klass->get_protocol_version_cc = NULL;
+	klass->get_query_metadata = NULL;
+	klass->handle_mlcl = NULL;
+
 	object_class->finalize	   = dmap_connection_finalize;
 	object_class->dispose       = dmap_connection_dispose;
 	object_class->set_property = dmap_connection_set_property;
@@ -725,7 +729,8 @@ handle_server_info (DMAPConnection *connection,
 	}
 
 	/* get the daap version number */
-	item = dmap_structure_find_item (structure, DMAP_CC_APRO);
+	item = dmap_structure_find_item (structure, 
+					 DMAP_CONNECTION_GET_CLASS(connection)->get_protocol_version_cc (connection));
 	if (item == NULL) {
 		dmap_connection_state_done (connection, FALSE);
 		return;
@@ -917,135 +922,52 @@ handle_song_listing (DMAPConnection *connection,
 	if (priv->emit_progress_id != 0) {
 		g_source_remove (priv->emit_progress_id);
 	}
-	connection->priv->emit_progress_id = g_idle_add ((GSourceFunc) emit_progress_idle, connection);
+	priv->emit_progress_id = g_idle_add ((GSourceFunc) emit_progress_idle, connection);
 
 	for (i = 0, n = listing_node->children; n; i++, n = n->next) {
-		GNode *n2;
-		DMAPRecord *record = NULL;
-		gchar *uri = NULL;
 		gint item_id = 0;
-		const gchar *title = NULL;
-		const gchar *album = NULL;
-		const gchar *artist = NULL;
-		const gchar *format = NULL;
-		const gchar *genre = NULL;
-		const gchar *streamURI = NULL;
-		const gchar *sort_artist = NULL;
-		const gchar *sort_album = NULL;
-		gint length = 0;
-		gint track_number = 0;
-		gint disc_number = 0;
-		gint year = 0;
-		gint size = 0;
-		gint bitrate = 0;
-
-		for (n2 = n->children; n2; n2 = n2->next) {
-			DMAPStructureItem *meta_item;
-
-			meta_item = n2->data;
-
-			switch (meta_item->content_code) {
-				case DMAP_CC_MIID:
-					item_id = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_MINM:
-					title = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASAL:
-					album = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASAR:
-					artist = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASFM:
-					format = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASGN:
-					genre = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASTM:
-					length = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_ASTN:
-					track_number = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_ASDN:
-					disc_number = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_ASYR:
-					year = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_ASSZ:
-					size = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_ASBR:
-					bitrate = g_value_get_int (&(meta_item->content));
-					break;
-				case DMAP_CC_ASUL:
-					streamURI = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASSA:
-					sort_artist = g_value_get_string (&(meta_item->content));
-					break;
-				case DMAP_CC_ASSU:
-					sort_album = g_value_get_string (&(meta_item->content));
-					break;
-				default:
-					break;
+		DMAPRecord *record = DMAP_CONNECTION_GET_CLASS(connection)->handle_mlcl (connection, priv->record_factory, n, &item_id);
+		if (record) {
+			gchar *uri = NULL;
+			gchar *format = NULL;
+			
+			g_object_get (record, "format", &format, NULL);
+			if (format == NULL) {
+				format = "Unknown";
 			}
-		}
 
-		/*if (connection->dmap_version == 3.0) {*/
+			/*if (connection->dmap_version == 3.0) {*/
 			uri = g_strdup_printf ("%s/databases/%d/items/%d.%s?session-id=%u",
-					       priv->daap_base_uri,
-					       priv->database_id,
+					       connection->priv->daap_base_uri,
+					       connection->priv->database_id,
 					       item_id, format,
-					       priv->session_id);
-		/*} else {*/
-		/* uri should be
-		 * "/databases/%d/items/%d.%s?session-id=%u&revision-id=%d";
-		 * but its not going to work cause the other parts of the code
-		 * depend on the uri to have the ip address so that the
-		 * DAAPSource can be found to ++request_id
-		 * maybe just /dont/ support older itunes.  doesn't seem
-		 * unreasonable to me, honestly
-		 */
-		/*}*/
-		record = dmap_record_factory_create (priv->record_factory, NULL);
-		if (record == NULL) {
-			g_debug ("cannot create record for daap track %s", uri);
-			continue;
-		}
-		/* FIXME: This is DAAP-specific! */
-		g_object_set (record,
-			     "location", uri,
-			     "year", year,
-			     "track", track_number,
-			     "disc", disc_number,
-			     "bitrate", bitrate,
-			     "duration", length / 1000,
-			     "filesize", (guint64) size,
-			     "format", format,
-			     "title", title,
-			     "songalbum", album,
-			     "songartist", artist,
-			     "songgenre", genre,
-			     "sort-artist", sort_artist,
-			     "sort-album", sort_album,
-			      NULL);
-		g_hash_table_insert (priv->item_id_to_uri, GINT_TO_POINTER (item_id), g_strdup (uri));
-		g_free (uri);
+					       connection->priv->session_id);
+			/*} else {*/
+			/* uri should be
+			 * "/databases/%d/items/%d.%s?session-id=%u&revision-id=%d";
+			 * but its not going to work cause the other parts of the code
+			 * depend on the uri to have the ip address so that the
+			 * DAAPSource can be found to ++request_id
+			 * maybe just /dont/ support older itunes.  doesn't seem
+			 * unreasonable to me, honestly
+			 */
+			/*}*/
 
-		dmap_db_add (priv->db, record);
-		g_debug ("Got song: %s", title);
-		g_object_unref (record);
+			g_object_set (record, "location", uri, NULL);
+			dmap_db_add (connection->priv->db, record);
+			g_object_unref (record);
+			g_hash_table_insert (connection->priv->item_id_to_uri, GINT_TO_POINTER (item_id), g_strdup (uri));
+			g_free (uri);
+		} else {
+			g_debug ("cannot create record for daap track");
+		}
 
 		if (i % commit_batch == 0) {
-			connection->priv->progress = ((float) i / (float) returned_count);
+			priv->progress = ((float) i / (float) returned_count);
 			if (priv->emit_progress_id != 0) {
 				g_source_remove (connection->priv->emit_progress_id);
 			}
-			connection->priv->emit_progress_id = g_idle_add ((GSourceFunc) emit_progress_idle, connection);
+			priv->emit_progress_id = g_idle_add ((GSourceFunc) emit_progress_idle, connection);
 		}
 	}
 
@@ -1473,6 +1395,7 @@ static gboolean
 dmap_connection_do_something (DMAPConnection *connection)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
+	char *meta;
 	char *path;
 
 	g_debug ("Doing something for state: %d", priv->state);
@@ -1551,22 +1474,20 @@ dmap_connection_do_something (DMAPConnection *connection)
 
 	case DMAP_GET_SONGS:
 		g_debug ("Getting DAAP song listing");
+		meta = DMAP_CONNECTION_GET_CLASS(connection)->get_query_metadata (connection);
 		path = g_strdup_printf ("/databases/%i/items?session-id=%u&revision-number=%i"
-				        "&meta=dmap.itemid,dmap.itemname,daap.songalbum,"
-					"daap.songartist,daap.songgenre,daap.songsize,"
-					"daap.songtime,daap.songtrackcount,daap.songtracknumber,"
-					"daap.songyear,daap.songformat,"
-					"daap.songbitrate,daap.songdiscnumber,daap.songdataurl,"
-					"daap.sortartist,daap.sortalbum",
+				        "&meta=%s",
 					priv->database_id,
 					priv->session_id,
-					priv->revision_number);
+					priv->revision_number,
+					meta);
 		if (! http_get (connection, path, TRUE, priv->dmap_version, 0, FALSE,
 			       (DMAPResponseHandler) handle_song_listing, NULL, TRUE)) {
 			g_debug ("Could not get DAAP song listing");
 			dmap_connection_state_done (connection, FALSE);
 		}
 		g_free (path);
+		g_free (meta);
 		break;
 
 	case DMAP_GET_PLAYLISTS:

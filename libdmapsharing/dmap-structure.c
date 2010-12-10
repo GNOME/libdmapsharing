@@ -379,8 +379,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
         GNode *node = NULL;
         GType gtype;
         
-        g_debug ("l is %d and buf_length is %d\n", l, buf_length);
-
         /* we need at least 8 bytes, 4 of content_code and 4 of size */
         if (buf_length - l < 8) {
             g_debug ("Malformed response recieved\n");
@@ -406,8 +404,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
         }
         l += 4;
 
-        g_debug ("content_code = %d, codesize is %d, l is %d\n", cc, codesize, l);
-        
         item = g_new0 (DMAPStructureItem, 1);
         item->content_code = cc;
         node = g_node_new (item);
@@ -431,8 +427,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 1;
                 g_value_set_char (&(item->content), c);
-                g_debug ("Code: %s, content (%d): \"%c\"\n", dmap_content_code_string (item->content_code), codesize, (gchar)c);
-
                 break;
             }
             case DMAP_TYPE_SHORT: {
@@ -444,8 +438,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
 
                 item->size = 2;
                 g_value_set_int (&(item->content),(gint32)s);
-                g_debug ("Code: %s, content (%d): %hi\n", dmap_content_code_string (item->content_code), codesize, s);
-
                 break;
             }
             case DMAP_TYPE_DATE:
@@ -458,7 +450,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 4;
                 g_value_set_int (&(item->content), i);
-                g_debug ("Code: %s, content (%d): %d\n", dmap_content_code_string (item->content_code), codesize, i);
                 break;
             }
             case DMAP_TYPE_INT64: {
@@ -470,8 +461,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 8;
                 g_value_set_int64 (&(item->content), i);
-                g_debug ("Code: %s, content (%d): %"G_GINT64_FORMAT"\n", dmap_content_code_string (item->content_code), codesize, i);
-
                 break;
             }
             case DMAP_TYPE_STRING: {
@@ -479,8 +468,6 @@ dmap_structure_parse_container_buffer (GNode *parent,
 
                 item->size = strlen (s);
                 g_value_set_string (&(item->content), s);
-                g_debug ("Code: %s, content (%d): \"%s\"\n", dmap_content_code_string (item->content_code), codesize, s);
-
                 break;
             }
             case DMAP_TYPE_POINTER: {
@@ -509,12 +496,9 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 
                 item->size = 4;
                 g_value_set_double (&(item->content), v);
-                g_debug ("Code: %s, content: %f\n", dmap_content_code_string (item->content_code), v);
-
                 break;
             }
             case DMAP_TYPE_CONTAINER: {
-                g_debug ("Code: %s, container\n", dmap_content_code_string (item->content_code));
                 dmap_structure_parse_container_buffer (node,&(buf[l]), codesize);
                 break;
             }

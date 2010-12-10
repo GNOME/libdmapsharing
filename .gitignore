@@ -53,5 +53,7 @@ tests/.libs/
 tests/Makefile
 tests/Makefile.in
 tests/*.o
+tests/dpapview
 tests/test-dmap-client
 tests/test-dmap-server
+tests/vala.stamp

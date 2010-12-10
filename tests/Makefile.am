@@ -1,4 +1,4 @@
-noinst_PROGRAMS = test-dmap-client test-dmap-server
+noinst_PROGRAMS = test-dmap-client test-dmap-server dpapview
 
 test_dmap_client_SOURCES = \
 	test-dmap-db.c \
@@ -38,6 +38,28 @@ test_dmap_server_LDADD = \
 	$(IMAGEMAGICK_LIBS) \
 	$(MDNS_LIBS)
 
+dpapview_VALASOURCES = \
+	dpapview.vala
+
+dpapview_VALABUILTSOURCES = $(dpapview_VALASOURCES:.vala=.c)
+
+if MAINTAINER_MODE
+PACKAGES = --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0
+BUILT_SOURCES = vala.stamp
+
+vala.stamp: $(dpapview_VALASOURCES)
+	$(VALAC) --vapidir=$(srcdir) $(PACKAGES) $^ -C
+	touch $@
+endif
+
+dpapview_SOURCES = \
+	$(dpapview_VALABUILTSOURCES)
+
+dpapview_LDADD = \
+	$(top_builddir)/libdmapsharing/libdmapsharing.la \
+	$(GTK_LIBS) \
+	$(GEE_LIBS)
+
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	$(GLIB_CFLAGS) \
@@ -48,7 +70,9 @@ AM_CPPFLAGS = \
 	$(MDNS_CFLAGS)
 
 INCLUDES = \
-	$(IMAGEMAGICK_CFLAGS)
+	$(IMAGEMAGICK_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(GEE_CFLAGS)
 
 noinst_HEADERS = \
 	test-dmap-container-record.h \
@@ -58,3 +82,14 @@ noinst_HEADERS = \
 	test-daap-record-factory.h \
 	test-dpap-record.h \
 	test-dpap-record-factory.h
+
+EXTRA_DIST = \
+	$(dpapview_VALASOURCES) \
+	$(dpapview_VALABUILTSOURCES)
+
+if MAINTAINER_MODE
+CLEANFILES = \
+	$(BUILT_SOURCES) \
+	$(dpapview_VALABUILTSOURCES)
+endif
+

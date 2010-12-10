@@ -326,6 +326,28 @@ else
   AC_WARN(GStreamer app element not present, transcoding will not be supported.)
 fi
 
+AM_MAINTAINER_MODE
+if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
+        AM_PROG_VALAC([0.10.0])
+        if test "x$VALAC" = "x" ; then
+                AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
+        fi
+fi
+
+PKG_CHECK_MODULES(GTK, gtk+-2.0, HAVE_GTK=yes, HAVE_GTK=no)
+if test "x$HAVE_GTK" = "xno"; then
+        AC_MSG_ERROR(you need gtk+-2.0 installed)
+fi
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
+
+PKG_CHECK_MODULES(GEE, gee-1.0, HAVE_GEE=yes, HAVE_GEE=no)
+if test "x$HAVE_GEE" = "xno"; then
+        AC_MSG_ERROR(you need gee-1.0 installed)
+fi
+AC_SUBST(GEE_CFLAGS)
+AC_SUBST(GEE_LIBS)
+
 AM_CONDITIONAL(USE_GSTREAMERAPP, test x"$HAVE_GSTREAMERAPP" = "xyes")
 
 AC_SUBST(GSTREAMERAPP_CFLAGS)

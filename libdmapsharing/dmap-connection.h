@@ -25,8 +25,9 @@
 #include <glib-object.h>
 #include <libsoup/soup.h>
 
-#include "dmap-db.h"
-#include "dmap-record-factory.h"
+#include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap-db.h>
+#include <libdmapsharing/dmap-record-factory.h>
 
 G_BEGIN_DECLS
 
@@ -106,6 +107,11 @@ typedef struct {
 
 typedef struct {
 	GObjectClass parent;
+
+	/* Pure virtual methods: */
+	DMAPContentCode (*get_protocol_version_cc) (DMAPConnection *connection);
+	gchar *         (*get_query_metadata)      (DMAPConnection *connection);
+	DMAPRecord *(*handle_mlcl) (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *mlcl, gint *item_id);
 
 	SoupMessage * (*build_message)
 				  (DMAPConnection     *connection,
