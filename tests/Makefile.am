@@ -85,7 +85,8 @@ noinst_HEADERS = \
 
 EXTRA_DIST = \
 	$(dpapview_VALASOURCES) \
-	$(dpapview_VALABUILTSOURCES)
+	$(dpapview_VALABUILTSOURCES) \
+	dpapview.ui
 
 if MAINTAINER_MODE
 CLEANFILES = \
