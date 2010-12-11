@@ -1,4 +1,8 @@
-noinst_PROGRAMS = test-dmap-client test-dmap-server dpapview
+noinst_PROGRAMS = test-dmap-client test-dmap-server
+
+if BUILD_DPAPVIEW
+noinst_PROGRAMS += dpapview
+endif
 
 test_dmap_client_SOURCES = \
 	test-dmap-db.c \
@@ -38,11 +42,6 @@ test_dmap_server_LDADD = \
 	$(IMAGEMAGICK_LIBS) \
 	$(MDNS_LIBS)
 
-dpapview_VALASOURCES = \
-	dpapview.vala
-
-dpapview_VALABUILTSOURCES = $(dpapview_VALASOURCES:.vala=.c)
-
 if MAINTAINER_MODE
 PACKAGES = --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0
 BUILT_SOURCES = vala.stamp
@@ -52,6 +51,12 @@ vala.stamp: $(dpapview_VALASOURCES)
 	touch $@
 endif
 
+if BUILD_DPAPVIEW
+dpapview_VALASOURCES = \
+	dpapview.vala
+
+dpapview_VALABUILTSOURCES = $(dpapview_VALASOURCES:.vala=.c)
+
 dpapview_SOURCES = \
 	$(dpapview_VALABUILTSOURCES)
 
@@ -59,6 +64,7 @@ dpapview_LDADD = \
 	$(top_builddir)/libdmapsharing/libdmapsharing.la \
 	$(GTK_LIBS) \
 	$(GEE_LIBS)
+endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
