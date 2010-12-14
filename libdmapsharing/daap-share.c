@@ -38,6 +38,7 @@
 
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap-utils.h>
 
 #ifdef HAVE_GSTREAMERAPP
 #include <libdmapsharing/g-gst-mp3-input-stream.h>
@@ -92,13 +93,6 @@ struct DAAPSharePrivate {
 enum {
 	PROP_0,
 };
-
-/* Provide two items as user_data to callback. */
-typedef struct ChunkData {
-	SoupServer *server;
-	GInputStream *stream;
-} ChunkData;
-
 
 G_DEFINE_TYPE (DAAPShare, daap_share, TYPE_DMAP_SHARE)
 
@@ -400,44 +394,6 @@ static struct DMAPMetaDataMap meta_data_map[] = {
 #define DAAP_SONG_DATA_KIND_NONE 0
 
 static void
-write_next_chunk (SoupMessage *message, ChunkData *cd)
-{
-	gssize read_size;
-	GError *error = NULL;
-	gchar *chunk = g_malloc (DMAP_SHARE_CHUNK_SIZE);
-
-	read_size = g_input_stream_read (cd->stream,
-					 chunk,
-					 DMAP_SHARE_CHUNK_SIZE,
-					 NULL,
-					 &error);
-	if (read_size > 0) {
-		soup_message_body_append (message->response_body,
-					  SOUP_MEMORY_TAKE,
-					  chunk,
-					  read_size);
-	} else {
-		if (error != NULL) {
-			g_warning ("Error reading from input stream: %s",
-				   error->message);
-			g_error_free (error);
-		}
-		g_free (chunk);
-		g_debug ("Wrote 0 bytes, sending message complete.");
-		soup_message_body_complete (message->response_body);
-	}
-	soup_server_unpause_message (cd->server, message);
-}
-
-static void
-chunked_message_finished (SoupMessage *message, ChunkData *cd)
-{
-	g_debug ("Finished sending chunked file.");
-	g_input_stream_close (cd->stream, NULL, NULL);
-	g_free (cd);
-}
-
-static void
 send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record, guint64 filesize, guint64 offset, const gchar *transcode_mimetype)
 {
 	GInputStream *stream;
@@ -536,9 +492,9 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 	soup_message_headers_append (message->response_headers, "Connection", "Close");
 	soup_message_headers_append (message->response_headers, "Content-Type", "application/x-dmap-tagged");
 
-	g_signal_connect (message, "wrote_headers", G_CALLBACK (write_next_chunk), cd);
-	g_signal_connect (message, "wrote_chunk", G_CALLBACK (write_next_chunk), cd);
-	g_signal_connect (message, "finished", G_CALLBACK (chunked_message_finished), cd);
+	g_signal_connect (message, "wrote_headers", G_CALLBACK (dmap_write_next_chunk), cd);
+	g_signal_connect (message, "wrote_chunk", G_CALLBACK (dmap_write_next_chunk), cd);
+	g_signal_connect (message, "finished", G_CALLBACK (dmap_chunked_message_finished), cd);
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
 }
 

@@ -91,7 +91,6 @@ G_BEGIN_DECLS
 #define DMAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 TYPE_DMAP_SHARE, DMAPShareClass))
 
-#define DMAP_SHARE_CHUNK_SIZE 16384
 #define DMAP_STATUS_OK 200
 
 typedef struct DMAPSharePrivate DMAPSharePrivate;

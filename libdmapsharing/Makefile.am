@@ -18,6 +18,7 @@ libdmapsharing_la_SOURCES = \
 	dmap-record-factory.c \
 	dmap-share.c \
 	dmap-structure.c \
+	dmap-utils.c \
 	dpap-connection.c \
 	dpap-record.c \
 	dpap-share.c

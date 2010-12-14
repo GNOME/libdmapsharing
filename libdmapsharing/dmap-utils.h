@@ -21,6 +21,7 @@
 #define __DMAP_UTILS_H__
 
 #include <glib.h>
+#include <libsoup/soup.h>
 
 #include <libdmapsharing/dmap-config.h>
 
@@ -61,6 +62,14 @@ G_BEGIN_DECLS
 #define DMAP_READ_UINT8(data) (_DMAP_GET (data, 0,  8,  0))
 
 #endif
+
+typedef struct ChunkData {
+	SoupServer *server;
+	GInputStream *stream;
+} ChunkData;
+
+void dmap_write_next_chunk (SoupMessage *message, ChunkData *cd);
+void dmap_chunked_message_finished (SoupMessage *message, ChunkData *cd);
 
 G_END_DECLS
 
