@@ -1,5 +1,5 @@
-SUBDIRS = docs libdmapsharing tests
-DIST_SUBDIRS = docs libdmapsharing m4 media tests
+SUBDIRS = docs libdmapsharing tests vala
+DIST_SUBDIRS = $(SUBDIRS) m4 media
 
 ### all of the standard pc files we need to generate
 # pcfiles = libdmapsharing-@LIBDMAPSHARING_MAJORMINOR@.pc

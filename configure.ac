@@ -332,6 +332,8 @@ if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
         if test "x$VALAC" = "x" ; then
                 AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
         fi
+	AC_PATH_PROG(VALA_GEN_INTROSPECT, vala-gen-introspect)
+	AC_PATH_PROG(VAPIGEN, vapigen)
 fi
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0, HAVE_GTK=yes, HAVE_GTK=no)
@@ -345,7 +347,7 @@ AC_SUBST(GEE_CFLAGS)
 AC_SUBST(GEE_LIBS)
 
 if test "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes"; then
-	AM_CONDITIONAL(BUILD_DPAPVIEW, true)
+	AM_CONDITIONAL(HAVE_VALA, true)
 else
 	AC_WARN([Will not build dpapview])
 fi
@@ -377,4 +379,5 @@ libdmapsharing/dmap-config.h
 tests/Makefile
 m4/Makefile
 media/Makefile
+vala/Makefile
 ])

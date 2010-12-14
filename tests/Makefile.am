@@ -1,6 +1,6 @@
 noinst_PROGRAMS = test-dmap-client test-dmap-server
 
-if BUILD_DPAPVIEW
+if HAVE_VALA
 noinst_PROGRAMS += dpapview
 endif
 
@@ -51,7 +51,7 @@ vala.stamp: $(dpapview_VALASOURCES)
 	touch $@
 endif
 
-if BUILD_DPAPVIEW
+if HAVE_VALA
 dpapview_VALASOURCES = \
 	dpapview.vala
 

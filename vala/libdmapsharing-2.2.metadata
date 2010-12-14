@@ -1,0 +1,4 @@
+DMAP cheader_filename="libdmapsharing/dmap.h"
+dmap_container_db_foreach.data hidden="1"
+dmap_db_foreach.data hidden="1"
+dmap_record_factory_create transfer_ownership="1"
