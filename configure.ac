@@ -327,6 +327,7 @@ else
 fi
 
 AM_MAINTAINER_MODE
+AM_CONDITIONAL(HAVE_VALA, false)
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
         AM_PROG_VALAC([0.10.0])
         if test "x$VALAC" = "x" ; then
@@ -334,6 +335,7 @@ if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
         fi
 	AC_PATH_PROG(VALA_GEN_INTROSPECT, vala-gen-introspect)
 	AC_PATH_PROG(VAPIGEN, vapigen)
+	AM_CONDITIONAL(HAVE_VALA, true)
 fi
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0, HAVE_GTK=yes, HAVE_GTK=no)
@@ -346,9 +348,10 @@ PKG_CHECK_MODULES(GEE, gee-1.0, HAVE_GEE=yes, HAVE_GEE=no)
 AC_SUBST(GEE_CFLAGS)
 AC_SUBST(GEE_LIBS)
 
-if test "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes"; then
-	AM_CONDITIONAL(HAVE_VALA, true)
+if test "x$HAVE_VALA" = "xyes" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes"; then
+	AM_CONDITIONAL(BUILD_DPAPVIEW, true)
 else
+	AM_CONDITIONAL(BUILD_DPAPVIEW, false)
 	AC_WARN([Will not build dpapview])
 fi
 
