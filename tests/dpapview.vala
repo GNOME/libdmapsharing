@@ -139,7 +139,7 @@ private class ViewerDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		set { _creation_date = value; }
 	}
 
-	public unowned GLib.InputStream read (DPAP.Record record) throws GLib.Error {
+	public unowned GLib.InputStream read () throws GLib.Error {
 		GLib.error ("read not implemented");
 	}
 
@@ -182,7 +182,7 @@ private class DPAPViewer {
 		/* FIXME: fix void * argument, see libdmapsharing TODO: */
 		DMAP.MdnsBrowserService *FIXME = service;
 		/* FIXME: fix int cast: should not be requried: */
-		connection = new DPAP.Connection (FIXME->service_name, FIXME->host, (int) FIXME->port, false, db, factory);
+		connection = (DMAP.Connection) new DPAP.Connection (FIXME->service_name, FIXME->host, (int) FIXME->port, false, db, factory);
 		connection.connect (connected_cb);
 	}
 

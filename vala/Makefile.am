@@ -24,7 +24,7 @@ libdmapsharing-@API_VERSION@-dpap.vapi: libdmapsharing-@API_VERSION@-dpap/libdma
 	$(VAPIGEN) --pkg=libsoup-2.4 --pkg=glib-2.0 --library libdmapsharing-@API_VERSION@-dpap libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi
 
 libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi
-	cat libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dpap.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi > libdmapsharing-@API_VERSION@.vapi
+	cat libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi > libdmapsharing-@API_VERSION@.vapi
 	rm -f libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi
 	
 all: libdmapsharing-@API_VERSION@.vapi
