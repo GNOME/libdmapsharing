@@ -23,8 +23,20 @@ libdmapsharing-@API_VERSION@-dmap.vapi: libdmapsharing-@API_VERSION@-dmap/libdma
 libdmapsharing-@API_VERSION@-dpap.vapi: libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.metadata
 	$(VAPIGEN) --pkg=libsoup-2.4 --pkg=glib-2.0 --library libdmapsharing-@API_VERSION@-dpap libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi
 
+# NOTE: Sed is used to fix a problem I don't know how to handle in
+# vapigen. I have several namespaces (DMAP, DAAP, ...) in libdmapsharing. In
+# order to support this, I generate four Vala API files and then concatenate
+# them. But, each has its own definition of DMAP.Db, DAAP.DMAPDb, etc. The
+# use of sed fixes this:
 libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi
 	cat libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi > libdmapsharing-@API_VERSION@.vapi
+	cat libdmapsharing-@API_VERSION@.vapi | \
+		sed 's/DPAP\.DMAPDb/DMAP.Db/g' | \
+		sed 's/DAAP\.DMAPDb/DMAP.Db/g' | \
+		sed 's/DPAP\.DMAPRecordFactory/DMAP.RecordFactory/g' | \
+		sed 's/DAAP\.DMAPRecordFactory/DMAP.RecordFactory/g' | \
+		cat > libdmapsharing-@API_VERSION@.vapi.tmp
+	mv libdmapsharing-@API_VERSION@.vapi.tmp libdmapsharing-@API_VERSION@.vapi
 	rm -f libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi
 	
 all: libdmapsharing-@API_VERSION@.vapi
