@@ -40,13 +40,13 @@
 #include "dmap-mdns-avahi.h"
 #include "dmap-mdns-publisher.h"
 
-static void	dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass);
-static void	dmap_mdns_publisher_init	  (DmapMdnsPublisher	    *publisher);
+static void	dmap_mdns_publisher_class_init (DMAPMdnsPublisherClass *klass);
+static void	dmap_mdns_publisher_init	  (DMAPMdnsPublisher	    *publisher);
 static void	dmap_mdns_publisher_finalize   (GObject	            *object);
 
-#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_MDNS_PUBLISHER, DmapMdnsPublisherPrivate))
+#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_MDNS_PUBLISHER, DMAPMdnsPublisherPrivate))
 
-struct DmapMdnsPublisherService
+struct DMAPMdnsPublisherService
 {
 	char            *name;
 	guint            port;
@@ -55,7 +55,7 @@ struct DmapMdnsPublisherService
 	gchar          **txt_records;
 };
 
-struct DmapMdnsPublisherPrivate
+struct DMAPMdnsPublisherPrivate
 {
 	AvahiClient     *client;
 	AvahiEntryGroup *entry_group;
@@ -74,7 +74,7 @@ enum {
 
 static guint	     signals [LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DmapMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
+G_DEFINE_TYPE (DMAPMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
 
 static gpointer publisher_object = NULL;
 
@@ -89,7 +89,7 @@ dmap_mdns_publisher_error_quark (void)
 }
 
 static void
-emit_published (char *name, DmapMdnsPublisher *publisher)
+emit_published (char *name, DMAPMdnsPublisher *publisher)
 {
 	g_signal_emit (publisher, signals [PUBLISHED], 0, name);
 }
@@ -97,7 +97,7 @@ emit_published (char *name, DmapMdnsPublisher *publisher)
 static void
 entry_group_cb (AvahiEntryGroup     *group,
 		AvahiEntryGroupState state,
-		DmapMdnsPublisher *publisher)
+		DMAPMdnsPublisher *publisher)
 {
 	if (state == AVAHI_ENTRY_GROUP_ESTABLISHED) {
 		g_slist_foreach (publisher->priv->service, (GFunc) emit_published, publisher);
@@ -112,8 +112,8 @@ entry_group_cb (AvahiEntryGroup     *group,
 }
 
 static gboolean
-create_service (struct DmapMdnsPublisherService *service,
-		DmapMdnsPublisher *publisher,
+create_service (struct DMAPMdnsPublisherService *service,
+		DMAPMdnsPublisher *publisher,
 		GError **error)
 {
 	int ret;
@@ -164,7 +164,7 @@ create_service (struct DmapMdnsPublisherService *service,
 }
 
 static gboolean
-create_services (DmapMdnsPublisher *publisher,
+create_services (DMAPMdnsPublisher *publisher,
 		 GError             **error)
 {
 	GSList     *ptr;
@@ -211,19 +211,19 @@ create_services (DmapMdnsPublisher *publisher,
 }
 
 static gboolean
-refresh_services (DmapMdnsPublisher *publisher,
+refresh_services (DMAPMdnsPublisher *publisher,
 		  GError             **error)
 {
 	return create_services (publisher, error);
 }
 
-static struct DmapMdnsPublisherService *
+static struct DMAPMdnsPublisherService *
 find_service_by_port (GSList *list, guint port)
 {
 	GSList *ptr;
 
 	for (ptr = list; ptr; ptr = g_slist_next (ptr)) {
-		if (port == ((struct DmapMdnsPublisherService *) ptr->data)->port)
+		if (port == ((struct DMAPMdnsPublisherService *) ptr->data)->port)
 			break;
 	}
 
@@ -231,12 +231,12 @@ find_service_by_port (GSList *list, guint port)
 }
 
 gboolean
-dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
+dmap_mdns_publisher_rename_at_port (DMAPMdnsPublisher *publisher,
 				    guint	       port,
 				    const char        *name,
 				    GError           **error)
 {
-	struct DmapMdnsPublisherService *ptr;
+	struct DMAPMdnsPublisherService *ptr;
 
         g_return_val_if_fail (publisher != NULL, FALSE);
 
@@ -262,7 +262,7 @@ dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
 }
 
 gboolean
-dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
+dmap_mdns_publisher_publish (DMAPMdnsPublisher *publisher,
 				const char          *name,
 				guint                port,
 				const char          *type_of_service,
@@ -270,7 +270,7 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 				gchar              **txt_records,
 				GError             **error)
 {
-	struct DmapMdnsPublisherService *service;
+	struct DMAPMdnsPublisherService *service;
 
 	if (publisher->priv->client == NULL) {
                 g_set_error (error,
@@ -282,7 +282,7 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 	}
 
 	
-	service = g_new (struct DmapMdnsPublisherService, 1);
+	service = g_new (struct DMAPMdnsPublisherService, 1);
 
 	service->name = g_strdup(name);
 	service->port = port;
@@ -296,7 +296,7 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
 }
 
 static void
-free_service (struct DmapMdnsPublisherService *service, gpointer user_data)
+free_service (struct DMAPMdnsPublisherService *service, gpointer user_data)
 {
 	g_free (service->name);
 	g_free (service->type_of_service);
@@ -304,11 +304,11 @@ free_service (struct DmapMdnsPublisherService *service, gpointer user_data)
 }
 
 gboolean
-dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
+dmap_mdns_publisher_withdraw (DMAPMdnsPublisher *publisher,
 			      guint port,
 			      GError             **error)
 {
-	struct DmapMdnsPublisherService *ptr;
+	struct DMAPMdnsPublisherService *ptr;
 
 	if (publisher->priv->client == NULL) {
                 g_set_error (error,
@@ -390,7 +390,7 @@ dmap_mdns_publisher_constructor (GType type,
 }
 
 static void
-dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
+dmap_mdns_publisher_class_init (DMAPMdnsPublisherClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -403,7 +403,7 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
 		g_signal_new ("published",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (DmapMdnsPublisherClass, published),
+			      G_STRUCT_OFFSET (DMAPMdnsPublisherClass, published),
 			      NULL,
 			      NULL,
 			      g_cclosure_marshal_VOID__STRING,
@@ -413,18 +413,18 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
 		g_signal_new ("name-collision",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (DmapMdnsPublisherClass, name_collision),
+			      G_STRUCT_OFFSET (DMAPMdnsPublisherClass, name_collision),
 			      NULL,
 			      NULL,
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE,
 			      1, G_TYPE_STRING);
 
-	g_type_class_add_private (klass, sizeof (DmapMdnsPublisherPrivate));
+	g_type_class_add_private (klass, sizeof (DMAPMdnsPublisherPrivate));
 }
 
 static void
-dmap_mdns_publisher_init (DmapMdnsPublisher *publisher)
+dmap_mdns_publisher_init (DMAPMdnsPublisher *publisher)
 {
 	publisher->priv = DMAP_MDNS_PUBLISHER_GET_PRIVATE (publisher);
 
@@ -436,7 +436,7 @@ dmap_mdns_publisher_init (DmapMdnsPublisher *publisher)
 static void
 dmap_mdns_publisher_finalize (GObject *object)
 {
-	DmapMdnsPublisher *publisher;
+	DMAPMdnsPublisher *publisher;
 
 	g_return_if_fail (object != NULL);
 	g_return_if_fail (IS_DMAP_MDNS_PUBLISHER (object));
@@ -468,7 +468,7 @@ dmap_mdns_publisher_finalize (GObject *object)
 	G_OBJECT_CLASS (dmap_mdns_publisher_parent_class)->finalize (object);
 }
 
-DmapMdnsPublisher *
+DMAPMdnsPublisher *
 dmap_mdns_publisher_new (void)
 {
 	if (publisher_object) {

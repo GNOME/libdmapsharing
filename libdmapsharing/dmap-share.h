@@ -154,11 +154,11 @@ typedef struct {
 
 	/* Virtual methods: MDNS callbacks */
 	void	  (*published)	   (DMAPShare         *share,
-				    DmapMdnsPublisher *publisher,
+				    DMAPMdnsPublisher *publisher,
 	              		    const char        *name);
 
 	void	  (*name_collision)(DMAPShare	      *share,
-				    DmapMdnsPublisher *publisher,
+				    DMAPMdnsPublisher *publisher,
 	              		    const char        *name);
 
 	/* Virtual methods: */
@@ -272,11 +272,11 @@ void _dmap_share_ctrl_int (DMAPShare         *share,
 
 /* Virtual methods: MDNS callbacks */
 void _dmap_share_published     (DMAPShare         *share,
-			       DmapMdnsPublisher *publisher,
+			       DMAPMdnsPublisher *publisher,
 			       const char        *name);
 
 void _dmap_share_name_collision(DMAPShare         *share,
-			       DmapMdnsPublisher *publisher,
+			       DMAPMdnsPublisher *publisher,
 			       const char        *name);
 
 

@@ -75,7 +75,7 @@ struct DMAPSharePrivate {
 	/* mDNS/DNS-SD publishing things */
 	gboolean server_active;
 	gboolean published;
-	DmapMdnsPublisher *publisher;
+	DMAPMdnsPublisher *publisher;
 
 	/* HTTP server things */
 	SoupServer *server;
@@ -669,14 +669,14 @@ dmap_share_class_init (DMAPShareClass *klass)
 	g_type_class_add_private (klass, sizeof (DMAPSharePrivate));
 }
 
-static void published_adapter (DmapMdnsPublisher *publisher,
+static void published_adapter (DMAPMdnsPublisher *publisher,
 			       const char          *name,
 			       DMAPShare         *share)
 {
 	DMAP_SHARE_GET_CLASS (share)->published (share, publisher, name);
 }
 
-static void name_collision_adapter (DmapMdnsPublisher *publisher,
+static void name_collision_adapter (DMAPMdnsPublisher *publisher,
 				    const char          *name,
 				    DMAPShare         *share)
 {
@@ -908,7 +908,7 @@ _dmap_share_soup_auth_filter (SoupAuthDomain *auth_domain,
 
 void
 _dmap_share_published (DMAPShare         *share,
-		      DmapMdnsPublisher *publisher,
+		      DMAPMdnsPublisher *publisher,
 		      const char        *name)
 {
 	gchar *nameprop;
@@ -930,7 +930,7 @@ _dmap_share_published (DMAPShare         *share,
 
 void
 _dmap_share_name_collision (DMAPShare         *share,
-			   DmapMdnsPublisher *publisher,
+			   DMAPMdnsPublisher *publisher,
 			   const char        *name)
 {
 	gchar *nameprop;
