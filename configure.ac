@@ -1,13 +1,13 @@
-AC_INIT(libdmapsharing, 2.1.13)
+AC_INIT(libdmapsharing, 2.9.0)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AS_VERSION(libdmapsharing, LIBDMAPSHARING, 2, 1, 13, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+AS_VERSION(libdmapsharing, LIBDMAPSHARING, 2, 9, 0, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
 
 dnl FIXME:
 dnl would like to automate this off the above definitions, but API might be 2.2 with version 2.1.
 dnl see also Makefile.am, libdmapsharing/Makefile.am and libdmapsharing.pc.in
-API_VERSION=2.2
+API_VERSION=3.0
 #AC_DEFINE(API_VERSION, $API_VERSION, [library API version])
 AC_SUBST(API_VERSION)
 

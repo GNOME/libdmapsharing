@@ -43,30 +43,30 @@ all: libdmapsharing-@API_VERSION@.vapi
 endif
 
 EXTRA_DIST = \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-2.2.excludes \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-2.2.files \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-2.2.metadata \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-2.2.namespace \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-2.2.excludes \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-2.2.files \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-2.2.metadata \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-2.2.namespace \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-2.2.excludes \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-2.2.files \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-2.2.metadata \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-2.2.namespace \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-2.2.excludes \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-2.2.files \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-2.2.metadata \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-2.2.namespace
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.excludes \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.metadata \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.namespace \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.excludes \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.metadata \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.namespace \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.excludes \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.metadata \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.namespace \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.excludes \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.metadata \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.namespace
 
 CLEANFILES = \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-2.2.gi \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-2.2.gi \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-2.2.gi \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-2.2.gi \
-	libdmapsharing-2.2-daap.vapi \
-	libdmapsharing-2.2-dacp.vapi \
-	libdmapsharing-2.2-dmap.vapi \
-	libdmapsharing-2.2-dpap.vapi \
-	libdmapsharing-2.2.vapi
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi \
+	libdmapsharing-@API_VERSION@-daap.vapi \
+	libdmapsharing-@API_VERSION@-dacp.vapi \
+	libdmapsharing-@API_VERSION@-dmap.vapi \
+	libdmapsharing-@API_VERSION@-dpap.vapi \
+	libdmapsharing-@API_VERSION@.vapi

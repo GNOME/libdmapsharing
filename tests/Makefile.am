@@ -13,7 +13,7 @@ test_dmap_client_SOURCES = \
 	test-dmap-client.c
 
 test_dmap_client_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing.la \
+	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GOBJECT_LIBS) \
@@ -33,7 +33,7 @@ test_dmap_server_SOURCES = \
 	test-dpap-record-factory.c
 
 test_dmap_server_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing.la \
+	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GOBJECT_LIBS) \
@@ -61,7 +61,7 @@ dpapview_SOURCES = \
 	$(dpapview_VALABUILTSOURCES)
 
 dpapview_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing.la \
+	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GTK_LIBS) \
 	$(GEE_LIBS)
 endif

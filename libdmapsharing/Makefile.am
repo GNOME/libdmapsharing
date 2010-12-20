@@ -1,8 +1,8 @@
-lib_LTLIBRARIES = libdmapsharing.la
+lib_LTLIBRARIES = libdmapsharing-3.0.la
 
 BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h
 
-libdmapsharing_la_SOURCES = \
+libdmapsharing_3_0_la_SOURCES = \
 	$(BUILT_SOURCES) \
 	daap-connection.c \
 	daap-record.c \
@@ -24,15 +24,15 @@ libdmapsharing_la_SOURCES = \
 	dpap-share.c
 
 if USE_HOWL
-libdmapsharing_la_SOURCES += \
+libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-browser-howl.c
 else
 if USE_DNS_SD
-libdmapsharing_la_SOURCES += \
+libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-browser-dnssd.c \
 	dmap-mdns-publisher-dnssd.c
 else
-libdmapsharing_la_SOURCES += \
+libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-avahi.c \
 	dmap-mdns-browser-avahi.c \
 	dmap-mdns-publisher-avahi.c
@@ -40,14 +40,14 @@ endif
 endif
 
 if USE_GSTREAMERAPP
-libdmapsharing_la_SOURCES += \
+libdmapsharing_3_0_la_SOURCES += \
 	g-gst-input-stream.c \
 	g-gst-mp3-input-stream.c \
 	g-gst-wav-input-stream.c \
 	gst-util.c
 endif
 
-libdmapsharing_la_CFLAGS = \
+libdmapsharing_3_0_la_CFLAGS = \
 	-DG_LOG_DOMAIN=\"libdmapsharing\" \
 	-I$(top_srcdir) \
 	$(GDKPIXBUF_CFLAGS) \
@@ -55,7 +55,7 @@ libdmapsharing_la_CFLAGS = \
 	$(GSTREAMERAPP_CFLAGS) \
 	$(MDNS_CFLAGS)
 
-libdmapsharing_la_LDFLAGS = \
+libdmapsharing_3_0_la_LDFLAGS = \
 	-version-info @SO_VERSION@ \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
