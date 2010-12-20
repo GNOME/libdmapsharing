@@ -32,7 +32,6 @@
 
 #include "dmap-md5.h"
 #include "dmap-connection.h"
-#include "dmap-structure.h"
 #include "dmap-record-factory.h"
 #include "dmap-marshal.h"
 

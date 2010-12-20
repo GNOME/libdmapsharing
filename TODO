@@ -1,3 +1,6 @@
+Realtime transcode: must g_input_stream_close what is returned from
+daap_record_read, unless I change API (see also dmapd.c)
+
 service-added callback takes a void *, not nice with Vala see also
 dpapview.vala.
 

@@ -85,6 +85,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
+	dmap-structure.h \
 	dpap-connection.h \
 	dpap-record.h \
 	dpap-share.h
@@ -94,7 +95,6 @@ noinst_HEADERS = \
 	dmap-marshal.h \
 	dmap-config.h \
 	dmap-mdns-avahi.h \
-	dmap-structure.h \
 	dmap-utils.h \
 	g-gst-input-stream.h \
 	g-gst-mp3-input-stream.h \
