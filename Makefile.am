@@ -17,7 +17,6 @@ pkgconfig_DATA = $(pcfiles)
 
 EXTRA_DIST =				\
 	autogen.sh			\
-	libdmapsharing-2.2.vapi		\
 	libdmapsharing.pc.in		\
 	README-Memory
 
