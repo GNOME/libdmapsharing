@@ -396,6 +396,7 @@ static struct DMAPMetaDataMap meta_data_map[] = {
 static void
 send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record, guint64 filesize, guint64 offset, const gchar *transcode_mimetype)
 {
+	gchar *format = NULL;
 	GInputStream *stream;
 	gboolean has_video;
 	const char *location;
@@ -420,7 +421,9 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 		return;
 	}
 
-	if (transcode_format == NULL) {
+	g_object_get (record, "format", &format, NULL);
+	if (transcode_format == NULL || ! strcmp (format, transcode_format)) {
+		g_debug ("Not transcoding");
 		cd->stream = stream;
 #ifdef HAVE_GSTREAMERAPP
 	} else if (! strcmp ("mp3", transcode_format)) {

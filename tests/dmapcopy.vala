@@ -1,6 +1,6 @@
-/*   FILE: dpapviewer.vala -- View DPAP data
+/*   FILE: dmapcopy.vala -- Copy files from a DMAP server
  * AUTHOR: W. Michael Petullo <mike@flyn.org>
- *   DATE: 24 November 2010
+ *   DATE: 20 December 2010 
  *
  * Copyright (c) 2010 W. Michael Petullo <new@flyn.org>
  * All rights reserved.
@@ -20,10 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-private class DPAPViewer {
+private class DPAPCopy {
 	private DMAP.MdnsBrowser browser;
 	private DMAP.Connection connection;
-	private Gtk.ListStore liststore;
 	private ValaDMAPDb db;
 	private ValaDPAPRecordFactory factory;
 
@@ -31,16 +30,29 @@ private class DPAPViewer {
 		GLib.debug ("%lld entries\n", db.count ());
 
 		db.foreach ((k, v) => {
-			string path;
-			int fd = GLib.FileUtils.open_tmp ("dpapview.XXXXXX", out path);
-			GLib.FileUtils.set_contents (path, (string) ((ValaDPAPRecord) v).thumbnail, ((ValaDPAPRecord) v).filesize);
-			var pixbuf = new Gdk.Pixbuf.from_file (path);
-			GLib.FileUtils.close (fd);
-			GLib.FileUtils.unlink (path);
 
-			Gtk.TreeIter iter;
-			liststore.append (out iter);
-			liststore.set (iter, 0, pixbuf, 1, ((ValaDPAPRecord) v).filename);
+			stdout.printf ("%s\n", ((ValaDPAPRecord) v).location);
+
+			/* Uncomment to copy the data:
+			var session = new Soup.SessionAsync ();
+			var message = new Soup.Message ("GET", ((ValaDPAPRecord) v).location);
+			message.request_headers = connection.get_headers (((ValaDPAPRecord) v).location);
+
+			GLib.debug ("GET %s", ((ValaDPAPRecord) v).location);
+			session.send_message (message);
+
+			var file = File.new_for_path (((int) k).to_string ());
+			var file_stream = file.create (FileCreateFlags.NONE);
+
+			// Test for the existence of file
+			if (file.query_exists ()) {
+				stdout.printf ("File successfully created.\n");
+			}
+
+			// Write text data to file
+			var data_stream = new DataOutputStream (file_stream);
+			data_stream.write (message.response_body.data, (size_t) message.response_body.length, null);
+			*/
 		});
 
 		return true;
@@ -54,19 +66,9 @@ private class DPAPViewer {
 		connection.connect (connected_cb);
 	}
 
-	public DPAPViewer (Gtk.Builder builder) throws GLib.Error {
-		builder.connect_signals (this);
-
-		Gtk.Widget widget = builder.get_object ("window") as Gtk.Widget;
-		Gtk.IconView iconview = builder.get_object ("iconview") as Gtk.IconView;
-		liststore = builder.get_object ("liststore") as Gtk.ListStore;
+	public DPAPCopy () throws GLib.Error {
 		db = new ValaDMAPDb ();
 		factory = new ValaDPAPRecordFactory ();
-
-		iconview.set_pixbuf_column (0);
-		iconview.set_text_column (1);
-
-		widget.show_all ();
 
 		browser = new DMAP.MdnsBrowser (DMAP.MdnsBrowserServiceType.DPAP);
 		browser.service_added.connect (service_added_cb);
@@ -74,21 +76,28 @@ private class DPAPViewer {
 	}
 }
 
+void debug_printf (string? log_domain,
+		   GLib.LogLevelFlags log_level,
+		   string? message)
+{
+	stdout.printf ("%s\n", message);
+}
+
+void debug_null (string? log_domain,
+		 GLib.LogLevelFlags log_level,
+		 string? message)
+{
+}
+
 int main (string[] args) {     
-	Gtk.init (ref args);
+	var loop = new GLib.MainLoop ();
 
-	try {
-		var builder = new Gtk.Builder ();
-		builder.add_from_file ("dpapview.ui");
+	GLib.Log.set_handler ("libdmapsharing", GLib.LogLevelFlags.LEVEL_DEBUG, debug_null);
+	GLib.Log.set_handler (null, GLib.LogLevelFlags.LEVEL_DEBUG, debug_null);
 
-		var dpapviewer = new DPAPViewer (builder);
+	var dmapcopy = new DPAPCopy ();
 
-		Gtk.main ();
-
-	} catch (GLib.Error e) {
-		stderr.printf ("Error: %s\n", e.message);
-		return 1;
-	} 
+	loop.run ();
 
 	return 0;
 }
