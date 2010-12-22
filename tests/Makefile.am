@@ -1,7 +1,7 @@
 noinst_PROGRAMS = test-dmap-client test-dmap-server
 
 if HAVE_VALA
-noinst_PROGRAMS += dpapview dmapcopy
+noinst_PROGRAMS += dpapview dmapcopy dmapserve
 endif
 
 test_dmap_client_SOURCES = \
@@ -43,13 +43,17 @@ test_dmap_server_LDADD = \
 	$(MDNS_LIBS)
 
 if MAINTAINER_MODE
-BUILT_SOURCES = dpapview.stamp dmapcopy.stamp
+BUILT_SOURCES = dpapview.stamp dmapcopy.stamp dmapserve.stamp
 
 dpapview.stamp: $(dpapview_VALASOURCES)
 	$(VALAC) --vapidir=$(srcdir) --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
 	touch $@
 
 dmapcopy.stamp: $(dmapcopy_VALASOURCES)
+	$(VALAC) --vapidir=$(srcdir) --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	touch $@
+
+dmapserve.stamp: $(dmapserve_VALASOURCES)
 	$(VALAC) --vapidir=$(srcdir) --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
 	touch $@
 endif
@@ -81,6 +85,21 @@ dmapcopy_SOURCES = \
 	$(dmapcopy_VALABUILTSOURCES)
 
 dmapcopy_LDADD = \
+	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
+	$(GEE_LIBS)
+
+dmapserve_VALASOURCES = \
+	dmapserve.vala \
+	vala-dmap-db.vala \
+	vala-dpap-record.vala \
+	vala-dmap-container-db.vala
+
+dmapserve_VALABUILTSOURCES = $(dmapserve_VALASOURCES:.vala=.c)
+
+dmapserve_SOURCES = \
+	$(dmapserve_VALABUILTSOURCES)
+
+dmapserve_LDADD = \
 	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GEE_LIBS)
 endif

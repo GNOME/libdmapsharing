@@ -23,7 +23,8 @@
 private class ValaDMAPDb : GLib.Object, DMAP.Db {
 	// A dumb database that stores everything in an array
 
-	private Gee.ArrayList<ValaDPAPRecord> db = new Gee.ArrayList<ValaDPAPRecord> ();
+	/* FIXME: What is with this unowned? */
+	private Gee.ArrayList<unowned ValaDPAPRecord> db = new Gee.ArrayList<ValaDPAPRecord> ();
 
 	public uint add (DMAP.Record record) {
 		db.add (((ValaDPAPRecord) record));
@@ -50,7 +51,7 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 	}
 
 	public unowned DMAP.Record lookup_by_id (uint id) {
-		GLib.error ("lookup_by_id not implemented");
+		return db.get ((int) id);
 	}
 
 

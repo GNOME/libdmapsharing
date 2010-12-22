@@ -23,13 +23,13 @@
 static gint dmap_container_db_init_count = 0;
 
 static void
-dmap_container_db_init (DMAPContainerDbInterface *iface)
+dmap_container_db_init (DMAPContainerDbIface *iface)
 {
         dmap_container_db_init_count++;
 }
 
 static void
-dmap_container_db_finalize (DMAPContainerDbInterface *iface)
+dmap_container_db_finalize (DMAPContainerDbIface *iface)
 {
 	dmap_container_db_init_count--;
 }
@@ -41,7 +41,7 @@ dmap_container_db_get_type (void)
 	static GType object_type = 0;
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DMAPContainerDbInterface),
+			sizeof(DMAPContainerDbIface),
 			(GBaseInitFunc) dmap_container_db_init,
 			(GBaseFinalizeFunc) dmap_container_db_finalize
 		};

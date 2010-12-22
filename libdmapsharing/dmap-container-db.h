@@ -28,11 +28,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DMAP_CONTAINER_DB:
+ * DMAP_TYPE_CONTAINER_DB:
  *
  * The type for #DMAPContainerDb.
  */
-#define TYPE_DMAP_CONTAINER_DB		 (dmap_container_db_get_type ())
+#define DMAP_TYPE_CONTAINER_DB		 (dmap_container_db_get_type ())
 /**
  * DMAP_CONTAINER_DB:
  * @o: Object which is subject to casting.
@@ -42,16 +42,16 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_CONTAINER_DB(o)		 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				          TYPE_DMAP_CONTAINER_DB, DMAPContainerDb))
+				          DMAP_TYPE_CONTAINER_DB, DMAPContainerDb))
 /**
  * IS_DMAP_CONTAINER_DB:
- * @o: Instance to check for being a %TYPE_DMAP_CONTAINER_DB.
+ * @o: Instance to check for being a %DMAP_TYPE_CONTAINER_DB.
  *
  * Checks whether a valid #GTypeInstance pointer is of type
- * %TYPE_DMAP_CONTAINER_DB.
+ * %DMAP_TYPE_CONTAINER_DB.
  */
 #define IS_DMAP_CONTAINER_DB(o)		 (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				          TYPE_DMAP_CONTAINER_DB))
+				          DMAP_TYPE_CONTAINER_DB))
 /**
  * DMAP_CONTAINER_DB_GET_INTERFACE:
  * @o: a #DMAPContainerDb instance.
@@ -61,12 +61,12 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DMAP_CONTAINER_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				            TYPE_DMAP_CONTAINER_DB, DMAPContainerDbInterface))
+				            DMAP_TYPE_CONTAINER_DB, DMAPContainerDbIface))
 
 typedef struct _DMAPContainerDb DMAPContainerDb;
-typedef struct _DMAPContainerDbInterface DMAPContainerDbInterface;
+typedef struct _DMAPContainerDbIface DMAPContainerDbIface;
 
-struct _DMAPContainerDbInterface {
+struct _DMAPContainerDbIface {
 	GTypeInterface parent;
 
 	DMAPContainerRecord *(*lookup_by_id)    (DMAPContainerDb *db, guint id);

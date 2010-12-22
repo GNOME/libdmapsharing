@@ -105,6 +105,10 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 	public unowned GLib.ByteArray to_blob () {
 		GLib.error ("to_blob not implemented");
 	}
+
+	public ValaDPAPRecord () {
+		location = "FIXME";
+	}
 }
 
 private class ValaDPAPRecordFactory : GLib.Object, DMAP.RecordFactory {
