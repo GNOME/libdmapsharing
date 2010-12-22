@@ -25,11 +25,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DPAP_CONNECTION:
+ * DPAP_TYPE_CONNECTION:
  *
  * The type for #DPAPConnection.
  */
-#define TYPE_DPAP_CONNECTION		(dpap_connection_get_type ())
+#define DPAP_TYPE_CONNECTION		(dpap_connection_get_type ())
 /**
  * DPAP_CONNECTION:
  * @o: Object which is subject to casting.
@@ -38,7 +38,7 @@ G_BEGIN_DECLS
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
-#define DPAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DPAP_CONNECTION, DPAPConnection))
+#define DPAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), DPAP_TYPE_CONNECTION, DPAPConnection))
 /**
  * DPAP_CONNECTION_CLASS:
  * @k: a valid #DPAPConnectionClass
@@ -46,14 +46,14 @@ G_BEGIN_DECLS
  * Casts a derived #DPAPConnectionClass structure into a #DPAPConnectionClass
  * structure.
  */
-#define DPAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), TYPE_DPAP_CONNECTION, DPAPConnectionClass))
+#define DPAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DPAP_TYPE_CONNECTION, DPAPConnectionClass))
 /**
  * IS_DPAP_CONNECTION:
- * @o: Instance to check for being a %TYPE_DPAP_CONNECTION.
+ * @o: Instance to check for being a %DPAP_TYPE_CONNECTION.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DPAP_CONNECTION.
+ * Checks whether a valid #GTypeInstance pointer is of type %DPAP_TYPE_CONNECTION.
  */
-#define IS_DPAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DPAP_CONNECTION))
+#define IS_DPAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DPAP_TYPE_CONNECTION))
 /**
  * IS_DPAP_CONNECTION_CLASS:
  * @k: a #DPAPConnectionClass
@@ -61,7 +61,7 @@ G_BEGIN_DECLS
  * Checks whether @k "is a" valid #DPAPConnectionClass structure of type
  * %DPAP_CONNECTION or derived.
  */
-#define IS_DPAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DPAP_CONNECTION))
+#define IS_DPAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DPAP_TYPE_CONNECTION))
 /**
  * DPAP_CONNECTION_GET_CLASS:
  * @o: a #DPAPConnection instance.
@@ -70,7 +70,7 @@ G_BEGIN_DECLS
  *
  * Returns: pointer to object class structure.
  */
-#define DPAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DPAP_CONNECTION, DPAPConnectionClass))
+#define DPAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DPAP_TYPE_CONNECTION, DPAPConnectionClass))
 
 typedef struct DPAPConnectionPrivate DPAPConnectionPrivate;
 

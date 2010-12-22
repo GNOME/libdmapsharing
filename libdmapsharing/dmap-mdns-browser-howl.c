@@ -78,7 +78,7 @@ static void dmap_mdns_browser_finalize   (GObject *object);
 
 static void free_service (DMAPMdnsBrowserService *service);
 
-#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowserPrivate))
+#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserPrivate))
 
 static guint signals [LAST_SIGNAL] = { 0, };
 
@@ -343,7 +343,7 @@ dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
     g_return_val_if_fail (type >= DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID &&
                           type <= DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST, NULL);
 
-    browser_object = DMAP_MDNS_BROWSER (g_object_new (TYPE_DMAP_MDNS_BROWSER, NULL));
+    browser_object = DMAP_MDNS_BROWSER (g_object_new (DMAP_TYPE_MDNS_BROWSER, NULL));
     browser_object->priv->service_type = type;
 
     return browser_object;

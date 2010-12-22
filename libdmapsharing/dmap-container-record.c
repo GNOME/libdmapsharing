@@ -23,7 +23,7 @@
 static gint dmap_container_record_init_count = 0;
 
 static void
-dmap_container_record_init (DMAPContainerRecordInterface *iface)
+dmap_container_record_init (DMAPContainerRecordIface *iface)
 {
 	static gboolean is_initialized = FALSE;
 
@@ -42,7 +42,7 @@ dmap_container_record_init (DMAPContainerRecordInterface *iface)
 }
 
 static void
-dmap_container_record_finalize (DMAPContainerRecordInterface *iface)
+dmap_container_record_finalize (DMAPContainerRecordIface *iface)
 {
 	dmap_container_record_init_count--;
 }
@@ -54,7 +54,7 @@ dmap_container_record_get_type (void)
 	static GType object_type = 0;
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DMAPContainerRecordInterface),
+			sizeof(DMAPContainerRecordIface),
 			(GBaseInitFunc) dmap_container_record_init,
 			(GBaseFinalizeFunc) dmap_container_record_finalize
 		};

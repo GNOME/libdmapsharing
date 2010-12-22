@@ -88,13 +88,13 @@ struct DAAPSharePrivate {
 	gchar unused;
 };
 
-#define DAAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DAAP_SHARE, DAAPSharePrivate))
+#define DAAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAAP_TYPE_SHARE, DAAPSharePrivate))
 
 enum {
 	PROP_0,
 };
 
-G_DEFINE_TYPE (DAAPShare, daap_share, TYPE_DMAP_SHARE)
+G_DEFINE_TYPE (DAAPShare, daap_share, DMAP_TYPE_SHARE)
 
 /* FIXME: get rid of this global: */
 static gchar *transcode_format = NULL;
@@ -188,7 +188,7 @@ daap_share_new (const char *name,
 	g_object_ref (db);
 	g_object_ref (container_db);
 
-	share = DAAP_SHARE (g_object_new (TYPE_DAAP_SHARE,
+	share = DAAP_SHARE (g_object_new (DAAP_TYPE_SHARE,
 					     "name", name,
 					     "password", password,
 					     "db", db,

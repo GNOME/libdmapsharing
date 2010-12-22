@@ -23,7 +23,7 @@
 #include <libdmapsharing/dpap-connection.h>
 #include <libdmapsharing/dmap-structure.h>
 
-#define DPAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DPAP_CONNECTION, DPAPConnectionPrivate))
+#define DPAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DPAP_TYPE_CONNECTION, DPAPConnectionPrivate))
 
 /* FIXME:
 struct DPAPConnectionPrivate {
@@ -160,7 +160,7 @@ dpap_connection_new (const char        *name,
 {
 	DPAPConnection *connection;
 	
-	connection = g_object_new (TYPE_DPAP_CONNECTION,
+	connection = g_object_new (DPAP_TYPE_CONNECTION,
 			          "name", name,
 			          "password-protected", password_protected,
 			          "db", db,
@@ -180,4 +180,4 @@ dpap_connection_init (DPAPConnection *connection)
 	*/
 }
 
-G_DEFINE_TYPE (DPAPConnection, dpap_connection, TYPE_DMAP_CONNECTION)
+G_DEFINE_TYPE (DPAPConnection, dpap_connection, DMAP_TYPE_CONNECTION)

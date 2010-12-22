@@ -33,11 +33,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DAAP_SHARE:
+ * DAAP_TYPE_SHARE:
  *
  * The type for #DAAPShare.
  */
-#define TYPE_DAAP_SHARE         (daap_share_get_type ())
+#define DAAP_TYPE_SHARE         (daap_share_get_type ())
 /**
  * DAAP_SHARE:
  * @o: Object which is subject to casting.
@@ -47,7 +47,7 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DAAP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				 TYPE_DAAP_SHARE, DAAPShare))
+				 DAAP_TYPE_SHARE, DAAPShare))
 /**
  * DAAP_SHARE_CLASS:
  * @k: a valid #DAAPShareClass
@@ -55,15 +55,15 @@ G_BEGIN_DECLS
  * Casts a derived #DAAPShareClass structure into a #DAAPShareClass structure.
  */
 #define DAAP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				 TYPE_DAAP_SHARE, DAAPShareClass))
+				 DAAP_TYPE_SHARE, DAAPShareClass))
 /**
  * IS_DAAP_SHARE:
- * @o: Instance to check for being a %TYPE_DAAP_SHARE.
+ * @o: Instance to check for being a %DAAP_TYPE_SHARE.
  * 
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DAAP_SHARE.
+ * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_SHARE.
  */
 #define IS_DAAP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				 TYPE_DAAP_SHARE))
+				 DAAP_TYPE_SHARE))
 /**
  * IS_DAAP_SHARE_CLASS:
  * @k: a #DAAPShareClass
@@ -72,7 +72,7 @@ G_BEGIN_DECLS
  * %DAAP_SHARE or derived.
  */
 #define IS_DAAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
-				 TYPE_DAAP_SHARE))
+				 DAAP_TYPE_SHARE))
 /**
  * DAAP_SHARE_GET_CLASS:
  * @o: a #DAAPShare instance.
@@ -82,7 +82,7 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DAAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
-				 TYPE_DAAP_SHARE, DAAPShareClass))
+				 DAAP_TYPE_SHARE, DAAPShareClass))
 
 typedef struct DAAPSharePrivate DAAPSharePrivate;
 

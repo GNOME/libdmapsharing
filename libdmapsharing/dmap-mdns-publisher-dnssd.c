@@ -25,7 +25,7 @@
 
 #include "dmap-mdns-publisher.h"
 
-#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_MDNS_PUBLISHER, DMAPMdnsPublisherPrivate))
+#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_PUBLISHER, DMAPMdnsPublisherPrivate))
 
 struct DMAPMdnsPublisherPrivate
 {
@@ -207,7 +207,7 @@ dmap_mdns_publisher_new (void)
         if (publisher_object) {
                 g_object_ref (publisher_object);
         } else {
-                publisher_object = g_object_new (TYPE_DMAP_MDNS_PUBLISHER, NULL);
+                publisher_object = g_object_new (DMAP_TYPE_MDNS_PUBLISHER, NULL);
                 g_object_add_weak_pointer (publisher_object,
                                            (gpointer *) &publisher_object);
         }

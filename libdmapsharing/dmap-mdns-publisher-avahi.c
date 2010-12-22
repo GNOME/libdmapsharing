@@ -44,7 +44,7 @@ static void	dmap_mdns_publisher_class_init (DMAPMdnsPublisherClass *klass);
 static void	dmap_mdns_publisher_init	  (DMAPMdnsPublisher	    *publisher);
 static void	dmap_mdns_publisher_finalize   (GObject	            *object);
 
-#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_MDNS_PUBLISHER, DMAPMdnsPublisherPrivate))
+#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_PUBLISHER, DMAPMdnsPublisherPrivate))
 
 struct DMAPMdnsPublisherService
 {
@@ -474,7 +474,7 @@ dmap_mdns_publisher_new (void)
 	if (publisher_object) {
 		g_object_ref (publisher_object);
 	} else {
-		publisher_object = g_object_new (TYPE_DMAP_MDNS_PUBLISHER, NULL);
+		publisher_object = g_object_new (DMAP_TYPE_MDNS_PUBLISHER, NULL);
 		g_object_add_weak_pointer (publisher_object,
 					   (gpointer *) &publisher_object);
 	}

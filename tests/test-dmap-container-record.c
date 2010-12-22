@@ -105,9 +105,9 @@ test_dmap_container_record_class_init (TestDMAPContainerRecordClass *klass)
 static void
 test_dmap_container_record_interface_init (gpointer iface, gpointer data)
 {
-	DMAPContainerRecordInterface *dmap_container_record = iface;
+	DMAPContainerRecordIface *dmap_container_record = iface;
 
-	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_record) == TYPE_DMAP_CONTAINER_RECORD);
+	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_record) == DMAP_TYPE_CONTAINER_RECORD);
 
 	dmap_container_record->get_id = test_dmap_container_record_get_id;
 	dmap_container_record->add_entry = test_dmap_container_record_add_entry;
@@ -116,7 +116,7 @@ test_dmap_container_record_interface_init (gpointer iface, gpointer data)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDMAPContainerRecord, test_dmap_container_record, G_TYPE_OBJECT, 
-			G_IMPLEMENT_INTERFACE (TYPE_DMAP_CONTAINER_RECORD,
+			G_IMPLEMENT_INTERFACE (DMAP_TYPE_CONTAINER_RECORD,
 					       test_dmap_container_record_interface_init))
 
 TestDMAPContainerRecord *test_dmap_container_record_new (void)

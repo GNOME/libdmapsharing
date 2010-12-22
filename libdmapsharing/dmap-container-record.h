@@ -27,11 +27,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DMAP_CONTAINER_RECORD:
+ * DMAP_TYPE_CONTAINER_RECORD:
  *
  * The type for #DMAPContainerRecord.
  */
-#define TYPE_DMAP_CONTAINER_RECORD	     (dmap_container_record_get_type ())
+#define DMAP_TYPE_CONTAINER_RECORD	     (dmap_container_record_get_type ())
 /**
  * DMAP_CONTAINER_RECORD:
  * @o: Object which is subject to casting.
@@ -41,16 +41,16 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_CONTAINER_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				      TYPE_DMAP_CONTAINER_RECORD, DMAPContainerRecord))
+				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecord))
 /**
  * IS_DMAP_CONTAINER_RECORD:
- * @o: Instance to check for being a %TYPE_DMAP_CONTAINER_RECORD.
+ * @o: Instance to check for being a %DMAP_TYPE_CONTAINER_RECORD.
  *
  * Checks whether a valid #GTypeInstance pointer is of type
- * %TYPE_DMAP_CONTAINER_RECORD.
+ * %DMAP_TYPE_CONTAINER_RECORD.
  */
 #define IS_DMAP_CONTAINER_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				      TYPE_DMAP_CONTAINER_RECORD))
+				      DMAP_TYPE_CONTAINER_RECORD))
 /**
  * DMAP_CONTAINER_RECORD_GET_INTERFACE:
  * @o: a #DMAPContainerRecord instance.
@@ -60,12 +60,12 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DMAP_CONTAINER_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      TYPE_DMAP_CONTAINER_RECORD, DMAPContainerRecordInterface))
+				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecordIface))
 
 typedef struct _DMAPContainerRecord DMAPContainerRecord;
-typedef struct _DMAPContainerRecordInterface DMAPContainerRecordInterface;
+typedef struct _DMAPContainerRecordIface DMAPContainerRecordIface;
 
-struct _DMAPContainerRecordInterface {
+struct _DMAPContainerRecordIface {
 	GTypeInterface parent;
 	
 	guint		(*get_id)	    (DMAPContainerRecord *record);

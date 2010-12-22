@@ -28,11 +28,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DMAP_MDNS_BROWSER:
+ * DMAP_TYPE_MDNS_BROWSER:
  *
  * The type for #DMAPMdnsBrowser.
  */
-#define TYPE_DMAP_MDNS_BROWSER         (dmap_mdns_browser_get_type ())
+#define DMAP_TYPE_MDNS_BROWSER         (dmap_mdns_browser_get_type ())
 /**
  * DMAP_MDNS_BROWSER:
  * @o: Object which is subject to casting.
@@ -41,21 +41,21 @@ G_BEGIN_DECLS
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
-#define DMAP_MDNS_BROWSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowser))
+#define DMAP_MDNS_BROWSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowser))
 /**
  * DMAP_MDNS_BROWSER_CLASS:
  * @k: a valid #DMAPMdnsBrowserClass
  *
  * Casts a derived #DAAPShareClass structure into a #DAAPShareClass structure.
  */
-#define DMAP_MDNS_BROWSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowserClass))
+#define DMAP_MDNS_BROWSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserClass))
 /**
  * IS_DMAP_MDNS_BROWSER:
- * @o: Instance to check for being a %TYPE_DMAP_MDNS_BROWSER.
+ * @o: Instance to check for being a %DMAP_TYPE_MDNS_BROWSER.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DAAP_SHARE.
+ * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_SHARE.
  */
-#define IS_DMAP_MDNS_BROWSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DMAP_MDNS_BROWSER))
+#define IS_DMAP_MDNS_BROWSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_MDNS_BROWSER))
 /**
  * IS_DMAP_MDNS_BROWSER_CLASS:
  * @k: a #DMAPMdnsBrowserClass
@@ -63,7 +63,7 @@ G_BEGIN_DECLS
  * Checks whether @k "is a" valid #DMAPMdnsBrowserClass structure of type
  * %DMAP_MDNS_BROWSER or derived.
  */
-#define IS_DMAP_MDNS_BROWSER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DMAP_MDNS_BROWSER))
+#define IS_DMAP_MDNS_BROWSER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_MDNS_BROWSER))
 /**
  * DMAP_MDNS_BROWSER_GET_CLASS:
  * @o: a #DMAPMdnsBrowser instance.
@@ -72,7 +72,7 @@ G_BEGIN_DECLS
  *
  * Returns: pointer to object class structure.
  */
-#define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DMAP_MDNS_BROWSER, DMAPMdnsBrowserClass))
+#define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserClass))
 
 typedef struct _DMAPMdnsBrowser        DMAPMdnsBrowser;
 typedef struct _DMAPMdnsBrowserClass   DMAPMdnsBrowserClass;

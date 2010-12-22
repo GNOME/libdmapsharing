@@ -25,11 +25,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DAAP_CONNECTION:
+ * DAAP_TYPE_CONNECTION:
  *
  * The type for #DAAPConnection.
  */
-#define TYPE_DAAP_CONNECTION		(daap_connection_get_type ())
+#define DAAP_TYPE_CONNECTION		(daap_connection_get_type ())
 /**
  * DAAP_CONNECTION:
  * @o: Object which is subject to casting.
@@ -38,7 +38,7 @@ G_BEGIN_DECLS
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
-#define DAAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DAAP_CONNECTION, DAAPConnection))
+#define DAAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), DAAP_TYPE_CONNECTION, DAAPConnection))
 /**
  * DAAP_CONNECTION_CLASS:
  * @k: a valid #DAAPConnectionClass
@@ -46,14 +46,14 @@ G_BEGIN_DECLS
  * Casts a derived #DAAPConnectionClass structure into a #DAAPConnectionClass
  * structure.
  */
-#define DAAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), TYPE_DAAP_CONNECTION, DAAPConnectionClass))
+#define DAAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DAAP_TYPE_CONNECTION, DAAPConnectionClass))
 /**
  * IS_DAAP_CONNECTION:
- * @o: Instance to check for being a %TYPE_DAAP_CONNECTION.
+ * @o: Instance to check for being a %DAAP_TYPE_CONNECTION.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DAAP_CONNECTION.
+ * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_CONNECTION.
  */
-#define IS_DAAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DAAP_CONNECTION))
+#define IS_DAAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DAAP_TYPE_CONNECTION))
 /**
  * IS_DAAP_CONNECTION_CLASS:
  * @k: a #DAAPConnectionClass
@@ -61,7 +61,7 @@ G_BEGIN_DECLS
  * Checks whether @k "is a" valid #DAAPConnectionClass structure of type
  * %DAAP_CONNECTION or derived.
  */
-#define IS_DAAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DAAP_CONNECTION))
+#define IS_DAAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DAAP_TYPE_CONNECTION))
 /**
  * DAAP_CONNECTION_GET_CLASS:
  * @o: a #DAAPConnection instance.
@@ -70,7 +70,7 @@ G_BEGIN_DECLS
  *
  * Returns: pointer to object class structure.
  */
-#define DAAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DAAP_CONNECTION, DAAPConnectionClass))
+#define DAAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DAAP_TYPE_CONNECTION, DAAPConnectionClass))
 
 typedef struct DAAPConnectionPrivate DAAPConnectionPrivate;
 

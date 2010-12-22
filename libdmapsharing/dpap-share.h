@@ -31,11 +31,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DPAP_SHARE:
+ * DPAP_TYPE_SHARE:
  *
  * The type for #DPAPShare.
  */
-#define TYPE_DPAP_SHARE         (dpap_share_get_type ())
+#define DPAP_TYPE_SHARE         (dpap_share_get_type ())
 /**
  * DPAP_SHARE:
  * @o: Object which is subject to casting.
@@ -45,7 +45,7 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DPAP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				 TYPE_DPAP_SHARE, DPAPShare))
+				 DPAP_TYPE_SHARE, DPAPShare))
 /**
  * DPAP_SHARE_CLASS:
  * @k: a valid #DPAPShareClass
@@ -53,15 +53,15 @@ G_BEGIN_DECLS
  * Casts a derived #DPAPShareClass structure into a #DPAPShareClass structure.
  */
 #define DPAP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				 TYPE_DPAP_SHARE, DPAPShareClass))
+				 DPAP_TYPE_SHARE, DPAPShareClass))
 /**
  * IS_DPAP_SHARE:
- * @o: Instance to check for being a %TYPE_DPAP_SHARE.
+ * @o: Instance to check for being a %DPAP_TYPE_SHARE.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DPAP_SHARE.
+ * Checks whether a valid #GTypeInstance pointer is of type %DPAP_TYPE_SHARE.
  */
 #define IS_DPAP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				 TYPE_DPAP_SHARE))
+				 DPAP_TYPE_SHARE))
 /**
  * IS_DPAP_SHARE_CLASS:
  * @k: a #DPAPShareClass
@@ -69,7 +69,7 @@ G_BEGIN_DECLS
  * Checks whether @k "is a" valid #DPAPShareClass structure of type
  * %DPAP_SHARE or derived.
  */
-#define IS_DPAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DPAP_SHARE))
+#define IS_DPAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), DPAP_TYPE_SHARE))
 /**
  * DPAP_SHARE_GET_CLASS:
  * @o: a #DPAPShare instance.
@@ -79,7 +79,7 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DPAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
-				 TYPE_DPAP_SHARE, DPAPShareClass))
+				 DPAP_TYPE_SHARE, DPAPShareClass))
 
 typedef struct DPAPSharePrivate DPAPSharePrivate;
 

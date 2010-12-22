@@ -46,15 +46,15 @@ if MAINTAINER_MODE
 BUILT_SOURCES = dpapview.stamp dmapcopy.stamp dmapserve.stamp
 
 dpapview.stamp: $(dpapview_VALASOURCES)
-	$(VALAC) --vapidir=$(srcdir) --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
 	touch $@
 
 dmapcopy.stamp: $(dmapcopy_VALASOURCES)
-	$(VALAC) --vapidir=$(srcdir) --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
 	touch $@
 
 dmapserve.stamp: $(dmapserve_VALASOURCES)
-	$(VALAC) --vapidir=$(srcdir) --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-2.2 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
 	touch $@
 endif
 

@@ -33,11 +33,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DACP_SHARE:
+ * DACP_TYPE_SHARE:
  *
  * The type for #DACPShare.
  */
-#define TYPE_DACP_SHARE         (dacp_share_get_type ())
+#define DACP_TYPE_SHARE         (dacp_share_get_type ())
 /**
  * DACP_SHARE:
  * @o: Object which is subject to casting.
@@ -47,7 +47,7 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DACP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				 TYPE_DACP_SHARE, DACPShare))
+				 DACP_TYPE_SHARE, DACPShare))
 /**
  * DACP_SHARE_CLASS:
  * @k: a valid #DACPShareClass
@@ -55,15 +55,15 @@ G_BEGIN_DECLS
  * Casts a derived #DACPShareClass structure into a #DACPShareClass structure.
  */
 #define DACP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				 TYPE_DACP_SHARE, DACPShareClass))
+				 DACP_TYPE_SHARE, DACPShareClass))
 /**
  * IS_DACP_SHARE:
- * @o: Instance to check for being a %TYPE_DACP_SHARE.
+ * @o: Instance to check for being a %DACP_TYPE_SHARE.
  * 
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DACP_SHARE.
+ * Checks whether a valid #GTypeInstance pointer is of type %DACP_TYPE_SHARE.
  */
 #define IS_DACP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				 TYPE_DACP_SHARE))
+				 DACP_TYPE_SHARE))
 /**
  * IS_DACP_SHARE_CLASS:
  * @k: a #DACPShareClass
@@ -72,7 +72,7 @@ G_BEGIN_DECLS
  * %DACP_SHARE or derived.
  */
 #define IS_DACP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
-				 TYPE_DACP_SHARE))
+				 DACP_TYPE_SHARE))
 /**
  * DACP_SHARE_GET_CLASS:
  * @o: a #DACPShare instance.
@@ -82,7 +82,7 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DACP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
-				 TYPE_DACP_SHARE, DACPShareClass))
+				 DACP_TYPE_SHARE, DACPShareClass))
 
 typedef struct DACPSharePrivate DACPSharePrivate;
 

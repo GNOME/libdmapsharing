@@ -27,13 +27,13 @@
 
 G_BEGIN_DECLS
 
-#define TYPE_DACP_PLAYER               (dacp_player_get_type ())
-#define DACP_PLAYER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), TYPE_DACP_PLAYER, DACPPlayer))
-#define IS_DACP_PLAYER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), TYPE_DACP_PLAYER))
+#define DACP_TYPE_PLAYER               (dacp_player_get_type ())
+#define DACP_PLAYER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), DACP_TYPE_PLAYER, DACPPlayer))
+#define IS_DACP_PLAYER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DACP_TYPE_PLAYER))
 #define DACP_PLAYER_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), \
-                                        TYPE_DACP_PLAYER, DACPPlayerInterface))
+                                        DACP_TYPE_PLAYER, DACPPlayerIface))
 
-typedef struct _DACPPlayerInterface DACPPlayerInterface;
+typedef struct _DACPPlayerIface DACPPlayerIface;
 typedef struct _DACPPlayer DACPPlayer;
 
 /**
@@ -54,7 +54,7 @@ typedef enum {
 	PLAY_PLAYING = 4
 } DACPPlayState;
 
-struct _DACPPlayerInterface
+struct _DACPPlayerIface
 {
 	GTypeInterface parent_class;
 

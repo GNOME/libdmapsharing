@@ -38,11 +38,11 @@ typedef struct {
 } DMAPPlaylist;
 
 /**
- * TYPE_DMAP_CONNECTION:
+ * DMAP_TYPE_CONNECTION:
  *
  * The type for #DMAPConnection.
  */
-#define TYPE_DMAP_CONNECTION		(dmap_connection_get_type ())
+#define DMAP_TYPE_CONNECTION		(dmap_connection_get_type ())
 /**
  * DMAP_CONNECTION:
  * @o: Object which is subject to casting.
@@ -51,7 +51,7 @@ typedef struct {
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
-#define DMAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), TYPE_DMAP_CONNECTION, DMAPConnection))
+#define DMAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_CONNECTION, DMAPConnection))
 /**
  * DMAP_CONNECTION_CLASS:
  * @k: a valid #DMAPConnectionClass
@@ -59,14 +59,14 @@ typedef struct {
  * Casts a derived #DMAPConnectionClass structure into a #DMAPConnectionClass
  * structure.
  */
-#define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), TYPE_DMAP_CONNECTION, DMAPConnectionClass))
+#define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_CONNECTION, DMAPConnectionClass))
 /**
  * IS_DMAP_CONNECTION:
- * @o: Instance to check for being a %TYPE_DMAP_CONNECTION.
+ * @o: Instance to check for being a %DMAP_TYPE_CONNECTION.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DMAP_CONNECTION.
+ * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_CONNECTION.
  */
-#define IS_DMAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), TYPE_DMAP_CONNECTION))
+#define IS_DMAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONNECTION))
 /**
  * IS_DMAP_CONNECTION_CLASS:
  * @k: a #DMAPConnectionClass
@@ -74,7 +74,7 @@ typedef struct {
  * Checks whether @k "is a" valid #DMAPConnectionClass structure of type
  * %DMAP_CONNECTION or derived.
  */
-#define IS_DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), TYPE_DMAP_CONNECTION))
+#define IS_DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_CONNECTION))
 /**
  * DMAP_CONNECTION_GET_CLASS:
  * @o: a #DMAPConnection instance.
@@ -83,7 +83,7 @@ typedef struct {
  *
  * Returns: pointer to object class structure.
  */
-#define DMAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), TYPE_DMAP_CONNECTION, DMAPConnectionClass))
+#define DMAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_CONNECTION, DMAPConnectionClass))
 
 typedef struct DMAPConnectionPrivate DMAPConnectionPrivate;
 

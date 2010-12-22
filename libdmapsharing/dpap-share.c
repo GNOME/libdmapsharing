@@ -95,13 +95,13 @@ struct DPAPSharePrivate {
  */
 static GMappedFile *mapped_file = NULL;
 
-#define DPAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DPAP_SHARE, DPAPSharePrivate))
+#define DPAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DPAP_TYPE_SHARE, DPAPSharePrivate))
 
 enum {
 	PROP_0,
 };
 
-G_DEFINE_TYPE (DPAPShare, dpap_share, TYPE_DMAP_SHARE)
+G_DEFINE_TYPE (DPAPShare, dpap_share, DMAP_TYPE_SHARE)
 
 static void
 dpap_share_class_init (DPAPShareClass *klass)
@@ -181,7 +181,7 @@ dpap_share_new (const char *name,
 {
 	DPAPShare *share;
 
-	share = DPAP_SHARE (g_object_new (TYPE_DPAP_SHARE,
+	share = DPAP_SHARE (g_object_new (DPAP_TYPE_SHARE,
 					     "name", name,
 					     "password", password,
 					     "db", db,

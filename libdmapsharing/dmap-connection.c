@@ -57,7 +57,7 @@ static gboolean emit_progress_idle (DMAPConnection *connection);
 
 G_DEFINE_TYPE (DMAPConnection, dmap_connection, G_TYPE_OBJECT)
 
-#define DMAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_DMAP_CONNECTION, DMAPConnectionPrivate))
+#define DMAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONNECTION, DMAPConnectionPrivate))
 
 struct DMAPConnectionPrivate {
 	char *name;
@@ -1135,7 +1135,7 @@ dmap_connection_new (const char        *name,
 {
 	DMAPConnection *connection;
 	
-	connection = g_object_new (TYPE_DMAP_CONNECTION,
+	connection = g_object_new (DMAP_TYPE_CONNECTION,
 			          "name", name,
 			          "password-protected", password_protected,
 			          "db", db,

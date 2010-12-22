@@ -39,11 +39,11 @@
 G_BEGIN_DECLS
 
 /**
- * TYPE_DMAP_SHARE:
+ * DMAP_TYPE_SHARE:
  *
  * The type for #DMAPShare.
  */
-#define TYPE_DMAP_SHARE         (dmap_share_get_type ())
+#define DMAP_TYPE_SHARE         (dmap_share_get_type ())
 /**
  * DMAP_SHARE:
  * @o: Object which is subject to casting.
@@ -53,7 +53,7 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_SHARE(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				 TYPE_DMAP_SHARE, DMAPShare))
+				 DMAP_TYPE_SHARE, DMAPShare))
 /**
  * DMAP_SHARE_CLASS:
  * @k: a valid #DMAPShareClass
@@ -61,16 +61,16 @@ G_BEGIN_DECLS
  * Casts a derived #DMAPShareClass structure into a #DMAPShareClass structure.
  */
 #define DMAP_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
-				 TYPE_DMAP_SHARE, DMAPShareClass))
+				 DMAP_TYPE_SHARE, DMAPShareClass))
 /**
  * IS_DMAP_SHARE:
- * @o: Instance to check for being a %TYPE_DMAP_SHARE.
+ * @o: Instance to check for being a %DMAP_TYPE_SHARE.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %TYPE_DMAP_SHARE.
+ * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_SHARE.
  */
 
 #define IS_DMAP_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
-				 TYPE_DMAP_SHARE))
+				 DMAP_TYPE_SHARE))
 /**
  * IS_DMAP_SHARE_CLASS:
  * @k: a #DMAPShareClass
@@ -79,7 +79,7 @@ G_BEGIN_DECLS
  * %DMAP_SHARE or derived.
  */
 #define IS_DMAP_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
-				 TYPE_DMAP_SHARE))
+				 DMAP_TYPE_SHARE))
 /**
  * DMAP_SHARE_GET_CLASS:
  * @o: a #DMAPShare instance.
@@ -89,7 +89,7 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DMAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
-				 TYPE_DMAP_SHARE, DMAPShareClass))
+				 DMAP_TYPE_SHARE, DMAPShareClass))
 
 #define DMAP_STATUS_OK 200
 
