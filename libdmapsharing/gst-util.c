@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-#include "g-gst-input-stream.h"
+#include "dmap-gst-input-stream.h"
 
 gboolean
 pads_compatible (GstPad *pad1, GstPad *pad2)

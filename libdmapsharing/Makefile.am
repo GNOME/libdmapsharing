@@ -41,9 +41,9 @@ endif
 
 if USE_GSTREAMERAPP
 libdmapsharing_3_0_la_SOURCES += \
-	g-gst-input-stream.c \
-	g-gst-mp3-input-stream.c \
-	g-gst-wav-input-stream.c \
+	dmap-gst-input-stream.c \
+	dmap-gst-mp3-input-stream.c \
+	dmap-gst-wav-input-stream.c \
 	gst-util.c
 endif
 
@@ -79,6 +79,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-container-db.h \
 	dmap-container-record.h \
 	dmap-db.h \
+	dmap-gst-input-stream.h \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
 	dmap-mdns-publisher.h \
@@ -96,9 +97,8 @@ noinst_HEADERS = \
 	dmap-config.h \
 	dmap-mdns-avahi.h \
 	dmap-utils.h \
-	g-gst-input-stream.h \
-	g-gst-mp3-input-stream.h \
-	g-gst-wav-input-stream.h \
+	dmap-gst-mp3-input-stream.h \
+	dmap-gst-wav-input-stream.h \
 	gst-util.h
 
 dmap-marshal.c: dmap-marshal.list

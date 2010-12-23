@@ -1,5 +1,5 @@
 /*
- * GGstWAVInputStream class: Open a URI using g_gst_wav_input_stream_new ().
+ * DMAPGstWAVInputStream class: Open a URI using dmap_gst_wav_input_stream_new ().
  * Data is decoded using GStreamer and is then reencoded as a WAV
  * stream by the class's read operations.
  *
@@ -24,11 +24,11 @@
 #include <gst/app/gstappsink.h>
 
 #include "gst-util.h"
-#include "g-gst-wav-input-stream.h"
+#include "dmap-gst-wav-input-stream.h"
 
 #define GST_APP_MAX_BUFFERS 1024
 
-struct GGstWAVInputStreamPrivate {
+struct DMAPGstWAVInputStreamPrivate {
 	GstElement *pipeline;
 	GstElement *src;
 	GstElement *decode;
@@ -42,7 +42,7 @@ static void
 new_decoded_pad_cb (GstElement *element,
 		    GstPad *pad,
 		    gboolean arg,
-		    GGstWAVInputStream *stream)
+		    DMAPGstWAVInputStream *stream)
 {
 	/* Link remaining pad after decodebin does its magic. */
 	GstPad *conv_pad;
@@ -70,13 +70,13 @@ new_decoded_pad_cb (GstElement *element,
 	}
 }
 
-GInputStream* g_gst_wav_input_stream_new (GInputStream *src_stream)
+GInputStream* dmap_gst_wav_input_stream_new (GInputStream *src_stream)
 {
 	GstStateChangeReturn sret;
 	GstState state;
-	GGstWAVInputStream *stream;
+	DMAPGstWAVInputStream *stream;
 
-	stream = G_GST_WAV_INPUT_STREAM (g_object_new (TYPE_G_GST_WAV_INPUT_STREAM,
+	stream = DMAP_GST_WAV_INPUT_STREAM (g_object_new (DMAP_TYPE_GST_WAV_INPUT_STREAM,
 						   NULL));
 
 	stream->priv->pipeline = gst_pipeline_new ("pipeline");
@@ -123,7 +123,7 @@ GInputStream* g_gst_wav_input_stream_new (GInputStream *src_stream)
 				      GST_APP_MAX_BUFFERS);
 	gst_app_sink_set_drop (GST_APP_SINK (stream->priv->sink), FALSE);
 
-	g_signal_connect (stream->priv->sink, "new-buffer", G_CALLBACK (g_gst_input_stream_new_buffer_cb), stream);
+	g_signal_connect (stream->priv->sink, "new-buffer", G_CALLBACK (dmap_gst_input_stream_new_buffer_cb), stream);
 
 	/* FIXME: this technique is shared with dmapd-daap-share.c */
 	sret = gst_element_set_state (stream->priv->pipeline, GST_STATE_PLAYING);
@@ -140,29 +140,29 @@ GInputStream* g_gst_wav_input_stream_new (GInputStream *src_stream)
 }
 
 static void
-g_gst_wav_input_stream_kill_pipeline (GGstInputStream *stream)
+dmap_gst_wav_input_stream_kill_pipeline (DMAPGstInputStream *stream)
 {
-        GGstWAVInputStream *wav_stream = G_GST_WAV_INPUT_STREAM (stream);
+        DMAPGstWAVInputStream *wav_stream = DMAP_GST_WAV_INPUT_STREAM (stream);
 
 	gst_element_set_state (wav_stream->priv->pipeline, GST_STATE_NULL);
 	gst_object_unref (GST_OBJECT (wav_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE (GGstWAVInputStream, g_gst_wav_input_stream, TYPE_G_GST_INPUT_STREAM)
+G_DEFINE_TYPE (DMAPGstWAVInputStream, dmap_gst_wav_input_stream, DMAP_TYPE_GST_INPUT_STREAM)
 
 static void
-g_gst_wav_input_stream_class_init (GGstWAVInputStreamClass *klass)
+dmap_gst_wav_input_stream_class_init (DMAPGstWAVInputStreamClass *klass)
 {
-	GGstInputStreamClass *parent_class = G_GST_INPUT_STREAM_CLASS (klass);
+	DMAPGstInputStreamClass *parent_class = DMAP_GST_INPUT_STREAM_CLASS (klass);
 
-	g_type_class_add_private (klass, sizeof (GGstWAVInputStreamPrivate));
+	g_type_class_add_private (klass, sizeof (DMAPGstWAVInputStreamPrivate));
 
-	parent_class->kill_pipeline = g_gst_wav_input_stream_kill_pipeline;
+	parent_class->kill_pipeline = dmap_gst_wav_input_stream_kill_pipeline;
 }
 
 static void
-g_gst_wav_input_stream_init (GGstWAVInputStream *stream)
+dmap_gst_wav_input_stream_init (DMAPGstWAVInputStream *stream)
 {
-	stream->priv = G_GST_WAV_INPUT_STREAM_GET_PRIVATE (stream);
+	stream->priv = DMAP_GST_WAV_INPUT_STREAM_GET_PRIVATE (stream);
 
 }

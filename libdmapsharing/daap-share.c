@@ -41,8 +41,7 @@
 #include <libdmapsharing/dmap-utils.h>
 
 #ifdef HAVE_GSTREAMERAPP
-#include <libdmapsharing/g-gst-mp3-input-stream.h>
-#include <libdmapsharing/g-gst-wav-input-stream.h>
+#include <libdmapsharing/dmap-gst-input-stream.h>
 #endif /* HAVE_GSTREAMERAPP */
 
 static void daap_share_set_property  (GObject *object,
@@ -95,9 +94,6 @@ enum {
 };
 
 G_DEFINE_TYPE (DAAPShare, daap_share, DMAP_TYPE_SHARE)
-
-/* FIXME: get rid of this global: */
-static gchar *transcode_format = NULL;
 
 static void
 daap_share_class_init (DAAPShareClass *klass)
@@ -198,8 +194,6 @@ daap_share_new (const char *name,
 
 	_dmap_share_server_start (DMAP_SHARE (share));
 	_dmap_share_publish_start (DMAP_SHARE (share));
-
-	transcode_format = mime_to_format (transcode_mimetype);
 
 	return share;
 }
@@ -422,19 +416,19 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 	}
 
 	g_object_get (record, "format", &format, NULL);
-	if (transcode_format == NULL || ! strcmp (format, transcode_format)) {
+	if (transcode_mimetype == NULL || ! strcmp (format, mime_to_format (transcode_mimetype))) {
 		g_debug ("Not transcoding");
 		cd->stream = stream;
 #ifdef HAVE_GSTREAMERAPP
-	} else if (! strcmp ("mp3", transcode_format)) {
-		cd->stream = G_INPUT_STREAM (g_gst_mp3_input_stream_new (stream));
-	} else if (! strcmp ("wav", transcode_format)) {
-		cd->stream = G_INPUT_STREAM (g_gst_wav_input_stream_new (stream));
-#endif /* HAVE_GSTREAMERAPP */
 	} else {
-		g_warning ("Transcode format %s not supported", transcode_format);
+		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
+	}
+#else
+	} else {
+		g_warning ("Transcode format %s not supported", transcode_mimetype);
 		cd->stream = stream;
 	}
+#endif /* HAVE_GSTREAMERAPP */
 
 	if (cd->stream == NULL) {
 		g_warning ("Could not set up input stream");
@@ -462,7 +456,7 @@ send_chunked_file (SoupServer *server, SoupMessage *message, DAAPRecord *record,
 		 * video data after about 2.5MB. Perhaps this is so iTunes
 		 * knows how much data to buffer.
 		 */
-	    || transcode_format == NULL) {
+	    || transcode_mimetype == NULL) {
 	    	/* NOTE: iTunes 8 (and other versions?) will not seek
 		 * properly without a Content-Length header.
 		 */
@@ -590,8 +584,10 @@ add_entry_to_mlcl (gpointer id,
 		dmap_structure_add (mlit, DMAP_CC_ASEQ, "");
 	if (_dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
 		gchar *format = NULL;
-		if (transcode_format)
-			format = g_strdup (transcode_format);
+		gchar *transcode_mimetype = NULL;
+		g_object_get (record, "transcode-mimetype", &transcode_mimetype, NULL);
+		if (transcode_mimetype)
+			format = g_strdup (mime_to_format (transcode_mimetype));
 		else
 			g_object_get (record, "format", &format, NULL);
 		if (format) {
