@@ -31,12 +31,15 @@ private class DPAPViewer {
 		GLib.debug ("%lld entries\n", db.count ());
 
 		db.foreach ((k, v) => {
-			string path;
-			int fd = GLib.FileUtils.open_tmp ("dpapview.XXXXXX", out path);
-			GLib.FileUtils.set_contents (path, (string) ((ValaDPAPRecord) v).thumbnail, ((ValaDPAPRecord) v).filesize);
-			var pixbuf = new Gdk.Pixbuf.from_file (path);
-			GLib.FileUtils.close (fd);
-			GLib.FileUtils.unlink (path);
+			Gdk.Pixbuf pixbuf = null;
+			if (((ValaDPAPRecord) v).filesize > 0) {
+				string path;
+				int fd = GLib.FileUtils.open_tmp ("dpapview.XXXXXX", out path);
+				GLib.FileUtils.set_contents (path, (string) ((ValaDPAPRecord) v).thumbnail, ((ValaDPAPRecord) v).filesize);
+				pixbuf = new Gdk.Pixbuf.from_file (path);
+				GLib.FileUtils.close (fd);
+				GLib.FileUtils.unlink (path);
+			}
 
 			Gtk.TreeIter iter;
 			liststore.append (out iter);
@@ -79,7 +82,7 @@ int main (string[] args) {
 
 	try {
 		var builder = new Gtk.Builder ();
-		builder.add_from_file ("dpapview.ui");
+		builder.add_from_file ("tests/dpapview.ui");
 
 		var dpapviewer = new DPAPViewer (builder);
 

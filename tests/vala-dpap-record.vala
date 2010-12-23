@@ -26,11 +26,11 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 	private string _aspect_ratio;
 	private string _format;
 	private string _comments;
-	private uchar *_thumbnail;
+	private string _thumbnail;
 	private int _filesize;
 	private int _large_filesize;
-	private int _height;
-	private int _width;
+	private int _pixel_height;
+	private int _pixel_width;
 	private int _rating;
 	private int _creation_date;
 
@@ -54,7 +54,7 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		set { _format = value; }
 	}
 
-	public uchar *thumbnail {
+	public string thumbnail {
 		get { return _thumbnail; }
 		set { _thumbnail = value; }
 	}
@@ -74,14 +74,14 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		set { _large_filesize = value; }
 	}
 
-	public int height {
-		get { return _height; }
-		set { _height = value; }
+	public int pixel_height {
+		get { return _pixel_height; }
+		set { _pixel_height = value; }
 	}
 
-	public int width {
-		get { return _width; }
-		set { _width = value; }
+	public int pixel_width {
+		get { return _pixel_width; }
+		set { _pixel_width = value; }
 	}
 
 	public int rating {
@@ -107,7 +107,21 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 	}
 
 	public ValaDPAPRecord () {
-		location = "FIXME";
+		_location = "file://" + GLib.Environment.get_current_dir () + "/media/test.jpeg";
+		_aspect_ratio = "1.333";
+		_filename = GLib.Path.get_basename (_location);
+		_format = "JPEG";
+		_comments = "Comments";
+		_large_filesize = 13953;
+		_pixel_height = 480;
+		_pixel_width = 640;
+		_rating = 5;
+		_creation_date = 0;
+
+		size_t size;
+		string path = GLib.Environment.get_current_dir () + "/media/test.jpeg";
+		GLib.FileUtils.get_contents (path, out _thumbnail, out size);
+		_filesize = (int) size;
 	}
 }
 
