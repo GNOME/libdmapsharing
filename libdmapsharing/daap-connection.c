@@ -165,7 +165,7 @@ daap_connection_class_init (DAAPConnectionClass *klass)
 DAAPConnection *
 daap_connection_new (const char        *name,
 		     const char        *host,
-		     int                port,
+		     guint              port,
 		     gboolean           password_protected,
 		     DMAPDb            *db,
 		     DMAPRecordFactory *factory)

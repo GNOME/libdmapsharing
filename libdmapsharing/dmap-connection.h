@@ -147,11 +147,11 @@ typedef void (* DMAPResponseHandler) (DMAPConnection *connection,
 GType              dmap_connection_get_type        (void);
 
 DMAPConnection * dmap_connection_new             (const char              *name,
-						       const char              *host,
-						       int                      port,
-						       gboolean                 password_protected,
-						       DMAPDb		  *db,
-						       DMAPRecordFactory *factory);
+						  const char              *host,
+						  guint                    port,
+						  gboolean                 password_protected,
+						  DMAPDb		  *db,
+						  DMAPRecordFactory *factory);
 
 gboolean           dmap_connection_is_connected    (DMAPConnection        *connection);
 void               dmap_connection_setup           (DMAPConnection        *connection);

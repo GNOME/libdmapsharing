@@ -153,7 +153,7 @@ dpap_connection_class_init (DPAPConnectionClass *klass)
 DPAPConnection *
 dpap_connection_new (const char        *name,
 		     const char        *host,
-		     int                port,
+		     guint              port,
 		     gboolean           password_protected,
 		     DMAPDb            *db,
 		     DMAPRecordFactory *factory)

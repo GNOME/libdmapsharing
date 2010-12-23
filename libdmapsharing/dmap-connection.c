@@ -1128,7 +1128,7 @@ handle_logout (DMAPConnection *connection,
 DMAPConnection *
 dmap_connection_new (const char        *name,
 		     const char        *host,
-		     int                port,
+		     guint              port,
 		     gboolean           password_protected,
 		     DMAPDb            *db,
 		     DMAPRecordFactory *factory)

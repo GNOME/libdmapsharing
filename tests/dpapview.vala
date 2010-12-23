@@ -49,11 +49,8 @@ private class DPAPViewer {
 		return true;
 	}
 
-	private void service_added_cb (void *service) {
-		/* FIXME: fix void * argument, see libdmapsharing TODO: */
-		DMAP.MdnsBrowserService *FIXME = service;
-		/* FIXME: fix int cast: should not be requried: */
-		connection = (DMAP.Connection) new DPAP.Connection (FIXME->service_name, FIXME->host, (int) FIXME->port, false, db, factory);
+	private void service_added_cb (DMAP.MdnsBrowserService *service) {
+		connection = (DMAP.Connection) new DPAP.Connection (service->service_name, service->host, service->port, false, db, factory);
 		connection.connect (connected_cb);
 	}
 

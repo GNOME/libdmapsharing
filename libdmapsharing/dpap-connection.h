@@ -87,7 +87,7 @@ GType              dpap_connection_get_type        (void);
 
 DPAPConnection * dpap_connection_new             (const char              *name,
 						  const char              *host,
-						  int                      port,
+						  guint                    port,
 						  gboolean                 password_protected,
 						  DMAPDb		  *db,
 						  DMAPRecordFactory *factory);
