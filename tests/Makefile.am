@@ -16,6 +16,7 @@ test_dmap_client_LDADD = \
 	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
+	$(GSTREAMERAPP_LIBS) \
 	$(GOBJECT_LIBS) \
 	$(GDKPIXBUF_LIBS) \
 	$(SOUP_LIBS) \
@@ -36,6 +37,7 @@ test_dmap_server_LDADD = \
 	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
+	$(GSTREAMERAPP_LIBS) \
 	$(GOBJECT_LIBS) \
 	$(GDKPIXBUF_LIBS) \
 	$(SOUP_LIBS) \
@@ -108,6 +110,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	$(GLIB_CFLAGS) \
 	$(GTHREAD_CFLAGS) \
+	$(GSTREAMERAPP_CFLAGS) \
 	$(GOBJECT_CFLAGS) \
 	$(GDKPIXBUF_CFLAGS) \
 	$(SOUP_CFLAGS) \

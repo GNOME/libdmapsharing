@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: libdmapsharing
 Description: libdmapsharing
 Version: @VERSION@
-Requires: glib-2.0 libsoup-2.4
+Requires: glib-2.0 libsoup-2.4 gstreamer-0.10
 Libs: -L${libdir} -ldmapsharing-@API_VERSION@
 Cflags: -I${includedir}/libdmapsharing-@API_VERSION@
