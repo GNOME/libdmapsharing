@@ -241,18 +241,38 @@ static void ctrl_int_adapter (SoupServer *server,
 gboolean
 _dmap_share_server_start (DMAPShare *share)
 {
+	SoupAddress *addr;
 	guint port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
 	gboolean              password_required;
 
-	share->priv->server = soup_server_new (SOUP_SERVER_PORT, port, NULL);
+	addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV6, port);
+	share->priv->server = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+	g_object_unref (addr);
+
 	if (share->priv->server == NULL) {
 		g_warning ("Unable to start music sharing server on port %d, trying any open port", port);
-		share->priv->server = soup_server_new (SOUP_SERVER_PORT, SOUP_ADDRESS_ANY_PORT, NULL);
+		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV6, SOUP_ADDRESS_ANY_PORT);
+		share->priv->server = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+		g_object_unref (addr);
+	}
 
-		if (share->priv->server == NULL) {
-			g_warning ("Unable to start music sharing server");
-			return FALSE;
-		}
+	if (share->priv->server == NULL) {
+		g_warning ("Unable to start music sharing server, trying IPv4 only");
+		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV4, port);
+		share->priv->server = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+		g_object_unref (addr);
+	}
+
+	if (share->priv->server == NULL) {
+		g_warning ("Unable to start music sharing server on port %d, trying IPv4 only, any open port", port);
+		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV4, SOUP_ADDRESS_ANY_PORT);
+		share->priv->server = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+		g_object_unref (addr);
+	}
+
+	if (share->priv->server == NULL) {
+		g_warning ("Unable to start music sharing server");
+		return FALSE;
 	}
 
 	share->priv->port = (guint)soup_server_get_port (share->priv->server);
