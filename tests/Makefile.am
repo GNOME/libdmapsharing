@@ -66,7 +66,9 @@ endif
 
 if HAVE_VALA
 dacplisten_VALASOURCES = \
-	dacplisten.vala
+	dacplisten.vala \
+	vala-dmap-db.vala \
+	vala-dmap-container-db.vala
 
 dacplisten_VALABUILTSOURCES = $(dacplisten_VALASOURCES:.vala=.c)
 

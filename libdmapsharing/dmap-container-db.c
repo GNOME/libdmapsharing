@@ -49,6 +49,7 @@ dmap_container_db_get_type (void)
 		    g_type_register_static(G_TYPE_INTERFACE,
 					   "DMAPContainerDb",
 					   &object_info, 0);
+		g_type_interface_add_prerequisite (object_type, G_TYPE_OBJECT);
 	}
 	return object_type;
 }

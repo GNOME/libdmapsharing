@@ -20,45 +20,66 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-private class ValaDACPPlayer : DACP.Player {
+private class ValaDACPPlayer : GLib.Object, DACP.Player {
 
 	unowned DAAP.Record now_playing_record () {
-		stdout.printf ("Now playing record request received");
+		stdout.printf ("Now playing record request received\n");
 		return null;
 	}
 
 	/* FIXME: This should return uint8[], modify dacp-player.h? */
 	unowned string now_playing_artwork (uint width, uint heigth) {
-		stdout.printf ("Now playing artwork request received");
+		stdout.printf ("Now playing artwork request received\n");
 		return null;
 	}
 
 	void play_pause () {
-		stdout.printf ("Play/pause request received");
+		stdout.printf ("Play/pause request received\n");
 	}
 
 	void pause () {
-		stdout.printf ("Pause request received");
+		stdout.printf ("Pause request received\n");
 	}
 
 	void next_item () {
-		stdout.printf ("Next item request received");
+		stdout.printf ("Next item request received\n");
 	}
 
 	void prev_item () {
-		stdout.printf ("Previous item request received");
+		stdout.printf ("Previous item request received\n");
 	}
 
 	void cue_clear () {
-		stdout.printf ("Cue clear request received");
+		stdout.printf ("Cue clear request received\n");
 	}
 
 	void cue_play (GLib.List records, uint index) {
-		stdout.printf ("Cue play request received");
+		stdout.printf ("Cue play request received\n");
 	}
 }
 
-private class DACPListener {
+private class DACPListener : GLib.Object {
+	private DMAP.Db db;
+	private DMAP.ContainerDb container_db;
+	private DACP.Player player;
+	private DACP.Share share;
+
+	public DACPListener () {
+		db = new ValaDMAPDb ();
+		container_db = new ValaDMAPContainerDb ();
+		player = new ValaDACPPlayer ();
+		share = new DACP.Share ("dacplisten", player, db, container_db);
+
+		share.remote_found.connect ((service_name, display_name) => {
+			stdout.printf ("Found remote: %s, %s\n", service_name, display_name);
+		});
+
+		share.add_guid.connect ((guid) => {
+			stdout.printf ("Add GUID request received\n");
+		});
+
+		share.start_lookup ();
+	}
 }
 
 int main (string[] args) {     

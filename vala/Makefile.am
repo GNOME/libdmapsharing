@@ -33,6 +33,10 @@ libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@-daap.vapi libdma
 	cat libdmapsharing-@API_VERSION@.vapi | \
 		sed 's/DAAP\.DMAPDb/DMAP.Db/g' | \
 		sed 's/DPAP\.DMAPDb/DMAP.Db/g' | \
+		sed 's/DACP\.DMAPDb/DMAP.Db/g' | \
+		sed 's/DAAP\.DMAPContainerDb/DMAP.ContainerDb/g' | \
+		sed 's/DPAP\.DMAPContainerDb/DMAP.ContainerDb/g' | \
+		sed 's/DACP\.DMAPContainerDb/DMAP.ContainerDb/g' | \
 		sed 's/DAAP\.DMAPRecordFactory/DMAP.RecordFactory/g' | \
 		sed 's/DPAP\.DMAPRecordFactory/DMAP.RecordFactory/g' | \
 		sed 's/DACP\.DAAPRecord/DAAP.Record/g' | \

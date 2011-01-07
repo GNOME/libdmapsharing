@@ -91,6 +91,7 @@ dacp_player_get_type (void)
 		object_type = g_type_register_static(G_TYPE_INTERFACE,
 		                                     "DACPPlayer",
 		                                     &object_info, 0);
+		g_type_interface_add_prerequisite (object_type, G_TYPE_OBJECT);
 	}
 	return object_type;
 }
