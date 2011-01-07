@@ -27,27 +27,51 @@
 
 G_BEGIN_DECLS
 
+/**
+ * DACP_TYPE_PLAYER:
+ *
+ * The type for #DACPPlayer.
+ */
 #define DACP_TYPE_PLAYER               (dacp_player_get_type ())
-#define DACP_PLAYER(obj)               (G_TYPE_CHECK_INSTANCE_CAST ((obj), DACP_TYPE_PLAYER, DACPPlayer))
-#define IS_DACP_PLAYER(obj)            (G_TYPE_CHECK_INSTANCE_TYPE ((obj), DACP_TYPE_PLAYER))
-#define DACP_PLAYER_GET_INTERFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), \
+
+/**
+ * DACP_PLAYER:
+ * @o: Object which is subject to casting.
+ *
+ * Casts a #DACPPlayer or derived pointer into a (DACPPlayer *) pointer.
+ * Depending on the current debugging level, this function may invoke
+ * certain runtime checks to identify invalid casts.
+ */
+#define DACP_PLAYER(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), DACP_TYPE_PLAYER, DACPPlayer))
+
+/**
+ * IS_DACP_PLAYER:
+ * @o: Instance to check for being a %DACP_TYPE_PLAYER.
+ *
+ * Checks whether a valid #GTypeInstance pointer is of type %DACP_TYPE_PLAYER.
+ */
+#define IS_DACP_PLAYER(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), DACP_TYPE_PLAYER))
+
+/**
+ * DACP_PLAYER_GET_INTERFACE:
+ * @o: a #DACPPlayer instance.
+ *
+ * Get the insterface structure associated to a #DACPPlayer instance.
+ *
+ * Returns: pointer to object interface structure.
+ */
+#define DACP_PLAYER_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
                                         DACP_TYPE_PLAYER, DACPPlayerIface))
 
 typedef struct _DACPPlayerIface DACPPlayerIface;
 typedef struct _DACPPlayer DACPPlayer;
 
-/**
- * DACPRepeatState:
- */
 typedef enum {
 	REPEAT_NONE = 0,
 	REPEAT_SINGLE = 1,
 	REPEAT_ALL = 2
 } DACPRepeatState;
 
-/**
- * DACPPlayState:
- */
 typedef enum {
 	PLAY_STOPPED = 2,
 	PLAY_PAUSED = 3,
@@ -71,14 +95,56 @@ struct _DACPPlayerIface
 
 GType dacp_player_get_type (void);
 
+/**
+ * dacp_player_now_playing_record
+ * @player: a player
+ */
 DAAPRecord *dacp_player_now_playing_record  (DACPPlayer *player);
+
+/**
+ * dacp_player_now_playing_artwork
+ * @player: a player
+ * @width: width
+ * @height: height
+ */
 gchar      *dacp_player_now_playing_artwork (DACPPlayer *player, guint width, guint height);
+
+/**
+ * dacp_player_play_pause
+ * @player: a player
+ */
 void        dacp_player_play_pause          (DACPPlayer *player);
+
+/**
+ * dacp_player_pause
+ * @player: a player
+ */
 void        dacp_player_pause               (DACPPlayer *player);
+
+/**
+ * dacp_player_next_item
+ * @player: a player
+ */
 void        dacp_player_next_item           (DACPPlayer *player);
+
+/**
+ * dacp_player_now_prev_item
+ * @player: a player
+ */
 void        dacp_player_prev_item           (DACPPlayer *player);
 
+/**
+ * dacp_player_cue_clear
+ * @player: a player
+ */
 void        dacp_player_cue_clear           (DACPPlayer *player);
+
+/**
+ * dacp_player_cue_play
+ * @player: a player
+ * @records : a list of records
+ * @index: an index
+ */
 void        dacp_player_cue_play            (DACPPlayer *player, GList *records, guint index);
 
 G_END_DECLS

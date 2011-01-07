@@ -35,6 +35,7 @@ libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@-daap.vapi libdma
 		sed 's/DPAP\.DMAPDb/DMAP.Db/g' | \
 		sed 's/DAAP\.DMAPRecordFactory/DMAP.RecordFactory/g' | \
 		sed 's/DPAP\.DMAPRecordFactory/DMAP.RecordFactory/g' | \
+		sed 's/DACP\.DAAPRecord/DAAP.Record/g' | \
 		cat > libdmapsharing-@API_VERSION@.vapi.tmp
 	mv libdmapsharing-@API_VERSION@.vapi.tmp libdmapsharing-@API_VERSION@.vapi
 	rm -f libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi

@@ -26,7 +26,7 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 	private string _aspect_ratio;
 	private string _format;
 	private string _comments;
-	private string _thumbnail;
+	private uint8[] _thumbnail;
 	private int _filesize;
 	private int _large_filesize;
 	private int _pixel_height;
@@ -54,7 +54,7 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		set { _format = value; }
 	}
 
-	public string thumbnail {
+	public uint8[] thumbnail {
 		get { return _thumbnail; }
 		set { _thumbnail = value; }
 	}
@@ -118,10 +118,9 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		_rating = 5;
 		_creation_date = 0;
 
-		size_t size;
 		string path = GLib.Environment.get_current_dir () + "/media/test.jpeg";
-		GLib.FileUtils.get_contents (path, out _thumbnail, out size);
-		_filesize = (int) size;
+		GLib.FileUtils.get_data (path, out _thumbnail);
+		_filesize = _thumbnail.length;
 	}
 }
 

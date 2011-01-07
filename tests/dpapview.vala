@@ -35,7 +35,7 @@ private class DPAPViewer {
 			if (((ValaDPAPRecord) v).filesize > 0) {
 				string path;
 				int fd = GLib.FileUtils.open_tmp ("dpapview.XXXXXX", out path);
-				GLib.FileUtils.set_contents (path, (string) ((ValaDPAPRecord) v).thumbnail, ((ValaDPAPRecord) v).filesize);
+				GLib.FileUtils.set_data (path, ((ValaDPAPRecord) v).thumbnail);
 				GLib.FileUtils.close (fd);
 				pixbuf = new Gdk.Pixbuf.from_file (path);
 				GLib.FileUtils.unlink (path);
