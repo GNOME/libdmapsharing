@@ -49,6 +49,9 @@ typedef enum {
 
 enum {
 	PROP_0,
+	/* I'd be nice to unify these, once libsoup supports it. See:
+	 * http://mail.gnome.org/archives/libsoup-list/2011-January/msg00000.html
+	 */
 	PROP_SERVER_IPV4,
 	PROP_SERVER_IPV6,
 	PROP_NAME,
