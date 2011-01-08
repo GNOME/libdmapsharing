@@ -49,7 +49,8 @@ typedef enum {
 
 enum {
 	PROP_0,
-	PROP_SERVER,
+	PROP_SERVER_IPV4,
+	PROP_SERVER_IPV6,
 	PROP_NAME,
 	PROP_PASSWORD,
 	PROP_REVISION_NUMBER,
@@ -78,7 +79,8 @@ struct DMAPSharePrivate {
 	DmapMdnsPublisher *publisher;
 
 	/* HTTP server things */
-	SoupServer *server;
+	SoupServer *server_ipv4;
+	SoupServer *server_ipv6;
 	guint revision_number;
 
 	/* The media database */
@@ -94,6 +96,7 @@ struct DMAPSharePrivate {
 /* FIXME: name this something else, as it is more than just share/bitwise now */
 struct share_bitwise_t {
 	DMAPShare *share;
+	SoupServer *server; /* Also in share, but we need to know whether server_ipv6 or _ipv4. */
 	struct MLCL_Bits mb;
 	GSList *id_list;
 	guint32 size;
@@ -238,27 +241,10 @@ static void ctrl_int_adapter (SoupServer *server,
 	                                        context);
 }
 
-gboolean
-_dmap_share_server_start (DMAPShare *share)
+static void
+_dmap_share_server_setup_handlers (DMAPShare *share, SoupServer *server)
 {
-	guint port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
-	gboolean              password_required;
-
-	share->priv->server = soup_server_new (SOUP_SERVER_PORT, port, NULL);
-	if (share->priv->server == NULL) {
-		g_warning ("Unable to start music sharing server on port %d, trying any open port", port);
-		share->priv->server = soup_server_new (SOUP_SERVER_PORT, SOUP_ADDRESS_ANY_PORT, NULL);
-
-		if (share->priv->server == NULL) {
-			g_warning ("Unable to start music sharing server");
-			return FALSE;
-		}
-	}
-
-	share->priv->port = (guint)soup_server_get_port (share->priv->server);
-	g_debug ("Started DMAP server on port %u", share->priv->port);
-
-	password_required = (share->priv->auth_method != DMAP_SHARE_AUTH_METHOD_NONE);
+	gboolean password_required = (share->priv->auth_method != DMAP_SHARE_AUTH_METHOD_NONE);
 
 	if (password_required) {
 		SoupAuthDomain *auth_domain;
@@ -273,31 +259,100 @@ _dmap_share_server_start (DMAPShare *share)
 							  (SoupAuthDomainBasicAuthCallback) _dmap_share_soup_auth_callback,
 							  g_object_ref (share),
 							  g_object_unref);
-		soup_server_add_auth_domain (share->priv->server, auth_domain);
+		soup_server_add_auth_domain (server, auth_domain);
 	}
 
-	soup_server_add_handler (share->priv->server, "/server-info",
+	soup_server_add_handler (server, "/server-info",
 				 (SoupServerCallback) server_info_adapter,
 				 share, NULL);
-	soup_server_add_handler (share->priv->server, "/content-codes",
+	soup_server_add_handler (server, "/content-codes",
 				 (SoupServerCallback) content_codes_adapter,
 				 share, NULL);
-	soup_server_add_handler (share->priv->server, "/login",
+	soup_server_add_handler (server, "/login",
 				 (SoupServerCallback) login_adapter,
 				 share, NULL);
-	soup_server_add_handler (share->priv->server, "/logout",
+	soup_server_add_handler (server, "/logout",
 				 (SoupServerCallback) logout_adapter,
 				 share, NULL);
-	soup_server_add_handler (share->priv->server, "/update",
+	soup_server_add_handler (server, "/update",
 				 (SoupServerCallback) update_adapter,
 				 share, NULL);
-	soup_server_add_handler (share->priv->server, "/databases",
+	soup_server_add_handler (server, "/databases",
 				 (SoupServerCallback) databases_adapter,
 				 share, NULL);
-	soup_server_add_handler (share->priv->server, "/ctrl-int",
+	soup_server_add_handler (server, "/ctrl-int",
 				 (SoupServerCallback) ctrl_int_adapter,
 				 share, NULL);
-	soup_server_run_async (share->priv->server);
+	soup_server_run_async (server);
+
+}
+
+gboolean
+_dmap_share_server_start (DMAPShare *share)
+{
+	SoupAddress *addr;
+	guint port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
+
+	addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV6, port);
+	share->priv->server_ipv6 = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+	g_object_unref (addr);
+
+	/* NOTE: On Linux, opening a socket may give a IPv6-wrapped IPv4 address.
+	 * in this case, the server_ipv6 object will service requests from both
+	 * IPv6 and IPv4 clients.
+	 */
+	if (share->priv->server_ipv6 == NULL) {
+		g_warning ("Unable to start music sharing server on port %d, trying any open port", port);
+		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV6, SOUP_ADDRESS_ANY_PORT);
+		share->priv->server_ipv6 = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+		g_object_unref (addr);
+	}
+
+	if (share->priv->server_ipv6 != NULL) {
+		/* Use same port for IPv4 as IPv6. */
+		port = soup_server_get_port (share->priv->server_ipv6);
+	} else {
+		g_warning ("Unable to start music sharing server (IPv6)");
+	}
+
+	/* NOTE: In the case mentioned above, this will fail as the server_ipv6 is already
+	 * servicing IPv4 requests. In this case server_ipv6 handles both IPv6 and IPv4
+	 * and server_ipv4 is NULL.
+	 */
+	addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV4, port);
+	share->priv->server_ipv4 = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+	g_object_unref (addr);
+
+	/* Don't try any port on IPv4 unless IPv6 failed. We don't want to listen to one
+	 * port on IPv6 and another on IPv4 */
+	if (share->priv->server_ipv6 == NULL && share->priv->server_ipv4 == NULL) {
+		g_warning ("Unable to start music sharing server on port %d, trying IPv4 only, any open port", port);
+		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV4, SOUP_ADDRESS_ANY_PORT);
+		share->priv->server_ipv4 = soup_server_new (SOUP_SERVER_INTERFACE, addr, NULL);
+		g_object_unref (addr);
+	}
+
+	if (share->priv->server_ipv4 == NULL) {
+		g_warning ("Unable to start music sharing server (IPv4)");
+		if (share->priv->server_ipv6 == NULL) {
+			return FALSE;
+		}
+	}
+
+	if (share->priv->server_ipv6)
+		share->priv->port = (guint) soup_server_get_port (share->priv->server_ipv6);
+	else
+		share->priv->port = (guint) soup_server_get_port (share->priv->server_ipv4);
+	g_debug ("Started DMAP server on port %u (IPv6: %s, explicit IPv4: %s)",
+		  share->priv->port,
+		  share->priv->server_ipv6 ? "yes" : "no",
+		  share->priv->server_ipv4 ? "yes" : "no");
+
+	if (share->priv->server_ipv6)
+		_dmap_share_server_setup_handlers (share, share->priv->server_ipv6);
+
+	if (share->priv->server_ipv4)
+		_dmap_share_server_setup_handlers (share, share->priv->server_ipv4);
 
 	/* using direct since there is no g_uint_hash or g_uint_equal */
 	share->priv->session_ids = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_free);
@@ -312,10 +367,16 @@ _dmap_share_server_stop (DMAPShare *share)
 {
 	g_debug ("Stopping music sharing server on port %d", share->priv->port);
 
-	if (share->priv->server) {
-		soup_server_quit (share->priv->server);
-		g_object_unref (share->priv->server);
-		share->priv->server = NULL;
+	if (share->priv->server_ipv4) {
+		soup_server_quit (share->priv->server_ipv4);
+		g_object_unref (share->priv->server_ipv4);
+		share->priv->server_ipv4 = NULL;
+	}
+
+	if (share->priv->server_ipv6) {
+		soup_server_quit (share->priv->server_ipv6);
+		g_object_unref (share->priv->server_ipv6);
+		share->priv->server_ipv6 = NULL;
 	}
 
 	if (share->priv->session_ids) {
@@ -498,8 +559,11 @@ _dmap_share_get_property (GObject *object,
 	DMAPShare *share = DMAP_SHARE (object);
 
 	switch (prop_id) {
-	case PROP_SERVER:
-		g_value_set_object (value, share->priv->server);
+	case PROP_SERVER_IPV4:
+		g_value_set_object (value, share->priv->server_ipv4);
+		return;
+	case PROP_SERVER_IPV6:
+		g_value_set_object (value, share->priv->server_ipv6);
 		return;
 	case PROP_NAME:
 		g_value_set_string (value, share->priv->name);
@@ -594,8 +658,16 @@ dmap_share_class_init (DMAPShareClass *klass)
 	klass->ctrl_int       = _dmap_share_ctrl_int;
 
 	g_object_class_install_property (object_class,
-					 PROP_SERVER,
-					 g_param_spec_object ("server",
+					 PROP_SERVER_IPV4,
+					 g_param_spec_object ("server-ipv4",
+							      "Soup Server",
+							      "Soup server",
+							      SOUP_TYPE_SERVER,
+							      G_PARAM_READABLE));
+	
+	g_object_class_install_property (object_class,
+					 PROP_SERVER_IPV6,
+					 g_param_spec_object ("server-ipv6",
 							      "Soup Server",
 							      "Soup server",
 							      SOUP_TYPE_SERVER,
@@ -1526,7 +1598,7 @@ write_next_mlit (SoupMessage *message, struct share_bitwise_t *share_bitwise)
 		g_object_unref (record);
 	}
 
-	soup_server_unpause_message (share_bitwise->share->priv->server, message);
+	soup_server_unpause_message (share_bitwise->server, message);
 }
 
 static void
@@ -1740,6 +1812,7 @@ _dmap_share_databases (DMAPShare *share,
 		/* 1: */
 		share_bitwise = g_new (struct share_bitwise_t, 1);
 		share_bitwise->share = share;
+		share_bitwise->server = server;
 		share_bitwise->mb = mb;
 		share_bitwise->id_list = NULL;
 		share_bitwise->size = 0;
