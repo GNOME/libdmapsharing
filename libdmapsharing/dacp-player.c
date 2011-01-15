@@ -102,7 +102,7 @@ dacp_player_now_playing_record (DACPPlayer *player)
 	return DACP_PLAYER_GET_INTERFACE (player)->now_playing_record (player);
 }
 
-gchar *
+const guchar *
 dacp_player_now_playing_artwork (DACPPlayer *player, guint width, guint height)
 {
 	return DACP_PLAYER_GET_INTERFACE (player)->now_playing_artwork (player, width, height);

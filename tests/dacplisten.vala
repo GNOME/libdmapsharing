@@ -27,8 +27,7 @@ private class ValaDACPPlayer : GLib.Object, DACP.Player {
 		return null;
 	}
 
-	/* FIXME: This should return uint8[], modify dacp-player.h? */
-	unowned string now_playing_artwork (uint width, uint heigth) {
+	unowned uchar[] now_playing_artwork (uint width, uint heigth) {
 		stdout.printf ("Now playing artwork request received\n");
 		return null;
 	}
