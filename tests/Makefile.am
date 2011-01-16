@@ -151,6 +151,10 @@ noinst_HEADERS = \
 EXTRA_DIST = \
 	$(dpapview_VALASOURCES) \
 	$(dpapview_VALABUILTSOURCES) \
+	$(dacplisten_VALASOURCES) \
+	$(dacplisten_VALABUILTSOURCES) \
+	$(dmapserve_VALASOURCES) \
+	$(dmapserve_VALABUILTSOURCES) \
 	dpapview.ui
 
 if MAINTAINER_MODE
