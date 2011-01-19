@@ -1125,28 +1125,6 @@ handle_logout (DMAPConnection *connection,
 	dmap_connection_state_done (connection, TRUE);
 }
 
-DMAPConnection *
-dmap_connection_new (const char        *name,
-		     const char        *host,
-		     guint              port,
-		     gboolean           password_protected,
-		     DMAPDb            *db,
-		     DMAPRecordFactory *factory)
-{
-	DMAPConnection *connection;
-	
-	connection = g_object_new (DMAP_TYPE_CONNECTION,
-			          "name", name,
-			          "password-protected", password_protected,
-			          "db", db,
-			          "host", host,
-			          "port", port,
-				  "factory", factory,
-			           NULL);
-
-	return connection;
-}
-
 gboolean
 dmap_connection_is_connected (DMAPConnection *connection)
 {

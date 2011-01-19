@@ -371,12 +371,13 @@ resolve_cb (AvahiServiceResolver *service_resolver,
 #endif
             DMAPMdnsBrowser *browser)
 {
+    gchar *name = NULL;
+    gchar *pair = NULL; /* FIXME: extract DACP-specific items into sub-class? See also howl code. */
+    gchar host[AVAHI_ADDRESS_STR_MAX];
+    gboolean pp = FALSE;
+    DMAPMdnsBrowserService *service;
+
     switch (event) {
-        gchar *name = NULL;
-        gchar *pair = NULL; /* FIXME: extract DACP-specific items into sub-class? See also howl code. */
-        gchar host[AVAHI_ADDRESS_STR_MAX];
-        gboolean pp = FALSE;
-        DMAPMdnsBrowserService *service;
     case AVAHI_RESOLVER_FAILURE:
 	g_warning ("Failed to resolve service '%s' of type '%s' in domain '%s': %s\n", service_name, type, domain, avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(service_resolver))));
 	break;
