@@ -1,4 +1,4 @@
-if HAVE_VALA
+if MAINTAINER_MODE
 libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.files libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.namespace
 	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@-daap
 
@@ -48,6 +48,7 @@ all: libdmapsharing-@API_VERSION@.vapi
 endif
 
 EXTRA_DIST = \
+	libdmapsharing-@API_VERSION@.vapi \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.excludes \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.files \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.metadata \
@@ -73,5 +74,9 @@ CLEANFILES = \
 	libdmapsharing-@API_VERSION@-daap.vapi \
 	libdmapsharing-@API_VERSION@-dacp.vapi \
 	libdmapsharing-@API_VERSION@-dmap.vapi \
-	libdmapsharing-@API_VERSION@-dpap.vapi \
+	libdmapsharing-@API_VERSION@-dpap.vapi
+
+if MAINTAINER_MODE
+CLEANFILES += \
 	libdmapsharing-@API_VERSION@.vapi
+endif
