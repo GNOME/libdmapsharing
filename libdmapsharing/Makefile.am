@@ -7,6 +7,7 @@ libdmapsharing_3_0_la_SOURCES = \
 	daap-connection.c \
 	daap-record.c \
 	daap-share.c \
+	dacp-connection.c \
 	dacp-share.c \
 	dacp-player.c \
 	dmap-connection.c \
@@ -72,6 +73,7 @@ libdmapsharinginclude_HEADERS = \
 	daap-connection.h \
 	daap-record.h \
 	daap-share.h \
+	dacp-connection.h \
 	dacp-share.h \
 	dacp-player.h \
 	dmap.h \

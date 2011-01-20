@@ -1031,7 +1031,7 @@ dacp_share_pair (DACPShare *share, gchar *service_name, gchar passcode[4])
 	
 	g_object_get (share, "name", &name, NULL);
 	
-	remote_info->connection = dmap_connection_new (name, 
+	remote_info->connection = dacp_connection_new (name, 
 	                                               remote_info->host, 
 	                                               remote_info->port, 
 	                                               FALSE, 
