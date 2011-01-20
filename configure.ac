@@ -154,7 +154,7 @@ if test x$HAVE_AVAHI_06 != xyes; then
       HAVE_AVAHI_05=yes,
       HAVE_AVAHI_05=no)
 fi
-if test x$HAVE_AVAHI_06 == xyes || test x$HAVE_AVAHI_05 == xyes; then
+if test x$HAVE_AVAHI_06 = xyes || test x$HAVE_AVAHI_05 = xyes; then
    HAVE_AVAHI=yes
 else
    HAVE_AVAHI=no
@@ -182,7 +182,7 @@ if test x"$WITH_MDNS" = xauto; then
     AC_DEFINE(WITH_AVAHI, 1, [Define if mDNS/DNS-SD implementation uses Avahi])
     USE_AVAHI=yes
     AC_MSG_NOTICE([Detected Avahi, using it for mDNS/DNS-SD])
-    if test x$HAVE_AVAHI_06 == xyes; then
+    if test x$HAVE_AVAHI_06 = xyes; then
       AC_DEFINE(HAVE_AVAHI_0_6, 1, [Define if mDNS/DNS-SD implementation uses Avahi 0.6])
     else
       AC_DEFINE(HAVE_AVAHI_0_5, 1, [Define if mDNS/DNS-SD implementation uses Avahi 0.5])
@@ -246,7 +246,7 @@ if test x"$WITH_MDNS" = xavahi; then
   USE_AVAHI=yes
   AC_MSG_NOTICE([Using Avahi for mDNS/DNS-SD])
 
-  if test x$HAVE_AVAHI_06 == xyes; then
+  if test x$HAVE_AVAHI_06 = xyes; then
     AC_DEFINE(HAVE_AVAHI_0_6, 1, [Define if mDNS/DNS-SD implementation uses Avahi 0.6])
   else
     AC_DEFINE(HAVE_AVAHI_0_5, 1, [Define if mDNS/DNS-SD implementation uses Avahi 0.5])
