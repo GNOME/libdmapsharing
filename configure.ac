@@ -376,7 +376,7 @@ AC_SUBST(DMAP_HAVE_UNALIGNED_ACCESS_DEFINE)
 AC_OUTPUT([
 Makefile
 docs/Makefile
-libdmapsharing.pc
+libdmapsharing-${API_VERSION}.pc
 libdmapsharing/Makefile
 libdmapsharing/dmap-config.h
 tests/Makefile
