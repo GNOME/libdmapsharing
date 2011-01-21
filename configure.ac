@@ -329,7 +329,7 @@ fi
 AM_MAINTAINER_MODE
 AM_CONDITIONAL(HAVE_VALA, false)
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
-        AM_PROG_VALAC([0.10.0])
+        AM_PROG_VALAC([0.11.4])
         if test "x$VALAC" = "x" ; then
                 AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
         fi
