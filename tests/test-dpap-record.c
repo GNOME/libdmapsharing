@@ -21,7 +21,6 @@
 #include "test-dpap-record.h"
 
 struct TestDPAPRecordPrivate {
-	gint filesize;
 	gint largefilesize;
 	gint pixelheight;
 	gint pixelwidth;
@@ -33,12 +32,11 @@ struct TestDPAPRecordPrivate {
 	char *filename;
 	char *format;
 	char *comments;
-	unsigned char *thumbnail;
+	GByteArray *thumbnail;
 };
 
 enum {
         PROP_0,
-        PROP_FILESIZE,
         PROP_LARGE_FILESIZE,
         PROP_CREATION_DATE,
         PROP_RATING,
@@ -60,9 +58,6 @@ test_dpap_record_set_property (GObject *object,
         TestDPAPRecord *record = TEST_DPAP_RECORD (object);
 
         switch (prop_id) {
-                case PROP_FILESIZE:
-                        record->priv->filesize = g_value_get_int (value);
-                        break;
                 case PROP_LARGE_FILESIZE:
                         record->priv->largefilesize = g_value_get_int (value);
                         break;
@@ -113,9 +108,6 @@ test_dpap_record_get_property (GObject *object,
         TestDPAPRecord *record = TEST_DPAP_RECORD (object);
 
         switch (prop_id) {
-                case PROP_FILESIZE:
-                        g_value_set_int (value, record->priv->filesize);
-                        break;
                 case PROP_LARGE_FILESIZE:
                         g_value_set_int (value, record->priv->largefilesize);
                         break;
@@ -186,13 +178,11 @@ test_dpap_record_class_init (TestDPAPRecordClass *klass)
         gobject_class->get_property = test_dpap_record_get_property;
         gobject_class->finalize     = test_dpap_record_finalize;
 
-        g_object_class_override_property (gobject_class, PROP_FILESIZE, "filesize");
         g_object_class_override_property (gobject_class, PROP_LARGE_FILESIZE, "large-filesize");
         g_object_class_override_property (gobject_class, PROP_CREATION_DATE, "creation-date");
         g_object_class_override_property (gobject_class, PROP_RATING, "rating");
         g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
         g_object_class_override_property (gobject_class, PROP_FILENAME, "filename");
-        g_object_class_override_property (gobject_class, PROP_FILESIZE, "filesize");
         g_object_class_override_property (gobject_class, PROP_ASPECT_RATIO, "aspect-ratio");
         g_object_class_override_property (gobject_class, PROP_PIXEL_HEIGHT, "pixel-height");
         g_object_class_override_property (gobject_class, PROP_PIXEL_WIDTH, "pixel-width");
@@ -233,7 +223,7 @@ test_dpap_record_finalize (GObject *object)
 	g_free (record->priv->filename);
 	g_free (record->priv->format);
 	g_free (record->priv->comments);
-	g_free (record->priv->thumbnail);
+	g_byte_array_unref (record->priv->thumbnail);
 
 	G_OBJECT_CLASS (test_dpap_record_parent_class)->finalize (object);
 }
@@ -276,13 +266,13 @@ test_dpap_record_new (void)
 
 	/* Normally, this data is scaled down to thumbnail size. I have not
 	 * done this here because I don't want any external dependencies.
-	 * In many cases the ImageMagick library is a good solution.
+	 * In many cases the VIPS library is a good solution.
 	 */
 	path = g_strdup_printf ("%s/media/test.jpeg", g_get_current_dir ());
 	g_file_get_contents (path, (gchar **) &thumbnail, &size, &error);
 	g_free (path);
-	record->priv->filesize = size;
-	record->priv->thumbnail = thumbnail;
+	record->priv->thumbnail = g_byte_array_sized_new (size);
+	g_byte_array_append (record->priv->thumbnail, thumbnail, size);
 
 	return record;
 }

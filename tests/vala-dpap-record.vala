@@ -26,8 +26,7 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 	private string _aspect_ratio;
 	private string _format;
 	private string _comments;
-	private uint8[] _thumbnail;
-	private int _filesize;
+	GLib.ByteArray _thumbnail;
 	private int _large_filesize;
 	private int _pixel_height;
 	private int _pixel_width;
@@ -54,19 +53,17 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		set { _format = value; }
 	}
 
-	public uint8[] thumbnail {
+	public GLib.ByteArray thumbnail {
 		get { return _thumbnail; }
-		set { _thumbnail = value; }
+		set { /* C implementations just use g_byte_array_ref (value); */
+			_thumbnail = new GLib.ByteArray ();
+			_thumbnail.append (value.data);
+		}
 	}
 
 	public string comments {
 		get { return _comments; }
 		set { _comments = value; }
-	}
-
-	public int filesize {
-		get { return _filesize; }
-		set { _filesize = value; }
 	}
 
 	public int large_filesize {
@@ -119,8 +116,10 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		_creation_date = 0;
 
 		string path = GLib.Environment.get_current_dir () + "/media/test.jpeg";
-		GLib.FileUtils.get_data (path, out _thumbnail);
-		_filesize = _thumbnail.length;
+		uint8[] data;
+		GLib.FileUtils.get_data (path, out data);
+		_thumbnail = new GLib.ByteArray ();
+		_thumbnail.append (data);
 	}
 }
 

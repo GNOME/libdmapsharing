@@ -87,15 +87,6 @@ dpap_record_init (DPAPRecordIface *iface)
 					   G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_int ("filesize",
-					  "Photo file size",
-					  "Photo file size",
-					   0,
-					   G_MAXINT,
-					   0,
-					   G_PARAM_READWRITE));
-
-		g_object_interface_install_property (iface,
 			g_param_spec_int ("creation-date",
 					  "Photo creation date",
 					  "Photo creation date",

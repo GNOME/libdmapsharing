@@ -411,9 +411,10 @@ add_entry_to_mlcl (gpointer id,
 			g_warning ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
+		GByteArray *thumbnail = NULL;
 		gint filesize = 0;
-		g_object_get (record, "filesize", &filesize, NULL);
-		dmap_structure_add (mlit, DMAP_CC_PIFS, filesize);
+		g_object_get (record, "thumbnail", &thumbnail, NULL);
+		dmap_structure_add (mlit, DMAP_CC_PIFS, thumbnail ? thumbnail->len : 0);
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
 		gint large_filesize = 0;
@@ -447,9 +448,15 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
 		unsigned char *data = NULL;
+		GByteArray *thumbnail = NULL;
 		if (_dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
-			g_object_get (record, "thumbnail", &data, NULL);
-			g_object_get (record, "filesize", &size, NULL);
+			g_object_get (record, "thumbnail", &thumbnail, NULL);
+			if (thumbnail) {
+				data = thumbnail->data;
+				size = thumbnail->len;
+			} else {
+				data = size = 0;
+			}
 		} else {
 			/* Should be PHOTO_HIRES */
 			char *location = NULL;

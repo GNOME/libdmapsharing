@@ -32,10 +32,10 @@ private class DPAPViewer {
 
 		db.foreach ((k, v) => {
 			Gdk.Pixbuf pixbuf = null;
-			if (((ValaDPAPRecord) v).filesize > 0) {
+			if (((ValaDPAPRecord) v).thumbnail != null) {
 				string path;
 				int fd = GLib.FileUtils.open_tmp ("dpapview.XXXXXX", out path);
-				GLib.FileUtils.set_data (path, ((ValaDPAPRecord) v).thumbnail);
+				GLib.FileUtils.set_data (path, ((ValaDPAPRecord) v).thumbnail.data);
 				GLib.FileUtils.close (fd);
 				pixbuf = new Gdk.Pixbuf.from_file (path);
 				GLib.FileUtils.unlink (path);
