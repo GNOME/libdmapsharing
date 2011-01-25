@@ -10,5 +10,3 @@ pkgconfig_DATA = $(pcfiles)
 EXTRA_DIST =					\
 	autogen.sh				\
 	README-Memory
-
-CLEANFILES = $(pcfiles)
