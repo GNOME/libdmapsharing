@@ -1,8 +1,4 @@
-noinst_PROGRAMS = test-dmap-client test-dmap-server
-
-if HAVE_VALA
-noinst_PROGRAMS += dacplisten dpapview dmapcopy dmapserve
-endif
+noinst_PROGRAMS = test-dmap-client test-dmap-server dacplisten dpapview dmapcopy dmapserve
 
 test_dmap_client_SOURCES = \
 	test-dmap-db.c \
@@ -64,7 +60,6 @@ dmapserve.stamp: $(dmapserve_VALASOURCES)
 	touch $@
 endif
 
-if HAVE_VALA
 dacplisten_VALASOURCES = \
 	dacplisten.vala \
 	vala-dmap-db.vala \
@@ -122,7 +117,6 @@ dmapserve_SOURCES = \
 dmapserve_LDADD = \
 	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GEE_LIBS)
-endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
