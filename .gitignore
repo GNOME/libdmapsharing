@@ -53,6 +53,9 @@ tests/.libs/
 tests/Makefile
 tests/Makefile.in
 tests/*.o
+tests/dacplisten
+tests/dmapcopy
+tests/dmapserve
 tests/dpapview
 tests/test-dmap-client
 tests/test-dmap-server
