@@ -39,7 +39,7 @@ test_dmap_container_db_foreach (DMAPContainerDb *db,
 				gpointer data)
 {
 	/* In reality, pull each record from the db and execute func on it. */
-        func (record, data, NULL);
+        func (GUINT_TO_POINTER (1), record, data);
 }
 
 static gint64

@@ -585,6 +585,7 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
 		gchar *format = NULL;
 		gchar *transcode_mimetype = NULL;
+		/* FIXME: This should be share, not record: */
 		g_object_get (record, "transcode-mimetype", &transcode_mimetype, NULL);
 		if (transcode_mimetype)
 			format = g_strdup (mime_to_format (transcode_mimetype));
