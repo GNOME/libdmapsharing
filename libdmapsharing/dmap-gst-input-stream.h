@@ -25,7 +25,6 @@
 
 #include <glib-object.h>
 #include <gio/gio.h>
-#include <gst/gst.h>
 
 G_BEGIN_DECLS
 
@@ -69,8 +68,10 @@ enum {
 
 GInputStream* dmap_gst_input_stream_new (const gchar *transcode_mimetype, GInputStream *src_stream);
 
+/* FIXME: this prototype was moved to the specific implementations in order to make this header file work without GStreamer installed:
 void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
 						  DMAPGstInputStream *stream);
+						  */
 
 gchar *dmapd_input_stream_strdup_format_extension (const gint format_code);
 

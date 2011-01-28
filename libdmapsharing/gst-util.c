@@ -19,6 +19,7 @@
  */
 
 #include <string.h>
+#include <gst/gst.h>
 
 #include "dmap-gst-input-stream.h"
 

@@ -38,6 +38,10 @@ struct DMAPGstWAVInputStreamPrivate {
 	GstElement *sink;
 };
 
+/* FIXME: See note in dmap-gst-input-stream.h */
+void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
+						  DMAPGstInputStream *stream);
+
 static void
 new_decoded_pad_cb (GstElement *element,
 		    GstPad *pad,
