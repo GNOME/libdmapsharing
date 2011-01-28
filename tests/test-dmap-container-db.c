@@ -30,7 +30,7 @@ static DMAPContainerRecord *
 test_dmap_container_db_lookup_by_id (DMAPContainerDb *db, guint id)
 {
 	/* In reality, lookup the proper record and return it. */
-	return record;
+	return g_object_ref (record);
 }
 
 static void
