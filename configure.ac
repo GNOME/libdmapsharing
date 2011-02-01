@@ -322,6 +322,8 @@ PKG_CHECK_MODULES(GSTREAMERAPP,
 
 if test x"$HAVE_GSTREAMERAPP" = "xyes"; then
   AC_DEFINE(HAVE_GSTREAMERAPP, 1, [Define if GStreamer App support is enabled])
+  GSTLIB=gstreamer-0.10
+  AC_SUBST(GSTLIB) # For libdmapsharing-3.0.pc.in.
 else
   AC_WARN(GStreamer app element not present, transcoding will not be supported.)
 fi
