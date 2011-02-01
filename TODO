@@ -61,5 +61,5 @@ See FIXME's in dmap-share.c, daap-share.c, daap-record.c and dpap-share.c.
 Comment purpose of each source file and describe interfaces, using test
 programs as examples.
 
-Version 3:
+Version 4:
 	Use yacc
