@@ -138,6 +138,12 @@ dmap_connection_finalize (GObject *object)
 
 	g_return_if_fail (connection->priv != NULL);
 
+	g_free (connection->priv->name);
+	g_free (connection->priv->host);
+
+	g_object_unref (connection->priv->db);
+	g_object_unref (connection->priv->record_factory);
+
 	g_debug ("Finalize");
 
 	G_OBJECT_CLASS (dmap_connection_parent_class)->finalize (object);
