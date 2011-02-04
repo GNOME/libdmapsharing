@@ -932,7 +932,7 @@ handle_song_listing (DMAPConnection *connection,
 			
 			g_object_get (record, "format", &format, NULL);
 			if (format == NULL) {
-				format = "Unknown";
+				format = g_strdup ("Unknown");
 			}
 
 			/*if (connection->dmap_version == 3.0) {*/
@@ -957,6 +957,7 @@ handle_song_listing (DMAPConnection *connection,
 			g_object_unref (record);
 			g_hash_table_insert (connection->priv->item_id_to_uri, GINT_TO_POINTER (item_id), g_strdup (uri));
 			g_free (uri);
+			g_free (format);
 		} else {
 			g_debug ("cannot create record for daap track");
 		}

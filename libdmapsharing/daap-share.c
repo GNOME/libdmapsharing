@@ -587,10 +587,12 @@ add_entry_to_mlcl (gpointer id,
 		gchar *transcode_mimetype = NULL;
 		/* FIXME: This should be share, not record: */
 		g_object_get (record, "transcode-mimetype", &transcode_mimetype, NULL);
-		if (transcode_mimetype)
+		if (transcode_mimetype) {
 			format = g_strdup (mime_to_format (transcode_mimetype));
-		else
+			g_free (transcode_mimetype);
+		} else {
 			g_object_get (record, "format", &format, NULL);
+		}
 		if (format) {
 			dmap_structure_add (mlit, DMAP_CC_ASFM, format);
 			g_free (format);
@@ -651,18 +653,22 @@ add_entry_to_mlcl (gpointer id,
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ARTIST)) {
 		gchar *sort_artist = NULL;
 		g_object_get (record, "sort-artist", &sort_artist, NULL);
-		if (sort_artist)
+		if (sort_artist) {
 			dmap_structure_add (mlit, DMAP_CC_ASSA, sort_artist);
-		else
+			g_free (sort_artist);
+		} else {
 			g_warning ("Sort artist requested but not available");
+		}
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ALBUM)) {
 		gchar *sort_album = NULL;
 		g_object_get (record, "sort-album", &sort_album, NULL);
-		if (sort_album)
+		if (sort_album) {
 			dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
-		else
+			g_free (sort_album);
+		} else {
 			g_warning ("Sort album requested but not available");
+		}
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_MEDIAKIND)) {
 		gint mediakind = 0;
