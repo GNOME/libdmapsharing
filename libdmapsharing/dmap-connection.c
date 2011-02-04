@@ -138,12 +138,6 @@ dmap_connection_finalize (GObject *object)
 
 	g_return_if_fail (connection->priv != NULL);
 
-	g_free (connection->priv->name);
-	g_free (connection->priv->host);
-
-	g_object_unref (connection->priv->db);
-	g_object_unref (connection->priv->record_factory);
-
 	g_debug ("Finalize");
 
 	G_OBJECT_CLASS (dmap_connection_parent_class)->finalize (object);
@@ -1676,6 +1670,11 @@ dmap_connection_dispose (GObject *object)
 	if (priv->db) {
 		g_object_unref (G_OBJECT (priv->db));
 		priv->db = NULL;
+	}
+
+	if (priv->record_factory) {
+		g_object_unref (G_OBJECT (priv->record_factory));
+		priv->record_factory = NULL;
 	}
 
 	if (priv->last_error_message != NULL) {
