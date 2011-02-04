@@ -467,7 +467,7 @@ dmap_structure_parse_container_buffer (GNode *parent,
                 gchar *s = dmap_buffer_read_string ((const gchar*)&(buf[l]), codesize);
 
                 item->size = strlen (s);
-                g_value_set_string (&(item->content), s);
+                g_value_take_string (&(item->content), s);
                 break;
             }
             case DMAP_TYPE_POINTER: {
