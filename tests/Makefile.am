@@ -1,4 +1,8 @@
-noinst_PROGRAMS = test-dmap-client test-dmap-server dacplisten dpapview dmapcopy dmapserve
+noinst_PROGRAMS = test-dmap-client test-dmap-server
+
+if HAVE_GEE
+noinst_PROGRAMS += dacplisten dpapview dmapcopy dmapserve
+endif
 
 test_dmap_client_SOURCES = \
 	test-dmap-db.c \
