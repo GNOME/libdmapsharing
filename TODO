@@ -1,13 +1,20 @@
-Realtime transcode: must g_input_stream_close what is returned from
+= Short term ===================================================================
+
+Noah: DNS-SD implementation
+	Finish browser side support.
+	Update MacPorts port to no longer require avahi.
+
+= Mid term =====================================================================
+
+Noah: Comment purpose of each source file and describe interfaces, using test
+programs as examples (Note: wait on doxygen vs. gtk-doc decision.
+
+Mike: Realtime transcode: must g_input_stream_close what is returned from
 daap_record_read, unless I change API (see also dmapd.c)
 
-Reduce memory needed to send entire listing to client:
-	get bdb dmapd backend working well
-	review changes
+= Long term ====================================================================
 
-Fix DNSSD on Mac OS X
-
-Audit remaining GSoC patch:
+Mike: Audit remaining GSoC patch:
 --- dmap-db.c
 --- dmap-share.c
 --- dacp-player.c
@@ -15,11 +22,11 @@ Audit remaining GSoC patch:
 --- dacp-share.c
 --- dacp-share.h
 
-Functions that could be simplified:
+Mike: Functions that could be simplified:
 	compare_record_property()
-	apply_filter()/_dmap_share_build_filter()
+	apply_filter()/_dmap_share_build_filter() (lex/yacc?)
 
-Add support for DMAP_CC_MSUP, dmap.supportsupdate
+Mike: Add support for DMAP_CC_MSUP, dmap.supportsupdate
 
 Something odd (as best as I can remember):
 	TunesRemote+ on Android emulator
@@ -31,35 +38,19 @@ Something odd (as best as I can remember):
 			entry_insert_text_cb has service_name set to garbled value
 			mdns_remote_added has service_name set to correct value
 
-Where to handle DACP-specific stuff in dmap-mdns-browser-avahi.c?
+Mike: Where to handle DACP-specific stuff in dmap-mdns-browser-avahi.c?
 
-Does, e.g., handle_server_info need user_data parameter?
+Mike: Does, e.g., handle_server_info need user_data parameter?
 
-Complete DACP code and push Rhythmbox patch
+Mike: Replace dmap-md5.[ch] with GChecksum.
 
-Reduce the memory usage while building response to media list query.
+Mike: Ensure client test catches newly shared files?
 
-Replace dmap-md5.[ch] with GChecksum.
+Mike: Do transcode based on client?
 
-Ensure client test catches newly shared files?
+Mike: Fix seeking.
 
-Do transcode based on client?
-
-Complete Mac OS X Zeroconf backend as an alternative to avahi
-	Finish browser side support.
-	Update MacPorts port to no longer require avahi.
-
-Fix seeking.
-
-Documentation, see README (put documentation in test code?).
-
-Clean up test_dmap_server.
+Mike: Clean up test_dmap_server.
 	Fix code that determines path of test.jpeg.
 
-See FIXME's in dmap-share.c, daap-share.c, daap-record.c and dpap-share.c.
-
-Comment purpose of each source file and describe interfaces, using test
-programs as examples.
-
-Version 4:
-	Use yacc
+Mike: See FIXME's in dmap-share.c, daap-share.c, daap-record.c and dpap-share.c.
