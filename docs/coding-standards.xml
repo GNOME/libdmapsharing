@@ -10,7 +10,7 @@
 	</refmeta>
 
 	<refnamediv>
-		<refname>Libdmapsharing Client Internals</refname>
+		<refname>Libdmapsharing Coding Standards</refname>
 		<refpurpose>
 			Description of libdmapsharing's coding standards
 		</refpurpose>
