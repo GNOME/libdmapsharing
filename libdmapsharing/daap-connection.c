@@ -31,7 +31,7 @@ struct DAAPConnectionPrivate {
 */
 
 static DMAPContentCode
-get_protocol_version_cc (DMAPConnection *connection)
+get_protocol_version_cc (DMAPConnection * connection)
 {
 	return DMAP_CC_APRO;
 }
@@ -48,7 +48,8 @@ get_query_metadata (void)
 }
 
 static DMAPRecord *
-handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, int *item_id)
+handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
+	     GNode * n, int *item_id)
 {
 	GNode *n2;
 	DMAPRecord *record = NULL;
@@ -73,53 +74,57 @@ handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, i
 		meta_item = n2->data;
 
 		switch (meta_item->content_code) {
-			case DMAP_CC_MIID:
-				*item_id = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_MINM:
-				title = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASAL:
-				album = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASAR:
-				artist = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASFM:
-				format = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASGN:
-				genre = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASTM:
-				length = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_ASTN:
-				track_number = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_ASDN:
-				disc_number = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_ASYR:
-				year = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_ASSZ:
-				size = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_ASBR:
-				bitrate = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_ASUL:
-				streamURI = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASSA:
-				sort_artist = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_ASSU:
-				sort_album = g_value_get_string (&(meta_item->content));
-				break;
-			default:
-				break;
+		case DMAP_CC_MIID:
+			*item_id = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_MINM:
+			title = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASAL:
+			album = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASAR:
+			artist = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASFM:
+			format = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASGN:
+			genre = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASTM:
+			length = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_ASTN:
+			track_number =
+				g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_ASDN:
+			disc_number = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_ASYR:
+			year = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_ASSZ:
+			size = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_ASBR:
+			bitrate = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_ASUL:
+			streamURI =
+				g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASSA:
+			sort_artist =
+				g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_ASSU:
+			sort_album =
+				g_value_get_string (&(meta_item->content));
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -128,68 +133,65 @@ handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, i
 		goto _return;
 	}
 	g_object_set (record,
-		     "year", year,
-		     "track", track_number,
-		     "disc", disc_number,
-		     "bitrate", bitrate,
-		     "duration", length / 1000,
-		     "filesize", (guint64) size,
-		     "format", format,
-		     "title", title,
-		     "songalbum", album,
-		     "songartist", artist,
-		     "songgenre", genre,
-		     "sort-artist", sort_artist,
-		     "sort-album", sort_album,
-		      NULL);
+		      "year", year,
+		      "track", track_number,
+		      "disc", disc_number,
+		      "bitrate", bitrate,
+		      "duration", length / 1000,
+		      "filesize", (guint64) size,
+		      "format", format,
+		      "title", title,
+		      "songalbum", album,
+		      "songartist", artist,
+		      "songgenre", genre,
+		      "sort-artist", sort_artist,
+		      "sort-album", sort_album, NULL);
 
-_return:
+      _return:
 	return record;
 }
 
 static void
-daap_connection_class_init (DAAPConnectionClass *klass)
+daap_connection_class_init (DAAPConnectionClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	DMAPConnectionClass *parent_class = DMAP_CONNECTION_CLASS (object_class);
+	DMAPConnectionClass *parent_class =
+		DMAP_CONNECTION_CLASS (object_class);
 
 	parent_class->get_protocol_version_cc = get_protocol_version_cc;
 	parent_class->get_query_metadata = get_query_metadata;
 	parent_class->handle_mlcl = handle_mlcl;
 
 	/* FIXME:
-	g_type_class_add_private (klass, sizeof (DAAPConnectionPrivate));
-	*/
+	 * g_type_class_add_private (klass, sizeof (DAAPConnectionPrivate));
+	 */
 }
 
 DAAPConnection *
-daap_connection_new (const char        *name,
-		     const char        *host,
-		     guint              port,
-		     gboolean           password_protected,
-		     DMAPDb            *db,
-		     DMAPRecordFactory *factory)
+daap_connection_new (const char *name,
+		     const char *host,
+		     guint port,
+		     gboolean password_protected,
+		     DMAPDb * db, DMAPRecordFactory * factory)
 {
 	DAAPConnection *connection;
-	
+
 	connection = g_object_new (DAAP_TYPE_CONNECTION,
-			          "name", name,
-			          "password-protected", password_protected,
-			          "db", db,
-			          "host", host,
-			          "port", port,
-				  "factory", factory,
-			           NULL);
+				   "name", name,
+				   "password-protected", password_protected,
+				   "db", db,
+				   "host", host,
+				   "port", port, "factory", factory, NULL);
 
 	return connection;
 }
 
 static void
-daap_connection_init (DAAPConnection *connection)
+daap_connection_init (DAAPConnection * connection)
 {
 	/* FIXME: 
-	connection->priv = DAAP_CONNECTION_GET_PRIVATE (connection);
-	*/
+	 * connection->priv = DAAP_CONNECTION_GET_PRIVATE (connection);
+	 */
 }
 
 G_DEFINE_TYPE (DAAPConnection, daap_connection, DMAP_TYPE_CONNECTION)

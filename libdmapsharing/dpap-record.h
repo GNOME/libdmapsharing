@@ -27,7 +27,6 @@
 #include <libdmapsharing/dmap-record.h>
 
 G_BEGIN_DECLS
-
 /**
  * DPAP_TYPE_RECORD:
  *
@@ -62,17 +61,17 @@ G_BEGIN_DECLS
  */
 #define DPAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      DPAP_TYPE_RECORD, DPAPRecordIface))
-
 typedef struct _DPAPRecord DPAPRecord;
 typedef struct _DPAPRecordIface DPAPRecordIface;
 
-struct _DPAPRecordIface {
+struct _DPAPRecordIface
+{
 	GTypeInterface parent;
 
-	GInputStream *  (*read)          (DPAPRecord *record, GError **err);
+	GInputStream *(*read) (DPAPRecord * record, GError ** err);
 };
 
-GType          dpap_record_get_type          (void);
+GType dpap_record_get_type (void);
 
 /**
  * dpap_record_read:
@@ -82,7 +81,7 @@ GType          dpap_record_get_type          (void);
  * Returns: A GInputStream that provides read-only access to the data stream
  * associated with record.
  */
-GInputStream  *dpap_record_read              (DPAPRecord *record, GError **err);
+GInputStream *dpap_record_read (DPAPRecord * record, GError ** err);
 
 #endif /* __DPAP_RECORD_H */
 

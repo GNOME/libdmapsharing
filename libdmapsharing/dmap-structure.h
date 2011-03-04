@@ -24,16 +24,15 @@
 #include <glib.h>
 #include <glib-object.h>
 
-G_BEGIN_DECLS
-
-typedef enum {
+G_BEGIN_DECLS typedef enum
+{
 	DMAP_CC_INVALID = 0,
-	DMAP_RAW,	/* The RAW type does not use a content code.
-			 * Instead of:
-			 * CCCC BYTECOUNT DATA
-			 * RAW sends:
-			 * DATA
-			 */
+	DMAP_RAW,		/* The RAW type does not use a content code.
+				 * Instead of:
+				 * CCCC BYTECOUNT DATA
+				 * RAW sends:
+				 * DATA
+				 */
 	DMAP_CC_MDCL,
 	DMAP_CC_MSTT,
 	DMAP_CC_MIID,
@@ -51,10 +50,10 @@ typedef enum {
 	DMAP_CC_MLCL,
 	DMAP_CC_MLIT,
 	DMAP_CC_MBCL,
-	DMAP_CC_MSRV, 
+	DMAP_CC_MSRV,
 	DMAP_CC_MSAU,
 	DMAP_CC_MSLR,
-	DMAP_CC_MPRO, 
+	DMAP_CC_MPRO,
 	DMAP_CC_MSAL,
 	DMAP_CC_MSUP,
 	DMAP_CC_MSPI,
@@ -63,7 +62,7 @@ typedef enum {
 	DMAP_CC_MSQY,
 	DMAP_CC_MSIX,
 	DMAP_CC_MSRS,
-	DMAP_CC_MSTM, 
+	DMAP_CC_MSTM,
 	DMAP_CC_MSDC,
 	DMAP_CC_MCCR,
 	DMAP_CC_MCNM,
@@ -73,11 +72,11 @@ typedef enum {
 	DMAP_CC_MLID,
 	DMAP_CC_MUPD,
 	DMAP_CC_MUSR,
-	DMAP_CC_MUTY, 
+	DMAP_CC_MUTY,
 	DMAP_CC_MUDL,
 	DMAP_CC_MSMA,
 	DMAP_CC_FQUESCH,
-	
+
 	DMAP_CC_APRO,
 	DMAP_CC_AVDB,
 	DMAP_CC_ABRO,
@@ -89,7 +88,7 @@ typedef enum {
 	DMAP_CC_ASAL,
 	DMAP_CC_ASAI,
 	DMAP_CC_ASAA,
-	DMAP_CC_ASAR, 
+	DMAP_CC_ASAR,
 	DMAP_CC_ASBT,
 	DMAP_CC_ASBR,
 	DMAP_CC_ASCM,
@@ -109,7 +108,7 @@ typedef enum {
 	DMAP_CC_ASST,
 	DMAP_CC_ASSP,
 	DMAP_CC_ASTM,
-	DMAP_CC_ASTC, 
+	DMAP_CC_ASTC,
 	DMAP_CC_ASTN,
 	DMAP_CC_ASUR,
 	DMAP_CC_ASYR,
@@ -121,12 +120,12 @@ typedef enum {
 	DMAP_CC_ABPL,
 	DMAP_CC_APSO,
 	DMAP_CC_PRSV,
-	DMAP_CC_ARIF, 
+	DMAP_CC_ARIF,
 	DMAP_CC_MSAS,
 	DMAP_CC_AGRP,
 	DMAP_CC_AGAL,
 	DMAP_CC_ASCP,
-	DMAP_CC_PPRO, 
+	DMAP_CC_PPRO,
 	DMAP_CC_PASP,
 	DMAP_CC_PFDT,
 	DMAP_CC_PICD,
@@ -139,7 +138,7 @@ typedef enum {
 	DMAP_CC_PRAT,
 	DMAP_CC_PCMT,
 	DMAP_CC_PRET,
-        
+
 	/* iTunes 6.02+ */
 	DMAP_CC_AESV,
 	DMAP_CC_AEHV,
@@ -150,13 +149,13 @@ typedef enum {
 	DMAP_CC_AESG,
 	DMAP_CC_AEMK,
 	DMAP_CC_AEFP,
-	
+
 	/* DACP */
 	DMAP_CC_CMPA,
 	DMAP_CC_CMNM,
 	DMAP_CC_CMTY,
 	DMAP_CC_CMPG,
-	
+
 	DMAP_CC_CACI,
 	DMAP_CC_CAPS,
 	DMAP_CC_CASH,
@@ -190,29 +189,27 @@ typedef enum {
 
 typedef struct _DMAPStructureItem DMAPStructureItem;
 
-struct _DMAPStructureItem {
+struct _DMAPStructureItem
+{
 	DMAPContentCode content_code;
 	GValue content;
 	guint size;
 };
 
-GNode             *dmap_structure_add		     (GNode *parent,
-						      DMAPContentCode cc,
-						      ...);
-gchar             *dmap_structure_serialize	     (GNode *structure, 
-						      guint *length);
-GNode             *dmap_structure_parse		     (const gchar *buf, 
-						      gint buf_length);
-DMAPStructureItem *dmap_structure_find_item	     (GNode *structure, 
-						      DMAPContentCode code);
-GNode             *dmap_structure_find_node	     (GNode *structure, 
-						      DMAPContentCode code);
-void               dmap_structure_print		     (GNode *structure);
-void               dmap_structure_destroy	     (GNode *structure);
-guint		   dmap_structure_get_size	     (GNode *structure);
-void		   dmap_structure_increase_by_predicted_size (GNode *structure, guint size);
+GNode *dmap_structure_add (GNode * parent, DMAPContentCode cc, ...);
+gchar *dmap_structure_serialize (GNode * structure, guint * length);
+GNode *dmap_structure_parse (const gchar * buf, gint buf_length);
+DMAPStructureItem *dmap_structure_find_item (GNode * structure,
+					     DMAPContentCode code);
+GNode *dmap_structure_find_node (GNode * structure, DMAPContentCode code);
+void dmap_structure_print (GNode * structure);
+void dmap_structure_destroy (GNode * structure);
+guint dmap_structure_get_size (GNode * structure);
+void dmap_structure_increase_by_predicted_size (GNode * structure,
+						guint size);
 
-typedef enum {
+typedef enum
+{
 	DMAP_TYPE_BYTE = 0x0001,
 	DMAP_TYPE_SIGNED_INT = 0x0002,
 	DMAP_TYPE_SHORT = 0x0003,
@@ -227,7 +224,8 @@ typedef enum {
 
 typedef struct _DMAPContentCodeDefinition DMAPContentCodeDefinition;
 
-struct _DMAPContentCodeDefinition {
+struct _DMAPContentCodeDefinition
+{
 	DMAPContentCode code;
 	gint32 int_code;
 	const gchar *name;
@@ -235,16 +233,13 @@ struct _DMAPContentCodeDefinition {
 	DMAPType type;
 };
 
-const DMAPContentCodeDefinition 
-            *dmap_content_codes                 (guint *number);
-gint32       dmap_content_code_string_as_int32  (const gchar *str);
-const gchar *dmap_content_code_name             (DMAPContentCode code);
-DMAPType     dmap_content_code_dmap_type        (DMAPContentCode code);
-const gchar *dmap_content_code_string           (DMAPContentCode code);
-	    	   
-DMAPContentCode 
-             dmap_content_code_read_from_buffer (const gchar *buf);
+const DMAPContentCodeDefinition * dmap_content_codes (guint * number);
+gint32 dmap_content_code_string_as_int32 (const gchar * str);
+const gchar *dmap_content_code_name (DMAPContentCode code);
+DMAPType dmap_content_code_dmap_type (DMAPContentCode code);
+const gchar *dmap_content_code_string (DMAPContentCode code);
+
+DMAPContentCode dmap_content_code_read_from_buffer (const gchar * buf);
 
 G_END_DECLS
-
 #endif

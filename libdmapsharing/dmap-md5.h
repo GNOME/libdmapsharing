@@ -24,13 +24,10 @@
 #include <glib.h>
 
 G_BEGIN_DECLS
-
-void dmap_hash_generate (short version_major,
-                         const guchar *url,
-                         guchar hash_select,
-                         guchar *out,
-                         gint request_id);
+	void dmap_hash_generate (short version_major,
+				 const guchar * url,
+				 guchar hash_select,
+				 guchar * out, gint request_id);
 
 G_END_DECLS
-
 #endif

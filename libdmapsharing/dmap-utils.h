@@ -26,22 +26,16 @@
 #include <libdmapsharing/dmap-config.h>
 
 G_BEGIN_DECLS
-
 #if DMAP_HAVE_UNALIGNED_ACCESS
-
 #define _DMAP_GET(__data, __size, __end) \
     (GUINT##__size##_FROM_##__end (* ((guint##__size *) (__data))))
-
 #define DMAP_READ_UINT64_BE(data) _DMAP_GET (data, 64, BE)
 #define DMAP_READ_UINT32_BE(data) _DMAP_GET (data, 32, BE)
 #define DMAP_READ_UINT16_BE(data) _DMAP_GET (data, 16, BE)
 #define DMAP_READ_UINT8(data)     (* ((guint8 *) (data)))
-
 #else
-
 #define _DMAP_GET(__data, __idx, __size, __shift) \
     (((guint##__size) (((guint8 *) (__data))[__idx])) << __shift)
-
 #define DMAP_READ_UINT64_BE(data)  \
     (_DMAP_GET (data, 0, 64, 56) | \
      _DMAP_GET (data, 1, 64, 48) | \
@@ -60,17 +54,15 @@ G_BEGIN_DECLS
     (_DMAP_GET (data, 0, 16,  8) | \
      _DMAP_GET (data, 1, 16,  0))
 #define DMAP_READ_UINT8(data) (_DMAP_GET (data, 0,  8,  0))
-
 #endif
-
-typedef struct ChunkData {
+	typedef struct ChunkData
+{
 	SoupServer *server;
 	GInputStream *stream;
 } ChunkData;
 
-void dmap_write_next_chunk (SoupMessage *message, ChunkData *cd);
-void dmap_chunked_message_finished (SoupMessage *message, ChunkData *cd);
+void dmap_write_next_chunk (SoupMessage * message, ChunkData * cd);
+void dmap_chunked_message_finished (SoupMessage * message, ChunkData * cd);
 
 G_END_DECLS
-
 #endif

@@ -26,7 +26,6 @@
 #include <libdmapsharing/dmap-record.h>
 
 G_BEGIN_DECLS
-
 /**
  * DMAP_TYPE_DB:
  *
@@ -61,36 +60,33 @@ G_BEGIN_DECLS
  */
 #define DMAP_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				  DMAP_TYPE_DB, DMAPDbIface))
-
 typedef struct _DMAPDb DMAPDb;
 typedef struct _DMAPDbIface DMAPDbIface;
 
-struct _DMAPDbIface {
+struct _DMAPDbIface
+{
 	GTypeInterface parent;
 
-	guint (*add)		       (DMAPDb *db, DMAPRecord *record);
-	guint (*add_with_id)	       (DMAPDb *db,
-					DMAPRecord *record,
-					guint id);
-	guint (*add_path)	       (DMAPDb *db, const gchar *path);
-	DMAPRecord *(*lookup_by_id)    (const DMAPDb *db, guint id);
-	guint (*lookup_id_by_location) (const DMAPDb *db,
-					const gchar *location);
-	void (*foreach)		       (const DMAPDb *db,
-					GHFunc func,
-					gpointer data);
-	gint64 (*count) 	       (const DMAPDb *db);
+	  guint (*add) (DMAPDb * db, DMAPRecord * record);
+	  guint (*add_with_id) (DMAPDb * db, DMAPRecord * record, guint id);
+	  guint (*add_path) (DMAPDb * db, const gchar * path);
+	DMAPRecord *(*lookup_by_id) (const DMAPDb * db, guint id);
+	  guint (*lookup_id_by_location) (const DMAPDb * db,
+					  const gchar * location);
+	void (*foreach) (const DMAPDb * db, GHFunc func, gpointer data);
+	  gint64 (*count) (const DMAPDb * db);
 };
 
-typedef const char *(*RecordGetValueFunc) (DMAPRecord *record);
+typedef const char *(*RecordGetValueFunc) (DMAPRecord * record);
 
-typedef struct FilterDefinition {
+typedef struct FilterDefinition
+{
 	gchar *key;
 	gchar *value;
 	gboolean negate;
 } FilterDefinition;
 
-GType dmap_db_get_type		    (void);
+GType dmap_db_get_type (void);
 
 /**
  * dmap_db_add:
@@ -105,7 +101,7 @@ GType dmap_db_get_type		    (void);
  * be placed elsewhere). In all cases, the record should be unrefed by the 
  * calling code.
  */
-guint        dmap_db_add	    (DMAPDb *db, DMAPRecord *record);
+guint dmap_db_add (DMAPDb * db, DMAPRecord * record);
 
 /**
  * dmap_db_add:
@@ -119,7 +115,7 @@ guint        dmap_db_add	    (DMAPDb *db, DMAPRecord *record);
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
-guint        dmap_db_add_with_id    (DMAPDb *db, DMAPRecord *record, guint id);
+guint dmap_db_add_with_id (DMAPDb * db, DMAPRecord * record, guint id);
 
 /**
  * dmap_db_add_path:
@@ -132,7 +128,7 @@ guint        dmap_db_add_with_id    (DMAPDb *db, DMAPRecord *record, guint id);
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
-guint        dmap_db_add_path	    (DMAPDb *db, const gchar *path);
+guint dmap_db_add_path (DMAPDb * db, const gchar * path);
 
 /**
  * dmap_db_lookup_by_id:
@@ -153,7 +149,7 @@ guint        dmap_db_add_path	    (DMAPDb *db, const gchar *path);
  * In this case, the reference count should not be incremented before
  * returning a record pointer.
  */
-DMAPRecord *dmap_db_lookup_by_id    (const DMAPDb *db, guint id);
+DMAPRecord *dmap_db_lookup_by_id (const DMAPDb * db, guint id);
 
 /**
  * dmap_db_lookup_id_by_location:
@@ -163,7 +159,8 @@ DMAPRecord *dmap_db_lookup_by_id    (const DMAPDb *db, guint id);
  * Returns: the database id for the record corresponding to @path or 0 if
  * such a record does not exist.
  */
-guint dmap_db_lookup_id_by_location (const DMAPDb *db, const gchar *location);
+guint dmap_db_lookup_id_by_location (const DMAPDb * db,
+				     const gchar * location);
 
 /**
  * dmap_db_foreach:
@@ -173,9 +170,7 @@ guint dmap_db_lookup_id_by_location (const DMAPDb *db, const gchar *location);
  *
  * Apply a function to each record in a media database.
  */
-void        dmap_db_foreach	    (const DMAPDb *db,
-				     GHFunc func,
-				     gpointer data);
+void dmap_db_foreach (const DMAPDb * db, GHFunc func, gpointer data);
 
 /**
  * dmap_db_count:
@@ -183,11 +178,11 @@ void        dmap_db_foreach	    (const DMAPDb *db,
  *
  * Returns: the number of records in the database.
  */
-gulong      dmap_db_count	    (const DMAPDb *db);
+gulong dmap_db_count (const DMAPDb * db);
 
-gchar     **_dmap_db_strsplit_using_quotes (const gchar *str);
+gchar **_dmap_db_strsplit_using_quotes (const gchar * str);
 
-GHashTable *dmap_db_apply_filter    (DMAPDb *db, GSList *filter_def);
+GHashTable *dmap_db_apply_filter (DMAPDb * db, GSList * filter_def);
 
 #endif /* __DMAP_DB_H */
 

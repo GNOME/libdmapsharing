@@ -23,7 +23,7 @@
 
 #include <gst/gst.h>
 
-gboolean pads_compatible (GstPad *pad1, GstPad *pad2);
+gboolean pads_compatible (GstPad * pad1, GstPad * pad2);
 
 #endif /* __GST_UTIL */
 

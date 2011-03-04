@@ -29,7 +29,6 @@
 #include <libdmapsharing/dmap-share.h>
 
 G_BEGIN_DECLS
-
 /**
  * DPAP_TYPE_SHARE:
  *
@@ -80,19 +79,20 @@ G_BEGIN_DECLS
  */
 #define DPAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 DPAP_TYPE_SHARE, DPAPShareClass))
-
 typedef struct DPAPSharePrivate DPAPSharePrivate;
 
-typedef struct {
+typedef struct
+{
 	DMAPShareClass dmap_share_class;
 } DPAPShareClass;
 
-typedef struct {
+typedef struct
+{
 	DMAPShare dmap_share_instance;
 	DPAPSharePrivate *priv;
 } DPAPShare;
 
-GType      dpap_share_get_type (void);
+GType dpap_share_get_type (void);
 
 /**
  * dpap_share_new:
@@ -106,9 +106,9 @@ GType      dpap_share_get_type (void);
  *
  * Returns: a pointer to a DPAPShare.
  */
-DPAPShare *dpap_share_new      (const char *name, const char *password,
-			        gpointer db, gpointer container_db,
-				gchar *transcode_mimetype);
+DPAPShare *dpap_share_new (const char *name, const char *password,
+			   gpointer db, gpointer container_db,
+			   gchar * transcode_mimetype);
 
 #endif /* __DPAP_SHARE_H */
 

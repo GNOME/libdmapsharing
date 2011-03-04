@@ -26,7 +26,6 @@
 #include <glib-object.h>
 
 G_BEGIN_DECLS
-
 /**
  * DMAP_TYPE_MDNS_BROWSER:
  *
@@ -73,59 +72,59 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserClass))
-
-typedef struct _DMAPMdnsBrowser        DMAPMdnsBrowser;
-typedef struct _DMAPMdnsBrowserClass   DMAPMdnsBrowserClass;
+typedef struct _DMAPMdnsBrowser DMAPMdnsBrowser;
+typedef struct _DMAPMdnsBrowserClass DMAPMdnsBrowserClass;
 typedef struct _DMAPMdnsBrowserPrivate DMAPMdnsBrowserPrivate;
 typedef struct _DMAPMdnsBrowserService DMAPMdnsBrowserService;
 
 typedef enum
 {
-    DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID = 0,
-    DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP,
-    DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP,
-    DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP,
-    DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST = DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP
+	DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID = 0,
+	DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP,
+	DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP,
+	DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP,
+	DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST =
+		DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP
 } DMAPMdnsBrowserServiceType;
 
 typedef enum
 {
-    DMAP_MDNS_BROWSER_ERROR_NOT_RUNNING = 0,
-    DMAP_MDNS_BROWSER_ERROR_FAILED,
+	DMAP_MDNS_BROWSER_ERROR_NOT_RUNNING = 0,
+	DMAP_MDNS_BROWSER_ERROR_FAILED,
 } DMAPMdnsBrowserError;
 
 struct _DMAPMdnsBrowserService
 {
-    gchar *service_name;
-    gchar *name;
-    gchar *host;
-    guint port;
-    gboolean password_protected;
-    gchar *pair;
+	gchar *service_name;
+	gchar *name;
+	gchar *host;
+	guint port;
+	gboolean password_protected;
+	gchar *pair;
 };
 
 struct _DMAPMdnsBrowserClass
 {
-    GObjectClass parent_class;
+	GObjectClass parent_class;
 
-    void (* service_added)    (DMAPMdnsBrowser *browser,
-                               DMAPMdnsBrowserService *service);
-    void (* service_removed ) (DMAPMdnsBrowser *browser,
-                               DMAPMdnsBrowserService *service);
+	void (*service_added) (DMAPMdnsBrowser * browser,
+			       DMAPMdnsBrowserService * service);
+	void (*service_removed) (DMAPMdnsBrowser * browser,
+				 DMAPMdnsBrowserService * service);
 };
 
 struct _DMAPMdnsBrowser
 {
-    GObject object;
+	GObject object;
 
-    DMAPMdnsBrowserPrivate *priv;
+	DMAPMdnsBrowserPrivate *priv;
 };
 
 #define DMAP_MDNS_BROWSER_ERROR dmap_mdns_browser_error_quark ()
 
-GQuark                     dmap_mdns_browser_error_quark      (void);
+GQuark dmap_mdns_browser_error_quark (void);
 
-GType                      dmap_mdns_browser_get_type         (void);
+GType dmap_mdns_browser_get_type (void);
 
 /**
  * dmap_mdns_browser_new:
@@ -135,7 +134,7 @@ GType                      dmap_mdns_browser_get_type         (void);
  *
  * Returns: a pointer to a DMAPMdnsBrowser.
  */
-DMAPMdnsBrowser           *dmap_mdns_browser_new              (DMAPMdnsBrowserServiceType type);
+DMAPMdnsBrowser *dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type);
 
 /**
  * dmap_mdns_browser_start:
@@ -146,8 +145,8 @@ DMAPMdnsBrowser           *dmap_mdns_browser_new              (DMAPMdnsBrowserSe
  *
  * Returns: TRUE on success, else FALSE.
  */
-gboolean                   dmap_mdns_browser_start            (DMAPMdnsBrowser *browser,
-                                                               GError **error);
+gboolean dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error);
+
 /**
  * dmap_mdns_browser_stop:
  * @browser: A DMAPMdnsBrowser.
@@ -157,12 +156,12 @@ gboolean                   dmap_mdns_browser_start            (DMAPMdnsBrowser *
  *
  * Returns: TRUE on success, else FALSE.
  */
-gboolean                   dmap_mdns_browser_stop             (DMAPMdnsBrowser *browser,
-                                                               GError **error);
+gboolean dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error);
 
-G_CONST_RETURN GSList     *dmap_mdns_browser_get_services     (DMAPMdnsBrowser *browser);
-DMAPMdnsBrowserServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser *browser);
+G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DMAPMdnsBrowser *
+						       browser);
+DMAPMdnsBrowserServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser
+							       * browser);
 
 G_END_DECLS
-
 #endif

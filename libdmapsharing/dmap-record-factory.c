@@ -23,13 +23,13 @@
 static gint dmap_record_factory_init_count = 0;
 
 static void
-dmap_record_factory_init (DMAPRecordFactoryIface *iface)
+dmap_record_factory_init (DMAPRecordFactoryIface * iface)
 {
 	dmap_record_factory_init_count++;
 }
 
 static void
-dmap_record_factory_finalize (DMAPRecordFactoryIface *iface)
+dmap_record_factory_finalize (DMAPRecordFactoryIface * iface)
 {
 	dmap_record_factory_init_count--;
 }
@@ -39,22 +39,24 @@ GType
 dmap_record_factory_get_type (void)
 {
 	static GType object_type = 0;
+
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DMAPRecordFactoryIface),
+			sizeof (DMAPRecordFactoryIface),
 			(GBaseInitFunc) dmap_record_factory_init,
 			(GBaseFinalizeFunc) dmap_record_factory_finalize
 		};
 		object_type =
-		    g_type_register_static(G_TYPE_INTERFACE,
-					   "DMAPRecordFactory",
-					   &object_info, 0);
+			g_type_register_static (G_TYPE_INTERFACE,
+						"DMAPRecordFactory",
+						&object_info, 0);
 	}
 	return object_type;
 }
 
 DMAPRecord *
-dmap_record_factory_create (DMAPRecordFactory *factory, gpointer user_data)
+dmap_record_factory_create (DMAPRecordFactory * factory, gpointer user_data)
 {
-	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory, user_data);
+	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory,
+								    user_data);
 }

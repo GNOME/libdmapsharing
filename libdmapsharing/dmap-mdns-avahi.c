@@ -32,9 +32,7 @@ static AvahiEntryGroup *entry_group = NULL;
 static gsize client_init = 0;
 
 static void
-client_cb (AvahiClient         *client,
-	   AvahiClientState     state,
-	   gpointer             data)
+client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
 {
 	/* FIXME
 	 * check to make sure we're in the _RUNNING state before we publish
@@ -53,18 +51,19 @@ client_cb (AvahiClient         *client,
 
 	case AVAHI_CLIENT_S_COLLISION:
 
-		 /* Let's drop our registered services. When the server is back
-		  * in AVAHI_SERVER_RUNNING state we will register them
-		  * again with the new host name.
-		  */
-		 if (entry_group) {
-			 avahi_entry_group_reset (entry_group);
-		 }
-		 break;
+		/* Let's drop our registered services. When the server is back
+		 * in AVAHI_SERVER_RUNNING state we will register them
+		 * again with the new host name.
+		 */
+		if (entry_group) {
+			avahi_entry_group_reset (entry_group);
+		}
+		break;
 
 	case AVAHI_CLIENT_FAILURE:
-		 g_warning ("Client failure: %s\n", avahi_strerror (avahi_client_errno (client)));
-		 break;
+		g_warning ("Client failure: %s\n",
+			   avahi_strerror (avahi_client_errno (client)));
+		break;
 
 	case AVAHI_CLIENT_CONNECTING:
 	case AVAHI_CLIENT_S_REGISTERING:
@@ -85,16 +84,17 @@ dmap_mdns_avahi_get_client (void)
 
 		apoll = avahi_glib_poll_new (NULL, G_PRIORITY_DEFAULT);
 		if (apoll == NULL) {
-			g_warning ("Unable to create AvahiGlibPoll object for mDNS");
+			g_warning
+				("Unable to create AvahiGlibPoll object for mDNS");
 		}
 
 		client = avahi_client_new (avahi_glib_poll_get (apoll),
 					   flags,
 					   (AvahiClientCallback) client_cb,
-					   NULL,
-					   &error);
+					   NULL, &error);
 		if (error != 0) {
-			g_warning ("Unable to initialize mDNS: %s", avahi_strerror (error));
+			g_warning ("Unable to initialize mDNS: %s",
+				   avahi_strerror (error));
 		}
 
 		g_once_init_leave (&client_init, 1);
@@ -104,7 +104,7 @@ dmap_mdns_avahi_get_client (void)
 }
 
 void
-dmap_mdns_avahi_set_entry_group (AvahiEntryGroup *eg)
+dmap_mdns_avahi_set_entry_group (AvahiEntryGroup * eg)
 {
 	/* FIXME: No longer a valid assumption with new multiple-protocol
 	 * per process code. Refactor?

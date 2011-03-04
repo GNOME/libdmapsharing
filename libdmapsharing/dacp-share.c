@@ -45,37 +45,37 @@
 #include <libdmapsharing/dacp-share.h>
 #include <libdmapsharing/dacp-player.h>
 
-static void dacp_share_set_property  (GObject *object,
-					 guint prop_id,
-					 const GValue *value,
-					 GParamSpec *pspec);
-static void dacp_share_get_property  (GObject *object,
-					 guint prop_id,
-					 GValue *value,
-				 	 GParamSpec *pspec);
-static void dacp_share_dispose	(GObject *object);
-const char *dacp_share_get_type_of_service (DMAPShare *share);
-void dacp_share_ctrl_int (DMAPShare *share,
-		      SoupServer        *server,
-		      SoupMessage       *message,
-		      const char        *path,
-		      GHashTable        *query,
-		      SoupClientContext *context);
-void dacp_share_login (DMAPShare *share,
-		  SoupServer        *server,
-		  SoupMessage       *message,
-		  const char        *path,
-		  GHashTable        *query,
-		  SoupClientContext *context);
+static void dacp_share_set_property (GObject * object,
+				     guint prop_id,
+				     const GValue * value,
+				     GParamSpec * pspec);
+static void dacp_share_get_property (GObject * object,
+				     guint prop_id,
+				     GValue * value, GParamSpec * pspec);
+static void dacp_share_dispose (GObject * object);
+const char *dacp_share_get_type_of_service (DMAPShare * share);
+void dacp_share_ctrl_int (DMAPShare * share,
+			  SoupServer * server,
+			  SoupMessage * message,
+			  const char *path,
+			  GHashTable * query, SoupClientContext * context);
+void dacp_share_login (DMAPShare * share,
+		       SoupServer * server,
+		       SoupMessage * message,
+		       const char *path,
+		       GHashTable * query, SoupClientContext * context);
 
-static gchar *dacp_share_pairing_code(DACPShare *share, gchar* pair_txt, gchar passcode[4]);
-static void dacp_share_send_playstatusupdate (DACPShare *share);
-static void dacp_share_fill_playstatusupdate (DACPShare *share, SoupMessage *message);
+static gchar *dacp_share_pairing_code (DACPShare * share, gchar * pair_txt,
+				       gchar passcode[4]);
+static void dacp_share_send_playstatusupdate (DACPShare * share);
+static void dacp_share_fill_playstatusupdate (DACPShare * share,
+					      SoupMessage * message);
 
 #define DACP_TYPE_OF_SERVICE "_touch-able._tcp"
 #define DACP_PORT 3689
 
-struct DACPSharePrivate {
+struct DACPSharePrivate
+{
 	DMAPMdnsBrowser *mdns_browser;
 
 	gchar *library_name;
@@ -91,7 +91,8 @@ struct DACPSharePrivate {
 /*
  * Internal representation of a DACP remote.
  */
-typedef struct {
+typedef struct
+{
 	gchar *host;
 	guint port;
 	gchar *pair_txt;
@@ -100,13 +101,15 @@ typedef struct {
 
 #define DACP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DACP_TYPE_SHARE, DACPSharePrivate))
 
-enum {
+enum
+{
 	PROP_0,
 	PROP_LIBRARY_NAME,
 	PROP_PLAYER
 };
 
-enum {
+enum
+{
 	REMOTE_FOUND,
 	REMOTE_LOST,
 	REMOTE_PAIRED,
@@ -117,12 +120,11 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals [LAST_SIGNAL] = { 0, };
+static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DACPShare, dacp_share, DAAP_TYPE_SHARE)
 
-static void
-dacp_share_class_init (DACPShareClass *klass)
+     static void dacp_share_class_init (DACPShareClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DMAPShareClass *dmap_class = DMAP_SHARE_CLASS (object_class);
@@ -131,26 +133,28 @@ dacp_share_class_init (DACPShareClass *klass)
 	object_class->set_property = dacp_share_set_property;
 	object_class->dispose = dacp_share_dispose;
 
-	dmap_class->get_type_of_service  = dacp_share_get_type_of_service;
+	dmap_class->get_type_of_service = dacp_share_get_type_of_service;
 	dmap_class->ctrl_int = dacp_share_ctrl_int;
 	dmap_class->login = dacp_share_login;
 
 	g_object_class_install_property (object_class,
-	                                 PROP_LIBRARY_NAME,
-	                                 g_param_spec_string ("library-name",
-	                                                      "Library Name",
-	                                                      "Library name as will be shown in the Remote",
-	                                                      NULL,
-	                                                      G_PARAM_READWRITE));
+					 PROP_LIBRARY_NAME,
+					 g_param_spec_string ("library-name",
+							      "Library Name",
+							      "Library name as will be shown in the Remote",
+							      NULL,
+							      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
-	                                 PROP_PLAYER,
-	                                 g_param_spec_object ("player",
-	                                                      "Player",
-	                                                      "Player",
-	                                                      G_TYPE_OBJECT,
-	                                                      G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
-	
+					 PROP_PLAYER,
+					 g_param_spec_object ("player",
+							      "Player",
+							      "Player",
+							      G_TYPE_OBJECT,
+							      G_PARAM_READWRITE
+							      |
+							      G_PARAM_CONSTRUCT_ONLY));
+
 	/**
 	 * DACPShare::remote-found
 	 * @share: the #DACPShare that received the signal.
@@ -159,7 +163,7 @@ dacp_share_class_init (DACPShareClass *klass)
 	 *
 	 * Signal emited when a remote is found in the local network.
 	 */
-	signals [REMOTE_FOUND] =
+	signals[REMOTE_FOUND] =
 		g_signal_new ("remote-found",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -167,9 +171,8 @@ dacp_share_class_init (DACPShareClass *klass)
 			      NULL,
 			      NULL,
 			      dmap_marshal_VOID__STRING_STRING,
-			      G_TYPE_NONE,
-			      2, G_TYPE_STRING, G_TYPE_STRING);
-			      
+			      G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
+
 	/**
 	 * DACPShare::remote-lost
 	 * @share: the #DACPShare that received the signal
@@ -177,7 +180,7 @@ dacp_share_class_init (DACPShareClass *klass)
 	 *
 	 * Signal emited when a remote is lost in the local network.
 	 */
-	signals [REMOTE_LOST] =
+	signals[REMOTE_LOST] =
 		g_signal_new ("remote-lost",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -185,8 +188,7 @@ dacp_share_class_init (DACPShareClass *klass)
 			      NULL,
 			      NULL,
 			      g_cclosure_marshal_VOID__STRING,
-			      G_TYPE_NONE,
-			      1, G_TYPE_STRING);
+			      G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	/**
 	 * DACPShare::remote-paired
@@ -196,7 +198,7 @@ dacp_share_class_init (DACPShareClass *klass)
 	 *
 	 * Signal emited when a remote is paired.
 	 */
-	signals [REMOTE_PAIRED] =
+	signals[REMOTE_PAIRED] =
 		g_signal_new ("remote-paired",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -204,8 +206,7 @@ dacp_share_class_init (DACPShareClass *klass)
 			      NULL,
 			      NULL,
 			      dmap_marshal_VOID__STRING_BOOLEAN,
-			      G_TYPE_NONE,
-			      2, G_TYPE_STRING, G_TYPE_BOOLEAN);
+			      G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	/**
 	 * DACPShare::lookup-guid
@@ -216,7 +217,7 @@ dacp_share_class_init (DACPShareClass *klass)
 	 * validated. An implementation must implement this signal to lookup
 	 * for guids saved by ::add-guid
 	 */
-	signals [LOOKUP_GUID] =
+	signals[LOOKUP_GUID] =
 		g_signal_new ("lookup-guid",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -224,8 +225,7 @@ dacp_share_class_init (DACPShareClass *klass)
 			      NULL,
 			      NULL,
 			      dmap_marshal_BOOLEAN__STRING,
-			      G_TYPE_BOOLEAN,
-			      1, G_TYPE_STRING);
+			      G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
 
 	/**
 	 * DACPShare::add-guid
@@ -240,7 +240,7 @@ dacp_share_class_init (DACPShareClass *klass)
 	 * a button to forget previously connected remotes, so that the user may
 	 * disconnect all previously connected remotes.
 	 */
-	signals [ADD_GUID] =
+	signals[ADD_GUID] =
 		g_signal_new ("add-guid",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -248,63 +248,69 @@ dacp_share_class_init (DACPShareClass *klass)
 			      NULL,
 			      NULL,
 			      g_cclosure_marshal_VOID__STRING,
-			      G_TYPE_NONE,
-			      1, G_TYPE_STRING);
-	
+			      G_TYPE_NONE, 1, G_TYPE_STRING);
+
 	g_type_class_add_private (klass, sizeof (DACPSharePrivate));
 }
 
 static void
-dacp_share_init (DACPShare *share)
+dacp_share_init (DACPShare * share)
 {
 	share->priv = DACP_SHARE_GET_PRIVATE (share);
 
 	share->priv->current_revision = 2;
-	
-	share->priv->remotes = g_hash_table_new_full ((GHashFunc)g_str_hash,
-	                                              (GEqualFunc)g_str_equal,
-	                                              (GDestroyNotify)g_free,
-	                                              (GDestroyNotify)g_free);
+
+	share->priv->remotes = g_hash_table_new_full ((GHashFunc) g_str_hash,
+						      (GEqualFunc)
+						      g_str_equal,
+						      (GDestroyNotify) g_free,
+						      (GDestroyNotify)
+						      g_free);
 }
 
 static gchar *
-get_dbid (void) 
+get_dbid (void)
 {
 	static gchar *dbid;
+
 	if (!dbid) {
 		GString *name;
+
 		// Creates a service name 14 characters long concatenating the hostname
 		// hash hex value with itself.
 		// Idea taken from stereo.
 		name = g_string_new (NULL);
-		g_string_printf (name, "%.8x", g_str_hash(g_get_host_name ()));
+		g_string_printf (name, "%.8x",
+				 g_str_hash (g_get_host_name ()));
 		g_string_ascii_up (name);
 		g_string_append_len (name, name->str, 4);
 
 		dbid = name->str;
-		
+
 		g_string_free (name, FALSE);
 	}
 	return dbid;
 }
 
 static void
-dacp_share_update_txt_records (DACPShare *share)
+dacp_share_update_txt_records (DACPShare * share)
 {
 	gchar *dbid_record;
 	gchar *library_name_record;
 
-	library_name_record = g_strdup_printf ("CtlN=%s", share->priv->library_name);
-	dbid_record = g_strdup_printf("DbId=%s", get_dbid());
-	
-	gchar *txt_records[] = {"Ver=131073", 
-	                        "DvSv=2049",
-	                        dbid_record,
-	                        "DvTy=iTunes",
-	                        "OSsi=0x1F6",
-	                        "txtvers=1",
-	                        library_name_record,
-	                        NULL};
+	library_name_record =
+		g_strdup_printf ("CtlN=%s", share->priv->library_name);
+	dbid_record = g_strdup_printf ("DbId=%s", get_dbid ());
+
+	gchar *txt_records[] = { "Ver=131073",
+		"DvSv=2049",
+		dbid_record,
+		"DvTy=iTunes",
+		"OSsi=0x1F6",
+		"txtvers=1",
+		library_name_record,
+		NULL
+	};
 
 	g_object_set (share, "txt-records", txt_records, NULL);
 
@@ -313,10 +319,9 @@ dacp_share_update_txt_records (DACPShare *share)
 }
 
 static void
-dacp_share_set_property (GObject *object,
-			    guint prop_id,
-			    const GValue *value,
-			    GParamSpec *pspec)
+dacp_share_set_property (GObject * object,
+			 guint prop_id,
+			 const GValue * value, GParamSpec * pspec)
 {
 	DACPShare *share = DACP_SHARE (object);
 
@@ -329,7 +334,8 @@ dacp_share_set_property (GObject *object,
 	case PROP_PLAYER:
 		if (share->priv->player)
 			g_object_unref (share->priv->player);
-		share->priv->player = DACP_PLAYER (g_value_dup_object (value));
+		share->priv->player =
+			DACP_PLAYER (g_value_dup_object (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -338,10 +344,8 @@ dacp_share_set_property (GObject *object,
 }
 
 static void
-dacp_share_get_property (GObject *object,
-			    guint prop_id,
-			    GValue *value,
-			    GParamSpec *pspec)
+dacp_share_get_property (GObject * object,
+			 guint prop_id, GValue * value, GParamSpec * pspec)
 {
 	DACPShare *share = DACP_SHARE (object);
 
@@ -359,7 +363,7 @@ dacp_share_get_property (GObject *object,
 }
 
 static void
-dacp_share_dispose (GObject *object)
+dacp_share_dispose (GObject * object)
 {
 	DACPShare *share = DACP_SHARE (object);
 
@@ -372,77 +376,64 @@ dacp_share_dispose (GObject *object)
 		g_object_unref (share->priv->player);
 
 	g_slist_free (share->priv->update_queue);
-	
+
 	g_hash_table_destroy (share->priv->remotes);
 }
 
-void 
-mdns_remote_added (DMAPMdnsBrowser *browser, 
-                   DMAPMdnsBrowserService *service,
-                   DACPShare *share) 
+void
+mdns_remote_added (DMAPMdnsBrowser * browser,
+		   DMAPMdnsBrowserService * service, DACPShare * share)
 {
 	DACPRemoteInfo *remote_info;
-       
+
 	remote_info = g_new (DACPRemoteInfo, 1);
 	remote_info->host = g_strdup (service->host);
 	remote_info->port = service->port;
 	remote_info->connection = NULL;
 	remote_info->pair_txt = g_strdup (service->pair);
-	
+
 	g_debug ("New Remote found: %s name=%s host=%s port=%u pair=%s",
-	         service->service_name,
-	         service->name,
-	         remote_info->host,
-	         remote_info->port,
-	         remote_info->pair_txt);
-	
+		 service->service_name,
+		 service->name,
+		 remote_info->host, remote_info->port, remote_info->pair_txt);
+
 	g_hash_table_insert (share->priv->remotes,
-	                     service->service_name,
-	                     remote_info);
-	
-	g_signal_emit (share, 
-	               signals [REMOTE_FOUND], 
-	               0, 
-	               service->service_name,
-	               service->name);
+			     service->service_name, remote_info);
+
+	g_signal_emit (share,
+		       signals[REMOTE_FOUND],
+		       0, service->service_name, service->name);
 }
 
 void
-mdns_remote_removed (DMAPMdnsBrowser *browser,
-                     const char *service_name,
-                     DACPShare *share)
+mdns_remote_removed (DMAPMdnsBrowser * browser,
+		     const char *service_name, DACPShare * share)
 {
-	g_signal_emit (share,
-	               signals [REMOTE_LOST],
-	               0,
-	               service_name);
-	               
-	g_hash_table_remove (share->priv->remotes,
-	                     service_name);
+	g_signal_emit (share, signals[REMOTE_LOST], 0, service_name);
+
+	g_hash_table_remove (share->priv->remotes, service_name);
 }
 
 DACPShare *
-dacp_share_new (const gchar *library_name,
-                DACPPlayer *player,
-                DMAPDb *db,
-                DMAPContainerDb *container_db)
+dacp_share_new (const gchar * library_name,
+		DACPPlayer * player,
+		DMAPDb * db, DMAPContainerDb * container_db)
 {
 	DACPShare *share;
-	
+
 	g_object_ref (db);
 	g_object_ref (container_db);
-	
+
 	share = DACP_SHARE (g_object_new (DACP_TYPE_SHARE,
-	                                  "name", get_dbid (),
-	                                  "library-name", library_name,
-	                                  "password", NULL,
-	                                  "db", db,
-	                                  "container-db", container_db,
-	                                  "player", G_OBJECT (player),
-	                                  "transcode-mimetype", NULL,
-	                                  NULL));
-	
-	g_debug("Starting DACP server");
+					  "name", get_dbid (),
+					  "library-name", library_name,
+					  "password", NULL,
+					  "db", db,
+					  "container-db", container_db,
+					  "player", G_OBJECT (player),
+					  "transcode-mimetype", NULL, NULL));
+
+	g_debug ("Starting DACP server");
 	_dmap_share_server_start (DMAP_SHARE (share));
 	_dmap_share_publish_start (DMAP_SHARE (share));
 
@@ -450,99 +441,104 @@ dacp_share_new (const gchar *library_name,
 }
 
 void
-dacp_share_start_lookup (DACPShare *share) 
+dacp_share_start_lookup (DACPShare * share)
 {
 	GError *error;
-	
+
 	if (share->priv->mdns_browser) {
 		g_warning ("DACP browsing already started");
 		return;
 	}
-	
-	share->priv->mdns_browser = dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP);
-	
+
+	share->priv->mdns_browser =
+		dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP);
+
 	g_signal_connect_object (share->priv->mdns_browser,
 				 "service-added",
-				 G_CALLBACK (mdns_remote_added),
-				 share,
-				 0);
+				 G_CALLBACK (mdns_remote_added), share, 0);
 	g_signal_connect_object (share->priv->mdns_browser,
 				 "service-removed",
-				 G_CALLBACK (mdns_remote_removed),
-				 share,
-				 0);
-	
+				 G_CALLBACK (mdns_remote_removed), share, 0);
+
 	error = NULL;
 	dmap_mdns_browser_start (share->priv->mdns_browser, &error);
 	if (error != NULL) {
-		g_warning ("Unable to start Remote lookup: %s", error->message);
+		g_warning ("Unable to start Remote lookup: %s",
+			   error->message);
 		g_error_free (error);
 	}
 }
 
 static gboolean
-remove_remotes_cb (gpointer service_name, gpointer remote_info, gpointer share)
+remove_remotes_cb (gpointer service_name, gpointer remote_info,
+		   gpointer share)
 {
-	g_signal_emit ((DACPShare*) share,
-	               signals [REMOTE_LOST],
-	               0,
-	               (gchar *) service_name);
+	g_signal_emit ((DACPShare *) share,
+		       signals[REMOTE_LOST], 0, (gchar *) service_name);
 	return TRUE;
 }
 
 void
-dacp_share_stop_lookup (DACPShare *share) 
+dacp_share_stop_lookup (DACPShare * share)
 {
 	GError *error;
-	
+
 	if (!share->priv->mdns_browser) {
 		g_warning ("DACP browsing not started");
 		return;
 	}
-	
-	g_hash_table_foreach_remove (share->priv->remotes, remove_remotes_cb, share);
-	
+
+	g_hash_table_foreach_remove (share->priv->remotes, remove_remotes_cb,
+				     share);
+
 	error = NULL;
 	dmap_mdns_browser_stop (share->priv->mdns_browser, &error);
 	if (error != NULL) {
-		g_warning ("Unable to stop Remote lookup: %s", error->message);
+		g_warning ("Unable to stop Remote lookup: %s",
+			   error->message);
 		g_error_free (error);
 	}
-	
+
 	share->priv->mdns_browser = NULL;
 }
 
 const char *
-dacp_share_get_type_of_service (DMAPShare *share)
+dacp_share_get_type_of_service (DMAPShare * share)
 {
 	return DACP_TYPE_OF_SERVICE;
 }
 
 void
-dacp_share_player_updated (DACPShare *share)
+dacp_share_player_updated (DACPShare * share)
 {
 	share->priv->current_revision++;
 	dacp_share_send_playstatusupdate (share);
 }
 
 static void
-status_update_message_finished (SoupMessage *message, DACPShare *share)
+status_update_message_finished (SoupMessage * message, DACPShare * share)
 {
-	share->priv->update_queue = g_slist_remove (share->priv->update_queue, message);
+	share->priv->update_queue =
+		g_slist_remove (share->priv->update_queue, message);
 	g_object_unref (message);
 }
 
 static void
-dacp_share_send_playstatusupdate (DACPShare *share)
+dacp_share_send_playstatusupdate (DACPShare * share)
 {
 	GSList *list;
 	SoupServer *server = NULL;
 
 	g_object_get (share, "server-ipv4", &server, NULL);
 	if (server) {
-		for (list = share->priv->update_queue; list; list = list->next) {
-			dacp_share_fill_playstatusupdate (share, (SoupMessage*) list->data);
-			soup_server_unpause_message (server, (SoupMessage*) list->data);
+		for (list = share->priv->update_queue; list;
+		     list = list->next) {
+			dacp_share_fill_playstatusupdate (share,
+							  (SoupMessage *)
+							  list->data);
+			soup_server_unpause_message (server,
+						     (SoupMessage *) list->
+						     data);
 		}
 	}
 
@@ -551,9 +547,14 @@ dacp_share_send_playstatusupdate (DACPShare *share)
 
 	g_object_get (share, "server-ipv6", &server, NULL);
 	if (server) {
-		for (list = share->priv->update_queue; list; list = list->next) {
-			dacp_share_fill_playstatusupdate (share, (SoupMessage*) list->data);
-			soup_server_unpause_message (server, (SoupMessage*) list->data);
+		for (list = share->priv->update_queue; list;
+		     list = list->next) {
+			dacp_share_fill_playstatusupdate (share,
+							  (SoupMessage *)
+							  list->data);
+			soup_server_unpause_message (server,
+						     (SoupMessage *) list->
+						     data);
 		}
 	}
 
@@ -564,7 +565,7 @@ dacp_share_send_playstatusupdate (DACPShare *share)
 }
 
 static void
-dacp_share_fill_playstatusupdate (DACPShare *share, SoupMessage *message)
+dacp_share_fill_playstatusupdate (DACPShare * share, SoupMessage * message)
 {
 	GNode *cmst;
 	DAAPRecord *record;
@@ -572,19 +573,19 @@ dacp_share_fill_playstatusupdate (DACPShare *share, SoupMessage *message)
 	DACPRepeatState repeat_state;
 	gboolean shuffle_state;
 	guint playing_time;
-	
-	g_object_get (share->priv->player, 
-	              "play-state", &play_state,
-	              "repeat-state", &repeat_state,
-	              "shuffle-state", &shuffle_state,
-	              "playing-time", &playing_time,
-	              NULL);
+
+	g_object_get (share->priv->player,
+		      "play-state", &play_state,
+		      "repeat-state", &repeat_state,
+		      "shuffle-state", &shuffle_state,
+		      "playing-time", &playing_time, NULL);
 
 	record = dacp_player_now_playing_record (share->priv->player);
 
 	cmst = dmap_structure_add (NULL, DMAP_CC_CMST);
 	dmap_structure_add (cmst, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
-	dmap_structure_add (cmst, DMAP_CC_CMSR, share->priv->current_revision);
+	dmap_structure_add (cmst, DMAP_CC_CMSR,
+			    share->priv->current_revision);
 	dmap_structure_add (cmst, DMAP_CC_CAPS, (gint32) play_state);
 	dmap_structure_add (cmst, DMAP_CC_CASH, shuffle_state ? 1 : 0);
 	dmap_structure_add (cmst, DMAP_CC_CARP, (gint32) repeat_state);
@@ -594,12 +595,12 @@ dacp_share_fill_playstatusupdate (DACPShare *share, SoupMessage *message)
 		gchar *album;
 		gint duration;
 		guint track_time;
-		g_object_get (record, 
-		              "title", &title,
-		              "songartist", &artist,
-		              "songalbum", &album,
-		              "duration", &duration,
-		              NULL);
+
+		g_object_get (record,
+			      "title", &title,
+			      "songartist", &artist,
+			      "songalbum", &album,
+			      "duration", &duration, NULL);
 		track_time = duration * 1000;
 		//dmap_structure_add (cmst, DMAP_CC_CAVC, 1);
 		dmap_structure_add (cmst, DMAP_CC_CAAS, 2);
@@ -614,8 +615,10 @@ dacp_share_fill_playstatusupdate (DACPShare *share, SoupMessage *message)
 		dmap_structure_add (cmst, DMAP_CC_CANG, "");
 		dmap_structure_add (cmst, DMAP_CC_ASAI, 0);
 		//dmap_structure_add (cmst, DMAP_CC_AEMK, 1);
-		g_debug ("Playing time: %u, Track time: %u", playing_time, track_time);
-		dmap_structure_add (cmst, DMAP_CC_CANT, track_time - playing_time);
+		g_debug ("Playing time: %u, Track time: %u", playing_time,
+			 track_time);
+		dmap_structure_add (cmst, DMAP_CC_CANT,
+				    track_time - playing_time);
 		dmap_structure_add (cmst, DMAP_CC_CAST, track_time);
 
 		g_free (title);
@@ -624,28 +627,27 @@ dacp_share_fill_playstatusupdate (DACPShare *share, SoupMessage *message)
 
 		g_object_unref (record);
 	}
-	
-	_dmap_share_message_set_from_dmap_structure (DMAP_SHARE (share), message, cmst);
+
+	_dmap_share_message_set_from_dmap_structure (DMAP_SHARE (share),
+						     message, cmst);
 	dmap_structure_destroy (cmst);
 }
 
 static void
 debug_param (gpointer key, gpointer val, gpointer user_data)
 {
-        g_debug ("%s %s", (char *) key, (char *) val);
+	g_debug ("%s %s", (char *) key, (char *) val);
 }
 
 void
-dacp_share_login (DMAPShare *share,
-	  SoupServer        *server,
-	  SoupMessage       *message,
-	  const char        *path,
-	  GHashTable        *query,
-	  SoupClientContext *context)
+dacp_share_login (DMAPShare * share,
+		  SoupServer * server,
+		  SoupMessage * message,
+		  const char *path,
+		  GHashTable * query, SoupClientContext * context)
 {
 	gchar *pairing_guid;
-	
-	
+
 	g_debug ("(DACP) Path is %s.", path);
 	if (query) {
 		g_hash_table_foreach (query, debug_param, NULL);
@@ -656,69 +658,74 @@ dacp_share_login (DMAPShare *share,
 	if (pairing_guid != NULL) {
 		gboolean allow_login;
 
-		g_signal_emit (share, signals [LOOKUP_GUID], 0, pairing_guid, &allow_login);
+		g_signal_emit (share, signals[LOOKUP_GUID], 0, pairing_guid,
+			       &allow_login);
 
 		if (!allow_login) {
 			g_debug ("Unknown remote trying to connect");
-			soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
+			soup_message_set_status (message,
+						 SOUP_STATUS_FORBIDDEN);
 			return;
 		}
 	}
-	
+
 	_dmap_share_login (share, server, message, path, query, context);
 }
 
 void
-dacp_share_ctrl_int (DMAPShare *share,
-		      SoupServer        *server,
-		      SoupMessage       *message,
-		      const char        *path,
-		      GHashTable        *query,
-		      SoupClientContext *context)
+dacp_share_ctrl_int (DMAPShare * share,
+		     SoupServer * server,
+		     SoupMessage * message,
+		     const char *path,
+		     GHashTable * query, SoupClientContext * context)
 {
 	const char *rest_of_path;
 
 	DACPShare *dacp_share = DACP_SHARE (share);
-	
+
 	g_debug ("Path is %s.", path);
 	if (query) {
 		g_hash_table_foreach (query, debug_param, NULL);
 	}
-		
+
 	rest_of_path = strchr (path + 1, '/');
 
 	/* If calling /ctrl-int without args, the client doesnt need a 
-	   session-id, otherwise it does and it should be validated. */
-	if ((rest_of_path != NULL) && (! _dmap_share_session_id_validate (share, context, message, query, NULL))) {
+	 * session-id, otherwise it does and it should be validated. */
+	if ((rest_of_path != NULL)
+	    &&
+	    (!_dmap_share_session_id_validate
+	     (share, context, message, query, NULL))) {
 		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
 		return;
 	}
 
 	if (rest_of_path == NULL) {
-	/* CACI control-int
-	 * 	MSTT status
-	 * 	MUTY update type
-	 * 	MTCO specified total count
-	 * 	MRCO returned count
-	 * 	MLCL listing
-	 * 		MLIT listing item
-	 * 			MIID item id
-	 * 			CMIK Unknown (TRUE)
-	 * 			CMSP Unknown (TRUE)
-	 * 			CMSV Unknown (TRUE)
-	 * 			CASS Unknown (TRUE)
-	 * 			CASU Unknown (TRUE)
-	 * 			CASG Unknown (TRUE)
-	 */
-	
+		/* CACI control-int
+		 *      MSTT status
+		 *      MUTY update type
+		 *      MTCO specified total count
+		 *      MRCO returned count
+		 *      MLCL listing
+		 *              MLIT listing item
+		 *                      MIID item id
+		 *                      CMIK Unknown (TRUE)
+		 *                      CMSP Unknown (TRUE)
+		 *                      CMSV Unknown (TRUE)
+		 *                      CASS Unknown (TRUE)
+		 *                      CASU Unknown (TRUE)
+		 *                      CASG Unknown (TRUE)
+		 */
+
 		GNode *caci;
 		GNode *mlcl;
 		GNode *mlit;
-	
+
 		// dacp.controlint
 		caci = dmap_structure_add (NULL, DMAP_CC_CACI);
 		// dmap.status
-		dmap_structure_add (caci, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (caci, DMAP_CC_MSTT,
+				    (gint32) DMAP_STATUS_OK);
 		// dmap.updatetype
 		dmap_structure_add (caci, DMAP_CC_MUTY, 0);
 		// dmap.specifiedtotalcount
@@ -744,14 +751,15 @@ dacp_share_ctrl_int (DMAPShare *share,
 		// Unknown (TRUE)
 		dmap_structure_add (mlit, DMAP_CC_CASG, (gint32) 1);
 
-		_dmap_share_message_set_from_dmap_structure (share, message, caci);
+		_dmap_share_message_set_from_dmap_structure (share, message,
+							     caci);
 		dmap_structure_destroy (caci);
 	} else if (g_ascii_strcasecmp ("/1/getproperty", rest_of_path) == 0) {
 		gchar *properties_query, **properties, **property;
 		GNode *cmgt;
-		
+
 		properties_query = g_hash_table_lookup (query, "properties");
-		
+
 		if (!properties_query) {
 			g_warning ("No property specified");
 			return;
@@ -759,57 +767,73 @@ dacp_share_ctrl_int (DMAPShare *share,
 
 		cmgt = dmap_structure_add (NULL, DMAP_CC_CMGT);
 		dmap_structure_add (cmgt, DMAP_CC_MSTT, DMAP_STATUS_OK);
-		
+
 		properties = g_strsplit (properties_query, ",", -1);
 		for (property = properties; *property; property++) {
-			if (g_ascii_strcasecmp (*property, "dmcp.volume") == 0) {
+			if (g_ascii_strcasecmp (*property, "dmcp.volume") ==
+			    0) {
 				gulong volume;
-				g_object_get (dacp_share->priv->player, "volume", &volume, NULL);
+
+				g_object_get (dacp_share->priv->player,
+					      "volume", &volume, NULL);
 				//g_debug ("Sending volume: %lu", volume);
-				dmap_structure_add (cmgt, DMAP_CC_CMVO, volume);
+				dmap_structure_add (cmgt, DMAP_CC_CMVO,
+						    volume);
 			} else {
-				g_warning ("Unhandled property %s", *property);
+				g_warning ("Unhandled property %s",
+					   *property);
 			}
 		}
 
 		g_strfreev (properties);
 
-		_dmap_share_message_set_from_dmap_structure (share, message, cmgt);
+		_dmap_share_message_set_from_dmap_structure (share, message,
+							     cmgt);
 		dmap_structure_destroy (cmgt);
 	} else if (g_ascii_strcasecmp ("/1/setproperty", rest_of_path) == 0) {
 		if (g_hash_table_lookup (query, "dmcp.volume")) {
-			gdouble volume = strtod (g_hash_table_lookup (query, "dmcp.volume"), NULL);
-			g_object_set (dacp_share->priv->player, "volume", (gulong) volume, NULL);
+			gdouble volume =
+				strtod (g_hash_table_lookup
+					(query, "dmcp.volume"), NULL);
+			g_object_set (dacp_share->priv->player, "volume",
+				      (gulong) volume, NULL);
 		}
 		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
 	} else if (g_ascii_strcasecmp ("/1/getspeakers", rest_of_path) == 0) {
 		GNode *casp;
 		GNode *mdcl;
-		
+
 		casp = dmap_structure_add (NULL, DMAP_CC_CASP);
-		dmap_structure_add (casp, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+		dmap_structure_add (casp, DMAP_CC_MSTT,
+				    (gint32) DMAP_STATUS_OK);
 		mdcl = dmap_structure_add (casp, DMAP_CC_MDCL);
-		
+
 		dmap_structure_add (casp, DMAP_CC_CAIA, TRUE);
 		dmap_structure_add (casp, DMAP_CC_MINM, "Computer");
 		dmap_structure_add (casp, DMAP_CC_MSMA, (gint32) 0);
-		
-		_dmap_share_message_set_from_dmap_structure (share, message, casp);
+
+		_dmap_share_message_set_from_dmap_structure (share, message,
+							     casp);
 		dmap_structure_destroy (casp);
-	} else if (g_ascii_strcasecmp ("/1/playstatusupdate", rest_of_path) == 0) {
-		gchar *revision = g_hash_table_lookup (query, "revision-number");
+	} else if (g_ascii_strcasecmp ("/1/playstatusupdate", rest_of_path) ==
+		   0) {
+		gchar *revision =
+			g_hash_table_lookup (query, "revision-number");
 		gint revision_number = atoi (revision);
 
 		if (revision_number >= dacp_share->priv->current_revision) {
 			g_object_ref (message);
-			dacp_share->priv->update_queue = g_slist_prepend (dacp_share->priv->update_queue, message);
-			g_signal_connect_object (message, 
-			                         "finished", 
-			                         G_CALLBACK (status_update_message_finished), 
-			                         dacp_share, 0);
+			dacp_share->priv->update_queue =
+				g_slist_prepend (dacp_share->priv->
+						 update_queue, message);
+			g_signal_connect_object (message, "finished",
+						 G_CALLBACK
+						 (status_update_message_finished),
+						 dacp_share, 0);
 			soup_server_pause_message (server, message);
 		} else {
-			dacp_share_fill_playstatusupdate (dacp_share, message);
+			dacp_share_fill_playstatusupdate (dacp_share,
+							  message);
 		}
 	} else if (g_ascii_strcasecmp ("/1/playpause", rest_of_path) == 0) {
 		dacp_player_play_pause (dacp_share->priv->player);
@@ -823,62 +847,79 @@ dacp_share_ctrl_int (DMAPShare *share,
 	} else if (g_ascii_strcasecmp ("/1/previtem", rest_of_path) == 0) {
 		dacp_player_prev_item (dacp_share->priv->player);
 		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
-	} else if (g_ascii_strcasecmp ("/1/nowplayingartwork", rest_of_path) == 0) {
+	} else if (g_ascii_strcasecmp ("/1/nowplayingartwork", rest_of_path)
+		   == 0) {
 		guint width = 320;
 		guint height = 320;
 		gchar *artwork_filename;
 		gchar *buffer;
 		gsize buffer_len;
-		
+
 		if (g_hash_table_lookup (query, "mw"))
 			width = atoi (g_hash_table_lookup (query, "mw"));
 		if (g_hash_table_lookup (query, "mh"))
 			height = atoi (g_hash_table_lookup (query, "mh"));
-		artwork_filename = dacp_player_now_playing_artwork (dacp_share->priv->player, width, height);
+		artwork_filename =
+			dacp_player_now_playing_artwork (dacp_share->priv->
+							 player, width,
+							 height);
 		if (!artwork_filename) {
 			g_debug ("No artwork for currently playing song");
-			soup_message_set_status (message, SOUP_STATUS_NOT_FOUND);
+			soup_message_set_status (message,
+						 SOUP_STATUS_NOT_FOUND);
 			return;
 		}
 #ifdef HAVE_GDKPIXBUF
-		GdkPixbuf *artwork = gdk_pixbuf_new_from_file_at_scale (artwork_filename, width, height, TRUE, NULL);
+		GdkPixbuf *artwork =
+			gdk_pixbuf_new_from_file_at_scale (artwork_filename,
+							   width, height,
+							   TRUE, NULL);
 		if (!artwork) {
 			g_debug ("Error loading image file");
 			g_free (artwork_filename);
-			soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_message_set_status (message,
+						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
-		if (!gdk_pixbuf_save_to_buffer (artwork, &buffer, &buffer_len, "png", NULL, NULL)) {
+		if (!gdk_pixbuf_save_to_buffer
+		    (artwork, &buffer, &buffer_len, "png", NULL, NULL)) {
 			g_debug ("Error saving artwork to PNG");
 			g_object_unref (artwork);
 			g_free (artwork_filename);
-			soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_message_set_status (message,
+						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
 		g_object_unref (artwork);
 #else
-		if (!g_file_get_contents (artwork_filename, &buffer, &buffer_len, NULL)) {
+		if (!g_file_get_contents
+		    (artwork_filename, &buffer, &buffer_len, NULL)) {
 			g_debug ("Error getting artwork data");
 			g_free (artwork_filename);
-			soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_message_set_status (message,
+						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
 			return;
 		}
 #endif
 		g_free (artwork_filename);
 		soup_message_set_status (message, SOUP_STATUS_OK);
-		soup_message_set_response (message, "image/png", SOUP_MEMORY_TAKE, buffer, buffer_len);
+		soup_message_set_response (message, "image/png",
+					   SOUP_MEMORY_TAKE, buffer,
+					   buffer_len);
 	} else if (g_ascii_strcasecmp ("/1/cue", rest_of_path) == 0) {
 		gchar *command;
-		
+
 		command = g_hash_table_lookup (query, "command");
 
 		if (!command) {
 			g_debug ("No CUE command specified");
-			soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+			soup_message_set_status (message,
+						 SOUP_STATUS_NO_CONTENT);
 			return;
 		} else if (g_ascii_strcasecmp ("clear", command) == 0) {
 			dacp_player_cue_clear (dacp_share->priv->player);
-			soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+			soup_message_set_status (message,
+						 SOUP_STATUS_NO_CONTENT);
 		} else if (g_ascii_strcasecmp ("play", command) == 0) {
 			GNode *cacr;
 			gchar *record_query;
@@ -887,7 +928,8 @@ dacp_share_ctrl_int (DMAPShare *share,
 			GList *sorted_records;
 			GSList *filter_def;
 			DMAPDb *db;
-			gint index = atoi (g_hash_table_lookup (query, "index"));
+			gint index =
+				atoi (g_hash_table_lookup (query, "index"));
 
 			g_object_get (share, "db", &db, NULL);
 			record_query = g_hash_table_lookup (query, "query");
@@ -896,26 +938,36 @@ dacp_share_ctrl_int (DMAPShare *share,
 			sorted_records = g_hash_table_get_values (records);
 			sort_by = g_hash_table_lookup (query, "sort");
 			if (g_strcmp0 (sort_by, "album") == 0) {
-				sorted_records = g_list_sort_with_data (sorted_records, (GCompareDataFunc) daap_record_cmp_by_album, db);
+				sorted_records =
+					g_list_sort_with_data (sorted_records,
+							       (GCompareDataFunc)
+							       daap_record_cmp_by_album,
+							       db);
 			} else if (sort_by != NULL) {
-				g_warning ("Unknown sort column: %s", sort_by);
+				g_warning ("Unknown sort column: %s",
+					   sort_by);
 			}
-			
-			dacp_player_cue_play (dacp_share->priv->player, sorted_records, index);
+
+			dacp_player_cue_play (dacp_share->priv->player,
+					      sorted_records, index);
 
 			g_list_free (sorted_records);
 			g_hash_table_unref (records);
 			dmap_share_free_filter (filter_def);
 
 			cacr = dmap_structure_add (NULL, DMAP_CC_CACR);
-			dmap_structure_add (cacr, DMAP_CC_MSTT, DMAP_STATUS_OK);
+			dmap_structure_add (cacr, DMAP_CC_MSTT,
+					    DMAP_STATUS_OK);
 			dmap_structure_add (cacr, DMAP_CC_MIID, index);
 
-			_dmap_share_message_set_from_dmap_structure (share, message, cacr);
+			_dmap_share_message_set_from_dmap_structure (share,
+								     message,
+								     cacr);
 			dmap_structure_destroy (cacr);
 		} else {
 			g_warning ("Unhandled cue command: %s", command);
-			soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+			soup_message_set_status (message,
+						 SOUP_STATUS_NO_CONTENT);
 			return;
 		}
 	} else {
@@ -928,33 +980,38 @@ dacp_share_ctrl_int (DMAPShare *share,
 #define PASSCODE_LENGTH 4
 
 static gchar *
-dacp_share_pairing_code(DACPShare *share, gchar* pair_txt, gchar passcode[4]) {
+dacp_share_pairing_code (DACPShare * share, gchar * pair_txt,
+			 gchar passcode[4])
+{
 	int i;
 	GString *pairing_code;
 	gchar *pairing_string;
 	gchar *ret;
-	
+
 	/* The pairing code is the MD5 sum of the concatenation of pair_txt
-	   with the passcode, but the passcode takes 16-bits unicodes characters */
-	pairing_string = g_strnfill(PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2, '\0');
-	g_strlcpy(pairing_string, pair_txt, PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2);
+	 * with the passcode, but the passcode takes 16-bits unicodes characters */
+	pairing_string =
+		g_strnfill (PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2, '\0');
+	g_strlcpy (pairing_string, pair_txt,
+		   PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2);
 	for (i = 0; i < 4; i++) {
 		pairing_string[PAIR_TXT_LENGTH + i * 2] = passcode[i];
 	}
-	
-	pairing_code = g_string_new (
-		g_compute_checksum_for_data(G_CHECKSUM_MD5, 
-		                            (guchar*)pairing_string, 
-		                            PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2));
+
+	pairing_code =
+		g_string_new (g_compute_checksum_for_data
+			      (G_CHECKSUM_MD5, (guchar *) pairing_string,
+			       PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2));
 	g_string_ascii_up (pairing_code);
 	ret = pairing_code->str;
 	g_string_free (pairing_code, FALSE);
-	
+
 	return ret;
 }
 
 void
-connection_handler_cb (DMAPConnection *connection, guint status, GNode *structure, gpointer user_data) 
+connection_handler_cb (DMAPConnection * connection, guint status,
+		       GNode * structure, gpointer user_data)
 {
 	gboolean connected;
 	GHashTableIter iter;
@@ -971,24 +1028,26 @@ connection_handler_cb (DMAPConnection *connection, guint status, GNode *structur
 	} else {
 		connected = FALSE;
 	}
-	
+
 	/* Get the pairing-guid to identify this remote in the future. */
 	if (structure)
 		item = dmap_structure_find_item (structure, DMAP_CC_CMPG);
 	if (item) {
 		guint64 guid = g_value_get_int64 (&(item->content));
-		pairing_guid = g_strdup_printf ("0x%.16" G_GINT64_MODIFIER "X", guid);
-		g_signal_emit (share, signals [ADD_GUID], 0, pairing_guid);
+
+		pairing_guid =
+			g_strdup_printf ("0x%.16" G_GINT64_MODIFIER "X",
+					 guid);
+		g_signal_emit (share, signals[ADD_GUID], 0, pairing_guid);
 		g_free (pairing_guid);
 	}
 
 	/* Find the remote that initiated this connection */
 	g_hash_table_iter_init (&iter, share->priv->remotes);
-	while (g_hash_table_iter_next (&iter, &key, &value)) 
-	{
-		if (((DACPRemoteInfo*) value)->connection == connection) {
+	while (g_hash_table_iter_next (&iter, &key, &value)) {
+		if (((DACPRemoteInfo *) value)->connection == connection) {
 			service_name = (gchar *) key;
-			remote_info = (DACPRemoteInfo*) value;
+			remote_info = (DACPRemoteInfo *) value;
 			break;
 		}
 	}
@@ -999,24 +1058,25 @@ connection_handler_cb (DMAPConnection *connection, guint status, GNode *structur
 	}
 
 	/* Frees the connection */
-	remote_info->connection = NULL;	
+	remote_info->connection = NULL;
 	g_object_unref (connection);
 
 	/* FIXME: Send more detailed error info, such as wrong pair code, etc */
-	g_signal_emit (share, signals [REMOTE_PAIRED], 0, service_name, connected);
+	g_signal_emit (share, signals[REMOTE_PAIRED], 0, service_name,
+		       connected);
 }
 
 void
-dacp_share_pair (DACPShare *share, gchar *service_name, gchar passcode[4]) 
+dacp_share_pair (DACPShare * share, gchar * service_name, gchar passcode[4])
 {
 	gchar *pairing_code;
 	gchar *name;
 	gchar *path;
 	DACPRemoteInfo *remote_info;
-	
+
 	remote_info = g_hash_table_lookup (share->priv->remotes,
-	                                   service_name);
-	                                   
+					   service_name);
+
 	if (remote_info == NULL) {
 		g_warning ("Remote %s not found.", service_name);
 		return;
@@ -1026,29 +1086,30 @@ dacp_share_pair (DACPShare *share, gchar *service_name, gchar passcode[4])
 		g_warning ("Already pairing remote %s.", service_name);
 		return;
 	}
-	
+
 	g_object_get (share, "name", &name, NULL);
-	
-	remote_info->connection = dacp_connection_new (name, 
-	                                               remote_info->host, 
-	                                               remote_info->port, 
-	                                               FALSE, 
-	                                               NULL, 
-	                                               NULL);
+
+	remote_info->connection = dacp_connection_new (name,
+						       remote_info->host,
+						       remote_info->port,
+						       FALSE, NULL, NULL);
 	/* This is required since we don't call DMAPConnection default handler */
 	dmap_connection_setup (remote_info->connection);
-	
+
 	/* Get the remote path for pairing */
-	pairing_code = dacp_share_pairing_code (share, remote_info->pair_txt, passcode);
-	path = g_strdup_printf ("/pair?pairingcode=%s&servicename=%s", 
-	                        pairing_code,
-	                        name);
+	pairing_code =
+		dacp_share_pairing_code (share, remote_info->pair_txt,
+					 passcode);
+	path = g_strdup_printf ("/pair?pairingcode=%s&servicename=%s",
+				pairing_code, name);
 	g_free (pairing_code);
-	
-	g_debug ("Pairing remote in %s:%d/%s", remote_info->host, remote_info->port, path);
+
+	g_debug ("Pairing remote in %s:%d/%s", remote_info->host,
+		 remote_info->port, path);
 
 	/* Let DMAPConnection do the heavy work */
-	dmap_connection_get (remote_info->connection, path, FALSE, connection_handler_cb, share);
+	dmap_connection_get (remote_info->connection, path, FALSE,
+			     connection_handler_cb, share);
 
 	g_free (path);
 }

@@ -23,7 +23,6 @@
 #include <libdmapsharing/dmap-db.h>
 
 G_BEGIN_DECLS
-
 /**
  * DAAP_TYPE_CONNECTION:
  *
@@ -71,26 +70,26 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DAAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DAAP_TYPE_CONNECTION, DAAPConnectionClass))
-
 typedef struct DAAPConnectionPrivate DAAPConnectionPrivate;
 
-typedef struct {
+typedef struct
+{
 	DMAPConnectionClass dmap_connection_class;
 } DAAPConnectionClass;
 
-typedef struct {
+typedef struct
+{
 	DMAPConnection dmap_connection_instance;
 	DAAPConnectionPrivate *priv;
 } DAAPConnection;
 
-GType              daap_connection_get_type        (void);
+GType daap_connection_get_type (void);
 
-DAAPConnection * daap_connection_new             (const char              *name,
-						  const char              *host,
-						  guint                    port,
-						  gboolean                 password_protected,
-						  DMAPDb		  *db,
-						  DMAPRecordFactory *factory);
+DAAPConnection *daap_connection_new (const char *name,
+				     const char *host,
+				     guint port,
+				     gboolean password_protected,
+				     DMAPDb * db,
+				     DMAPRecordFactory * factory);
 G_END_DECLS
-
 #endif /* __DAAP_CONNECTION_H */

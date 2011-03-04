@@ -25,7 +25,6 @@
 #include <libdmapsharing/dmap-db.h>
 
 G_BEGIN_DECLS
-
 /**
  * DMAP_TYPE_CONTAINER_RECORD:
  *
@@ -61,23 +60,24 @@ G_BEGIN_DECLS
  */
 #define DMAP_CONTAINER_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecordIface))
-
 typedef struct _DMAPContainerRecord DMAPContainerRecord;
 typedef struct _DMAPContainerRecordIface DMAPContainerRecordIface;
 
-struct _DMAPContainerRecordIface {
+struct _DMAPContainerRecordIface
+{
 	GTypeInterface parent;
-	
-	guint		(*get_id)	    (DMAPContainerRecord *record);
 
-	void (*add_entry) (DMAPContainerRecord *container_record, DMAPRecord *record, gint id);
+	  guint (*get_id) (DMAPContainerRecord * record);
 
-	guint64 (*get_entry_count) (DMAPContainerRecord *record);
+	void (*add_entry) (DMAPContainerRecord * container_record,
+			   DMAPRecord * record, gint id);
 
-	DMAPDb *(*get_entries) (DMAPContainerRecord *record);
+	  guint64 (*get_entry_count) (DMAPContainerRecord * record);
+
+	DMAPDb *(*get_entries) (DMAPContainerRecord * record);
 };
 
-GType       dmap_container_record_get_type         (void);
+GType dmap_container_record_get_type (void);
 
 /**
  * dmap_container_record_get_id:
@@ -85,7 +85,7 @@ GType       dmap_container_record_get_type         (void);
  *
  * Returns: the ID for the given record.
  */
-guint       dmap_container_record_get_id           (DMAPContainerRecord *record);
+guint dmap_container_record_get_id (DMAPContainerRecord * record);
 
 /**
  * dmap_container_record_add_entry:
@@ -96,9 +96,8 @@ guint       dmap_container_record_get_id           (DMAPContainerRecord *record)
  * Add a record to the database. It is assumed that the record is placed
  * directly into the database (not copied) and not freed.
  */
-void        dmap_container_record_add_entry        (DMAPContainerRecord *container_record,
-						    DMAPRecord *record,
-						    gint id);
+void dmap_container_record_add_entry (DMAPContainerRecord * container_record,
+				      DMAPRecord * record, gint id);
 
 /**
  * dmap_container_record_get_entry_count:
@@ -106,7 +105,7 @@ void        dmap_container_record_add_entry        (DMAPContainerRecord *contain
  *
  * Returns: the number of records in the container record.
  */
-guint64     dmap_container_record_get_entry_count  (DMAPContainerRecord *record);
+guint64 dmap_container_record_get_entry_count (DMAPContainerRecord * record);
 
 /**
  * dmap_container_record_get_entries:
@@ -114,7 +113,7 @@ guint64     dmap_container_record_get_entry_count  (DMAPContainerRecord *record)
  *
  * Returns: A pointer to a DMAPDb containing the entries contained in record.
  */
-DMAPDb *dmap_container_record_get_entries      (DMAPContainerRecord *record);
+DMAPDb *dmap_container_record_get_entries (DMAPContainerRecord * record);
 
 #endif /* __DMAP_CONTAINER_RECORD_H */
 

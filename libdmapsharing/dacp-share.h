@@ -31,7 +31,6 @@
 #include <libdmapsharing/daap-share.h>
 
 G_BEGIN_DECLS
-
 /**
  * DACP_TYPE_SHARE:
  *
@@ -83,31 +82,29 @@ G_BEGIN_DECLS
  */
 #define DACP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 DACP_TYPE_SHARE, DACPShareClass))
-
 typedef struct DACPSharePrivate DACPSharePrivate;
 
-typedef struct {
+typedef struct
+{
 	DAAPShare daap_share_instance;
 	DACPSharePrivate *priv;
 } DACPShare;
 
-typedef struct {
+typedef struct
+{
 	DAAPShareClass daap_share_class;
-	
-	gboolean (*lookup_guid)            (DACPShare *share, gchar *guid);
-	void     (*add_guid)               (DACPShare *share, gchar *guid);
-	
-	void (*remote_found)               (DACPShare *share,
-	                                    gchar *service_name,
-	                                    gchar *remote_name);
-	void (*remote_lost)                (DACPShare *share,
-	                                    gchar *service_name);
-	void (*remote_paired)              (DACPShare *share,
-	                                    gchar *service_name,
-	                                    gboolean connected);
+
+	  gboolean (*lookup_guid) (DACPShare * share, gchar * guid);
+	void (*add_guid) (DACPShare * share, gchar * guid);
+
+	void (*remote_found) (DACPShare * share,
+			      gchar * service_name, gchar * remote_name);
+	void (*remote_lost) (DACPShare * share, gchar * service_name);
+	void (*remote_paired) (DACPShare * share,
+			       gchar * service_name, gboolean connected);
 } DACPShareClass;
 
-GType      dacp_share_get_type (void);
+GType dacp_share_get_type (void);
 
 /**
  * dacp_share_new:
@@ -122,7 +119,8 @@ GType      dacp_share_get_type (void);
  *
  * Returns: a pointer to a #DACPShare.
  */
-DACPShare *dacp_share_new (const gchar *library_name, DACPPlayer *player, DMAPDb *db, DMAPContainerDb *container_db);
+DACPShare *dacp_share_new (const gchar * library_name, DACPPlayer * player,
+			   DMAPDb * db, DMAPContainerDb * container_db);
 
 /**
  * dacp_share_pair:
@@ -134,7 +132,8 @@ DACPShare *dacp_share_new (const gchar *library_name, DACPPlayer *player, DMAPDb
  * correct (the same as shown on the remote), the remote will start connecting
  * to this server.
  */
-void dacp_share_pair (DACPShare *share, gchar *service_name, gchar passcode[4]);
+void dacp_share_pair (DACPShare * share, gchar * service_name,
+		      gchar passcode[4]);
 
 /**
  * dacp_share_start_lookup:
@@ -145,7 +144,7 @@ void dacp_share_pair (DACPShare *share, gchar *service_name, gchar passcode[4]);
  * after calling this function is that it starts looking up for Remotes on the
  * network.
  */
-void dacp_share_start_lookup (DACPShare *share);
+void dacp_share_start_lookup (DACPShare * share);
 
 /**
  * dacp_share_stop_lookup:
@@ -153,7 +152,7 @@ void dacp_share_start_lookup (DACPShare *share);
  *     
  * Stop looking up for DACP remotes.
  */
-void dacp_share_stop_lookup (DACPShare *share);
+void dacp_share_stop_lookup (DACPShare * share);
 
 /**
  * dacp_share_player_update:
@@ -161,8 +160,8 @@ void dacp_share_stop_lookup (DACPShare *share);
  * 
  * Signals that the player has been updated (different track playing, playing
  * state changed, suffle state changed, etc).
- */ 
-void dacp_share_player_updated (DACPShare *share);
+ */
+void dacp_share_player_updated (DACPShare * share);
 
 #endif /* __DACP_SHARE_H */
 

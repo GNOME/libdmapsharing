@@ -26,7 +26,6 @@
 #include <libdmapsharing/dmap-container-record.h>
 
 G_BEGIN_DECLS
-
 /**
  * DMAP_TYPE_CONTAINER_DB:
  *
@@ -62,23 +61,21 @@ G_BEGIN_DECLS
  */
 #define DMAP_CONTAINER_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				            DMAP_TYPE_CONTAINER_DB, DMAPContainerDbIface))
-
 typedef struct _DMAPContainerDb DMAPContainerDb;
 typedef struct _DMAPContainerDbIface DMAPContainerDbIface;
 
-struct _DMAPContainerDbIface {
+struct _DMAPContainerDbIface
+{
 	GTypeInterface parent;
 
-	DMAPContainerRecord *(*lookup_by_id)    (DMAPContainerDb *db, guint id);
+	DMAPContainerRecord *(*lookup_by_id) (DMAPContainerDb * db, guint id);
 
-	void        (*foreach) (DMAPContainerDb *db,
-				GHFunc func,
-				gpointer data);
+	void (*foreach) (DMAPContainerDb * db, GHFunc func, gpointer data);
 
-	gint64 (*count)        (DMAPContainerDb *db);
+	  gint64 (*count) (DMAPContainerDb * db);
 };
 
-GType	    dmap_container_db_get_type        (void);
+GType dmap_container_db_get_type (void);
 
 /**
  * dmap_container_db_lookup_by_id:
@@ -88,7 +85,8 @@ GType	    dmap_container_db_get_type        (void);
  * Returns: the database record corresponding to @id. This record should
  * be unrefed when no longer required.
  */
-DMAPContainerRecord *dmap_container_db_lookup_by_id    (DMAPContainerDb *db, guint id);
+DMAPContainerRecord *dmap_container_db_lookup_by_id (DMAPContainerDb * db,
+						     guint id);
 
 /**
  * dmap_container_db_foreach:
@@ -98,9 +96,8 @@ DMAPContainerRecord *dmap_container_db_lookup_by_id    (DMAPContainerDb *db, gui
  *
  * Apply a function to each record in a container database.
  */
-void	    dmap_container_db_foreach         (DMAPContainerDb *db,
-					       GHFunc func,
-				     	       gpointer data);
+void dmap_container_db_foreach (DMAPContainerDb * db,
+				GHFunc func, gpointer data);
 
 /**
  * dmap_container_db_count:
@@ -108,7 +105,7 @@ void	    dmap_container_db_foreach         (DMAPContainerDb *db,
  *
  * Returns: the number of records in the database.
  */
-gulong      dmap_container_db_count           (DMAPContainerDb *db);
+gulong dmap_container_db_count (DMAPContainerDb * db);
 
 #endif /* __DMAP_CONTAINER_DB_H */
 

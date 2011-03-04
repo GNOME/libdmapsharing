@@ -24,7 +24,6 @@
 #include <glib-object.h>
 
 G_BEGIN_DECLS
-
 /**
  * DMAP_TYPE_RECORD:
  *
@@ -59,30 +58,32 @@ G_BEGIN_DECLS
  */
 #define DMAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      DMAP_TYPE_RECORD, DMAPRecordIface))
-
 typedef struct _DMAPRecord DMAPRecord;
 typedef struct _DMAPRecordIface DMAPRecordIface;
 
-struct _DMAPRecordIface {
+struct _DMAPRecordIface
+{
 	GTypeInterface parent;
 
-	GByteArray * (*to_blob)	      (DMAPRecord *record);
-	DMAPRecord * (*set_from_blob) (DMAPRecord *record, GByteArray *blob);
+	GByteArray *(*to_blob) (DMAPRecord * record);
+	DMAPRecord *(*set_from_blob) (DMAPRecord * record, GByteArray * blob);
 };
 
 typedef unsigned long long bitwise;
 
-struct MLCL_Bits {
+struct MLCL_Bits
+{
 	GNode *mlcl;
 	bitwise bits;
 };
 
-typedef enum {
+typedef enum
+{
 	DMAP_MEDIA_KIND_MUSIC = 1,
 	DMAP_MEDIA_KIND_MOVIE = 2
 } DMAPMediaKind;
 
-GType       dmap_record_get_type      (void);
+GType dmap_record_get_type (void);
 
 /**
  * dmap_record_to_blob:
@@ -90,7 +91,7 @@ GType       dmap_record_get_type      (void);
  *
  * Returns: A byte array representation of the record.
  */
-GByteArray *dmap_record_to_blob (DMAPRecord *record);
+GByteArray *dmap_record_to_blob (DMAPRecord * record);
 
 /**
  * dmap_record_from_blob:
@@ -98,7 +99,8 @@ GByteArray *dmap_record_to_blob (DMAPRecord *record);
  *
  * Returns: The record.
  */
-DMAPRecord *dmap_record_set_from_blob (DMAPRecord *record, GByteArray *blob);
+DMAPRecord *dmap_record_set_from_blob (DMAPRecord * record,
+				       GByteArray * blob);
 
 #endif /* __DMAP_RECORD_H */
 

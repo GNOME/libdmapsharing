@@ -26,7 +26,6 @@
 #include <libdmapsharing/dmap-record.h>
 
 G_BEGIN_DECLS
-
 /**
  * DMAP_TYPE_RECORD_FACTORY:
  *
@@ -64,14 +63,15 @@ G_BEGIN_DECLS
 				 (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				  DMAP_TYPE_RECORD_FACTORY, \
 				  DMAPRecordFactoryIface))
-
 typedef struct _DMAPRecordFactory DMAPRecordFactory;
 typedef struct _DMAPRecordFactoryIface DMAPRecordFactoryIface;
 
-struct _DMAPRecordFactoryIface {
+struct _DMAPRecordFactoryIface
+{
 	GTypeInterface parent;
 
-	DMAPRecord *(*create) (DMAPRecordFactory *factory, gpointer user_data);
+	DMAPRecord *(*create) (DMAPRecordFactory * factory,
+			       gpointer user_data);
 };
 
 GType dmap_record_factory_get_type (void);
@@ -83,7 +83,7 @@ GType dmap_record_factory_get_type (void);
  *
  * Returns: a new DMAPRecord as read from path.
  */
-DMAPRecord *dmap_record_factory_create (DMAPRecordFactory *factory,
+DMAPRecord *dmap_record_factory_create (DMAPRecordFactory * factory,
 					gpointer user_data);
 
 #endif /* __DMAP_RECORD_FACTORY_H */

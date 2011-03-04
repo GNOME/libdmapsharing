@@ -29,11 +29,10 @@
 #include <libdmapsharing/dmap-db.h>
 #include <libdmapsharing/dmap-record-factory.h>
 
-G_BEGIN_DECLS
-
-typedef struct {
-	char  *name;
-	int    id;
+G_BEGIN_DECLS typedef struct
+{
+	char *name;
+	int id;
 	GList *uris;
 } DMAPPlaylist;
 
@@ -87,7 +86,8 @@ typedef struct {
 
 typedef struct DMAPConnectionPrivate DMAPConnectionPrivate;
 
-typedef enum {
+typedef enum
+{
 	DMAP_GET_INFO = 0,
 	DMAP_GET_PASSWORD,
 	DMAP_LOGIN,
@@ -100,79 +100,78 @@ typedef enum {
 	DMAP_DONE
 } DMAPConnectionState;
 
-typedef struct {
+typedef struct
+{
 	GObject parent;
 	DMAPConnectionPrivate *priv;
 } DMAPConnection;
 
-typedef struct {
+typedef struct
+{
 	GObjectClass parent;
 
 	/* Pure virtual methods: */
-	DMAPContentCode (*get_protocol_version_cc) (DMAPConnection *connection);
-	gchar *         (*get_query_metadata)      (DMAPConnection *connection);
-	DMAPRecord *(*handle_mlcl) (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *mlcl, gint *item_id);
+	  DMAPContentCode (*get_protocol_version_cc) (DMAPConnection *
+						      connection);
+	gchar *(*get_query_metadata) (DMAPConnection * connection);
+	DMAPRecord *(*handle_mlcl) (DMAPConnection * connection,
+				    DMAPRecordFactory * factory, GNode * mlcl,
+				    gint * item_id);
 
-	SoupMessage * (*build_message)
-				  (DMAPConnection     *connection,
-				   const gchar        *path,
-				   gboolean            need_hash,
-				   gdouble             version,
-				   gint                req_id,
-				   gboolean            send_close);
-	void   (* connected)      (DMAPConnection     *connection);
-	void   (* disconnected)   (DMAPConnection     *connection);
+	SoupMessage *(*build_message)
+	 
+		(DMAPConnection * connection,
+	   const gchar * path,
+	   gboolean need_hash,
+	   gdouble version, gint req_id, gboolean send_close);
+	void (*connected) (DMAPConnection * connection);
+	void (*disconnected) (DMAPConnection * connection);
 
-	char * (* authenticate)   (DMAPConnection     *connection,
-				   const char           *name);
-	void   (* connecting)     (DMAPConnection     *connection,
-				   DMAPConnectionState state,
-				   float		 progress);
+	char *(*authenticate) (DMAPConnection * connection, const char *name);
+	void (*connecting) (DMAPConnection * connection,
+			    DMAPConnectionState state, float progress);
 
-	void   (* operation_done) (DMAPConnection     *connection);
+	void (*operation_done) (DMAPConnection * connection);
 
 } DMAPConnectionClass;
 
 /* hmm, maybe should give more error information? */
-typedef gboolean (* DMAPConnectionCallback)  (DMAPConnection *connection,
-						gboolean          result,
-						const char       *reason,
-						gpointer          user_data);
+typedef gboolean (*DMAPConnectionCallback) (DMAPConnection * connection,
+					    gboolean result,
+					    const char *reason,
+					    gpointer user_data);
 
-typedef void (* DMAPResponseHandler) (DMAPConnection *connection,
-                                      guint status,
-                                      GNode *structure,
-                                      gpointer user_data);
+typedef void (*DMAPResponseHandler) (DMAPConnection * connection,
+				     guint status,
+				     GNode * structure, gpointer user_data);
 
-GType              dmap_connection_get_type        (void);
+GType dmap_connection_get_type (void);
 
-gboolean           dmap_connection_is_connected    (DMAPConnection        *connection);
-void               dmap_connection_setup           (DMAPConnection        *connection);
-void               dmap_connection_connect         (DMAPConnection        *connection,
-						       DMAPConnectionCallback callback,
-						       gpointer                 user_data);
-void               dmap_connection_disconnect      (DMAPConnection        *connection,
-						       DMAPConnectionCallback callback,
-						       gpointer                 user_data);
+gboolean dmap_connection_is_connected (DMAPConnection * connection);
+void dmap_connection_setup (DMAPConnection * connection);
+void dmap_connection_connect (DMAPConnection * connection,
+			      DMAPConnectionCallback callback,
+			      gpointer user_data);
+void dmap_connection_disconnect (DMAPConnection * connection,
+				 DMAPConnectionCallback callback,
+				 gpointer user_data);
 
-SoupMessageHeaders *dmap_connection_get_headers     (DMAPConnection         *connection,
-						       const char               *uri);
+SoupMessageHeaders *dmap_connection_get_headers (DMAPConnection * connection,
+						 const char *uri);
 
-GSList *           dmap_connection_get_playlists   (DMAPConnection         *connection);
+GSList *dmap_connection_get_playlists (DMAPConnection * connection);
 
-SoupMessage *      dmap_connection_build_message   (DMAPConnection     *connection,
-				  		    const gchar        *path,
-				  		    gboolean            need_hash,
-				  		    gdouble             version,
-				  		    gint                req_id,
-				  		    gboolean            send_close);
+SoupMessage *dmap_connection_build_message (DMAPConnection * connection,
+					    const gchar * path,
+					    gboolean need_hash,
+					    gdouble version,
+					    gint req_id, gboolean send_close);
 
-gboolean dmap_connection_get (DMAPConnection *self,
-                     const gchar *path,
-                     gboolean need_hash,
-                     DMAPResponseHandler handler,
-                     gpointer user_data);
+gboolean dmap_connection_get (DMAPConnection * self,
+			      const gchar * path,
+			      gboolean need_hash,
+			      DMAPResponseHandler handler,
+			      gpointer user_data);
 
 G_END_DECLS
-
 #endif /* __DMAP_CONNECTION_H */

@@ -25,7 +25,7 @@
 #define DMAP_SHARE_CHUNK_SIZE 16384
 
 void
-dmap_write_next_chunk (SoupMessage *message, ChunkData *cd)
+dmap_write_next_chunk (SoupMessage * message, ChunkData * cd)
 {
 	gssize read_size;
 	GError *error = NULL;
@@ -33,14 +33,10 @@ dmap_write_next_chunk (SoupMessage *message, ChunkData *cd)
 
 	read_size = g_input_stream_read (cd->stream,
 					 chunk,
-					 DMAP_SHARE_CHUNK_SIZE,
-					 NULL,
-					 &error);
+					 DMAP_SHARE_CHUNK_SIZE, NULL, &error);
 	if (read_size > 0) {
 		soup_message_body_append (message->response_body,
-					  SOUP_MEMORY_TAKE,
-					  chunk,
-					  read_size);
+					  SOUP_MEMORY_TAKE, chunk, read_size);
 	} else {
 		if (error != NULL) {
 			g_warning ("Error reading from input stream: %s",
@@ -55,7 +51,7 @@ dmap_write_next_chunk (SoupMessage *message, ChunkData *cd)
 }
 
 void
-dmap_chunked_message_finished (SoupMessage *message, ChunkData *cd)
+dmap_chunked_message_finished (SoupMessage * message, ChunkData * cd)
 {
 	g_debug ("Finished sending chunked file.");
 	g_input_stream_close (cd->stream, NULL, NULL);

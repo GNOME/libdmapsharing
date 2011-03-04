@@ -31,7 +31,6 @@
 #include <libdmapsharing/dmap-container-db.h>
 
 G_BEGIN_DECLS
-
 /**
  * DAAP_TYPE_SHARE:
  *
@@ -83,19 +82,20 @@ G_BEGIN_DECLS
  */
 #define DAAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 DAAP_TYPE_SHARE, DAAPShareClass))
-
 typedef struct DAAPSharePrivate DAAPSharePrivate;
 
-typedef struct {
+typedef struct
+{
 	DMAPShareClass dmap_share_class;
 } DAAPShareClass;
 
-typedef struct {
+typedef struct
+{
 	DMAPShare dmap_share_instance;
 	DAAPSharePrivate *priv;
 } DAAPShare;
 
-GType      daap_share_get_type (void);
+GType daap_share_get_type (void);
 
 /**
  * daap_share_new:
@@ -109,9 +109,9 @@ GType      daap_share_get_type (void);
  *
  * Returns: a pointer to a DAAPShare.
  */
-DAAPShare *daap_share_new      (const char *name, const char *password,
-			        DMAPDb *db, DMAPContainerDb *container_db,
-				gchar *transcode_mimetype);
+DAAPShare *daap_share_new (const char *name, const char *password,
+			   DMAPDb * db, DMAPContainerDb * container_db,
+			   gchar * transcode_mimetype);
 
 #endif /* __DAAP_SHARE_H */
 

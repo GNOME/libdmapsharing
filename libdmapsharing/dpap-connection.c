@@ -31,7 +31,7 @@ struct DPAPConnectionPrivate {
 */
 
 static DMAPContentCode
-get_protocol_version_cc (DMAPConnection *connection)
+get_protocol_version_cc (DMAPConnection * connection)
 {
 	return DMAP_CC_PPRO;
 }
@@ -43,7 +43,8 @@ get_query_metadata (void)
 }
 
 static DMAPRecord *
-handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, int *item_id)
+handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
+	     GNode * n, int *item_id)
 {
 	GNode *n2;
 	DMAPRecord *record = NULL;
@@ -66,44 +67,48 @@ handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, i
 		meta_item = n2->data;
 
 		switch (meta_item->content_code) {
-			case DMAP_CC_MIID:
-				*item_id = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PIMF:
-				filename = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_PASP:
-				aspect_ratio = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_PICD:
-				creation_date = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PFMT:
-				format = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_PIFS:
-				filesize = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PLSZ:
-				large_filesize = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PHGT:
-				height = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PWTH:
-				width = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PRAT:
-				rating = g_value_get_int (&(meta_item->content));
-				break;
-			case DMAP_CC_PCMT:
-				comments = g_value_get_string (&(meta_item->content));
-				break;
-			case DMAP_CC_PFDT:
-				thumbnail = g_value_get_pointer (&(meta_item->content));
-				break;
-			default:
-				break;
+		case DMAP_CC_MIID:
+			*item_id = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PIMF:
+			filename = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_PASP:
+			aspect_ratio =
+				g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_PICD:
+			creation_date =
+				g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PFMT:
+			format = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_PIFS:
+			filesize = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PLSZ:
+			large_filesize =
+				g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PHGT:
+			height = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PWTH:
+			width = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PRAT:
+			rating = g_value_get_int (&(meta_item->content));
+			break;
+		case DMAP_CC_PCMT:
+			comments = g_value_get_string (&(meta_item->content));
+			break;
+		case DMAP_CC_PFDT:
+			thumbnail =
+				g_value_get_pointer (&(meta_item->content));
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -118,69 +123,65 @@ handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, i
 	}
 
 	g_object_set (record,
-		     "filename", filename,
-		     "aspect-ratio", aspect_ratio,
-		     "creation-date", creation_date,
-		     "format", format,
-		     "large-filesize", large_filesize,
-		     "pixel-height", height,
-		     "pixel-width", width,
-		     "rating", rating,
-		     "comments", comments,
-		     "thumbnail", ptr,
-		      NULL);
+		      "filename", filename,
+		      "aspect-ratio", aspect_ratio,
+		      "creation-date", creation_date,
+		      "format", format,
+		      "large-filesize", large_filesize,
+		      "pixel-height", height,
+		      "pixel-width", width,
+		      "rating", rating,
+		      "comments", comments, "thumbnail", ptr, NULL);
 
 	if (ptr) {
 		g_byte_array_unref (ptr);
 	}
 
-_return:
+      _return:
 	return record;
 }
 
 static void
-dpap_connection_class_init (DPAPConnectionClass *klass)
+dpap_connection_class_init (DPAPConnectionClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	DMAPConnectionClass *parent_class = DMAP_CONNECTION_CLASS (object_class);
+	DMAPConnectionClass *parent_class =
+		DMAP_CONNECTION_CLASS (object_class);
 
 	parent_class->get_protocol_version_cc = get_protocol_version_cc;
 	parent_class->get_query_metadata = get_query_metadata;
 	parent_class->handle_mlcl = handle_mlcl;
 
 	/* FIXME:
-	g_type_class_add_private (klass, sizeof (DPAPConnectionPrivate));
-	*/
+	 * g_type_class_add_private (klass, sizeof (DPAPConnectionPrivate));
+	 */
 }
 
 DPAPConnection *
-dpap_connection_new (const char        *name,
-		     const char        *host,
-		     guint              port,
-		     gboolean           password_protected,
-		     DMAPDb            *db,
-		     DMAPRecordFactory *factory)
+dpap_connection_new (const char *name,
+		     const char *host,
+		     guint port,
+		     gboolean password_protected,
+		     DMAPDb * db, DMAPRecordFactory * factory)
 {
 	DPAPConnection *connection;
-	
+
 	connection = g_object_new (DPAP_TYPE_CONNECTION,
-			          "name", name,
-			          "password-protected", password_protected,
-			          "db", db,
-			          "host", host,
-			          "port", port,
-				  "factory", factory,
-			           NULL);
+				   "name", name,
+				   "password-protected", password_protected,
+				   "db", db,
+				   "host", host,
+				   "port", port, "factory", factory, NULL);
 
 	return connection;
 }
 
 static void
-dpap_connection_init (DPAPConnection *connection)
+dpap_connection_init (DPAPConnection * connection)
 {
 	/* FIXME: 
-	connection->priv = DPAP_CONNECTION_GET_PRIVATE (connection);
-	*/
+	 * connection->priv = DPAP_CONNECTION_GET_PRIVATE (connection);
+	 */
 }
 
 G_DEFINE_TYPE (DPAPConnection, dpap_connection, DMAP_TYPE_CONNECTION)

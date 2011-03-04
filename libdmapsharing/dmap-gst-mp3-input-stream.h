@@ -28,7 +28,6 @@
 #include "dmap-gst-input-stream.h"
 
 G_BEGIN_DECLS
-
 #define DMAP_TYPE_GST_MP3_INPUT_STREAM         (dmap_gst_mp3_input_stream_get_type ())
 #define DMAP_GST_MP3_INPUT_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM, \
@@ -46,22 +45,22 @@ G_BEGIN_DECLS
 #define DMAP_GST_MP3_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
 					   DMAP_TYPE_GST_MP3_INPUT_STREAM, \
 					   DMAPGstMP3InputStreamPrivate))
-
 typedef struct DMAPGstMP3InputStreamPrivate DMAPGstMP3InputStreamPrivate;
 
-typedef struct {
+typedef struct
+{
 	DMAPGstInputStream parent;
 	DMAPGstMP3InputStreamPrivate *priv;
 } DMAPGstMP3InputStream;
 
-typedef struct {
+typedef struct
+{
 	DMAPGstInputStreamClass parent;
 } DMAPGstMP3InputStreamClass;
 
-GType         dmap_gst_mp3_input_stream_get_type (void);
+GType dmap_gst_mp3_input_stream_get_type (void);
 
-GInputStream* dmap_gst_mp3_input_stream_new         (GInputStream *stream);
+GInputStream *dmap_gst_mp3_input_stream_new (GInputStream * stream);
 
 G_END_DECLS
-
 #endif /* __DMAP_GST_MP3_INPUT_STREAM */

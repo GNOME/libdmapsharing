@@ -28,7 +28,6 @@
 #include <libdmapsharing/dmap-db.h>
 
 G_BEGIN_DECLS
-
 /**
  * DAAP_TYPE_RECORD:
  *
@@ -63,18 +62,18 @@ G_BEGIN_DECLS
  */
 #define DAAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      DAAP_TYPE_RECORD, DAAPRecordIface))
-
 typedef struct _DAAPRecord DAAPRecord;
 typedef struct _DAAPRecordIface DAAPRecordIface;
 
-struct _DAAPRecordIface {
+struct _DAAPRecordIface
+{
 	GTypeInterface parent;
 
-	gboolean	(*itunes_compat) (DAAPRecord *record);
-	GInputStream *	(*read)	         (DAAPRecord *record, GError **err);
+	  gboolean (*itunes_compat) (DAAPRecord * record);
+	GInputStream *(*read) (DAAPRecord * record, GError ** err);
 };
 
-GType         daap_record_get_type      (void);
+GType daap_record_get_type (void);
 
 /**
  * daap_record_itunes_compat:
@@ -82,7 +81,7 @@ GType         daap_record_get_type      (void);
  *
  * Returns: TRUE if record is compatible with iTunes, else FALSE.
  */
-gboolean      daap_record_itunes_compat (DAAPRecord *record);
+gboolean daap_record_itunes_compat (DAAPRecord * record);
 
 /**
  * daap_record_read:
@@ -92,7 +91,7 @@ gboolean      daap_record_itunes_compat (DAAPRecord *record);
  * Returns: A GInputStream that provides read-only access to the data stream
  * associated with record.
  */
-GInputStream *daap_record_read          (DAAPRecord *record, GError **err);
+GInputStream *daap_record_read (DAAPRecord * record, GError ** err);
 
 /**
  * daap_record_cmp_by_album:
@@ -102,8 +101,8 @@ GInputStream *daap_record_read          (DAAPRecord *record, GError **err);
  *
  * Compares the two records associated with the provided keys according
  * to album. Suitable to sort lists of albums.
- */ 
-gint daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb *db);
+ */
+gint daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb * db);
 
 #endif /* __DAAP_RECORD_H */
 

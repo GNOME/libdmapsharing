@@ -23,14 +23,12 @@
 #include "daap-record.h"
 
 G_BEGIN_DECLS
-
 /**
  * DACP_TYPE_PLAYER:
  *
  * The type for #DACPPlayer.
  */
 #define DACP_TYPE_PLAYER               (dacp_player_get_type ())
-
 /**
  * DACP_PLAYER:
  * @o: Object which is subject to casting.
@@ -40,7 +38,6 @@ G_BEGIN_DECLS
  * certain runtime checks to identify invalid casts.
  */
 #define DACP_PLAYER(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), DACP_TYPE_PLAYER, DACPPlayer))
-
 /**
  * IS_DACP_PLAYER:
  * @o: Instance to check for being a %DACP_TYPE_PLAYER.
@@ -48,7 +45,6 @@ G_BEGIN_DECLS
  * Checks whether a valid #GTypeInstance pointer is of type %DACP_TYPE_PLAYER.
  */
 #define IS_DACP_PLAYER(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), DACP_TYPE_PLAYER))
-
 /**
  * DACP_PLAYER_GET_INTERFACE:
  * @o: a #DACPPlayer instance.
@@ -59,17 +55,18 @@ G_BEGIN_DECLS
  */
 #define DACP_PLAYER_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
                                         DACP_TYPE_PLAYER, DACPPlayerIface))
-
 typedef struct _DACPPlayerIface DACPPlayerIface;
 typedef struct _DACPPlayer DACPPlayer;
 
-typedef enum {
+typedef enum
+{
 	REPEAT_NONE = 0,
 	REPEAT_SINGLE = 1,
 	REPEAT_ALL = 2
 } DACPRepeatState;
 
-typedef enum {
+typedef enum
+{
 	PLAY_STOPPED = 2,
 	PLAY_PAUSED = 3,
 	PLAY_PLAYING = 4
@@ -79,15 +76,16 @@ struct _DACPPlayerIface
 {
 	GTypeInterface parent_class;
 
-	DAAPRecord *(*now_playing_record)  (DACPPlayer *player);
-	const guchar *(*now_playing_artwork)      (DACPPlayer *player, guint width, guint height);
-	void (*play_pause)                 (DACPPlayer *player);
-	void (*pause)                      (DACPPlayer *player);
-	void (*next_item)                  (DACPPlayer *player);
-	void (*prev_item)                  (DACPPlayer *player);
+	DAAPRecord *(*now_playing_record) (DACPPlayer * player);
+	const guchar *(*now_playing_artwork) (DACPPlayer * player,
+					      guint width, guint height);
+	void (*play_pause) (DACPPlayer * player);
+	void (*pause) (DACPPlayer * player);
+	void (*next_item) (DACPPlayer * player);
+	void (*prev_item) (DACPPlayer * player);
 
-	void (*cue_clear)                  (DACPPlayer *player);
-	void (*cue_play)                   (DACPPlayer *player, GList *records, guint index);
+	void (*cue_clear) (DACPPlayer * player);
+	void (*cue_play) (DACPPlayer * player, GList * records, guint index);
 };
 
 GType dacp_player_get_type (void);
@@ -96,7 +94,7 @@ GType dacp_player_get_type (void);
  * dacp_player_now_playing_record
  * @player: a player
  */
-DAAPRecord *dacp_player_now_playing_record  (DACPPlayer *player);
+DAAPRecord *dacp_player_now_playing_record (DACPPlayer * player);
 
 /**
  * dacp_player_now_playing_artwork
@@ -104,37 +102,38 @@ DAAPRecord *dacp_player_now_playing_record  (DACPPlayer *player);
  * @width: width
  * @height: height
  */
-const guchar *dacp_player_now_playing_artwork (DACPPlayer *player, guint width, guint height);
+const guchar *dacp_player_now_playing_artwork (DACPPlayer * player,
+					       guint width, guint height);
 
 /**
  * dacp_player_play_pause
  * @player: a player
  */
-void        dacp_player_play_pause          (DACPPlayer *player);
+void dacp_player_play_pause (DACPPlayer * player);
 
 /**
  * dacp_player_pause
  * @player: a player
  */
-void        dacp_player_pause               (DACPPlayer *player);
+void dacp_player_pause (DACPPlayer * player);
 
 /**
  * dacp_player_next_item
  * @player: a player
  */
-void        dacp_player_next_item           (DACPPlayer *player);
+void dacp_player_next_item (DACPPlayer * player);
 
 /**
  * dacp_player_now_prev_item
  * @player: a player
  */
-void        dacp_player_prev_item           (DACPPlayer *player);
+void dacp_player_prev_item (DACPPlayer * player);
 
 /**
  * dacp_player_cue_clear
  * @player: a player
  */
-void        dacp_player_cue_clear           (DACPPlayer *player);
+void dacp_player_cue_clear (DACPPlayer * player);
 
 /**
  * dacp_player_cue_play
@@ -142,8 +141,7 @@ void        dacp_player_cue_clear           (DACPPlayer *player);
  * @records : a list of records
  * @index: an index
  */
-void        dacp_player_cue_play            (DACPPlayer *player, GList *records, guint index);
+void dacp_player_cue_play (DACPPlayer * player, GList * records, guint index);
 
 G_END_DECLS
-
 #endif /* _DACP_PLAYER_H_ */

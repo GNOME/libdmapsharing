@@ -23,13 +23,13 @@
 static gint dmap_record_init_count = 0;
 
 static void
-dmap_record_init (DMAPRecordIface *iface)
+dmap_record_init (DMAPRecordIface * iface)
 {
-        dmap_record_init_count++;
+	dmap_record_init_count++;
 }
 
 static void
-dmap_record_finalize (DMAPRecordIface *iface)
+dmap_record_finalize (DMAPRecordIface * iface)
 {
 	dmap_record_init_count--;
 }
@@ -39,29 +39,32 @@ GType
 dmap_record_get_type (void)
 {
 	static GType object_type = 0;
+
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DMAPRecordIface),
+			sizeof (DMAPRecordIface),
 			(GBaseInitFunc) dmap_record_init,
 			(GBaseFinalizeFunc) dmap_record_finalize
 		};
 		object_type =
-		    g_type_register_static(G_TYPE_INTERFACE,
-					   "DMAPRecord",
-					   &object_info, 0);
-		g_type_interface_add_prerequisite (object_type, G_TYPE_OBJECT);
+			g_type_register_static (G_TYPE_INTERFACE,
+						"DMAPRecord",
+						&object_info, 0);
+		g_type_interface_add_prerequisite (object_type,
+						   G_TYPE_OBJECT);
 	}
 	return object_type;
 }
 
 GByteArray *
-dmap_record_to_blob (DMAPRecord *record)
+dmap_record_to_blob (DMAPRecord * record)
 {
-        return DMAP_RECORD_GET_INTERFACE (record)->to_blob (record);
+	return DMAP_RECORD_GET_INTERFACE (record)->to_blob (record);
 }
 
 DMAPRecord *
-dmap_record_set_from_blob (DMAPRecord *record, GByteArray *blob)
+dmap_record_set_from_blob (DMAPRecord * record, GByteArray * blob)
 {
-	return DMAP_RECORD_GET_INTERFACE (record)->set_from_blob (record, blob);
+	return DMAP_RECORD_GET_INTERFACE (record)->set_from_blob (record,
+								  blob);
 }

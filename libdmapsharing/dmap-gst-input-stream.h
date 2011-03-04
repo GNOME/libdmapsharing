@@ -27,7 +27,6 @@
 #include <gio/gio.h>
 
 G_BEGIN_DECLS
-
 #define DMAP_TYPE_GST_INPUT_STREAM         (dmap_gst_input_stream_get_type ())
 #define DMAP_GST_INPUT_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				               DMAP_TYPE_GST_INPUT_STREAM, \
@@ -42,31 +41,34 @@ G_BEGIN_DECLS
 #define DMAP_GST_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_INPUT_STREAM, \
 					       DMAPGstInputStreamClass))
-
 typedef struct DMAPGstInputStreamPrivate DMAPGstInputStreamPrivate;
 
-typedef struct {
+typedef struct
+{
 	GInputStream parent;
 	DMAPGstInputStreamPrivate *priv;
 } DMAPGstInputStream;
 
-typedef struct {
+typedef struct
+{
 	GInputStreamClass parent;
 
 	void (*kill_pipeline) (DMAPGstInputStream *);
 } DMAPGstInputStreamClass;
 
-GType         dmap_gst_input_stream_get_type (void);
+GType dmap_gst_input_stream_get_type (void);
 
 /* Supported transcode target formats (data read from DMAPGstInputStream
  * will be in one of these formats): */
-enum {
-	RAW, /* No transcoding performed. */
-        WAV16,
+enum
+{
+	RAW,			/* No transcoding performed. */
+	WAV16,
 	MP3
 };
 
-GInputStream* dmap_gst_input_stream_new (const gchar *transcode_mimetype, GInputStream *src_stream);
+GInputStream *dmap_gst_input_stream_new (const gchar * transcode_mimetype,
+					 GInputStream * src_stream);
 
 /* FIXME: this prototype was moved to the specific implementations in order to make this header file work without GStreamer installed:
 void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
@@ -76,5 +78,4 @@ void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
 gchar *dmapd_input_stream_strdup_format_extension (const gint format_code);
 
 G_END_DECLS
-
 #endif /* __DMAP_GST_INPUT_STREAM */

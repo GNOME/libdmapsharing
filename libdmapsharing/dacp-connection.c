@@ -31,7 +31,7 @@ struct DACPConnectionPrivate {
 */
 
 static DMAPContentCode
-get_protocol_version_cc (DMAPConnection *connection)
+get_protocol_version_cc (DMAPConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -45,55 +45,54 @@ get_query_metadata (void)
 }
 
 static DMAPRecord *
-handle_mlcl (DMAPConnection *connection, DMAPRecordFactory *factory, GNode *n, int *item_id)
+handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
+	     GNode * n, int *item_id)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
 }
 
 static void
-dacp_connection_class_init (DACPConnectionClass *klass)
+dacp_connection_class_init (DACPConnectionClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	DMAPConnectionClass *parent_class = DMAP_CONNECTION_CLASS (object_class);
+	DMAPConnectionClass *parent_class =
+		DMAP_CONNECTION_CLASS (object_class);
 
 	parent_class->get_protocol_version_cc = get_protocol_version_cc;
 	parent_class->get_query_metadata = get_query_metadata;
 	parent_class->handle_mlcl = handle_mlcl;
 
 	/* FIXME:
-	g_type_class_add_private (klass, sizeof (DACPConnectionPrivate));
-	*/
+	 * g_type_class_add_private (klass, sizeof (DACPConnectionPrivate));
+	 */
 }
 
 DACPConnection *
-dacp_connection_new (const char        *name,
-		     const char        *host,
-		     guint              port,
-		     gboolean           password_protected,
-		     DMAPDb            *db,
-		     DMAPRecordFactory *factory)
+dacp_connection_new (const char *name,
+		     const char *host,
+		     guint port,
+		     gboolean password_protected,
+		     DMAPDb * db, DMAPRecordFactory * factory)
 {
 	DACPConnection *connection;
-	
+
 	connection = g_object_new (DACP_TYPE_CONNECTION,
-			          "name", name,
-			          "password-protected", password_protected,
-			          "db", db,
-			          "host", host,
-			          "port", port,
-				  "factory", factory,
-			           NULL);
+				   "name", name,
+				   "password-protected", password_protected,
+				   "db", db,
+				   "host", host,
+				   "port", port, "factory", factory, NULL);
 
 	return connection;
 }
 
 static void
-dacp_connection_init (DACPConnection *connection)
+dacp_connection_init (DACPConnection * connection)
 {
 	/* FIXME: 
-	connection->priv = DACP_CONNECTION_GET_PRIVATE (connection);
-	*/
+	 * connection->priv = DACP_CONNECTION_GET_PRIVATE (connection);
+	 */
 }
 
 G_DEFINE_TYPE (DACPConnection, dacp_connection, DMAP_TYPE_CONNECTION)

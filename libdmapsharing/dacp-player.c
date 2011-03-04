@@ -20,7 +20,7 @@
 #include <libdmapsharing/daap-record.h>
 
 static void
-dacp_player_init (DACPPlayerIface *iface)
+dacp_player_init (DACPPlayerIface * iface)
 {
 	static gboolean initialized = FALSE;
 
@@ -28,50 +28,48 @@ dacp_player_init (DACPPlayerIface *iface)
 		initialized = TRUE;
 
 		g_object_interface_install_property (iface,
-			g_param_spec_ulong ("playing-time",
-			                    "Playing time",
-			                    "Playing time (ms)",
-			                    0,
-			                    G_MAXULONG,
-			                    0,
-			                    G_PARAM_READWRITE));
+						     g_param_spec_ulong
+						     ("playing-time",
+						      "Playing time",
+						      "Playing time (ms)", 0,
+						      G_MAXULONG, 0,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_boolean ("shuffle-state",
-			                      "Shuffle state",
-			                      "Shufle state",
-			                      FALSE,
-			                      G_PARAM_READWRITE));
+						     g_param_spec_boolean
+						     ("shuffle-state",
+						      "Shuffle state",
+						      "Shufle state", FALSE,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_enum ("repeat-state",
-			                   "Repeat state",
-			                   "Repeat state",
-			                   DMAP_TYPE_DACP_REPEAT_STATE,
-			                   REPEAT_NONE,
-			                   G_PARAM_READWRITE));
+						     g_param_spec_enum
+						     ("repeat-state",
+						      "Repeat state",
+						      "Repeat state",
+						      DMAP_TYPE_DACP_REPEAT_STATE,
+						      REPEAT_NONE,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_enum ("play-state",
-			                   "Play state",
-			                   "Play state",
-			                   DMAP_TYPE_DACP_PLAY_STATE,
-			                   PLAY_STOPPED,
-			                   G_PARAM_READWRITE));
-		
+						     g_param_spec_enum
+						     ("play-state",
+						      "Play state",
+						      "Play state",
+						      DMAP_TYPE_DACP_PLAY_STATE,
+						      PLAY_STOPPED,
+						      G_PARAM_READWRITE));
+
 		g_object_interface_install_property (iface,
-			g_param_spec_ulong ("volume",
-			                    "Volume",
-			                    "Volume",
-			                    0,
-			                    100,
-			                    0,
-			                    G_PARAM_READWRITE));
+						     g_param_spec_ulong
+						     ("volume", "Volume",
+						      "Volume", 0, 100, 0,
+						      G_PARAM_READWRITE));
 	}
 }
 
 static void
-dacp_player_finalize (DACPPlayerIface *iface)
+dacp_player_finalize (DACPPlayerIface * iface)
 {
 }
 
@@ -79,65 +77,69 @@ GType
 dacp_player_get_type (void)
 {
 	static GType object_type = 0;
+
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DACPPlayerIface),
+			sizeof (DACPPlayerIface),
 			(GBaseInitFunc) dacp_player_init,
 			(GBaseFinalizeFunc) dacp_player_finalize
 		};
-		object_type = g_type_register_static(G_TYPE_INTERFACE,
-		                                     "DACPPlayer",
-		                                     &object_info, 0);
-		g_type_interface_add_prerequisite (object_type, G_TYPE_OBJECT);
+		object_type = g_type_register_static (G_TYPE_INTERFACE,
+						      "DACPPlayer",
+						      &object_info, 0);
+		g_type_interface_add_prerequisite (object_type,
+						   G_TYPE_OBJECT);
 	}
 	return object_type;
 }
 
 DAAPRecord *
-dacp_player_now_playing_record (DACPPlayer *player)
+dacp_player_now_playing_record (DACPPlayer * player)
 {
-	return DACP_PLAYER_GET_INTERFACE (player)->now_playing_record (player);
+	return DACP_PLAYER_GET_INTERFACE (player)->
+		now_playing_record (player);
 }
 
 const guchar *
-dacp_player_now_playing_artwork (DACPPlayer *player, guint width, guint height)
+dacp_player_now_playing_artwork (DACPPlayer * player, guint width,
+				 guint height)
 {
-	return DACP_PLAYER_GET_INTERFACE (player)->now_playing_artwork (player, width, height);
+	return DACP_PLAYER_GET_INTERFACE (player)->
+		now_playing_artwork (player, width, height);
 }
 
-void 
-dacp_player_play_pause (DACPPlayer *player)
+void
+dacp_player_play_pause (DACPPlayer * player)
 {
 	DACP_PLAYER_GET_INTERFACE (player)->play_pause (player);
 }
 
-
-void 
-dacp_player_pause (DACPPlayer *player)
+void
+dacp_player_pause (DACPPlayer * player)
 {
 	DACP_PLAYER_GET_INTERFACE (player)->pause (player);
 }
 
-void 
-dacp_player_next_item (DACPPlayer *player)
+void
+dacp_player_next_item (DACPPlayer * player)
 {
 	DACP_PLAYER_GET_INTERFACE (player)->next_item (player);
 }
 
-void 
-dacp_player_prev_item (DACPPlayer *player)
+void
+dacp_player_prev_item (DACPPlayer * player)
 {
 	DACP_PLAYER_GET_INTERFACE (player)->prev_item (player);
 }
 
-void 
-dacp_player_cue_clear (DACPPlayer *player)
+void
+dacp_player_cue_clear (DACPPlayer * player)
 {
 	DACP_PLAYER_GET_INTERFACE (player)->cue_clear (player);
 }
 
-void 
-dacp_player_cue_play (DACPPlayer *player, GList *records, guint index)
+void
+dacp_player_cue_play (DACPPlayer * player, GList * records, guint index)
 {
 	DACP_PLAYER_GET_INTERFACE (player)->cue_play (player, records, index);
 }

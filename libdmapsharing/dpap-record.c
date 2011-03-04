@@ -24,110 +24,108 @@
 static gint dpap_record_init_count = 0;
 
 static void
-dpap_record_init (DPAPRecordIface *iface)
+dpap_record_init (DPAPRecordIface * iface)
 {
 	static gboolean is_initialized = FALSE;
 
-        dpap_record_init_count++;
+	dpap_record_init_count++;
 
-	if (! is_initialized) {
+	if (!is_initialized) {
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("location",
-					     "URI pointing to photo data",
-					     "URI pointing to photo data",
-					      NULL,
-					      G_PARAM_READWRITE));
+						     g_param_spec_string
+						     ("location",
+						      "URI pointing to photo data",
+						      "URI pointing to photo data",
+						      NULL,
+						      G_PARAM_READWRITE));
 
-
-	/* iTunes does not require to this to match the datatype for the image
-	 * to be displayed (set to "JPEG" and served a PNG). I think this is
-	 * for display to the user only.
-	 */
+		/* iTunes does not require to this to match the datatype for the image
+		 * to be displayed (set to "JPEG" and served a PNG). I think this is
+		 * for display to the user only.
+		 */
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("format",
-					     "Photo data format",
-					     "Photo data format",
-					      NULL,
-					      G_PARAM_READWRITE));
-
-		g_object_interface_install_property (iface,
-			g_param_spec_string ("aspect-ratio",
-					     "Photo aspect ratio",
-					     "Photo aspect ratio",
-					      NULL,
-					      G_PARAM_READWRITE));
+						     g_param_spec_string
+						     ("format",
+						      "Photo data format",
+						      "Photo data format",
+						      NULL,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("filename",
-					     "Photo filename",
-					     "Photo filename",
-					      NULL,
-					      G_PARAM_READWRITE));
+						     g_param_spec_string
+						     ("aspect-ratio",
+						      "Photo aspect ratio",
+						      "Photo aspect ratio",
+						      NULL,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_string ("comments",
-					     "Photo comments",
-					     "Photo comments",
-					      NULL,
-					      G_PARAM_READWRITE));
+						     g_param_spec_string
+						     ("filename",
+						      "Photo filename",
+						      "Photo filename", NULL,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_pointer ("thumbnail",
-					      "Photo thumbnail",
-					      "Photo thumbnail",
-					      G_PARAM_READWRITE));
+						     g_param_spec_string
+						     ("comments",
+						      "Photo comments",
+						      "Photo comments", NULL,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_int ("rating",
-					  "Photo rating",
-					  "Photo rating",
-					   0,
-					   G_MAXINT,
-					   0,
-					   G_PARAM_READWRITE));
+						     g_param_spec_pointer
+						     ("thumbnail",
+						      "Photo thumbnail",
+						      "Photo thumbnail",
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_int ("creation-date",
-					  "Photo creation date",
-					  "Photo creation date",
-					   0,
-					   G_MAXINT,
-					   0,
-					   G_PARAM_READWRITE));
+						     g_param_spec_int
+						     ("rating",
+						      "Photo rating",
+						      "Photo rating", 0,
+						      G_MAXINT, 0,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_int ("large-filesize",
-					  "Photo large file size",
-					  "Photo large file size",
-					   0,
-					   G_MAXINT,
-					   0,
-					   G_PARAM_READWRITE));
+						     g_param_spec_int
+						     ("creation-date",
+						      "Photo creation date",
+						      "Photo creation date",
+						      0, G_MAXINT, 0,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_int ("pixel-height",
-					  "Photo pixel height",
-					  "Photo pixel height",
-					   0,
-					   G_MAXINT,
-					   0,
-					   G_PARAM_READWRITE));
+						     g_param_spec_int
+						     ("large-filesize",
+						      "Photo large file size",
+						      "Photo large file size",
+						      0, G_MAXINT, 0,
+						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-			g_param_spec_int ("pixel-width",
-					  "Photo pixel width",
-					  "Photo pixel width",
-					   0,
-					   G_MAXINT,
-					   0,
-					   G_PARAM_READWRITE));
+						     g_param_spec_int
+						     ("pixel-height",
+						      "Photo pixel height",
+						      "Photo pixel height", 0,
+						      G_MAXINT, 0,
+						      G_PARAM_READWRITE));
+
+		g_object_interface_install_property (iface,
+						     g_param_spec_int
+						     ("pixel-width",
+						      "Photo pixel width",
+						      "Photo pixel width", 0,
+						      G_MAXINT, 0,
+						      G_PARAM_READWRITE));
 
 		is_initialized = TRUE;
 	}
 }
 
 static void
-dpap_record_finalize (DPAPRecordIface *iface)
+dpap_record_finalize (DPAPRecordIface * iface)
 {
 	dpap_record_init_count--;
 }
@@ -137,22 +135,23 @@ GType
 dpap_record_get_type (void)
 {
 	static GType object_type = 0;
+
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof(DPAPRecordIface),
+			sizeof (DPAPRecordIface),
 			(GBaseInitFunc) dpap_record_init,
 			(GBaseFinalizeFunc) dpap_record_finalize
 		};
 		object_type =
-		    g_type_register_static(G_TYPE_INTERFACE,
-					   "DPAPRecord",
-					   &object_info, 0);
+			g_type_register_static (G_TYPE_INTERFACE,
+						"DPAPRecord",
+						&object_info, 0);
 	}
 	return object_type;
 }
 
 GInputStream *
-dpap_record_read (DPAPRecord *record, GError **err)
+dpap_record_read (DPAPRecord * record, GError ** err)
 {
 	return DPAP_RECORD_GET_INTERFACE (record)->read (record, err);
 }
