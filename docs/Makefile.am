@@ -15,7 +15,7 @@ DOC_MODULE=libdmapsharing-3.0
 #DOC_MODULE_VERSION=2
 
 # The top-level SGML file. You can change this if you want to.
-DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.sgml
+DOC_MAIN_SGML_FILE=$(DOC_MODULE)-docs.xml
 
 # The directory containing the source code. Relative to $(srcdir).
 # gtk-doc will search all .c & .h files beneath here for inline comments
@@ -122,3 +122,12 @@ if ENABLE_GTK_DOC
 endif
 
 -include $(top_srcdir)/git.mk
+
+publish:
+	sed 's/images\/logo_head.png/\.\.\/\.\.\/\.\.\/\.\.\/images\/logo_head.png/g' ~/Public/www.flyn.org/head.html.in > tmpl/head.html
+# Add header and point stylesheet to flyn.org stylesheet
+	for h in html/*.html; do \
+		sed '/<body/ r tmpl/head.html' $$h | sed 's/style.css/\.\.\/\.\.\/\.\.\/\.\.\/flyn.org.css/g' \
+			> ~/Public/www.flyn.org/projects/libdmapsharing/docs/`basename $$h`; \
+	done
+	cp html/*.png ~/Public/www.flyn.org/projects/libdmapsharing/docs/

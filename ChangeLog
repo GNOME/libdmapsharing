@@ -1,3 +1,24 @@
+commit cdd875cbeac45c071aeccaff5d07b8f6ede78a00
+Author: W. Michael Petullo <mike@flyn.org>
+Date:   Fri Mar 4 08:53:10 2011 -0600
+
+    Add libdmapsharing-3.0-docs.sgml
+    Signed-off-by: W. Michael Petullo <mike@flyn.org>
+
+commit 58e89e1ab4816ce4d0b9683b144837fc24007d68
+Author: W. Michael Petullo <mike@flyn.org>
+Date:   Sun Feb 27 12:29:16 2011 -0600
+
+    Update TODO
+    Signed-off-by: W. Michael Petullo <mike@flyn.org>
+
+commit e7b624b9d0f21f1322fd5a6a3cc61a3875cb9679
+Author: W. Michael Petullo <mike@flyn.org>
+Date:   Sun Feb 27 11:16:18 2011 -0600
+
+    Generate ChangeLog from Git and legacy ChangeLog contents
+    Signed-off-by: W. Michael Petullo <mike@flyn.org>
+
 commit 632e30eb0b32bd333e0eea8444cb53c219d7007c
 Author: W. Michael Petullo <mike@flyn.org>
 Date:   Mon Feb 7 20:45:44 2011 -0600
@@ -1379,7 +1400,7 @@ Date:   Sat Aug 8 20:02:09 2009 -0400
     Initial git commit. Moving project from SourceForge to GNOME.
 
 ======================== Convert to Git-based ChangeLog ========================
-= Please note that there is a period where some changes were logged in the     =
+= Please note that theres is a period where some changes were logged in the    =
 = ChangeLog and others in Git. This may be present between August 2009 and     =
 = November 2010.                                                               =
 ================================================================================

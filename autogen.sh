@@ -13,7 +13,7 @@ git log > ChangeLog
 cat <<EOF >> ChangeLog
 
 ======================== Convert to Git-based ChangeLog ========================
-= Please note that theres is a period where some changes were logged in the    =
+= Please note that there is is a period where some changes were logged in the  =
 = ChangeLog and others in Git. This may be present between August 2009 and     =
 = November 2010.                                                               =
 ================================================================================
