@@ -124,10 +124,10 @@ endif
 -include $(top_srcdir)/git.mk
 
 publish:
-	sed 's/images\/logo_head.png/\.\.\/\.\.\/\.\.\/\.\.\/images\/logo_head.png/g' ~/Public/www.flyn.org/head.html.in > tmpl/head.html
+	sed 's/images\/logo_head.png/\.\.\/\.\.\/\.\.\/images\/logo_head.png/g' ~/Public/www.flyn.org/head.html.in > tmpl/head.html
 # Add header and point stylesheet to flyn.org stylesheet
 	for h in html/*.html; do \
-		sed '/<body/ r tmpl/head.html' $$h | sed 's/style.css/\.\.\/\.\.\/\.\.\/\.\.\/flyn.org.css/g' \
+		sed '/<body/ r tmpl/head.html' $$h | sed 's/style.css/\.\.\/\.\.\/\.\.\/flyn.org.css/g' \
 			> ~/Public/www.flyn.org/projects/libdmapsharing/docs/`basename $$h`; \
 	done
 	cp html/*.png ~/Public/www.flyn.org/projects/libdmapsharing/docs/
