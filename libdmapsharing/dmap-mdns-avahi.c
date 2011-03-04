@@ -1,6 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
- *
- * Copyright (C) 2006 William Jon McCann <mccann@jhu.edu>
+/* Copyright (C) 2006 William Jon McCann <mccann@jhu.edu>
  *
  * Modifications Copyright (C) 2008 W. Michael Petullo <mike@flyn.org>
  *

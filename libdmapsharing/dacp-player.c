@@ -1,7 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 4; tab-width: 4 -*- */
-/*
- * libdmapsharing
- * Copyright (C) Alexandre Rosenfeld 2010 <alexandre.rosenfeld@gmail.com>
+/* Copyright (C) Alexandre Rosenfeld 2010 <alexandre.rosenfeld@gmail.com>
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

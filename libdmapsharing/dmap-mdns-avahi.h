@@ -1,6 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
- *
- * Copyright (C) 2008 Jonathan Matthew  <jonathan@d14n.org>
+/* Copyright (C) 2008 Jonathan Matthew  <jonathan@d14n.org>
  *
  * Modifications Copyright (C) 2008 W. Michael Petullo <mike@flyn.org>
  *

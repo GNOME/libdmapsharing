@@ -1,6 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
- *
- * Header for abstraction of Multicast DNS for DMAP sharing
+/* Header for abstraction of Multicast DNS for DMAP sharing
  *
  * Copyright (C) 2005 Charles Schmidt <cschmidt2@emich.edu>
  * Copyright (C) 2006 William Jon McCann <mccann@jhu.edu>

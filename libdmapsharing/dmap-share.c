@@ -1,6 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
- *
- * Implmentation of DMAP (e.g., iTunes Music or iPhoto Picture) sharing
+/* Implmentation of DMAP (e.g., iTunes Music or iPhoto Picture) sharing
  *
  * Copyright (C) 2005 Charles Schmidt <cschmidt2@emich.edu>
  *

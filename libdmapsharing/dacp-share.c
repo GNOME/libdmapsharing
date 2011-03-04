@@ -1,6 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
- *
- * Implmentation of DACP (e.g., iTunes Remote) sharing
+/* Implmentation of DACP (e.g., iTunes Remote) sharing
  *
  * Copyright (C) 2010 Alexandre Rosenfeld <airmind@gmail.com>
  *

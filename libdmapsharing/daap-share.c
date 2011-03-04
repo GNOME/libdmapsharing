@@ -1,6 +1,4 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
- *
- * Implmentation of DAAP (e.g., iTunes Music) sharing
+/* Implmentation of DAAP (e.g., iTunes Music) sharing
  *
  * Copyright (C) 2005 Charles Schmidt <cschmidt2@emich.edu>
  *
