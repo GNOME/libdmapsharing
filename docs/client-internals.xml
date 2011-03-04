@@ -12,7 +12,7 @@
 	<refnamediv>
 		<refname>Libdmapsharing Client Internals</refname>
 		<refpurpose>
-			Detailed decription of libdmapsharing's code for programmers who wish to contribute to libdmapsharing
+			Description of libdmapsharing's internal client code
 		</refpurpose>
 	</refnamediv>
 
