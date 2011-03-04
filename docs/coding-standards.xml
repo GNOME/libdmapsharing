@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="coding-standards">
+	<refmeta>
+		<refentrytitle>Libdmapsharing Coding Standards</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Libdmapsharing Client Internals</refname>
+		<refpurpose>
+			Description of libdmapsharing's coding standards
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Libdmapsharing Coding Standards</title>
+<itemizedlist>
+
+	<listitem>Use tabs to indent</listitem>
+
+	<listitem>Use spaces to align</listitem>
+
+	<listitem>Attempt to limit lines to 80 characters</listitem>
+
+	<listitem>Use whitespace to keep expressions clear:
+<programlisting>
+int foo = x + 1 - bar (y);
+</programlisting>
+	</listitem>
+
+	<listitem>In order to protect against an accidental use of assignment in a Boolean expression, use:
+<programlisting>if (CONSTANT == variable)</programlisting>
+	not: 
+<programlisting>if (variable == CONSTANT)</programlisting></listitem>
+
+	<listitem>Braces should be formatted as follows:
+<programlisting>
+if (foo) {
+	something ();
+}
+</programlisting>
+	or, in the case of function definitions:
+<programlisting>
+void foo (void)
+{
+	something ();
+}
+</programlisting>
+	</listitem>
+
+	<listitem>Perform a Git commit after finishing a single
+	task</listitem>
+
+	<listitem>Patches submitted should perform one task (e.g.,
+	don't add functionality and reformat existing code in the same
+	patch)</listitem>
+
+	<listitem>Git commit messages should be of the following form:
+<literallayout>single line summary with no period
+
+Optional detailed description. This should use paragraph grammar,
+including periods. This may be any number of lines long. Paragraphs are
+separated by an empty line but are not indented. Lines are less than 80
+characters long.
+</literallayout>
+	</listitem>
+
+	<listitem>Use GObject conventions for things not covered here</listitem>
+
+</itemizedlist>
+	</refsect1>
+</refentry>

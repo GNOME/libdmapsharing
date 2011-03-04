@@ -31,6 +31,7 @@
 
   <chapter>
     <title>Libdmapsharing Internals</title>
+    <xi:include href="coding-standards.xml"/>
     <xi:include href="server-internals.xml"/>
     <xi:include href="client-internals.xml"/>
   </chapter>

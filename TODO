@@ -4,6 +4,14 @@ Noah: DNS-SD implementation
 	Finish browser side support.
 	Update MacPorts port to no longer require avahi.
 
+Documentation:
+	Improve content (Noah?)
+	Fix bad characters (UTF-8 issue?)
+	Fix alignment of object description code
+	Fix "up" icon in second level pages
+	Add standard sidebar
+	Improve aesthetics
+
 = Mid term =====================================================================
 
 Noah: Comment purpose of each source file and describe interfaces, using test
