@@ -52,6 +52,12 @@ void foo (void)
 </programlisting>
 	</listitem>
 
+	<listitem>Place a semicolon following function-like preprocessor macros because the lack of one might confuse tools such as <application>indent</application> (even if the semicolon is actually repetitive):
+<programlisting>
+CPPFUNC(foo);
+</programlisting>
+	</listitem>
+
 	<listitem>Perform a Git commit after finishing a single
 	task</listitem>
 
@@ -70,6 +76,12 @@ characters long.
 	</listitem>
 
 	<listitem>Use GObject conventions for things not covered here</listitem>
+
+	<listitem>You may use the following indent command to format libdmapsharing code:
+<programlisting>
+indent -i8 -bad -bap -br -ce -d0 -ndj -lp -pcs -psl -sc -sob foo.c
+</programlisting>
+	</listitem>
 
 </itemizedlist>
 	</refsect1>
