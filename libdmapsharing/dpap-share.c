@@ -97,9 +97,10 @@ enum
 	PROP_0,
 };
 
-G_DEFINE_TYPE (DPAPShare, dpap_share, DMAP_TYPE_SHARE)
+G_DEFINE_TYPE (DPAPShare, dpap_share, DMAP_TYPE_SHARE);
 
-     static void dpap_share_class_init (DPAPShareClass * klass)
+static void
+dpap_share_class_init (DPAPShareClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DMAPShareClass *parent_class = DMAP_SHARE_CLASS (object_class);

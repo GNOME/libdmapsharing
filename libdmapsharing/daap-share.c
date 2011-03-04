@@ -89,9 +89,10 @@ enum
 	PROP_0,
 };
 
-G_DEFINE_TYPE (DAAPShare, daap_share, DMAP_TYPE_SHARE)
+G_DEFINE_TYPE (DAAPShare, daap_share, DMAP_TYPE_SHARE);
 
-     static void daap_share_class_init (DAAPShareClass * klass)
+static void
+daap_share_class_init (DAAPShareClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DMAPShareClass *parent_class = DMAP_SHARE_CLASS (object_class);
@@ -472,9 +473,8 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 						   SOUP_ENCODING_CONTENT_LENGTH);
 		g_debug ("Content length is %" G_GUINT64_FORMAT ".",
 			 filesize);
-		soup_message_headers_set_content_length (message->
-							 response_headers,
-							 filesize);
+		soup_message_headers_set_content_length
+			(message->response_headers, filesize);
 	} else if (soup_message_get_http_version (message) == SOUP_HTTP_1_0) {
 		/* NOTE: Roku clients support only HTTP 1.0. */
 #ifdef HAVE_ENCODING_EOF

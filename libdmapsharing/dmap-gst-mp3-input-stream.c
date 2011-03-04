@@ -162,11 +162,10 @@ dmap_gst_mp3_input_stream_kill_pipeline (DMAPGstInputStream * stream)
 }
 
 G_DEFINE_TYPE (DMAPGstMP3InputStream, dmap_gst_mp3_input_stream,
-	       DMAP_TYPE_GST_INPUT_STREAM)
+	       DMAP_TYPE_GST_INPUT_STREAM);
 
-     static void
-	     dmap_gst_mp3_input_stream_class_init (DMAPGstMP3InputStreamClass
-						   * klass)
+static void
+dmap_gst_mp3_input_stream_class_init (DMAPGstMP3InputStreamClass * klass)
 {
 	DMAPGstInputStreamClass *parent_class =
 		DMAP_GST_INPUT_STREAM_CLASS (klass);

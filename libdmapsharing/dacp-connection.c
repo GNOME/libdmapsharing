@@ -95,4 +95,4 @@ dacp_connection_init (DACPConnection * connection)
 	 */
 }
 
-G_DEFINE_TYPE (DACPConnection, dacp_connection, DMAP_TYPE_CONNECTION)
+G_DEFINE_TYPE (DACPConnection, dacp_connection, DMAP_TYPE_CONNECTION);

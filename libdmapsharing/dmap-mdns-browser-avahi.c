@@ -106,14 +106,14 @@ static void free_service (DMAPMdnsBrowserService * service);
 
 static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT)
+G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
-     static gchar *service_type_name[] = {
-	     NULL,
-	     "_daap._tcp",
-	     "_dpap._tcp",
-	     "_touch-remote._tcp"
-     };
+static gchar *service_type_name[] = {
+	NULL,
+	"_daap._tcp",
+	"_dpap._tcp",
+	"_touch-remote._tcp"
+};
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -241,8 +241,8 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 		avahi_service_browser_new (browser->priv->client,
 					   AVAHI_IF_UNSPEC,
 					   AVAHI_PROTO_UNSPEC,
-					   service_type_name[browser->priv->
-							     service_type],
+					   service_type_name[browser->
+							     priv->service_type],
 					   NULL,
 #ifdef HAVE_AVAHI_0_6
 					   0,
@@ -466,8 +466,9 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 						       AVAHI_PROTO_INET,
 						       name,
 						       service_type_name
-						       [browser->priv->
-							service_type], domain,
+						       [browser->
+							priv->service_type],
+						       domain,
 						       AVAHI_PROTO_UNSPEC,
 #ifdef HAVE_AVAHI_0_6
 						       0,

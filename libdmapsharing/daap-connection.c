@@ -194,4 +194,4 @@ daap_connection_init (DAAPConnection * connection)
 	 */
 }
 
-G_DEFINE_TYPE (DAAPConnection, daap_connection, DMAP_TYPE_CONNECTION)
+G_DEFINE_TYPE (DAAPConnection, daap_connection, DMAP_TYPE_CONNECTION);

@@ -83,9 +83,9 @@ static void free_service (DMAPMdnsBrowserService * service);
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT)
+G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
-	GQuark
+GQuark
 dmap_mdns_browser_error_quark (void)
 {
 	static GQuark quark = 0;
@@ -295,8 +295,7 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser, const char *name)
 				       0,
 				       name,
 				       "_dmap._tcp",
-				       "local",
-				       (sw_discovery_resolve_reply)
+				       "local", (sw_discovery_resolve_reply)
 				       resolve_cb, (sw_opaque) browser,
 				       (sw_discovery_oid *) & oid);
 
@@ -378,8 +377,8 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 				      "local",
 				      (sw_discovery_browse_reply) browse_cb,
 				      (sw_opaque) browser,
-				      (sw_discovery_oid *) browser->priv->
-				      oid);
+				      (sw_discovery_oid *) browser->
+				      priv->oid);
 
 	if (result != SW_OKAY) {
 		g_debug ("Error starting mDNS discovery using Howl");

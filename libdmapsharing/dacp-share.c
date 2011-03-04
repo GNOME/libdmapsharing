@@ -122,9 +122,10 @@ enum
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DACPShare, dacp_share, DAAP_TYPE_SHARE)
+G_DEFINE_TYPE (DACPShare, dacp_share, DAAP_TYPE_SHARE);
 
-     static void dacp_share_class_init (DACPShareClass * klass)
+static void
+dacp_share_class_init (DACPShareClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DMAPShareClass *dmap_class = DMAP_SHARE_CLASS (object_class);
@@ -537,8 +538,8 @@ dacp_share_send_playstatusupdate (DACPShare * share)
 							  (SoupMessage *)
 							  list->data);
 			soup_server_unpause_message (server,
-						     (SoupMessage *) list->
-						     data);
+						     (SoupMessage *)
+						     list->data);
 		}
 	}
 
@@ -553,8 +554,8 @@ dacp_share_send_playstatusupdate (DACPShare * share)
 							  (SoupMessage *)
 							  list->data);
 			soup_server_unpause_message (server,
-						     (SoupMessage *) list->
-						     data);
+						     (SoupMessage *)
+						     list->data);
 		}
 	}
 
@@ -824,8 +825,8 @@ dacp_share_ctrl_int (DMAPShare * share,
 		if (revision_number >= dacp_share->priv->current_revision) {
 			g_object_ref (message);
 			dacp_share->priv->update_queue =
-				g_slist_prepend (dacp_share->priv->
-						 update_queue, message);
+				g_slist_prepend (dacp_share->
+						 priv->update_queue, message);
 			g_signal_connect_object (message, "finished",
 						 G_CALLBACK
 						 (status_update_message_finished),
@@ -860,8 +861,8 @@ dacp_share_ctrl_int (DMAPShare * share,
 		if (g_hash_table_lookup (query, "mh"))
 			height = atoi (g_hash_table_lookup (query, "mh"));
 		artwork_filename =
-			dacp_player_now_playing_artwork (dacp_share->priv->
-							 player, width,
+			dacp_player_now_playing_artwork (dacp_share->
+							 priv->player, width,
 							 height);
 		if (!artwork_filename) {
 			g_debug ("No artwork for currently playing song");
@@ -874,6 +875,7 @@ dacp_share_ctrl_int (DMAPShare * share,
 			gdk_pixbuf_new_from_file_at_scale (artwork_filename,
 							   width, height,
 							   TRUE, NULL);
+
 		if (!artwork) {
 			g_debug ("Error loading image file");
 			g_free (artwork_filename);

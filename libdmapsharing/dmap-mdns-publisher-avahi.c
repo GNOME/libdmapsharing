@@ -74,9 +74,9 @@ enum
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
+G_DEFINE_TYPE (DMAPMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT);
 
-     static gpointer publisher_object = NULL;
+static gpointer publisher_object = NULL;
 
 GQuark
 dmap_mdns_publisher_error_quark (void)
@@ -142,8 +142,8 @@ create_service (struct DMAPMdnsPublisherService *service,
 		}
 	}
 
-	ret = avahi_entry_group_add_service_strlst (publisher->priv->
-						    entry_group,
+	ret = avahi_entry_group_add_service_strlst (publisher->
+						    priv->entry_group,
 						    AVAHI_IF_UNSPEC,
 						    AVAHI_PROTO_UNSPEC, 0,
 						    service->name,
@@ -177,8 +177,8 @@ create_services (DMAPMdnsPublisher * publisher, GError ** error)
 			avahi_entry_group_new (publisher->priv->client,
 					       (AvahiEntryGroupCallback)
 					       entry_group_cb, publisher);
-		dmap_mdns_avahi_set_entry_group (publisher->priv->
-						 entry_group);
+		dmap_mdns_avahi_set_entry_group (publisher->
+						 priv->entry_group);
 	} else {
 		avahi_entry_group_reset (publisher->priv->entry_group);
 	}
@@ -379,9 +379,10 @@ dmap_mdns_publisher_constructor (GType type,
 	static GObject *self = NULL;
 
 	if (self == NULL) {
-		self = G_OBJECT_CLASS (dmap_mdns_publisher_parent_class)->
-			constructor (type, n_construct_params,
-				     construct_params);
+		self = G_OBJECT_CLASS
+			(dmap_mdns_publisher_parent_class)->constructor (type,
+									 n_construct_params,
+									 construct_params);
 		g_object_add_weak_pointer (self, (gpointer) & self);
 		return self;
 	}

@@ -445,4 +445,4 @@ dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 G_DEFINE_TYPE_WITH_CODE (DMAPGstInputStream, dmap_gst_input_stream,
 			 G_TYPE_INPUT_STREAM,
 			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
-						dmap_gst_input_stream_seekable_iface_init))
+						dmap_gst_input_stream_seekable_iface_init));

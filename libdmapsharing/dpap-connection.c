@@ -184,4 +184,4 @@ dpap_connection_init (DPAPConnection * connection)
 	 */
 }
 
-G_DEFINE_TYPE (DPAPConnection, dpap_connection, DMAP_TYPE_CONNECTION)
+G_DEFINE_TYPE (DPAPConnection, dpap_connection, DMAP_TYPE_CONNECTION);
