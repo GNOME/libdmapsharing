@@ -371,7 +371,7 @@ add_entry_to_mlcl (gpointer id,
 			dmap_structure_add (mlit, DMAP_CC_MINM, filename);
 			g_free (filename);
 		} else
-			g_warning ("Filename requested but not available");
+			g_debug ("Filename requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT (id));
@@ -384,7 +384,8 @@ add_entry_to_mlcl (gpointer id,
 			dmap_structure_add (mlit, DMAP_CC_PASP, aspect_ratio);
 			g_free (aspect_ratio);
 		} else
-			g_warning ("Aspect ratio requested but not available");
+			g_debug
+				("Aspect ratio requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
 		gint creation_date = 0;
@@ -398,7 +399,7 @@ add_entry_to_mlcl (gpointer id,
 			dmap_structure_add (mlit, DMAP_CC_PIMF, filename);
 			g_free (filename);
 		} else
-			g_warning ("Filename requested but not available");
+			g_debug ("Filename requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
 		gchar *format = NULL;
@@ -407,7 +408,7 @@ add_entry_to_mlcl (gpointer id,
 			dmap_structure_add (mlit, DMAP_CC_PFMT, format);
 			g_free (format);
 		} else
-			g_warning ("Format requested but not available");
+			g_debug ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
 		gint filesize = 0;
@@ -441,7 +442,7 @@ add_entry_to_mlcl (gpointer id,
 			dmap_structure_add (mlit, DMAP_CC_PCMT, comments);
 			g_free (comments);
 		} else
-			g_warning ("Comments requested but not available");
+			g_debug ("Comments requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
