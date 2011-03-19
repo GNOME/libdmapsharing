@@ -533,7 +533,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_MINM, title);
 			g_free (title);
 		} else
-			g_warning ("Title requested but not available");
+			g_debug ("Title requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER,
@@ -556,7 +556,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_ASAL, album);
 			g_free (album);
 		} else
-			g_warning ("Album requested but not available");
+			g_debug ("Album requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
@@ -568,7 +568,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
 			g_free (artist);
 		} else
-			g_warning ("Artist requested but not available");
+			g_debug ("Artist requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
 		gint32 bitrate = 0;
@@ -628,7 +628,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_ASFM, format);
 			g_free (format);
 		} else
-			g_warning ("Format requested but not available");
+			g_debug ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre = NULL;
@@ -638,7 +638,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
 			g_free (genre);
 		} else
-			g_warning ("Genre requested but not available");
+			g_debug ("Genre requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
 		dmap_structure_add (mlit, DMAP_CC_ASDT, "");	/* FIXME: e.g., wav audio file */
@@ -696,7 +696,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_ASSA, sort_artist);
 			g_free (sort_artist);
 		} else {
-			g_warning ("Sort artist requested but not available");
+			g_debug ("Sort artist requested but not available");
 		}
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ALBUM)) {
@@ -707,7 +707,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_ASSU, sort_album);
 			g_free (sort_album);
 		} else {
-			g_warning ("Sort album requested but not available");
+			g_debug ("Sort album requested but not available");
 		}
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_MEDIAKIND)) {
