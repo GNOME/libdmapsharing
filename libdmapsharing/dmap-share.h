@@ -170,6 +170,12 @@ struct DMAPMetaDataMap
 	guint md;
 };
 
+struct MLCL_Bits
+{
+	GNode *mlcl;
+	bitwise bits;
+};
+
 GType dmap_share_get_type (void);
 
 /* Non-virtual methods */

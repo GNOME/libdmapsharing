@@ -71,12 +71,6 @@ struct _DMAPRecordIface
 
 typedef unsigned long long bitwise;
 
-struct MLCL_Bits
-{
-	GNode *mlcl;
-	bitwise bits;
-};
-
 typedef enum
 {
 	DMAP_MEDIA_KIND_MUSIC = 1,
