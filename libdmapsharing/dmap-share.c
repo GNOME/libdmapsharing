@@ -100,7 +100,6 @@ struct DMAPSharePrivate
 /* FIXME: name this something else, as it is more than just share/bitwise now */
 struct share_bitwise_t
 {
-	DMAPShare *share;
 	SoupServer *server;	/* Also in share, but we need to know whether server_ipv6 or _ipv4. */
 	struct MLCL_Bits mb;
 	GSList *id_list;
@@ -1572,7 +1571,7 @@ accumulate_mlcl_size_and_ids (gpointer id,
 
 	mb_copy.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);;
 
-	DMAP_SHARE_GET_CLASS (share_bitwise->share)->add_entry_to_mlcl (id,
+	DMAP_SHARE_GET_CLASS (share_bitwise->mb.share)->add_entry_to_mlcl (id,
 									record,
 									&mb_copy);
 	share_bitwise->size += dmap_structure_get_size (mb_copy.mlcl);
@@ -1607,7 +1606,7 @@ write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		gchar *data = NULL;
 		guint length;
 		DMAPRecord *record;
-		struct MLCL_Bits mb = { NULL, 0 };
+		struct MLCL_Bits mb = { NULL, 0, NULL };
 
 		record = share_bitwise->lookup_by_id (share_bitwise->db,
 						      GPOINTER_TO_UINT
@@ -1617,7 +1616,7 @@ write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		mb.bits = share_bitwise->mb.bits;
 		mb.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);
 
-		DMAP_SHARE_GET_CLASS (share_bitwise->share)->
+		DMAP_SHARE_GET_CLASS (share_bitwise->mb.share)->
 			add_entry_to_mlcl (share_bitwise->id_list->data,
 					   record, &mb);
 		data = dmap_structure_serialize (g_node_first_child (mb.mlcl),
@@ -1832,7 +1831,7 @@ _dmap_share_databases (DMAPShare * share,
 		GHashTable *records = NULL;
 		struct DMAPMetaDataMap *map;
 		gint32 num_songs;
-		struct MLCL_Bits mb = { NULL, 0 };
+		struct MLCL_Bits mb = { NULL, 0, NULL };
 		struct share_bitwise_t *share_bitwise;
 
 		record_query = g_hash_table_lookup (query, "query");
@@ -1853,6 +1852,7 @@ _dmap_share_databases (DMAPShare * share,
 
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
+		mb.share = share;
 
 		/* NOTE:
 		 * We previously simply called foreach...add_entry_to_mlcl and later serialized the entire
@@ -1871,7 +1871,6 @@ _dmap_share_databases (DMAPShare * share,
 		/* 1: */
 		share_bitwise = g_new (struct share_bitwise_t, 1);
 
-		share_bitwise->share = share;
 		share_bitwise->server = server;
 		share_bitwise->mb = mb;
 		share_bitwise->id_list = NULL;
@@ -1957,10 +1956,11 @@ _dmap_share_databases (DMAPShare * share,
 		GNode *aply;
 		GNode *mlit;
 		struct DMAPMetaDataMap *map;
-		struct MLCL_Bits mb = { NULL, 0 };
+		struct MLCL_Bits mb = { NULL, 0, NULL };
 
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
+		mb.share = share;
 
 		g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
@@ -2016,7 +2016,7 @@ _dmap_share_databases (DMAPShare * share,
 		 */
 		GNode *apso;
 		struct DMAPMetaDataMap *map;
-		struct MLCL_Bits mb = { NULL, 0 };
+		struct MLCL_Bits mb = { NULL, 0, NULL };
 		guint pl_id;
 		gchar *record_query;
 		GSList *filter_def;
@@ -2024,6 +2024,7 @@ _dmap_share_databases (DMAPShare * share,
 
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
+		mb.share = share;
 
 		apso = dmap_structure_add (NULL, DMAP_CC_APSO);
 		dmap_structure_add (apso, DMAP_CC_MSTT,

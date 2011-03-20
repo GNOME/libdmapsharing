@@ -170,10 +170,15 @@ struct DMAPMetaDataMap
 	guint md;
 };
 
+/* FIXME: this is passed as user_data to various functions; 
+ * need to rename. Also, get rid of initializations elsewhere: { NULL, 0, NULL };
+ * instead define a function to do this.
+ */
 struct MLCL_Bits
 {
 	GNode *mlcl;
 	bitwise bits;
+	DMAPShare *share;
 };
 
 GType dmap_share_get_type (void);

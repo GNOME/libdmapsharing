@@ -615,7 +615,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 		gchar *transcode_mimetype = NULL;
 
 		/* FIXME: This should be share, not record: */
-		g_object_get (record, "transcode-mimetype",
+		g_object_get (mb->share, "transcode-mimetype",
 			      &transcode_mimetype, NULL);
 		if (transcode_mimetype) {
 			format = g_strdup (mime_to_format
