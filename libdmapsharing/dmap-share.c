@@ -1615,6 +1615,7 @@ write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 
 		mb.bits = share_bitwise->mb.bits;
 		mb.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);
+		mb.share = share_bitwise->mb.share;
 
 		DMAP_SHARE_GET_CLASS (share_bitwise->mb.share)->
 			add_entry_to_mlcl (share_bitwise->id_list->data,
