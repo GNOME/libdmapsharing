@@ -541,9 +541,9 @@ dacp_share_send_playstatusupdate (DACPShare * share)
 						     (SoupMessage *)
 						     list->data);
 		}
+		g_object_unref (server);
 	}
 
-	g_object_unref (server);
 	server = NULL;
 
 	g_object_get (share, "server-ipv6", &server, NULL);
@@ -557,9 +557,8 @@ dacp_share_send_playstatusupdate (DACPShare * share)
 						     (SoupMessage *)
 						     list->data);
 		}
+		g_object_unref (server);
 	}
-
-	g_object_unref (server);
 
 	g_slist_free (share->priv->update_queue);
 	share->priv->update_queue = NULL;
