@@ -297,7 +297,7 @@ _dmap_share_server_start (DMAPShare * share)
 	 * IPv6 and IPv4 clients.
 	 */
 	if (share->priv->server_ipv6 == NULL) {
-		g_warning
+		g_debug
 			("Unable to start music sharing server on port %d, trying any open port",
 			 port);
 		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV6,
@@ -311,7 +311,7 @@ _dmap_share_server_start (DMAPShare * share)
 		/* Use same port for IPv4 as IPv6. */
 		port = soup_server_get_port (share->priv->server_ipv6);
 	} else {
-		g_warning ("Unable to start music sharing server (IPv6)");
+		g_debug ("Unable to start music sharing server (IPv6)");
 	}
 
 	/* NOTE: In the case mentioned above, this will fail as the server_ipv6 is already
@@ -327,7 +327,7 @@ _dmap_share_server_start (DMAPShare * share)
 	 * port on IPv6 and another on IPv4 */
 	if (share->priv->server_ipv6 == NULL
 	    && share->priv->server_ipv4 == NULL) {
-		g_warning
+		g_debug
 			("Unable to start music sharing server on port %d, trying IPv4 only, any open port",
 			 port);
 		addr = soup_address_new_any (SOUP_ADDRESS_FAMILY_IPV4,
@@ -338,8 +338,9 @@ _dmap_share_server_start (DMAPShare * share)
 	}
 
 	if (share->priv->server_ipv4 == NULL) {
-		g_warning ("Unable to start music sharing server (IPv4)");
+		g_debug ("Unable to start music sharing server (IPv4)");
 		if (share->priv->server_ipv6 == NULL) {
+			g_warning ("Unable to start music sharing server (both IPv4 and IPv6 failed)");
 			return FALSE;
 		}
 	}
@@ -352,7 +353,11 @@ _dmap_share_server_start (DMAPShare * share)
 		share->priv->port =
 			(guint) soup_server_get_port (share->priv->
 						      server_ipv4);
-	g_debug ("Started DMAP server on port %u (IPv6: %s, explicit IPv4: %s)", share->priv->port, share->priv->server_ipv6 ? "yes" : "no", share->priv->server_ipv4 ? "yes" : "no");
+
+	g_debug ("Started DMAP server on port %u (IPv6: %s, explicit IPv4: %s)",
+	          share->priv->port,
+		  share->priv->server_ipv6 ? "yes" : "no",
+		  share->priv->server_ipv4 ? "yes" : "no");
 
 	if (share->priv->server_ipv6)
 		_dmap_share_server_setup_handlers (share,
