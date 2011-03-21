@@ -928,6 +928,10 @@ _dmap_share_session_id_create (DMAPShare * share, SoupClientContext * context)
 	} while (addr != NULL);
 
 	/* store session id and remote address */
+	/* FIXME, warning, this fails against libsoup-2.33.90-1.fc15.x86_64 with:
+	 * (dmapd:12917): libsoup-CRITICAL **: soup_address_get_physical: assertion `SOUP_IS_ADDRESS (addr)' failed
+	 * Is this a bug in libsoup or libdmapsharing?
+	 */
 	remote_address = g_strdup (soup_client_context_get_host (context));
 	g_hash_table_insert (share->priv->session_ids, GUINT_TO_POINTER (id),
 			     remote_address);
