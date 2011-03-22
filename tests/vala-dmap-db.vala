@@ -28,6 +28,7 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 
 	public uint add (DMAP.Record record) {
 		db.add (((DMAP.Record) record));
+		db.add (((DMAP.Record) record));
 		return db.size;
 	}
 
@@ -46,12 +47,16 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 	public void @foreach (GLib.HFunc func) {
 		int i;
 		for (i = 0; i < db.size; i++) {
-			func (i.to_pointer (), db[i]);
+			// NOTE: iPhoto does not like a record ID of 0,
+			// so we pretend to start with 1
+			func ((i + 1).to_pointer (), db[i]);
 		}
 	}
 
 	public unowned DMAP.Record lookup_by_id (uint id) {
-		return db.get ((int) id);
+		// NOTE: iPhoto does not like a record ID of 0,
+		// so we pretend to start with 1
+		return db.get ((int) id - 1);
 	}
 
 

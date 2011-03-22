@@ -84,6 +84,7 @@ static guint vala_dmap_db_real_add (DMAPDb* base, DMAPRecord* record) {
 	self = (ValaDMAPDb*) base;
 	g_return_val_if_fail (record != NULL, 0U);
 	gee_abstract_collection_add ((GeeAbstractCollection*) self->priv->db, DMAP_RECORD (record));
+	gee_abstract_collection_add ((GeeAbstractCollection*) self->priv->db, DMAP_RECORD (record));
 	_tmp0_ = gee_collection_get_size ((GeeCollection*) self->priv->db);
 	result = (guint) _tmp0_;
 	return result;
@@ -95,7 +96,7 @@ static guint vala_dmap_db_real_add_path (DMAPDb* base, const gchar* path) {
 	guint result = 0U;
 	self = (ValaDMAPDb*) base;
 	g_return_val_if_fail (path != NULL, 0U);
-	g_error ("vala-dmap-db.vala:35: add_path not implemented");
+	g_error ("vala-dmap-db.vala:36: add_path not implemented");
 	return result;
 }
 
@@ -105,7 +106,7 @@ static guint vala_dmap_db_real_add_with_id (DMAPDb* base, DMAPRecord* record, gu
 	guint result = 0U;
 	self = (ValaDMAPDb*) base;
 	g_return_val_if_fail (record != NULL, 0U);
-	g_error ("vala-dmap-db.vala:39: add_with_id not implemented");
+	g_error ("vala-dmap-db.vala:40: add_with_id not implemented");
 	return result;
 }
 
@@ -141,7 +142,7 @@ static void vala_dmap_db_real_foreach (DMAPDb* base, GHFunc func, void* func_tar
 			if (!(i < _tmp1_)) {
 				break;
 			}
-			_tmp2_ = GINT_TO_POINTER (i);
+			_tmp2_ = GINT_TO_POINTER (i + 1);
 			_tmp3_ = gee_abstract_list_get ((GeeAbstractList*) self->priv->db, i);
 			func (_tmp2_, (DMAPRecord*) _tmp3_, func_target);
 		}
@@ -154,7 +155,7 @@ static DMAPRecord* vala_dmap_db_real_lookup_by_id (DMAPDb* base, guint id) {
 	DMAPRecord* result = NULL;
 	gpointer _tmp0_ = NULL;
 	self = (ValaDMAPDb*) base;
-	_tmp0_ = gee_abstract_list_get ((GeeAbstractList*) self->priv->db, (gint) id);
+	_tmp0_ = gee_abstract_list_get ((GeeAbstractList*) self->priv->db, ((gint) id) - 1);
 	result = (DMAPRecord*) _tmp0_;
 	return result;
 }
@@ -165,7 +166,7 @@ static guint vala_dmap_db_real_lookup_id_by_location (DMAPDb* base, const gchar*
 	guint result = 0U;
 	self = (ValaDMAPDb*) base;
 	g_return_val_if_fail (location != NULL, 0U);
-	g_error ("vala-dmap-db.vala:59: lookup_id_by_location not implemented");
+	g_error ("vala-dmap-db.vala:64: lookup_id_by_location not implemented");
 	return result;
 }
 
