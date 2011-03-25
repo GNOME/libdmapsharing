@@ -30,8 +30,11 @@ from SourceForge to GNOME Git in August of 2009.
 Alexandre Rosenfeld added initial DACP support to libdmapsharing while
 working on his 2010 Google Summer of Code project.
 
+Noah Alcantara contributed client-side support for mDNS/DNS-SD on Mac
+OS X early in 2011.
+
 The original authors of Rhythmbox's DAAP plugin have endorsed the
-re-licensing of their code in the following two emails:
+re-licensing of their code to LGPL in the following two emails:
 
 	Date: Sun, 11 Jan 2009 14:46:35 -0500
 	From: Charles Schmidt <cschmidt2[@]gmail.com>
