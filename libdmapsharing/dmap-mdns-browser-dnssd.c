@@ -38,12 +38,9 @@
 #include "config.h"
 #include "dmap-mdns-browser.h"
 
-#define LONG_TIME 10000000
 
 
 
-static volatile int stopNow = 0;
-static volatile int timeOut = LONG_TIME;
 
 
 
@@ -62,6 +59,9 @@ _DMAPMdnsBrowserPrivate
 	char serviceName[100];
 	char fullname[100];
 	char hosttarget[100];
+	
+	DNSServiceRef sdServiceRef;
+	DNSServiceRef sdBrowseRef;
 
 	GSList *services;
 	GSList *resolvers;
@@ -79,7 +79,7 @@ static void
 print_browser (DMAPMdnsBrowser *browser);
 
 static gboolean
-dnssd_resolve_services (DMAPMdnsBrowser *browser, DNSServiceRef sdRef);
+add_sd_to_event_loop (DMAPMdnsBrowser *browser, DNSServiceRef sdRef);
 
 static void 
 dmap_mdns_browser_class_init (DMAPMdnsBrowserClass *klass);
@@ -168,97 +168,77 @@ dmap_mdns_browser_init (DMAPMdnsBrowser *browser)
 	printf ("\n");
 }
 
-
-gboolean
-dnssd_resolve_services (DMAPMdnsBrowser *browser, DNSServiceRef sdRef)
+static gboolean
+browse_result_available_cb (GIOChannel *gio, GIOCondition condition, DMAPMdnsBrowser *browser)
 {
-	printf ("dnssd_resolve_services ()\n");
-	
-	int dns_sd_fd = DNSServiceRefSockFD (sdRef);
-	int nFDs = dns_sd_fd + 1;
-	int result = 0;
-	
-	struct timeval tv;
-	fd_set readfds;
-	
-	stopNow = 0;
-	
-	gboolean isSuccess = FALSE;
+	if (condition & G_IO_HUP) {
+		g_error ("DNS-SD browser socket closed");
+	}
 
-	print_browser (browser);	
+	DNSServiceErrorType err = DNSServiceProcessResult (browser->priv->sdBrowseRef);
 
-	while (!stopNow)
+	if (! kDNSServiceErr_NoError == err) {
+		g_error("Error processing DNS-SD browse result");
+	} else {
+		err = DNSServiceResolve (
+				&(browser->priv->sdServiceRef),
+				browser->priv->flags,
+				browser->priv->interfaceIndex,
+				browser->priv->serviceName,
+				browser->priv->regtype,
+				browser->priv->domain,
+				(DNSServiceResolveReply) dnsServiceResolveReply,
+				(void *) browser);
+	}
+
+	if (kDNSServiceErr_NoError == err)
 	{
-		printf ("*** Loop:  processing ****\n");
-		
-		FD_ZERO (&readfds);
-		FD_SET (dns_sd_fd, &readfds);
-
-		tv.tv_sec = timeOut;
-		tv.tv_usec = 0;
-
-		result = select (nFDs, &readfds, (fd_set*) NULL, (fd_set*) NULL, &tv);
-
-		if (result > 0)
-		{
-			printf ("*** Loop:  (result > 0) ****\n");
-
-			DNSServiceErrorType err = kDNSServiceErr_NoError;
-
-			if (FD_ISSET (dns_sd_fd, &readfds))
-			{
-				printf ("*** Loop:  reading daemon response ****\n");
-				err = DNSServiceProcessResult (sdRef);
-			}
-
-			if (err)
-			{
-				printf ("*** Loop:  error reading daemon ****\n");
-				stopNow = 1;
-			}
-			else
-			{
-				printf ("*** Loop:  success reading daemon ****\n");
-				isSuccess = TRUE;
-				stopNow = 1;
-			}
-		}
-		else if (0 == result)
-		{
-			printf ("*** Loop:  waiting ****\n");
-		}
-		else
-		{
-			printf ("select () returned %d errno %d %s\n",
-					result, errno, strerror (errno));
-
-			if (errno == EBADF)
-			{
-				printf ("*** Loop - EBADF ****\n");
-			}
-			else if (errno == EINTR)
-			{
-				printf ("*** Loop - EINTR ****\n");
-			}
-			else if (errno == EISDIR)
-			{
-				printf ("*** Loop - EISDIR ****\n");
-			}
-			else if (errno == EINVAL)
-			{
-				printf ("*** Loop - EINVAL ****\n");
-			}
-			
-			stopNow = 1;
-		}
+		g_debug ("Success processing DNS-SD browse result");
+		add_sd_to_event_loop (browser, browser->priv->sdServiceRef);
+	} else {
+		g_error("Error setting up DNS-SD resolve handler");
 	}
 	
-	printf ("\n");
-
-	FD_CLR (dns_sd_fd, &readfds);
-	
-	return isSuccess;
+	return TRUE;
 }
+
+static gboolean
+service_result_available_cb (GIOChannel *gio, GIOCondition condition, DMAPMdnsBrowser *browser)
+{
+	if (condition & G_IO_HUP) {
+		g_error ("DNS-SD service socket closed");
+	}
+
+	DNSServiceErrorType err = DNSServiceProcessResult (browser->priv->sdServiceRef);
+
+	if (! kDNSServiceErr_NoError == err) {
+		g_error("Error processing DNS-SD service result");
+	} else {
+		browser_add_service (
+			browser, 
+			(gchar *) browser->priv->serviceName, 
+			(gchar *) browser->priv->domain);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+add_sd_to_event_loop (DMAPMdnsBrowser *browser, DNSServiceRef sdRef)
+{
+	int dns_sd_fd = DNSServiceRefSockFD (sdRef);
+	
+	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
+	/* FIXME: last argument is ugly! */
+	if (!g_io_add_watch(dns_sd_chan,
+	                    G_IO_IN | G_IO_HUP | G_IO_ERR,
+			    (GIOFunc) (browser->priv->sdBrowseRef == sdRef ? browse_result_available_cb : service_result_available_cb), browser)) {
+		g_error("Error adding SD to event loop");
+	}
+
+	return TRUE;
+}
+
 
 
 
@@ -460,26 +440,19 @@ browser_add_service (
 }
 
 
-
 gboolean 
 dmap_mdns_browser_start (DMAPMdnsBrowser *browser, GError **error)
 {
 	printf ("dmap_mdns_browser_start ()\n");
 
 	gboolean isSuccess = FALSE;
-	gboolean canBrowse = FALSE;
-	gboolean canResolve = FALSE;
-	
-	DNSServiceRef sdBrowseRef;
-	DNSServiceRef sdServiceRef;
 	
 	DNSServiceErrorType browseErr = kDNSServiceErr_Unknown;
-	DNSServiceErrorType resolveErr = kDNSServiceErr_Unknown;
 
 	print_browser (browser);
 
 	browseErr = DNSServiceBrowse (
-		&(sdBrowseRef),
+		&(browser->priv->sdBrowseRef),
 		browser->priv->flags,
 		browser->priv->interfaceIndex,
 		browser->priv->regtype,
@@ -490,45 +463,9 @@ dmap_mdns_browser_start (DMAPMdnsBrowser *browser, GError **error)
 	if (kDNSServiceErr_NoError == browseErr)
 	{
 		printf ("*** Browse Success ****\n");
-		canBrowse = dnssd_resolve_services (browser, sdBrowseRef);
-		DNSServiceRefDeallocate (sdBrowseRef);
+		add_sd_to_event_loop (browser, browser->priv->sdBrowseRef);
 	}
 
-	if (canBrowse)
-	{
-		printf ("*** Browser read from daemon ****\n");
-		resolveErr = DNSServiceResolve (
-				&(sdServiceRef),
-				browser->priv->flags,
-				browser->priv->interfaceIndex,
-				browser->priv->serviceName,
-				browser->priv->regtype,
-				browser->priv->domain,
-				(DNSServiceResolveReply) dnsServiceResolveReply,
-				(void *) browser);
-	}
-
-	if (kDNSServiceErr_NoError == resolveErr)
-	{
-		printf ("*** Service Resolve Success ****\n");
-		canResolve = dnssd_resolve_services (browser, sdServiceRef);
-		DNSServiceRefDeallocate (sdServiceRef);
-	}
-	
-	if (canResolve)
-	{
-		printf ("*** Service read from daemon ****\n");
-
-		print_browser (browser);
-
-		// Add the successful browsed service
-		browser_add_service (
-			browser, 
-			(gchar *) browser->priv->serviceName, 
-			(gchar *) browser->priv->domain);
-		
-		isSuccess = TRUE;
-	}	
 
 	printf ("\n");
 	
@@ -544,6 +481,9 @@ dmap_mdns_browser_start (DMAPMdnsBrowser *browser, GError **error)
 gboolean 
 dmap_mdns_browser_stop (DMAPMdnsBrowser *browser, GError **error)
 {
+	DNSServiceRefDeallocate (browser->priv->sdBrowseRef);
+	DNSServiceRefDeallocate (browser->priv->sdServiceRef);
+
 	return TRUE;
 }
 
