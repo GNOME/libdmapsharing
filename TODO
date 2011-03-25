@@ -6,7 +6,6 @@ Noah: DNS-SD implementation
 
 Documentation:
 	Improve content (Noah?)
-	Fix bad characters (UTF-8 issue?) -- see email to GTK-Doc mailing list
 	Fix alignment of object description code
 	Fix "up" icon in second level pages
 	Add standard sidebar
