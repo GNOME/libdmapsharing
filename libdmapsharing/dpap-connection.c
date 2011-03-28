@@ -120,6 +120,8 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	if (filesize) {
 		ptr = g_byte_array_sized_new (filesize);
 		g_byte_array_append (ptr, thumbnail, filesize);
+	} else {
+		ptr = g_byte_array_sized_new (0);
 	}
 
 	g_object_set (record,
