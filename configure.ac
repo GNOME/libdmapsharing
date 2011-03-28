@@ -308,9 +308,10 @@ else
   AC_WARN(built. Roku clients may be affected.)
 fi
 
-dnl Check for libsoup again, this time >= 2.32, needed DACP + Apple Remote App
-PKG_CHECK_MODULES(SOUP_APPLE_REMOTE_APP, libsoup-2.4 >= 2.32, ,
-  AC_WARN(Apple Remote App (DACP) may not work with libsoup < 2.32))
+dnl Check for libsoup again, this time >= 2.32.2, needed for
+dnl DACP + Apple Remote App (actually 2.32) and IPv6 (tested 2.32.2)
+PKG_CHECK_MODULES(SOUP_APPLE_REMOTE_APP, libsoup-2.4 >= 2.32.2, ,
+  AC_WARN(Apple Remote App (DACP) and IPv6 may not work with libsoup < 2.32.2))
 
 dnl Check for GStreamer App, needed for transcoding
 dnl gstreamer-plugins-base >= 0.10.23.2 for GNOME Bugzilla #588205 & #587896.
