@@ -1,4 +1,4 @@
-Name: libdmapsharing3
+Name: libdmapsharing
 Version: 2.9.0
 Release: 1%{?dist}
 License: LGPLv2+
