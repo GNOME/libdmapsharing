@@ -16,7 +16,6 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <dns_sd.h>
@@ -25,22 +24,11 @@
 #include <time.h>
 #include <unistd.h>
 #include <errno.h>
-
-/*
-#include <arpa/inet.h>
-
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/select.h>
-*/
-
 #include <glib.h>
 #include <glib-object.h>
 
 #include "config.h"
 #include "dmap-mdns-browser.h"
-
-
 
 struct 
 _DMAPMdnsBrowserPrivate
@@ -71,7 +59,6 @@ enum
 	SERVICE_REMOVED,
 	LAST_SIGNAL
 };
-
 
 static void 
 print_browser (DMAPMdnsBrowser *browser);
@@ -251,9 +238,6 @@ add_sd_to_event_loop (DMAPMdnsBrowser *browser, DNSServiceRef sdRef)
 	return TRUE;
 }
 
-
-
-
 static void 
 dns_service_browse_reply (
 	DNSServiceRef sdRef,
@@ -288,8 +272,6 @@ dns_service_browse_reply (
 	}
 }
 
-
-
 static void 
 dns_service_resolve_reply (
 	DNSServiceRef sdRef,
@@ -321,8 +303,6 @@ dns_service_resolve_reply (
 	}
 }
 
-
-
 static void
 dnssd_browser_init (DMAPMdnsBrowser *browser)
 {
@@ -348,8 +328,6 @@ dnssd_browser_init (DMAPMdnsBrowser *browser)
 	g_free (browser->priv->host_target);	
 	browser->priv->host_target = g_strdup ("");	
 }
-
-
 
 static void 
 dmap_mdns_browser_class_init (DMAPMdnsBrowserClass *klass)
@@ -389,8 +367,6 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass *klass)
 			  1, G_TYPE_STRING);
 }
 
-
-
 DMAPMdnsBrowser* 
 dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
 {
@@ -408,8 +384,6 @@ dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
 
 	return browser_object;
 }
-
-
 
 static gboolean 
 dmap_mdns_browser_resolve (
@@ -443,8 +417,6 @@ dmap_mdns_browser_resolve (
 	return TRUE;	
 }
 
-
-
 static void
 browser_add_service (
 	DMAPMdnsBrowser *browser,
@@ -455,7 +427,6 @@ browser_add_service (
 
 	dmap_mdns_browser_resolve (browser, service_name, domain);
 }
-
 
 gboolean 
 dmap_mdns_browser_start (DMAPMdnsBrowser *browser, GError **error)
@@ -484,8 +455,6 @@ dmap_mdns_browser_start (DMAPMdnsBrowser *browser, GError **error)
 	return isSuccess;
 }
 
-
-
 /**
  *  Note that you must terminate the connection with the daemon and 
  *  free any memory associated with DNSServiceRef
@@ -498,8 +467,6 @@ dmap_mdns_browser_stop (DMAPMdnsBrowser *browser, GError **error)
 
 	return TRUE;
 }
-
-
 
 GQuark 
 dmap_mdns_browser_error_quark (void)
@@ -515,8 +482,6 @@ dmap_mdns_browser_error_quark (void)
 	return quark;
 }
 
-
-
 G_CONST_RETURN GSList*
 dmap_mdns_browser_get_services (DMAPMdnsBrowser *browser)
 {
@@ -524,8 +489,6 @@ dmap_mdns_browser_get_services (DMAPMdnsBrowser *browser)
 	
 	return browser->priv->services;
 }
-
-
 
 DMAPMdnsBrowserServiceType 
 dmap_mdns_browser_get_service_type (DMAPMdnsBrowser *browser)
@@ -536,8 +499,6 @@ dmap_mdns_browser_get_service_type (DMAPMdnsBrowser *browser)
 
 	return browser->priv->service_type;
 }
-
-
 
 static void 
 dmap_mdns_browser_dispose (GObject *object)
@@ -556,16 +517,12 @@ dmap_mdns_browser_dispose (GObject *object)
 	G_OBJECT_CLASS (dmap_mdns_browser_parent_class)->dispose (object);
 }
 
-
-
 static void 
 dmap_mdns_browser_finalize (GObject *object)
 {
 	g_signal_handlers_destroy (object);
 	G_OBJECT_CLASS (dmap_mdns_browser_parent_class)->finalize (object);
 }
-
-
 
 static void
 free_service (DMAPMdnsBrowserService *service)
@@ -576,7 +533,6 @@ free_service (DMAPMdnsBrowserService *service)
 	g_free (service->pair);
 	g_free (service);
 }
-
 
 static void
 print_browser (DMAPMdnsBrowser *browser)
@@ -596,4 +552,3 @@ print_browser (DMAPMdnsBrowser *browser)
 	
 	printf ("\n");
 }
-
