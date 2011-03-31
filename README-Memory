@@ -36,8 +36,8 @@ I have made the following changes in order to make dmapd more memory
 efficient:
 
 1. Replace the hash table-based DMAPDb implementation with a Berkeley
-Database implementation. This has not resulted in any improvement,
-so the hash table implementation is once again the default.
+Database implementation. Currently measuring the memory use compared to
+the in-memory database.
 
 2. Fixed several memory leaks after analyzing with valgrind.
 
@@ -85,11 +85,4 @@ chunks, avoiding the need to build the entire response in memory.
 
 	VIPS must decompress multiple scan JPEG's fully in memory due
 	to the way libjpeg works. Either 1) use embedded EXIF thumbnail
-	or 2) skip. Currently adding the following to VIPS im_jpeg2vips.c
-	to skip:
-
-	Right below jpeg_start_decompress:
-	if (jpeg_had_multiple_scans(cinfo)) {
-		printf ("MULTISCAN, SKIPPING\n");
-		return -1;
-	}
+	or 2) skip.
