@@ -87,6 +87,13 @@ typedef enum
 		DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP
 } DMAPMdnsBrowserServiceType;
 
+static const char *service_type_name[] = {
+	NULL,
+	"_daap._tcp",
+	"_dpap._tcp",
+	"_touch-remote._tcp"
+};
+
 typedef enum
 {
 	DMAP_MDNS_BROWSER_ERROR_NOT_RUNNING = 0,

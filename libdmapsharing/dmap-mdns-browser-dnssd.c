@@ -106,13 +106,6 @@ dns_service_resolve_reply (DNSServiceRef sdRef,
 
 gboolean dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error);
 
-static const char *service_type_name[] = {
-	NULL,
-	"_daap._tcp",
-	"_dpap._tcp",
-	"_touch-remote._tcp"
-};
-
 #define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserPrivate))
 
 static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };

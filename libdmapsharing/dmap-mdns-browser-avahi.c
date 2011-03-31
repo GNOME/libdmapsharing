@@ -108,13 +108,6 @@ static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
-static gchar *service_type_name[] = {
-	NULL,
-	"_daap._tcp",
-	"_dpap._tcp",
-	"_touch-remote._tcp"
-};
-
 GQuark
 dmap_mdns_browser_error_quark (void)
 {
