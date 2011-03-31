@@ -59,8 +59,6 @@ enum
 	LAST_SIGNAL
 };
 
-static void print_browser (DMAPMdnsBrowser * browser);
-
 static gboolean
 add_sd_to_event_loop (DMAPMdnsBrowser * browser, DNSServiceRef sdRef);
 
@@ -110,9 +108,9 @@ gboolean dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error);
 
 static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT)
+G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
-     static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
+static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 {
 	g_debug ("dmap_mdns_browser_init ()");
 
@@ -482,23 +480,4 @@ free_service (DMAPMdnsBrowserService * service)
 	g_free (service->host);
 	g_free (service->pair);
 	g_free (service);
-}
-
-static void
-print_browser (DMAPMdnsBrowser * browser)
-{
-	printf ("\n======= Browser Fields =======\n");
-
-	printf ("     reg_type: %s\n", browser->priv->reg_type);
-	printf (" service_name: %s\n", browser->priv->service_name);
-	printf ("    full_name: %s\n", browser->priv->full_name);
-	printf ("  host_target: %s\n", browser->priv->host_target);
-	printf ("       domain: %s\n", browser->priv->domain);
-
-	printf ("         port: %d\n", browser->priv->port);
-	printf ("  iface index: %d\n", browser->priv->interface_index);
-	printf ("        flags: %d\n", browser->priv->flags);
-	printf ("==============================\n");
-
-	printf ("\n");
 }
