@@ -186,14 +186,14 @@ service_result_available_cb (GIOChannel * gio,
 }
 
 static gboolean
-add_sd_to_event_loop (DMAPMdnsBrowser * browser, DNSServiceRef sdRef)
+add_sd_to_event_loop (DMAPMdnsBrowser * browser, DNSServiceRef sd_ref)
 {
-	int dns_sd_fd = DNSServiceRefSockFD (sdRef);
+	int dns_sd_fd = DNSServiceRefSockFD (sd_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 	GIOFunc result_func = NULL;
 
-	if (browser->priv->sd_browse_ref == sdRef) {
+	if (browser->priv->sd_browse_ref == sd_ref) {
 		result_func = (GIOFunc) browse_result_available_cb;
 	} else if (browser->priv->sd_service_ref) {
 		result_func = (GIOFunc) service_result_available_cb;
@@ -209,55 +209,55 @@ add_sd_to_event_loop (DMAPMdnsBrowser * browser, DNSServiceRef sdRef)
 }
 
 static void
-dns_service_browse_reply (DNSServiceRef sdRef,
+dns_service_browse_reply (DNSServiceRef sd_ref,
 			  DNSServiceFlags flags,
-			  uint32_t interfaceIndex,
-			  DNSServiceErrorType errorCode,
-			  const char *serviceName,
+			  uint32_t interface_index,
+			  DNSServiceErrorType error_code,
+			  const char *service_name,
 			  const char *regtype,
-			  const char *replyDomain, void *context)
+			  const char *reply_domain, void *context)
 {
-	if (errorCode == kDNSServiceErr_NoError) {
+	if (error_code == kDNSServiceErr_NoError) {
 		g_debug ("dns_service_browse_reply ():  success");
 
 		// Cast the context pointer to a DMAPMdnsBrowser
 		DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) context;
 
 		browser->priv->flags = flags;
-		browser->priv->interface_index = interfaceIndex;
+		browser->priv->interface_index = interface_index;
 
 		g_free (browser->priv->service_name);
-		browser->priv->service_name = g_strdup (serviceName);
+		browser->priv->service_name = g_strdup (service_name);
 
 		g_free (browser->priv->reg_type);
 		browser->priv->reg_type = g_strdup (regtype);
 
 		g_free (browser->priv->domain);
-		browser->priv->domain = g_strdup (replyDomain);
+		browser->priv->domain = g_strdup (reply_domain);
 	} else {
 		g_debug ("dnsServiceBrowserReply ():  fail");
 	}
 }
 
 static void
-dns_service_resolve_reply (DNSServiceRef sdRef,
+dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   DNSServiceFlags flags,
-			   uint32_t interfaceIndex,
-			   DNSServiceErrorType errorCode,
+			   uint32_t interface_index,
+			   DNSServiceErrorType error_code,
 			   const char *fullname,
 			   const char *hosttarget,
 			   uint16_t port,
-			   uint16_t txtLen,
-			   const char *txtRecord, void *context)
+			   uint16_t txt_len,
+			   const char *txt_record, void *context)
 {
 	g_debug ("dns_service_resolve_reply ()");
 
 	// Cast the context pointer to a DMAPMdnsBrowser
 	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) context;
 
-	if (kDNSServiceErr_NoError == errorCode) {
+	if (kDNSServiceErr_NoError == error_code) {
 		browser->priv->flags = flags;
-		browser->priv->interface_index = interfaceIndex;
+		browser->priv->interface_index = interface_index;
 		browser->priv->port = htons (port);
 
 		g_free (browser->priv->full_name);
@@ -391,11 +391,11 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 {
 	g_debug ("dmap_mdns_browser_start ()");
 
-	gboolean isSuccess = FALSE;
+	gboolean is_success = FALSE;
 
-	DNSServiceErrorType browseErr = kDNSServiceErr_Unknown;
+	DNSServiceErrorType browse_err = kDNSServiceErr_Unknown;
 
-	browseErr = DNSServiceBrowse (&(browser->priv->sd_browse_ref),
+	browse_err = DNSServiceBrowse (&(browser->priv->sd_browse_ref),
 				      browser->priv->flags,
 				      browser->priv->interface_index,
 				      browser->priv->reg_type,
@@ -404,13 +404,13 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 				      dns_service_browse_reply,
 				      (void *) browser);
 
-	if (kDNSServiceErr_NoError == browseErr) {
+	if (kDNSServiceErr_NoError == browse_err) {
 		g_debug ("*** Browse Success ****");
 
 		add_sd_to_event_loop (browser, browser->priv->sd_browse_ref);
 	}
 
-	return isSuccess;
+	return is_success;
 }
 
 /**
