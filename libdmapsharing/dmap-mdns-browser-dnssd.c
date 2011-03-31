@@ -40,7 +40,6 @@ struct _DMAPMdnsBrowserPrivate
 	uint32_t interface_index;
 
 	gchar *service_name;
-	gchar *reg_type;
 	gchar *full_name;
 	gchar *host_target;
 	gchar *domain;
@@ -136,7 +135,7 @@ browse_result_available_cb (GIOChannel * gio,
 					 browser->priv->flags,
 					 browser->priv->interface_index,
 					 browser->priv->service_name,
-					 browser->priv->reg_type,
+					 service_type_name[browser->priv->service_type],
 					 browser->priv->domain,
 					 (DNSServiceResolveReply)
 					 dns_service_resolve_reply,
@@ -220,8 +219,9 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 		g_free (browser->priv->service_name);
 		browser->priv->service_name = g_strdup (service_name);
 
-		g_free (browser->priv->reg_type);
-		browser->priv->reg_type = g_strdup (regtype);
+		/* NOTE: regtype is ignored as it is assumed to be the same
+		 * as what we were browsing for in the first place.
+		 */
 
 		g_free (browser->priv->domain);
 		browser->priv->domain = g_strdup (reply_domain);
@@ -267,11 +267,6 @@ dnssd_browser_init (DMAPMdnsBrowser * browser)
 	browser->priv->flags = kDNSServiceFlagsDefault;
 	browser->priv->port = 0;
 	browser->priv->interface_index = 0;
-
-	g_free (browser->priv->reg_type);
-	browser->priv->reg_type =
-		g_strdup (service_type_name
-			  [DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP]);
 
 	g_free (browser->priv->domain);
 	browser->priv->domain = g_strdup ("");
@@ -350,7 +345,7 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 
 	service = g_new (DMAPMdnsBrowserService, 1);
 
-	service->service_name = g_strdup (browser->priv->reg_type);
+	service->service_name = g_strdup (service_type_name[browser->priv->service_type]);
 	service->name = name;
 	service->host = g_strdup (browser->priv->host_target);
 	service->port = browser->priv->port;
@@ -389,7 +384,7 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 	browse_err = DNSServiceBrowse (&(browser->priv->sd_browse_ref),
 				      browser->priv->flags,
 				      browser->priv->interface_index,
-				      browser->priv->reg_type,
+				      service_type_name[browser->priv->service_type],
 				      browser->priv->domain,
 				      (DNSServiceBrowseReply)
 				      dns_service_browse_reply,
