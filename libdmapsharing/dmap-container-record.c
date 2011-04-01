@@ -73,6 +73,10 @@ dmap_container_record_get_id (DMAPContainerRecord * record)
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->get_id (record);
 }
 
+/* NOTE: record is not used in dmapd implementation, only ID. Should we get rid
+ * of record in next API generation? Should we add a function to explicitly set
+ * a pointer to the "whole" media database (in which the ID is valid)?
+ */
 void
 dmap_container_record_add_entry (DMAPContainerRecord * container_record,
 				 DMAPRecord * record, gint id)
