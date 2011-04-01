@@ -68,7 +68,7 @@ struct _DMAPContainerDbIface
 {
 	GTypeInterface parent;
 
-	void *(*add) (DMAPContainerDb * db, DMAPContainerRecord * record);
+	void (*add) (DMAPContainerDb * db, DMAPContainerRecord * record);
 
 	DMAPContainerRecord *(*lookup_by_id) (DMAPContainerDb * db, guint id);
 
