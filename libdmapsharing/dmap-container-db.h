@@ -68,6 +68,8 @@ struct _DMAPContainerDbIface
 {
 	GTypeInterface parent;
 
+	void *(*add) (DMAPContainerDb * db, DMAPContainerRecord * record);
+
 	DMAPContainerRecord *(*lookup_by_id) (DMAPContainerDb * db, guint id);
 
 	void (*foreach) (DMAPContainerDb * db, GHFunc func, gpointer data);
@@ -76,6 +78,16 @@ struct _DMAPContainerDbIface
 };
 
 GType dmap_container_db_get_type (void);
+
+/**
+ * dmap_container_db_add:
+ * @db: A container database.
+ * @record: A record.
+ *
+ * Add a record to the database.
+ */
+void dmap_container_db_add (DMAPContainerDb * db,
+                            DMAPContainerRecord * record);
 
 /**
  * dmap_container_db_lookup_by_id:

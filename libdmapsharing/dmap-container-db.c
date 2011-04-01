@@ -56,6 +56,12 @@ dmap_container_db_get_type (void)
 	return object_type;
 }
 
+void
+dmap_container_db_add (DMAPContainerDb * db, DMAPContainerRecord *record)
+{
+	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->add (db, record);
+}
+
 DMAPContainerRecord *
 dmap_container_db_lookup_by_id (DMAPContainerDb * db, guint id)
 {
