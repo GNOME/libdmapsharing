@@ -303,6 +303,7 @@ free_service (struct DMAPMdnsPublisherService *service, gpointer user_data)
 	g_free (service->name);
 	g_free (service->type_of_service);
 	g_strfreev (service->txt_records);
+	g_free (service);
 }
 
 gboolean
