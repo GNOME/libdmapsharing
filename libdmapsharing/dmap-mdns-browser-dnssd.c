@@ -61,17 +61,23 @@ enum
 static gboolean
 add_sd_to_event_loop (DMAPMdnsBrowser * browser, DNSServiceRef sdRef);
 
-static void dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass);
+static void 
+dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass);
 
-static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser);
+static void 
+dmap_mdns_browser_init (DMAPMdnsBrowser * browser);
 
-static void dmap_mdns_browser_dispose (GObject * object);
+static void 
+dmap_mdns_browser_dispose (GObject * object);
 
-static void dmap_mdns_browser_finalize (GObject * object);
+static void 
+dmap_mdns_browser_finalize (GObject * object);
 
-static void dnssd_browser_init (DMAPMdnsBrowser * browser);
+static void 
+dnssd_browser_init (DMAPMdnsBrowser * browser);
 
-static void free_service (DMAPMdnsBrowserService * service);
+static void 
+free_service (DMAPMdnsBrowserService * service);
 
 static void
 browser_add_service (DMAPMdnsBrowser * browser,
@@ -109,7 +115,8 @@ static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
-static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
+static void 
+dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 {
 	g_debug ("dmap_mdns_browser_init ()");
 
@@ -210,21 +217,27 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 	if (error_code == kDNSServiceErr_NoError) {
 		g_debug ("dns_service_browse_reply ():  success");
 
-		// Cast the context pointer to a DMAPMdnsBrowser
-		DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) context;
+		if (flags & kDNSServiceFlagsAdd) {
+			g_debug ("adding a service");
+			
+			// Cast the context pointer to a DMAPMdnsBrowser
+			DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) context;
 
-		browser->priv->flags = flags;
-		browser->priv->interface_index = interface_index;
+			browser->priv->flags = flags;
+			browser->priv->interface_index = interface_index;
 
-		g_free (browser->priv->service_name);
-		browser->priv->service_name = g_strdup (service_name);
+			g_free (browser->priv->service_name);
+			browser->priv->service_name = g_strdup (service_name);
 
-		/* NOTE: regtype is ignored as it is assumed to be the same
-		 * as what we were browsing for in the first place.
-		 */
-
-		g_free (browser->priv->domain);
-		browser->priv->domain = g_strdup (reply_domain);
+			/* NOTE: regtype is ignored as it is assumed to be 
+			 * the same as what we were browsing for in the 
+			 * first place.
+			 */
+			g_free (browser->priv->domain);
+			browser->priv->domain = g_strdup (reply_domain);
+		} else if (flags & kDNSServiceFlagsMoreComing) {
+			g_debug ("more incoming information");
+		}
 	} else {
 		g_debug ("dnsServiceBrowserReply ():  fail");
 	}
@@ -241,12 +254,12 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   uint16_t txt_len,
 			   const char *txt_record, void *context)
 {
-	g_debug ("dns_service_resolve_reply ()");
-
 	// Cast the context pointer to a DMAPMdnsBrowser
 	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) context;
 
 	if (kDNSServiceErr_NoError == error_code) {
+		g_debug ("dns_service_resolve_reply ():  success");
+		
 		browser->priv->flags = flags;
 		browser->priv->interface_index = interface_index;
 		browser->priv->port = htons (port);
@@ -256,6 +269,8 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 
 		g_free (browser->priv->host_target);
 		browser->priv->host_target = g_strdup (hosttarget);
+	} else {
+		g_debug ("dns_service_resolve_reply ():  fail");
 	}
 }
 
@@ -345,7 +360,8 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 
 	service = g_new (DMAPMdnsBrowserService, 1);
 
-	service->service_name = g_strdup (service_type_name[browser->priv->service_type]);
+	service->service_name = 
+		g_strdup (service_type_name[browser->priv->service_type]);
 	service->name = name;
 	service->host = g_strdup (browser->priv->host_target);
 	service->port = browser->priv->port;
@@ -476,3 +492,4 @@ free_service (DMAPMdnsBrowserService * service)
 	g_free (service->pair);
 	g_free (service);
 }
+
