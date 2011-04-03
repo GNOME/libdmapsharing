@@ -26,6 +26,8 @@
 #include <gst/app/gstappbuffer.h>
 
 #include "dmap-gst-input-stream.h"
+#include "dmap-gst-mp3-input-stream.h"
+#include "dmap-gst-wav-input-stream.h"
 #include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
@@ -85,10 +87,10 @@ dmap_gst_input_stream_seek (GSeekable * seekable,
 			    GSeekType type,
 			    GCancellable * cacellable, GError ** error)
 {
-	DMAPGstInputStream *stream;
-	goffset absolute;
+	// FIXME: implement: DMAPGstInputStream *stream;
+	// FIXME: implement: goffset absolute;
 
-	stream = DMAP_GST_INPUT_STREAM (seekable);
+	// FIXME: implement: stream = DMAP_GST_INPUT_STREAM (seekable);
 
 	switch (type) {
 		/* FIXME: implement:
@@ -102,7 +104,7 @@ dmap_gst_input_stream_seek (GSeekable * seekable,
 		 */
 
 	case G_SEEK_SET:
-		absolute = offset;
+		// FIXME: implement: absolute = offset;
 		break;
 
 	default:

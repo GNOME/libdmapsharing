@@ -35,13 +35,15 @@ get_protocol_version_cc (DMAPConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
+	return 0;
 }
 
 static gchar *
-get_query_metadata (void)
+get_query_metadata (DMAPConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
+	return NULL;
 }
 
 static DMAPRecord *
@@ -50,6 +52,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 {
 	/* FIXME: */
 	g_error ("Not implemented");
+	return NULL;
 }
 
 static void

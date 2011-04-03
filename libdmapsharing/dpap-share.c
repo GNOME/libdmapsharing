@@ -416,7 +416,6 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
 		GByteArray *thumbnail = NULL;
-		gint filesize = 0;
 
 		g_object_get (record, "thumbnail", &thumbnail, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PIFS,
@@ -468,7 +467,8 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 				data = thumbnail->data;
 				size = thumbnail->len;
 			} else {
-				data = size = 0;
+				data = NULL;
+				size = 0;
 			}
 		} else {
 			/* Should be PHOTO_HIRES */

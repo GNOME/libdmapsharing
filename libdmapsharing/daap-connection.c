@@ -37,7 +37,7 @@ get_protocol_version_cc (DMAPConnection * connection)
 }
 
 static gchar *
-get_query_metadata (void)
+get_query_metadata (DMAPConnection * connection)
 {
 	return g_strdup ("dmap.itemid,dmap.itemname,daap.songalbum,"
 			 "daap.songartist,daap.songgenre,daap.songsize,"
@@ -58,7 +58,8 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	const gchar *artist = NULL;
 	const gchar *format = NULL;
 	const gchar *genre = NULL;
-	const gchar *streamURI = NULL;
+	// FIXME: not used?
+	// const gchar *streamURI = NULL;
 	const gchar *sort_artist = NULL;
 	const gchar *sort_album = NULL;
 	gint length = 0;
@@ -111,10 +112,12 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 		case DMAP_CC_ASBR:
 			bitrate = g_value_get_int (&(meta_item->content));
 			break;
+		/* FIXME: not used?
 		case DMAP_CC_ASUL:
 			streamURI =
 				g_value_get_string (&(meta_item->content));
 			break;
+		*/
 		case DMAP_CC_ASSA:
 			sort_artist =
 				g_value_get_string (&(meta_item->content));

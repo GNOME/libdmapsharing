@@ -37,7 +37,7 @@ get_protocol_version_cc (DMAPConnection * connection)
 }
 
 static gchar *
-get_query_metadata (void)
+get_query_metadata (DMAPConnection * connection)
 {
 	return g_strdup ("all");
 }
@@ -53,7 +53,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	const gchar *format = NULL;
 	const gchar *comments = NULL;
 	const gchar *thumbnail = NULL;
-	const GByteArray *ptr = NULL;
+	GByteArray *ptr = NULL;
 	gint creation_date = 0;
 	gint filesize = 0;
 	gint large_filesize = 0;
@@ -119,7 +119,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 
 	if (filesize) {
 		ptr = g_byte_array_sized_new (filesize);
-		g_byte_array_append (ptr, thumbnail, filesize);
+		g_byte_array_append (ptr, (guint8 *) thumbnail, filesize);
 	} else {
 		ptr = g_byte_array_sized_new (0);
 	}

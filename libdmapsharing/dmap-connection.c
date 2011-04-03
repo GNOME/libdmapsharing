@@ -869,8 +869,8 @@ handle_song_listing (DMAPConnection * connection,
 	gint returned_count;
 	gint i;
 	GNode *n;
-	gint specified_total_count;
-	gboolean update_type;
+	// FIXME: unused? gint specified_total_count;
+	// FIXME: unused? gboolean update_type;
 	gint commit_batch;
 
 	/* get the songs */
@@ -899,7 +899,7 @@ handle_song_listing (DMAPConnection * connection,
 		dmap_connection_state_done (connection, FALSE);
 		return;
 	}
-	specified_total_count = g_value_get_int (&(item->content));
+	// FIXME: unused? specified_total_count = g_value_get_int (&(item->content));
 
 	item = dmap_structure_find_item (structure, DMAP_CC_MUTY);
 	if (item == NULL) {
@@ -907,7 +907,7 @@ handle_song_listing (DMAPConnection * connection,
 		dmap_connection_state_done (connection, FALSE);
 		return;
 	}
-	update_type = g_value_get_char (&(item->content));
+	// FIXME: unused? update_type = g_value_get_char (&(item->content));
 
 	listing_node = dmap_structure_find_node (structure, DMAP_CC_MLCL);
 	if (listing_node == NULL) {

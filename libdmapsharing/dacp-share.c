@@ -43,6 +43,7 @@
 
 #include <libdmapsharing/dmap-share.h>
 #include <libdmapsharing/dacp-share.h>
+#include <libdmapsharing/dacp-connection.h>
 #include <libdmapsharing/dacp-player.h>
 
 static void dacp_share_set_property (GObject * object,
@@ -801,12 +802,11 @@ dacp_share_ctrl_int (DMAPShare * share,
 		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
 	} else if (g_ascii_strcasecmp ("/1/getspeakers", rest_of_path) == 0) {
 		GNode *casp;
-		GNode *mdcl;
 
 		casp = dmap_structure_add (NULL, DMAP_CC_CASP);
 		dmap_structure_add (casp, DMAP_CC_MSTT,
 				    (gint32) DMAP_STATUS_OK);
-		mdcl = dmap_structure_add (casp, DMAP_CC_MDCL);
+		dmap_structure_add (casp, DMAP_CC_MDCL);
 
 		dmap_structure_add (casp, DMAP_CC_CAIA, TRUE);
 		dmap_structure_add (casp, DMAP_CC_MINM, "Computer");
@@ -1090,10 +1090,11 @@ dacp_share_pair (DACPShare * share, gchar * service_name, gchar passcode[4])
 
 	g_object_get (share, "name", &name, NULL);
 
-	remote_info->connection = dacp_connection_new (name,
-						       remote_info->host,
-						       remote_info->port,
-						       FALSE, NULL, NULL);
+	remote_info->connection = DMAP_CONNECTION (dacp_connection_new (name,
+						                        remote_info->host, remote_info->port,
+									FALSE,
+									NULL,
+									NULL));
 	/* This is required since we don't call DMAPConnection default handler */
 	dmap_connection_setup (remote_info->connection);
 

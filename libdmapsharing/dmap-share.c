@@ -97,6 +97,9 @@ struct DMAPSharePrivate
 	GHashTable *session_ids;
 };
 
+typedef void (*ShareBitwiseDestroyFunc) (void *);
+typedef DMAPRecord *(*ShareBitwiseLookupByIdFunc) (void *db, guint id);
+
 /* FIXME: name this something else, as it is more than just share/bitwise now */
 struct share_bitwise_t
 {
@@ -499,7 +502,6 @@ static void
 _dmap_share_set_name (DMAPShare * share, const char *name)
 {
 	GError *error;
-	gboolean res;
 
 	g_return_if_fail (share != NULL);
 
@@ -508,10 +510,11 @@ _dmap_share_set_name (DMAPShare * share, const char *name)
 
 	if (share->priv->published) {
 		error = NULL;
-		res = dmap_mdns_publisher_rename_at_port (share->priv->
-							  publisher,
-							  share->priv->port,
-							  name, &error);
+		dmap_mdns_publisher_rename_at_port (share->priv->
+						    publisher,
+						    share->priv->port,
+						    name,
+						    &error);
 		if (error != NULL) {
 			g_warning ("Unable to change MDNS service name: %s",
 				   error->message);
@@ -1887,16 +1890,16 @@ _dmap_share_databases (DMAPShare * share,
 		share_bitwise->size = 0;
 		if (record_query) {
 			share_bitwise->db = records;
-			share_bitwise->lookup_by_id =
+			share_bitwise->lookup_by_id = (ShareBitwiseLookupByIdFunc)
 				g_hash_table_lookup_adapter;
-			share_bitwise->destroy = g_hash_table_destroy;
+			share_bitwise->destroy = (ShareBitwiseDestroyFunc) g_hash_table_destroy;
 			g_hash_table_foreach (records,
 					      (GHFunc)
 					      accumulate_mlcl_size_and_ids,
 					      share_bitwise);
 		} else {
 			share_bitwise->db = share->priv->db;
-			share_bitwise->lookup_by_id = dmap_db_lookup_by_id;
+			share_bitwise->lookup_by_id = (ShareBitwiseLookupByIdFunc) dmap_db_lookup_by_id;
 			share_bitwise->destroy = NULL;
 			dmap_db_foreach (share->priv->db,
 					 (GHFunc)
