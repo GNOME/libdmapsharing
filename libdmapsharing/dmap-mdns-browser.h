@@ -87,7 +87,7 @@ typedef enum
 		DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP
 } DMAPMdnsBrowserServiceType;
 
-static const char *service_type_name[] = {
+static const char * const service_type_name[] = {
 	NULL,
 	"_daap._tcp",
 	"_dpap._tcp",
