@@ -91,7 +91,8 @@ static const char * const service_type_name[] = {
 	NULL,
 	"_daap._tcp",
 	"_dpap._tcp",
-	"_touch-remote._tcp"
+	"_touch-remote._tcp",
+	"_touch-able._tcp"
 };
 
 typedef enum

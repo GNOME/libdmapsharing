@@ -20,5 +20,6 @@
 #include <libdmapsharing/dpap-share.h>
 #include <libdmapsharing/dacp-share.h>
 #include <libdmapsharing/dacp-player.h>
+#include <libdmapsharing/dacp-connection.h>
 
 #endif /* __DMAP_H */
