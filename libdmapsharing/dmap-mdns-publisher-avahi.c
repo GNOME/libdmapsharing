@@ -177,21 +177,22 @@ create_services (DMAPMdnsPublisher * publisher, GError ** error)
 			avahi_entry_group_new (publisher->priv->client,
 					       (AvahiEntryGroupCallback)
 					       entry_group_cb, publisher);
+
+		if (publisher->priv->entry_group == NULL) {
+			g_debug ("Could not create AvahiEntryGroup for publishing");
+			g_set_error (error,
+				     DMAP_MDNS_PUBLISHER_ERROR,
+				     DMAP_MDNS_PUBLISHER_ERROR_FAILED,
+				     "%s",
+				     _
+				     ("Could not create AvahiEntryGroup for publishing"));
+			return FALSE;
+		}
+
 		dmap_mdns_avahi_set_entry_group (publisher->
 						 priv->entry_group);
 	} else {
 		avahi_entry_group_reset (publisher->priv->entry_group);
-	}
-
-	if (publisher->priv->entry_group == NULL) {
-		g_warning ("Could not create AvahiEntryGroup for publishing");
-		g_set_error (error,
-			     DMAP_MDNS_PUBLISHER_ERROR,
-			     DMAP_MDNS_PUBLISHER_ERROR_FAILED,
-			     "%s",
-			     _
-			     ("Could not create AvahiEntryGroup for publishing"));
-		return FALSE;
 	}
 
 	for (ptr = publisher->priv->service; ptr; ptr = g_slist_next (ptr)) {
