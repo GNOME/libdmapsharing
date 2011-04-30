@@ -19,6 +19,7 @@
  */
 
 #include <libdmapsharing/daap-record.h>
+#include <libdmapsharing/dmap-enums.h>
 
 static gint daap_record_init_count = 0;
 
@@ -46,11 +47,12 @@ daap_record_init (DAAPRecordIface * iface)
 
 		/* FIXME: This is actually an enum */
 		g_object_interface_install_property (iface,
-						     g_param_spec_int
+						     g_param_spec_enum
 						     ("mediakind",
 						      "Media kind",
-						      "Media kind", 0,
-						      G_MAXINT, 1,
+						      "Media kind",
+						      DMAP_TYPE_DMAP_MEDIA_KIND,
+						      DMAP_MEDIA_KIND_MUSIC,
 						      G_PARAM_READWRITE));
 
 		/* NOTE: the name must match the part after the last dot of the
