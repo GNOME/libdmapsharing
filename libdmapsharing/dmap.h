@@ -8,6 +8,7 @@
 #include <libdmapsharing/dmap-container-db.h>
 #include <libdmapsharing/dmap-container-record.h>
 #include <libdmapsharing/dmap-db.h>
+#include <libdmapsharing/dmap-enums.h>
 #include <libdmapsharing/dmap-gst-input-stream.h>
 #include <libdmapsharing/dmap-md5.h>
 #include <libdmapsharing/dmap-mdns-browser.h>

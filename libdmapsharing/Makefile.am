@@ -81,6 +81,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-container-db.h \
 	dmap-container-record.h \
 	dmap-db.h \
+	dmap-enums.h \
 	dmap-gst-input-stream.h \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
@@ -94,7 +95,6 @@ libdmapsharinginclude_HEADERS = \
 	dpap-share.h
 
 noinst_HEADERS = \
-	dmap-enums.h \
 	dmap-marshal.h \
 	dmap-config.h \
 	dmap-mdns-avahi.h \
