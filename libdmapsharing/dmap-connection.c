@@ -1200,8 +1200,23 @@ authenticate_cb (SoupSession *session, SoupMessage *msg, SoupAuth *auth, gboolea
 			       retrying);
 		// FIXME: GDK_THREADS_LEAVE ();
 	} else {
+		g_debug ("Using cached credentials");
 		soup_auth_authenticate (auth, connection->priv->username, connection->priv->password);
 	}
+}
+
+void
+dmap_connection_authenticate_message (DMAPConnection * connection, SoupSession *session, SoupMessage *message, SoupAuth *auth, const char *password)
+{
+	char *username = NULL;
+
+	g_object_set (connection, "password", password, NULL);
+
+	g_object_get (connection, "username", &username, NULL);
+	g_assert (username);
+
+	soup_auth_authenticate (auth, username, password);
+	soup_session_unpause_message (session, message);
 }
 
 void

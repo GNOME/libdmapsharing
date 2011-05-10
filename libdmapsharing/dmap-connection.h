@@ -166,6 +166,27 @@ SoupMessage *dmap_connection_build_message (DMAPConnection * connection,
 					    gdouble version,
 					    gint req_id, gboolean send_close);
 
+/**
+ * dmap_connection_authenticate_message
+ * @connection: A #DMAPConnection
+ * @session: A #SoupSession
+ * @message: A #SoupMessage
+ * @auth: A #SoupAuth
+ * @password: A password
+ *     
+ * Attach an authentication credential to a request. This
+ * method should be called by a function that is connected to the
+ * #DMAPConnection::authenticate signal. The signal will provide the
+ * connection, session, message and auth to that function. That function
+ * should obtain a password and provide it to this method.
+ */
+void dmap_connection_authenticate_message (DMAPConnection *connection,
+                                           SoupSession *session,
+                                           SoupMessage *message,
+					   SoupAuth *auth,
+					   const char *password);
+
+
 gboolean dmap_connection_get (DMAPConnection * self,
 			      const gchar * path,
 			      gboolean need_hash,
