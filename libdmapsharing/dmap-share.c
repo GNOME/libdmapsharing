@@ -121,7 +121,8 @@ static void dmap_share_class_init (DMAPShareClass * klass);
 
 G_DEFINE_ABSTRACT_TYPE (DMAPShare, dmap_share, G_TYPE_OBJECT)
 #define DMAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-				   DMAP_TYPE_SHARE, DMAPSharePrivate))
+				   DMAP_TYPE_SHARE, DMAPSharePrivate));
+
      static gboolean
 	     _dmap_share_soup_auth_callback (SoupAuthDomain * auth_domain,
 					     SoupMessage * msg,
