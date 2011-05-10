@@ -106,6 +106,7 @@ struct _DMAPMdnsBrowserService
 	gchar *name;
 	gchar *host;
 	guint port;
+	gboolean password_protected;
 	gchar *pair;
 };
 

@@ -431,6 +431,7 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 		service->host = g_strdup (host);
 		service->port = port;
 		service->pair = pair;
+		service->password_protected = pp;
 		browser->priv->services =
 			g_slist_append (browser->priv->services, service);
 		g_signal_emit (browser,
