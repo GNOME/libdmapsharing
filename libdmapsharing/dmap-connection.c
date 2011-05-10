@@ -60,7 +60,6 @@ G_DEFINE_TYPE (DMAPConnection, dmap_connection, G_TYPE_OBJECT);
 struct DMAPConnectionPrivate
 {
 	char *name;
-	gboolean password_protected;
 	char *username;
 	char *password;
 	char *host;
@@ -105,7 +104,6 @@ enum
 	PROP_FACTORY,
 	PROP_NAME,
 	PROP_ENTRY_TYPE,
-	PROP_PASSWORD_PROTECTED,
 	PROP_HOST,
 	PROP_PORT,
 	PROP_BASE_URI,
@@ -113,6 +111,8 @@ enum
 	PROP_SESSION_ID,
 	PROP_DMAP_VERSION,
 	PROP_REVISION_NUMBER,
+	PROP_USERNAME,
+	PROP_PASSWORD,
 };
 
 enum
@@ -178,15 +178,6 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 							       |
 							       G_PARAM_CONSTRUCT_ONLY));
 
-	g_object_class_install_property (object_class,
-					 PROP_PASSWORD_PROTECTED,
-					 g_param_spec_boolean
-					 ("password-protected",
-					  "password protected",
-					  "connection is password protected",
-					  FALSE,
-					  G_PARAM_READWRITE |
-					  G_PARAM_CONSTRUCT_ONLY));
 	g_object_class_install_property (object_class, PROP_NAME,
 					 g_param_spec_string ("name",
 							      "connection name",
@@ -249,6 +240,21 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 							   0, G_MAXINT, 0,
 							   G_PARAM_READWRITE));
 
+	g_object_class_install_property (object_class, PROP_USERNAME,
+					 g_param_spec_string ("username",
+							      "connection username",
+							      "connection username",
+							      "libdmapsharing",
+							      G_PARAM_READWRITE |
+							      G_PARAM_CONSTRUCT_ONLY));
+
+	g_object_class_install_property (object_class, PROP_PASSWORD,
+					 g_param_spec_string ("password",
+							      "connection password",
+							      "connection password",
+							      NULL,
+							      G_PARAM_WRITABLE));
+
 	signals[AUTHENTICATE] = g_signal_new ("authenticate",
 					      G_TYPE_FROM_CLASS
 					      (object_class),
@@ -256,9 +262,13 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 					      G_STRUCT_OFFSET
 					      (DMAPConnectionClass,
 					       authenticate), NULL, NULL,
-					      dmap_marshal_STRING__STRING,
-					      G_TYPE_STRING, 1,
-					      G_TYPE_STRING);
+					      dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN,
+					      G_TYPE_NONE, 5,
+					      G_TYPE_STRING,
+					      SOUP_TYPE_SESSION,
+					      SOUP_TYPE_MESSAGE,
+					      SOUP_TYPE_AUTH,
+					      G_TYPE_BOOLEAN);
 	signals[CONNECTING] =
 		g_signal_new ("connecting", G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -292,23 +302,6 @@ static void
 dmap_connection_init (DMAPConnection * connection)
 {
 	connection->priv = DMAP_CONNECTION_GET_PRIVATE (connection);
-
-	connection->priv->username =
-		g_strdup_printf ("libdmapsharing_%s", VERSION);
-}
-
-static char *
-connection_get_password (DMAPConnection * connection)
-{
-	char *password = NULL;;
-
-	// FIXME: GDK_THREADS_ENTER ();
-	g_signal_emit (connection,
-		       signals[AUTHENTICATE],
-		       0, connection->priv->name, &password);
-	// FIXME: GDK_THREADS_LEAVE ();
-
-	return password;
 }
 
 static void
@@ -759,7 +752,7 @@ handle_login (DMAPConnection * connection,
 	if (status == SOUP_STATUS_UNAUTHORIZED
 	    || status == SOUP_STATUS_FORBIDDEN) {
 		g_debug ("Incorrect password");
-		priv->state = DMAP_GET_PASSWORD;
+		// Maintain present state; libsoup will signal for password.
 		if (priv->do_something_id != 0) {
 			g_source_remove (priv->do_something_id);
 		}
@@ -1190,10 +1183,33 @@ connected_cb (DMAPConnection * connection, ConnectionResponseData * rdata)
 	}
 }
 
+static void
+authenticate_cb (SoupSession *session, SoupMessage *msg, SoupAuth *auth, gboolean retrying, DMAPConnection *connection)
+{
+	if (retrying || ! connection->priv->password) {
+		g_debug ("Requesting password from application");
+		soup_session_pause_message (session, msg);
+		// FIXME: GDK_THREADS_ENTER ();
+		g_signal_emit (connection,
+			       signals[AUTHENTICATE],
+			       0,
+			       connection->priv->name,
+			       session,
+			       msg,
+			       auth,
+			       retrying);
+		// FIXME: GDK_THREADS_LEAVE ();
+	} else {
+		soup_auth_authenticate (auth, connection->priv->username, connection->priv->password);
+	}
+}
+
 void
 dmap_connection_setup (DMAPConnection * connection)
 {
 	connection->priv->session = soup_session_async_new ();
+
+	g_signal_connect (connection->priv->session, "authenticate", authenticate_cb, connection);
 
 	connection->priv->base_uri = soup_uri_new (NULL);
 	soup_uri_set_scheme (connection->priv->base_uri,
@@ -1417,40 +1433,13 @@ dmap_connection_do_something (DMAPConnection * connection)
 		}
 		break;
 
-	case DMAP_GET_PASSWORD:
-		if (priv->password_protected) {
-			/* FIXME this bit is still synchronous */
-			g_debug ("Need a password for %s", priv->name);
-			g_free (priv->password);
-			priv->password = connection_get_password (connection);
-
-			if (priv->password == NULL
-			    || priv->password[0] == '\0') {
-				g_debug ("Password entry cancelled");
-				priv->result = FALSE;
-				priv->state = DMAP_DONE;
-				dmap_connection_do_something (connection);
-				return FALSE;
-			}
-
-			/* If the share went away while we were asking for the password,
-			 * don't bother trying to log in.
-			 */
-			if (priv->state != DMAP_GET_PASSWORD) {
-				return FALSE;
-			}
-		}
-
-		/* otherwise, fall through */
-		priv->state = DMAP_LOGIN;
-
 	case DMAP_LOGIN:
+		// NOTE: libsoup will signal if password required and not present.
 		g_debug ("Logging into DAAP server");
 		if (!http_get (connection, "/login", FALSE, 0.0, 0, FALSE,
 			       (DMAPResponseHandler) handle_login, NULL,
 			       FALSE)) {
 			g_debug ("Could not login to DAAP server");
-			/* FIXME: set state back to GET_PASSWORD to try again */
 			dmap_connection_state_done (connection, FALSE);
 		}
 
@@ -1605,31 +1594,6 @@ dmap_connection_get_headers (DMAPConnection * connection, const gchar * uri)
 				     request_id);
 	g_free (request_id);
 
-	if (priv->password_protected) {
-		char *h;
-		char *user_pass;
-		char *token;
-
-		if (priv->username == NULL || priv->password == NULL) {
-			g_debug ("No username or no password provided");
-		} else {
-
-			user_pass =
-				g_strdup_printf ("%s:%s", priv->username,
-						 priv->password);
-			token = g_base64_encode ((guchar *) user_pass,
-						 strlen (user_pass));
-			h = g_strdup_printf ("Basic %s", token);
-
-			g_free (token);
-			g_free (user_pass);
-
-			soup_message_headers_append (headers,
-						     "Authentication", h);
-			g_free (h);
-		}
-	}
-
 	return headers;
 }
 
@@ -1751,9 +1715,6 @@ dmap_connection_set_property (GObject * object,
 		priv->record_factory =
 			DMAP_RECORD_FACTORY (g_value_get_pointer (value));
 		break;
-	case PROP_PASSWORD_PROTECTED:
-		priv->password_protected = g_value_get_boolean (value);
-		break;
 	case PROP_HOST:
 		g_free (priv->host);
 		priv->host = g_value_dup_string (value);
@@ -1775,6 +1736,12 @@ dmap_connection_set_property (GObject * object,
 		break;
 	case PROP_REVISION_NUMBER:
 		priv->revision_number = g_value_get_int (value);
+		break;
+	case PROP_USERNAME:
+		priv->username = g_value_dup_string (value);
+		break;
+	case PROP_PASSWORD:
+		priv->password = g_value_dup_string (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1799,9 +1766,6 @@ dmap_connection_get_property (GObject * object,
 	case PROP_NAME:
 		g_value_set_string (value, priv->name);
 		break;
-	case PROP_PASSWORD_PROTECTED:
-		g_value_set_boolean (value, priv->password_protected);
-		break;
 	case PROP_HOST:
 		g_value_set_string (value, priv->host);
 		break;
@@ -1822,6 +1786,9 @@ dmap_connection_get_property (GObject * object,
 		break;
 	case PROP_REVISION_NUMBER:
 		g_value_set_int (value, priv->revision_number);
+		break;
+	case PROP_USERNAME:
+		g_value_set_string (value, priv->username);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);

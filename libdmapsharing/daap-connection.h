@@ -88,7 +88,6 @@ GType daap_connection_get_type (void);
 DAAPConnection *daap_connection_new (const char *name,
 				     const char *host,
 				     guint port,
-				     gboolean password_protected,
 				     DMAPDb * db,
 				     DMAPRecordFactory * factory);
 G_END_DECLS

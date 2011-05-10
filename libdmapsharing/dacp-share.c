@@ -1092,7 +1092,6 @@ dacp_share_pair (DACPShare * share, gchar * service_name, gchar passcode[4])
 
 	remote_info->connection = DMAP_CONNECTION (dacp_connection_new (name,
 						                        remote_info->host, remote_info->port,
-									FALSE,
 									NULL,
 									NULL));
 	/* This is required since we don't call DMAPConnection default handler */

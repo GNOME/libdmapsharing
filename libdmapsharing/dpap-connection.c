@@ -163,14 +163,12 @@ DPAPConnection *
 dpap_connection_new (const char *name,
 		     const char *host,
 		     guint port,
-		     gboolean password_protected,
 		     DMAPDb * db, DMAPRecordFactory * factory)
 {
 	DPAPConnection *connection;
 
 	connection = g_object_new (DPAP_TYPE_CONNECTION,
 				   "name", name,
-				   "password-protected", password_protected,
 				   "db", db,
 				   "host", host,
 				   "port", port, "factory", factory, NULL);

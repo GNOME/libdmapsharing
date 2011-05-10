@@ -40,4 +40,8 @@ private class ValaDMAPContainerDb : GLib.Object, DMAP.ContainerDb {
 	public unowned DMAP.ContainerRecord lookup_by_id (uint id) {
 		GLib.error ("lookup_by_id not implemented");
 	}
+
+	public void add (DMAP.ContainerRecord record) {
+		GLib.error ("add not implemented");
+	}
 }

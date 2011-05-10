@@ -5,7 +5,7 @@ namespace DAAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class Connection : DAAP.DMAPConnection {
 		[CCode (has_construct_function = false)]
-		public Connection (string name, string host, uint port, bool password_protected, DMAP.Db db, DMAP.RecordFactory factory);
+		public Connection (string name, string host, uint port, DMAP.Db db, DMAP.RecordFactory factory);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPConnection : GLib.Object {
@@ -48,6 +48,8 @@ namespace DAAP {
 		[NoAccessorMethod]
 		public string name { owned get; construct; }
 		[NoAccessorMethod]
+		public string password { set; }
+		[NoAccessorMethod]
 		public bool password_protected { get; construct; }
 		[NoAccessorMethod]
 		public uint port { get; construct; }
@@ -55,7 +57,9 @@ namespace DAAP {
 		public int revision_number { get; set; }
 		[NoAccessorMethod]
 		public int session_id { get; set; }
-		public virtual signal unowned string authenticate (string name);
+		[NoAccessorMethod]
+		public string username { owned get; construct; }
+		public virtual signal void authenticate (string name, Soup.Session p1, Soup.Message p2, Soup.Auth p3, bool p4);
 		public virtual signal void connected ();
 		public virtual signal void connecting (ulong state, float progress);
 		public virtual signal void disconnected ();
@@ -75,8 +79,6 @@ namespace DAAP {
 	public class DMAPGstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_input_stream_new", type = "GInputStream*", has_construct_function = false)]
 		public DMAPGstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
-		[CCode (cname = "dmap_gst_input_stream_new_buffer_cb", type = "void", has_construct_function = false)]
-		public DMAPGstInputStream.buffer_cb (Gst.Element element, DAAP.DMAPGstInputStream stream);
 		[NoWrapper]
 		public virtual void kill_pipeline (DAAP.DMAPGstInputStream p1);
 	}
@@ -218,6 +220,8 @@ namespace DAAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPContainerDb : GLib.Object {
+		[CCode (cname = "dmap_container_db_add")]
+		public abstract void add (DMAP.ContainerDb db, DAAP.DMAPContainerRecord record);
 		[CCode (cname = "dmap_container_db_count")]
 		public abstract int64 count (DMAP.ContainerDb db);
 		[CCode (cname = "dmap_container_db_foreach")]
@@ -273,10 +277,21 @@ namespace DAAP {
 		public abstract bool itunes_compat ();
 		public abstract unowned GLib.InputStream read () throws GLib.Error;
 	}
-	[CCode (cprefix = "DMAP_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "PLAY_", cheader_filename = "libdmapsharing/dmap.h")]
+	public enum DACPPlayState {
+		STOPPED,
+		PAUSED,
+		PLAYING
+	}
+	[CCode (cprefix = "REPEAT_", cheader_filename = "libdmapsharing/dmap.h")]
+	public enum DACPRepeatState {
+		NONE,
+		SINGLE,
+		ALL
+	}
+	[CCode (cprefix = "DMAP_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPConnectionState {
 		GET_INFO,
-		GET_PASSWORD,
 		LOGIN,
 		GET_REVISION_NUMBER,
 		GET_DB_INFO,
@@ -435,12 +450,12 @@ namespace DAAP {
 		CC_CMMK,
 		CC_CMVO
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsBrowserError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsBrowserServiceType {
 		INVALID,
 		DAAP,
@@ -448,17 +463,17 @@ namespace DAAP {
 		DACP,
 		LAST
 	}
-	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsPublisherError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MEDIA_KIND_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MEDIA_KIND_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMediaKind {
 		MUSIC,
 		MOVIE
 	}
-	[CCode (cprefix = "DMAP_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPType {
 		BYTE,
 		SIGNED_INT,
@@ -521,12 +536,12 @@ namespace DACP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class Connection : DACP.DMAPConnection {
 		[CCode (has_construct_function = false)]
-		public Connection (string name, string host, uint port, bool password_protected, DMAP.Db db, DACP.DMAPRecordFactory factory);
+		public Connection (string name, string host, uint port, DMAP.Db db, DACP.DMAPRecordFactory factory);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DAAPConnection : DACP.DMAPConnection {
 		[CCode (cname = "daap_connection_new", type = "DAAPConnection*", has_construct_function = false)]
-		public DAAPConnection (string name, string host, uint port, bool password_protected, DMAP.Db db, DACP.DMAPRecordFactory factory);
+		public DAAPConnection (string name, string host, uint port, DMAP.Db db, DACP.DMAPRecordFactory factory);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DAAPShare : DACP.DMAPShare {
@@ -574,6 +589,8 @@ namespace DACP {
 		[NoAccessorMethod]
 		public string name { owned get; construct; }
 		[NoAccessorMethod]
+		public string password { set; }
+		[NoAccessorMethod]
 		public bool password_protected { get; construct; }
 		[NoAccessorMethod]
 		public uint port { get; construct; }
@@ -581,7 +598,9 @@ namespace DACP {
 		public int revision_number { get; set; }
 		[NoAccessorMethod]
 		public int session_id { get; set; }
-		public virtual signal unowned string authenticate (string name);
+		[NoAccessorMethod]
+		public string username { owned get; construct; }
+		public virtual signal void authenticate (string name, Soup.Session p1, Soup.Message p2, Soup.Auth p3, bool p4);
 		public virtual signal void connected ();
 		public virtual signal void connecting (ulong state, float progress);
 		public virtual signal void disconnected ();
@@ -601,8 +620,6 @@ namespace DACP {
 	public class DMAPGstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_input_stream_new", type = "GInputStream*", has_construct_function = false)]
 		public DMAPGstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
-		[CCode (cname = "dmap_gst_input_stream_new_buffer_cb", type = "void", has_construct_function = false)]
-		public DMAPGstInputStream.buffer_cb (Gst.Element element, DACP.DMAPGstInputStream stream);
 		[NoWrapper]
 		public virtual void kill_pipeline (DACP.DMAPGstInputStream p1);
 	}
@@ -766,6 +783,8 @@ namespace DACP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPContainerDb : GLib.Object {
+		[CCode (cname = "dmap_container_db_add")]
+		public abstract void add (DMAP.ContainerDb db, DACP.DMAPContainerRecord record);
 		[CCode (cname = "dmap_container_db_count")]
 		public abstract int64 count (DMAP.ContainerDb db);
 		[CCode (cname = "dmap_container_db_foreach")]
@@ -831,10 +850,9 @@ namespace DACP {
 		public bool shuffle_state { get; set; }
 		public ulong volume { get; set; }
 	}
-	[CCode (cprefix = "DMAP_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPConnectionState {
 		GET_INFO,
-		GET_PASSWORD,
 		LOGIN,
 		GET_REVISION_NUMBER,
 		GET_DB_INFO,
@@ -993,12 +1011,12 @@ namespace DACP {
 		CC_CMMK,
 		CC_CMVO
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsBrowserError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsBrowserServiceType {
 		INVALID,
 		DAAP,
@@ -1006,17 +1024,17 @@ namespace DACP {
 		DACP,
 		LAST
 	}
-	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsPublisherError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MEDIA_KIND_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MEDIA_KIND_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMediaKind {
 		MUSIC,
 		MOVIE
 	}
-	[CCode (cprefix = "DMAP_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPType {
 		BYTE,
 		SIGNED_INT,
@@ -1029,13 +1047,13 @@ namespace DACP {
 		CONTAINER,
 		POINTER
 	}
-	[CCode (cprefix = "PLAY_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "PLAY_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum PlayState {
 		STOPPED,
 		PAUSED,
 		PLAYING
 	}
-	[CCode (cprefix = "REPEAT_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "REPEAT_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum RepeatState {
 		NONE,
 		SINGLE,
@@ -1121,6 +1139,8 @@ namespace DMAP {
 		[NoAccessorMethod]
 		public string name { owned get; construct; }
 		[NoAccessorMethod]
+		public string password { set; }
+		[NoAccessorMethod]
 		public bool password_protected { get; construct; }
 		[NoAccessorMethod]
 		public uint port { get; construct; }
@@ -1128,7 +1148,9 @@ namespace DMAP {
 		public int revision_number { get; set; }
 		[NoAccessorMethod]
 		public int session_id { get; set; }
-		public virtual signal unowned string authenticate (string name);
+		[NoAccessorMethod]
+		public string username { owned get; construct; }
+		public virtual signal void authenticate (string name, Soup.Session p1, Soup.Message p2, Soup.Auth p3, bool p4);
 		public virtual signal void connected ();
 		public virtual signal void connecting (ulong state, float progress);
 		public virtual signal void disconnected ();
@@ -1155,8 +1177,6 @@ namespace DMAP {
 	public class GstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (type = "GInputStream*", has_construct_function = false)]
 		public GstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
-		[CCode (type = "void", has_construct_function = false)]
-		public GstInputStream.buffer_cb (Gst.Element element, DMAP.GstInputStream stream);
 		[NoWrapper]
 		public virtual void kill_pipeline ();
 	}
@@ -1276,6 +1296,7 @@ namespace DMAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface ContainerDb : GLib.Object {
+		public abstract void add (DMAP.ContainerRecord record);
 		public abstract int64 count ();
 		public abstract void @foreach (GLib.HFunc func);
 		public abstract unowned DMAP.ContainerRecord lookup_by_id (uint id);
@@ -1307,10 +1328,9 @@ namespace DMAP {
 	public interface RecordFactory {
 		public abstract DMAP.Record create (void* user_data);
 	}
-	[CCode (cprefix = "DMAP_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum ConnectionState {
 		GET_INFO,
-		GET_PASSWORD,
 		LOGIN,
 		GET_REVISION_NUMBER,
 		GET_DB_INFO,
@@ -1469,12 +1489,24 @@ namespace DMAP {
 		CC_CMMK,
 		CC_CMVO
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "PLAY_", cheader_filename = "libdmapsharing/dmap.h")]
+	public enum DACPPlayState {
+		STOPPED,
+		PAUSED,
+		PLAYING
+	}
+	[CCode (cprefix = "REPEAT_", cheader_filename = "libdmapsharing/dmap.h")]
+	public enum DACPRepeatState {
+		NONE,
+		SINGLE,
+		ALL
+	}
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum MdnsBrowserError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum MdnsBrowserServiceType {
 		INVALID,
 		DAAP,
@@ -1482,17 +1514,17 @@ namespace DMAP {
 		DACP,
 		LAST
 	}
-	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum MdnsPublisherError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MEDIA_KIND_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MEDIA_KIND_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum MediaKind {
 		MUSIC,
 		MOVIE
 	}
-	[CCode (cprefix = "DMAP_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum Type {
 		BYTE,
 		SIGNED_INT,
@@ -1555,7 +1587,7 @@ namespace DPAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class Connection : DPAP.DMAPConnection {
 		[CCode (has_construct_function = false)]
-		public Connection (string name, string host, uint port, bool password_protected, DMAP.Db db, DMAP.RecordFactory factory);
+		public Connection (string name, string host, uint port, DMAP.Db db, DMAP.RecordFactory factory);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPConnection : GLib.Object {
@@ -1598,6 +1630,8 @@ namespace DPAP {
 		[NoAccessorMethod]
 		public string name { owned get; construct; }
 		[NoAccessorMethod]
+		public string password { set; }
+		[NoAccessorMethod]
 		public bool password_protected { get; construct; }
 		[NoAccessorMethod]
 		public uint port { get; construct; }
@@ -1605,7 +1639,9 @@ namespace DPAP {
 		public int revision_number { get; set; }
 		[NoAccessorMethod]
 		public int session_id { get; set; }
-		public virtual signal unowned string authenticate (string name);
+		[NoAccessorMethod]
+		public string username { owned get; construct; }
+		public virtual signal void authenticate (string name, Soup.Session p1, Soup.Message p2, Soup.Auth p3, bool p4);
 		public virtual signal void connected ();
 		public virtual signal void connecting (ulong state, float progress);
 		public virtual signal void disconnected ();
@@ -1625,8 +1661,6 @@ namespace DPAP {
 	public class DMAPGstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_input_stream_new", type = "GInputStream*", has_construct_function = false)]
 		public DMAPGstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
-		[CCode (cname = "dmap_gst_input_stream_new_buffer_cb", type = "void", has_construct_function = false)]
-		public DMAPGstInputStream.buffer_cb (Gst.Element element, DPAP.DMAPGstInputStream stream);
 		[NoWrapper]
 		public virtual void kill_pipeline (DPAP.DMAPGstInputStream p1);
 	}
@@ -1768,6 +1802,8 @@ namespace DPAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPContainerDb : GLib.Object {
+		[CCode (cname = "dmap_container_db_add")]
+		public abstract void add (DMAP.ContainerDb db, DPAP.DMAPContainerRecord record);
 		[CCode (cname = "dmap_container_db_count")]
 		public abstract int64 count (DMAP.ContainerDb db);
 		[CCode (cname = "dmap_container_db_foreach")]
@@ -1821,10 +1857,21 @@ namespace DPAP {
 	public interface Record {
 		public abstract unowned GLib.InputStream read () throws GLib.Error;
 	}
-	[CCode (cprefix = "DMAP_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "PLAY_", cheader_filename = "libdmapsharing/dmap.h")]
+	public enum DACPPlayState {
+		STOPPED,
+		PAUSED,
+		PLAYING
+	}
+	[CCode (cprefix = "REPEAT_", cheader_filename = "libdmapsharing/dmap.h")]
+	public enum DACPRepeatState {
+		NONE,
+		SINGLE,
+		ALL
+	}
+	[CCode (cprefix = "DMAP_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPConnectionState {
 		GET_INFO,
-		GET_PASSWORD,
 		LOGIN,
 		GET_REVISION_NUMBER,
 		GET_DB_INFO,
@@ -1983,12 +2030,12 @@ namespace DPAP {
 		CC_CMMK,
 		CC_CMVO
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsBrowserError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsBrowserServiceType {
 		INVALID,
 		DAAP,
@@ -1996,17 +2043,17 @@ namespace DPAP {
 		DACP,
 		LAST
 	}
-	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MDNS_PUBLISHER_ERROR_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMdnsPublisherError {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cprefix = "DMAP_MEDIA_KIND_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_MEDIA_KIND_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPMediaKind {
 		MUSIC,
 		MOVIE
 	}
-	[CCode (cprefix = "DMAP_TYPE_", has_type_id = false, cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cprefix = "DMAP_TYPE_", cheader_filename = "libdmapsharing/dmap.h")]
 	public enum DMAPType {
 		BYTE,
 		SIGNED_INT,

@@ -89,7 +89,6 @@ typedef struct DMAPConnectionPrivate DMAPConnectionPrivate;
 typedef enum
 {
 	DMAP_GET_INFO = 0,
-	DMAP_GET_PASSWORD,
 	DMAP_LOGIN,
 	DMAP_GET_REVISION_NUMBER,
 	DMAP_GET_DB_INFO,

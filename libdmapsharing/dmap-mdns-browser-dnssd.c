@@ -368,7 +368,6 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 	service->host = g_strdup (browser->priv->host_target);
 	service->port = browser->priv->port;
 	service->pair = NULL;
-	service->password_protected = FALSE;
 
 	// add to the services list
 	browser->priv->services =

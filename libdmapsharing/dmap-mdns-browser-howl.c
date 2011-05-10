@@ -272,7 +272,6 @@ resolve_cb (sw_discovery discovery,
 	service->name = name;
 	service->host = g_strdup (host);
 	service->port = port;
-	service->password_protected = pp;
 	service->pair = pair;
 	browser->priv->services =
 		g_slist_append (browser->priv->services, service);

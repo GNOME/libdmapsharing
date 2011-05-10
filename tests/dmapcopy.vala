@@ -59,7 +59,7 @@ private class DPAPCopy {
 	}
 
 	private void service_added_cb (DMAP.MdnsBrowserService *service) {
-		connection = (DMAP.Connection) new DPAP.Connection (service->service_name, service->host, service->port, false, db, factory);
+		connection = (DMAP.Connection) new DPAP.Connection (service->service_name, service->host, service->port, db, factory);
 		connection.connect (connected_cb);
 	}
 

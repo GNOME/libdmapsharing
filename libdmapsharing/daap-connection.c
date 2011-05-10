@@ -174,14 +174,12 @@ DAAPConnection *
 daap_connection_new (const char *name,
 		     const char *host,
 		     guint port,
-		     gboolean password_protected,
 		     DMAPDb * db, DMAPRecordFactory * factory)
 {
 	DAAPConnection *connection;
 
 	connection = g_object_new (DAAP_TYPE_CONNECTION,
 				   "name", name,
-				   "password-protected", password_protected,
 				   "db", db,
 				   "host", host,
 				   "port", port, "factory", factory, NULL);

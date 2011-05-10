@@ -62,6 +62,25 @@ connected_cb (DMAPConnection *connection,
 }
 
 static void
+authenticate_cb (DMAPConnection *connection,
+		 const char *name,
+		 SoupSession *session,
+		 SoupMessage *msg,
+		 SoupAuth *auth,
+		 gboolean retrying,
+		 gpointer user_data)
+{
+	char *username, password[BUFSIZ + 1];
+	g_object_get (connection, "username", &username, NULL);
+	g_print ("Password required (username is %s): ", username);
+	fgets (password, BUFSIZ, stdin);
+	password[strlen(password) - 1] = 0x00; // Remove newline.
+	g_object_set (connection, "password", password, NULL);
+	soup_auth_authenticate (auth, username, password);
+	soup_session_unpause_message (session, msg);
+}
+
+static void
 service_added_cb (DMAPMdnsBrowser *browser,
                   DMAPMdnsBrowserService *service,
                   gpointer user_data)
@@ -74,8 +93,7 @@ service_added_cb (DMAPMdnsBrowser *browser,
              service->service_name,
              service->name,
              service->host,
-             service->port,
-             service->password_protected ? "protected" : "not protected");
+             service->port);
 
     db = DMAP_DB (test_dmap_db_new ());
     if (db == NULL) {
@@ -87,14 +105,15 @@ service_added_cb (DMAPMdnsBrowser *browser,
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (daap_connection_new (service->name, service->host, service->port, FALSE, db, factory));
+        conn = DMAP_CONNECTION (daap_connection_new (service->name, service->host, service->port, db, factory));
     } else {
         factory = DMAP_RECORD_FACTORY (test_dpap_record_factory_new ());
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (dpap_connection_new (service->name, service->host, service->port, FALSE, db, factory));
+        conn = DMAP_CONNECTION (dpap_connection_new (service->name, service->host, service->port, db, factory));
     }
+    g_signal_connect (DMAP_CONNECTION (conn), "authenticate", (DMAPConnectionCallback) authenticate_cb, NULL);
     dmap_connection_connect (DMAP_CONNECTION (conn), (DMAPConnectionCallback) connected_cb, db);
 }
 
