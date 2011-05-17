@@ -1,8 +1,8 @@
-AC_INIT(libdmapsharing, 2.9.8)
+AC_INIT(libdmapsharing, 2.9.9)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AS_VERSION(libdmapsharing, LIBDMAPSHARING, 2, 9, 8, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+AS_VERSION(libdmapsharing, LIBDMAPSHARING, 2, 9, 9, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
 
 dnl FIXME:
 dnl would like to automate this off the above definitions, but API might be 2.2 with version 2.1.
