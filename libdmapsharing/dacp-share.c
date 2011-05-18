@@ -782,7 +782,6 @@ dacp_share_ctrl_int (DMAPShare * share,
 
 				g_object_get (dacp_share->priv->player,
 					      "volume", &volume, NULL);
-				//g_debug ("Sending volume: %lu", volume);
 				dmap_structure_add (cmgt, DMAP_CC_CMVO,
 						    volume);
 			} else {
@@ -807,6 +806,7 @@ dacp_share_ctrl_int (DMAPShare * share,
 		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
 	} else if (g_ascii_strcasecmp ("/1/getspeakers", rest_of_path) == 0) {
 		GNode *casp;
+		gulong volume;
 
 		casp = dmap_structure_add (NULL, DMAP_CC_CASP);
 		dmap_structure_add (casp, DMAP_CC_MSTT,
@@ -818,7 +818,9 @@ dacp_share_ctrl_int (DMAPShare * share,
 		dmap_structure_add (casp, DMAP_CC_CAIV, 1);
 		dmap_structure_add (casp, DMAP_CC_MINM, "Computer");
 		dmap_structure_add (casp, DMAP_CC_MSMA, (gint32) 0);
-		dmap_structure_add (casp, DMAP_CC_CMVO, 1); // FIXME
+
+		g_object_get (dacp_share->priv->player, "volume", &volume, NULL);
+		dmap_structure_add (casp, DMAP_CC_CMVO, volume);
 
 		_dmap_share_message_set_from_dmap_structure (share, message,
 							     casp);
