@@ -328,6 +328,23 @@ static const DMAPContentCodeDefinition cc_defs[] = {
 	 "dmcp.mediakind", "cmmk", DMAP_TYPE_INT},
 	{DMAP_CC_CMVO, MAKE_CONTENT_CODE ('c', 'm', 'v', 'o'), "dmcp.volume",
 	 "cmvo", DMAP_TYPE_INT},
+	 
+	{DMAP_CC_CMPR, MAKE_CONTENT_CODE ('c', 'm', 'p', 'r'), "dacp.unknown",
+	 "cmpr", DMAP_TYPE_INT},
+	{DMAP_CC_CAPR, MAKE_CONTENT_CODE ('c', 'a', 'p', 'r'), "dacp.unknown",
+	 "capr", DMAP_TYPE_INT},
+	{DMAP_CC_AEFR, MAKE_CONTENT_CODE ('a', 'e', 'F', 'R'), "dacp.unknown",
+	 "aeFR", DMAP_TYPE_BYTE},
+	{DMAP_CC_CAOV, MAKE_CONTENT_CODE ('c', 'a', 'o', 'v'), "dacp.unknown",
+	 "caov", DMAP_TYPE_BYTE},
+	{DMAP_CC_CMRL, MAKE_CONTENT_CODE ('c', 'm', 'r', 'l'), "dacp.unknown",
+	 "cmrl", DMAP_TYPE_BYTE},
+	{DMAP_CC_CAHP, MAKE_CONTENT_CODE ('c', 'a', 'h', 'p'), "dacp.unknown",
+	 "cahp", DMAP_TYPE_BYTE},
+	{DMAP_CC_CAIV, MAKE_CONTENT_CODE ('c', 'a', 'i', 'v'), "dacp.unknown",
+	 "caiv", DMAP_TYPE_BYTE},
+	{DMAP_CC_CAVC, MAKE_CONTENT_CODE ('c', 'a', 'v', 'c'), "dacp.unknwon",
+	 "cavc", DMAP_TYPE_BYTE},
 
 };
 

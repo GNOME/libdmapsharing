@@ -587,6 +587,7 @@ dacp_share_fill_playstatusupdate (DACPShare * share, SoupMessage * message)
 	dmap_structure_add (cmst, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
 	dmap_structure_add (cmst, DMAP_CC_CMSR,
 			    share->priv->current_revision);
+	dmap_structure_add (cmst, DMAP_CC_CAVC, 1);
 	dmap_structure_add (cmst, DMAP_CC_CAPS, (gint32) play_state);
 	dmap_structure_add (cmst, DMAP_CC_CASH, shuffle_state ? 1 : 0);
 	dmap_structure_add (cmst, DMAP_CC_CARP, (gint32) repeat_state);
@@ -603,10 +604,9 @@ dacp_share_fill_playstatusupdate (DACPShare * share, SoupMessage * message)
 			      "songalbum", &album,
 			      "duration", &duration, NULL);
 		track_time = duration * 1000;
-		//dmap_structure_add (cmst, DMAP_CC_CAVC, 1);
 		dmap_structure_add (cmst, DMAP_CC_CAAS, 2);
 		dmap_structure_add (cmst, DMAP_CC_CAAR, 6);
-		dmap_structure_add (cmst, DMAP_CC_CANP, (gint64) 0);
+		dmap_structure_add (cmst, DMAP_CC_CANP, (gint64) 0); // FIXME: may be wrong.
 		if (title)
 			dmap_structure_add (cmst, DMAP_CC_CANN, title);
 		if (artist)
@@ -649,7 +649,7 @@ dacp_share_login (DMAPShare * share,
 {
 	gchar *pairing_guid;
 
-	g_debug ("(DACP) Path is %s.", path);
+	g_debug ("Path is %s.", path);
 	if (query) {
 		g_hash_table_foreach (query, debug_param, NULL);
 	}
@@ -742,15 +742,20 @@ dacp_share_ctrl_int (DMAPShare * share,
 		// Unknown (TRUE)
 		dmap_structure_add (mlit, DMAP_CC_CMIK, (gint32) 1);
 		// Unknown (TRUE)
+		dmap_structure_add (mlit, DMAP_CC_CMPR, (gint32) (2 << 16 | 1));
+		dmap_structure_add (mlit, DMAP_CC_CAPR, (gint32) (2 << 16 | 2));
 		dmap_structure_add (mlit, DMAP_CC_CMSP, (gint32) 1);
 		// Unknown (TRUE)
+		dmap_structure_add (mlit, DMAP_CC_AEFR, 0x64);
 		dmap_structure_add (mlit, DMAP_CC_CMSV, (gint32) 1);
 		// Unknown (TRUE)
 		dmap_structure_add (mlit, DMAP_CC_CASS, (gint32) 1);
 		// Unknown (TRUE)
+		dmap_structure_add (mlit, DMAP_CC_CAOV, 1);
 		dmap_structure_add (mlit, DMAP_CC_CASU, (gint32) 1);
 		// Unknown (TRUE)
 		dmap_structure_add (mlit, DMAP_CC_CASG, (gint32) 1);
+		dmap_structure_add (mlit, DMAP_CC_CMRL, 1);
 
 		_dmap_share_message_set_from_dmap_structure (share, message,
 							     caci);
@@ -809,8 +814,11 @@ dacp_share_ctrl_int (DMAPShare * share,
 		dmap_structure_add (casp, DMAP_CC_MDCL);
 
 		dmap_structure_add (casp, DMAP_CC_CAIA, TRUE);
+		dmap_structure_add (casp, DMAP_CC_CAHP, 1);
+		dmap_structure_add (casp, DMAP_CC_CAIV, 1);
 		dmap_structure_add (casp, DMAP_CC_MINM, "Computer");
 		dmap_structure_add (casp, DMAP_CC_MSMA, (gint32) 0);
+		dmap_structure_add (casp, DMAP_CC_CMVO, 1); // FIXME
 
 		_dmap_share_message_set_from_dmap_structure (share, message,
 							     casp);
