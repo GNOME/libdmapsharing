@@ -1994,13 +1994,20 @@ _dmap_share_databases (DMAPShare * share,
 				    + 1);
 		mb.mlcl = dmap_structure_add (aply, DMAP_CC_MLCL);
 
-		/* Base playlist: */
+		/* Base playlist (playlist 1 contains all songs): */
 		mlit = dmap_structure_add (mb.mlcl, DMAP_CC_MLIT);
 		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) 1);
 		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) 1);
 		dmap_structure_add (mlit, DMAP_CC_MINM, nameprop);
 		dmap_structure_add (mlit, DMAP_CC_MIMC,
 				    dmap_db_count (share->priv->db));
+		dmap_structure_add (mlit, DMAP_CC_FQUESCH, 0);
+		dmap_structure_add (mlit, DMAP_CC_MPCO, 0);
+		dmap_structure_add (mlit, DMAP_CC_AESP, 0);
+		dmap_structure_add (mlit, DMAP_CC_AEPP, 0);
+		dmap_structure_add (mlit, DMAP_CC_AEPS, 0);
+		dmap_structure_add (mlit, DMAP_CC_AESG, 0);
+
 		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1);
 
 		dmap_container_db_foreach (share->priv->container_db,
