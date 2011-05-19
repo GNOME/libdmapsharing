@@ -74,7 +74,9 @@ typedef unsigned long long bitwise;
 typedef enum
 {
 	DMAP_MEDIA_KIND_MUSIC = 1,
-	DMAP_MEDIA_KIND_MOVIE = 2
+	DMAP_MEDIA_KIND_MOVIE = 2,
+	DMAP_MEDIA_KIND_PODCAST = 32,
+	DMAP_MEDIA_KIND_TV_SHOW = 64 
 } DMAPMediaKind;
 
 GType dmap_record_get_type (void);
