@@ -179,6 +179,7 @@ compare_record_property (DMAPRecord * record, const gchar * property_name,
 	if (G_VALUE_HOLDS_STRING (&value)) {
 		str_value = g_value_get_string (&value);
 	} else if (G_VALUE_HOLDS_BOOLEAN (&value)) {
+		g_debug ("Compare %s (boolean): %d %s", property_name, g_value_get_boolean (&value), property_value);
 		accept = (g_value_get_boolean (&value) &&
 			  g_strcmp0 (property_value, "1") == 0);
 		g_value_unset (&value);
@@ -195,6 +196,7 @@ compare_record_property (DMAPRecord * record, const gchar * property_name,
 			g_value_unset (&value);
 			return FALSE;
 		}
+		g_debug ("Compare %s (long): %ld %s", property_name, g_value_get_long (&dest), property_value);
 		accept = (g_value_get_long (&dest) ==
 			  strtol (property_value, NULL, 10));
 		g_value_unset (&value);
@@ -220,11 +222,13 @@ compare_record_property (DMAPRecord * record, const gchar * property_name,
 		g_value_take_string (&value, (gchar *) str_value);
 		g_value_unset (&dest);
 	} else {
+		g_warning ("Attempt to compare unhandled type");
 		g_value_unset (&value);
 		return FALSE;
 	}
 
 	// Only arrive here if we are handling strings.
+	g_debug ("Compare %s (string): %s %s", property_name, str_value, property_value);
 	if (str_value != NULL && property_value != NULL &&
 	    g_ascii_strcasecmp (str_value, property_value) == 0) {
 		accept = TRUE;
