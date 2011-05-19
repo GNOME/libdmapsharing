@@ -1,9 +1,5 @@
 = Short term ===================================================================
 
-DACP: Remote only displays playlists that have songs (result of
-/1/containers). Do I need to create a "fake" playlist that contains
-all songs?
-
 Noah: DNS-SD implementation
 	Finish browser side support.
 	Update MacPorts port to no longer require avahi.
