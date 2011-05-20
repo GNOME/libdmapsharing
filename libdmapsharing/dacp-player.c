@@ -48,7 +48,7 @@ dacp_player_init (DACPPlayerIface * iface)
 						      "Repeat state",
 						      "Repeat state",
 						      DMAP_TYPE_DACP_REPEAT_STATE,
-						      REPEAT_NONE,
+						      DACP_REPEAT_NONE,
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
@@ -57,7 +57,7 @@ dacp_player_init (DACPPlayerIface * iface)
 						      "Play state",
 						      "Play state",
 						      DMAP_TYPE_DACP_PLAY_STATE,
-						      PLAY_STOPPED,
+						      DACP_PLAY_STOPPED,
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,

@@ -60,16 +60,16 @@ typedef struct _DACPPlayer DACPPlayer;
 
 typedef enum
 {
-	REPEAT_NONE = 0,
-	REPEAT_SINGLE = 1,
-	REPEAT_ALL = 2
+	DACP_REPEAT_NONE = 0,
+	DACP_REPEAT_SINGLE = 1,
+	DACP_REPEAT_ALL = 2
 } DACPRepeatState;
 
 typedef enum
 {
-	PLAY_STOPPED = 2,
-	PLAY_PAUSED = 3,
-	PLAY_PLAYING = 4
+	DACP_PLAY_STOPPED = 2,
+	DACP_PLAY_PAUSED = 3,
+	DACP_PLAY_PLAYING = 4
 } DACPPlayState;
 
 struct _DACPPlayerIface
