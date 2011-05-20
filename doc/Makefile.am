@@ -122,18 +122,3 @@ if ENABLE_GTK_DOC
 endif
 
 -include $(top_srcdir)/git.mk
-
-# FIXME: this target is host-specific!
-# NOTE: flyn.org serves using "Content-Type: text/html;
-# charset=ISO-8859-1." This breaks HTML that contains UTF-8.
-# To get GTK-Doc to output ISO-8859-1, edit
-# /usr/share/gtk-doc/data/gtk-doc.xsl and set "chunker.output.encoding"
-# to "ISO-8859-1."
-publish:
-	sed 's/images\/logo_head.png/\.\.\/\.\.\/\.\.\/images\/logo_head.png/g' ~/Public/www.flyn.org/head.html.in > tmpl/head.html
-# Add header and point stylesheet to flyn.org stylesheet
-	for h in html/*.html; do \
-		sed '/<body/ r tmpl/head.html' $$h | sed 's/style.css/\.\.\/\.\.\/\.\.\/flyn.org.css/g' \
-			> ~/Public/www.flyn.org/projects/libdmapsharing/docs/`basename $$h`; \
-	done
-	cp html/*.png ~/Public/www.flyn.org/projects/libdmapsharing/docs/
