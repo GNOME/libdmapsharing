@@ -1,4 +1,4 @@
-SUBDIRS = libdmapsharing vala tests docs
+SUBDIRS = libdmapsharing vala tests doc
 DIST_SUBDIRS = $(SUBDIRS) m4 media
 
 # pcfiles = libdmapsharing-@LIBDMAPSHARING_MAJORMINOR@.pc
