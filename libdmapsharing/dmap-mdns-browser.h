@@ -87,6 +87,15 @@ typedef enum
 	DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST = DMAP_MDNS_BROWSER_SERVICE_TYPE_RAOP
 } DMAPMdnsBrowserServiceType;
 
+// FIXME: this is only for RAOP and corresponds to the "tp" txt record.
+// This should be in a sub-class.
+typedef enum
+{
+	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP = 0,
+	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_UDP,
+	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_LAST = DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_UDP
+} DMAPMdnsBrowserTransportProtocol;
+
 static const char * const service_type_name[] = {
 	NULL,
 	"_daap._tcp",
@@ -108,7 +117,8 @@ struct _DMAPMdnsBrowserService
 	gchar *host;
 	guint port;
 	gboolean password_protected;
-	gchar *pair;
+	gchar *pair;                                         // FIXME: subclass
+	DMAPMdnsBrowserTransportProtocol transport_protocol; // FIXME: subclass
 };
 
 struct _DMAPMdnsBrowserClass

@@ -359,7 +359,8 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 	    DMAPMdnsBrowser * browser)
 {
 	gchar *name = NULL;
-	gchar *pair = NULL;	/* FIXME: extract DACP-specific items into sub-class? See also howl code. */
+	gchar *pair = NULL;	/* FIXME: extract DACP-specific items into sub-class. Ensure in Howl and dns-sd code too. */
+	DMAPMdnsBrowserTransportProtocol transport_protocol = DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP; // FIXME: subclass
 	gchar host[AVAHI_ADDRESS_STR_MAX];
 	gboolean pp = FALSE;
 	DMAPMdnsBrowserService *service;
@@ -412,6 +413,11 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 				} else if (strcmp (key, "Pair") == 0) {
 					/* Pair is used when first connecting to a DACP remote */
 					pair = g_strdup (value);
+				} else if (strcmp (key, "tp") == 0) {
+					/* RAOP transport protocol */
+					transport_protocol = strstr (value, "UDP")
+					                   ? DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_UDP
+							   : DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP;
 				}
 
 				g_free (key);
@@ -430,7 +436,8 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 		service->name = name;
 		service->host = g_strdup (host);
 		service->port = port;
-		service->pair = pair;
+		service->pair = pair; // FIXME: subclass
+		service->transport_protocol = transport_protocol; // FIXME: subclass
 		service->password_protected = pp;
 		browser->priv->services =
 			g_slist_append (browser->priv->services, service);
