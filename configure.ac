@@ -329,7 +329,11 @@ else
   AC_WARN(GStreamer app element not present, transcoding will not be supported.)
 fi
 
-AM_MAINTAINER_MODE
+AM_CONDITIONAL(USE_GSTREAMERAPP, test x"$HAVE_GSTREAMERAPP" = "xyes")
+
+AC_SUBST(GSTREAMERAPP_CFLAGS)
+AC_SUBST(GSTREAMERAPP_LIBS)
+
 AM_CONDITIONAL(HAVE_VALA, false)
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
         AM_PROG_VALAC([0.11.4])
@@ -359,10 +363,12 @@ else
 	AC_WARN([Will not build dpapview])
 fi
 
-AM_CONDITIONAL(USE_GSTREAMERAPP, test x"$HAVE_GSTREAMERAPP" = "xyes")
-
-AC_SUBST(GSTREAMERAPP_CFLAGS)
-AC_SUBST(GSTREAMERAPP_LIBS)
+AM_CONDITIONAL(HAVE_CHECK, false)
+if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
+	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
+	AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
+	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
+fi
 
 AC_CHECK_LIB(z, uncompress)
 

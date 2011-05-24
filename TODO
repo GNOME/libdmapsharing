@@ -1,8 +1,5 @@
 = Short term ===================================================================
 
-Add more txt record handling to browser. Add comments indicating that
-we should subclass for DACP and RAOP.
-
 Noah: DNS-SD implementation
 	Finish browser side support.
 	Update MacPorts port to no longer require avahi.

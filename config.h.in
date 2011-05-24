@@ -6,6 +6,9 @@
 /* Define if mDNS/DNS-SD implementation uses Avahi 0.6 */
 #undef HAVE_AVAHI_0_6
 
+/* Define if check support is enabled */
+#undef HAVE_CHECK
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 

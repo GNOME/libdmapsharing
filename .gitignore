@@ -14,6 +14,7 @@ ltmain.sh
 missing
 stamp-h.in
 stamp-h1
+ChangeLog
 
 docs/.hierarchy
 docs/Makefile
@@ -59,4 +60,5 @@ tests/dmapserve
 tests/dpapview
 tests/test-dmap-client
 tests/test-dmap-server
-tests/vala.stamp
+tests/unit-test
+tests/*.stamp

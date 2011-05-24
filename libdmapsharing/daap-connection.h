@@ -22,6 +22,8 @@
 #include <libdmapsharing/dmap-connection.h>
 #include <libdmapsharing/dmap-db.h>
 
+#include "config.h"
+
 G_BEGIN_DECLS
 /**
  * DAAP_TYPE_CONNECTION:
@@ -90,5 +92,12 @@ DAAPConnection *daap_connection_new (const char *name,
 				     guint port,
 				     DMAPDb * db,
 				     DMAPRecordFactory * factory);
+
+#ifdef HAVE_CHECK
+#include <check.h>
+
+Suite *dmap_test_daap_connection_suite (void);
+#endif
+
 G_END_DECLS
 #endif /* __DAAP_CONNECTION_H */

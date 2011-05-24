@@ -4,6 +4,16 @@ if HAVE_GEE
 noinst_PROGRAMS += dacplisten dpapview dmapcopy dmapserve
 endif
 
+# Automake documentation mentions LDADD, but it does not work;
+# LIBS does.
+LIBS = $(top_builddir)/libdmapsharing/libdmapsharing-3.0.la
+
+if HAVE_CHECK
+noinst_PROGRAMS += unit-test
+
+LIBS += $(CHECK_LIBS)
+endif
+
 test_dmap_client_SOURCES = \
 	test-dmap-db.c \
 	test-daap-record.c \
@@ -13,7 +23,6 @@ test_dmap_client_SOURCES = \
 	test-dmap-client.c
 
 test_dmap_client_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GSTREAMERAPP_LIBS) \
@@ -34,7 +43,6 @@ test_dmap_server_SOURCES = \
 	test-dpap-record-factory.c
 
 test_dmap_server_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GSTREAMERAPP_LIBS) \
@@ -75,7 +83,6 @@ dacplisten_SOURCES = \
 	$(dacplisten_VALABUILTSOURCES)
 
 dacplisten_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GEE_LIBS)
 
 dpapview_VALASOURCES = \
@@ -89,7 +96,6 @@ dpapview_SOURCES = \
 	$(dpapview_VALABUILTSOURCES)
 
 dpapview_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GTK_LIBS) \
 	$(GEE_LIBS)
 
@@ -104,7 +110,6 @@ dmapcopy_SOURCES = \
 	$(dmapcopy_VALABUILTSOURCES)
 
 dmapcopy_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GEE_LIBS)
 
 dmapserve_VALASOURCES = \
@@ -119,8 +124,10 @@ dmapserve_SOURCES = \
 	$(dmapserve_VALABUILTSOURCES)
 
 dmapserve_LDADD = \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
 	$(GEE_LIBS)
+
+unit_test_SOURCES = \
+	unit-test.c
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
@@ -136,6 +143,10 @@ INCLUDES = \
 	$(IMAGEMAGICK_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(GEE_CFLAGS)
+
+if HAVE_CHECK
+INCLUDES += $(CHECK_CFLAGS)
+endif
 
 noinst_HEADERS = \
 	test-dmap-container-record.h \
