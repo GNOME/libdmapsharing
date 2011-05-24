@@ -248,6 +248,7 @@ MD5Transform (guint32 buf[4], guint32 const in[16], gint version)
 	MD5STEP (F2, c, d, a, b, in[3] + 0xf4d50d87, 14);
 
 	if (version == 1) {
+		// DMAP-specific moification:
 		MD5STEP (F2, b, c, d, a, in[8] + 0x445a14ed, 20);
 	} else {
 		MD5STEP (F2, b, c, d, a, in[8] + 0x455a14ed, 20);
