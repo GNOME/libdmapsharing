@@ -52,7 +52,8 @@ int main(void)
 	g_log_set_handler ("libdmapsharing", G_LOG_LEVEL_DEBUG, debug_null, NULL);
 	g_log_set_handler (NULL, G_LOG_LEVEL_DEBUG, debug_null, NULL);
 
-	run_suite (dmap_test_daap_connection_suite());
+	run_suite (dmap_test_daap_connection_suite ());
+	run_suite (dmap_test_dmap_md5_suite ());
 
 	exit (EXIT_SUCCESS);
 }

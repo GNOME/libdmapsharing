@@ -485,3 +485,26 @@ dmap_hash_generate (short version_major,
 
 	return;
 }
+
+#ifdef HAVE_CHECK
+START_TEST(test_dmap_hash_generate_v3_h2)
+{
+	char hash[33] = { 0 };
+	char *url = "test://foo";
+	dmap_hash_generate (3, url, 2, hash, 0);
+	fail_unless (! strcmp (hash, "798A9D80B6F08E339603BE83E0FEAD03"));
+}
+END_TEST
+
+Suite *dmap_test_dmap_md5_suite (void)
+{
+	TCase *tc;
+	Suite *s = suite_create("test_dmap_hash_generate");
+
+	tc = tcase_create("test_dmap_hash_generate_v3_h2");
+	tcase_add_test(tc, test_dmap_hash_generate_v3_h2);
+	suite_add_tcase(s, tc);
+
+	return s;
+}
+#endif

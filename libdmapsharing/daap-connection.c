@@ -210,7 +210,7 @@ END_TEST
 Suite *dmap_test_daap_connection_suite (void)
 {
 	TCase *tc;
-	Suite *s = suite_create("dmap_test_daap_connection_suite");
+	Suite *s = suite_create("test_daap_connection_suite");
 
 	tc = tcase_create("test_get_protocol_version_cc");
 	tcase_add_test(tc, test_get_protocol_version_cc);
