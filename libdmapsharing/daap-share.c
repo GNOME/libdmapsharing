@@ -397,7 +397,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	GError *error = NULL;
 	ChunkData *cd = g_new (ChunkData, 1);
 
-	g_object_get (record, "location", &location, NULL);
+	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 
 	/* FIXME: This crashes on powerpc-440fp-linux-gnu:
 	 * g_debug ("Sending %s chunked from offset %" G_GUINT64_FORMAT ".", location, offset);
@@ -417,7 +417,8 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	}
 
 	g_object_get (record, "format", &format, NULL);
-	if (transcode_mimetype == NULL
+	// Not presently transcoding videos (see also same comments elsewhere).
+	if (has_video || transcode_mimetype == NULL
 	    || !strcmp (format, mime_to_format (transcode_mimetype))) {
 		g_debug ("Not transcoding");
 		cd->stream = stream;
@@ -458,7 +459,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	/* Free memory after each chunk sent out over network. */
 	soup_message_body_set_accumulate (message->response_body, FALSE);
 
-	g_object_get (record, "has-video", &has_video, NULL);
+	// Not presently transcoding videos (see also same comments elsewhere).
 	if (has_video
 	    /* NOTE: iTunes seems to require this or it stops reading 
 	     * video data after about 2.5MB. Perhaps this is so iTunes
@@ -515,9 +516,11 @@ static void
 add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 {
 	GNode *mlit;
+	gboolean has_video = 0;
 	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
 
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
+	g_object_get (record, "has-video", &has_video, NULL);
 
 	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD,
@@ -614,10 +617,10 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 		gchar *format = NULL;
 		gchar *transcode_mimetype = NULL;
 
-		/* FIXME: This should be share, not record: */
 		g_object_get (mb->share, "transcode-mimetype",
 			      &transcode_mimetype, NULL);
-		if (transcode_mimetype) {
+		// Not presently transcoding videos (see also same comments elsewhere).
+		if (! has_video && transcode_mimetype) {
 			format = g_strdup (mime_to_format
 					   (transcode_mimetype));
 			g_free (transcode_mimetype);
@@ -683,9 +686,6 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 		dmap_structure_add (mlit, DMAP_CC_ASYR, year);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_HAS_VIDEO)) {
-		gboolean has_video = 0;
-
-		g_object_get (record, "has-video", &has_video, NULL);
 		dmap_structure_add (mlit, DMAP_CC_AEHV, has_video);
 	}
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ARTIST)) {
