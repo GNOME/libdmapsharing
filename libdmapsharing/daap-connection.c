@@ -44,7 +44,7 @@ get_query_metadata (DMAPConnection * connection)
 			 "daap.songtime,daap.songtrackcount,daap.songtracknumber,"
 			 "daap.songyear,daap.songformat,"
 			 "daap.songbitrate,daap.songdiscnumber,daap.songdataurl,"
-			 "daap.sortartist,daap.sortalbum");
+			 "daap.sortartist,daap.sortalbum,com.apple.itunes.has-video");
 }
 
 static DMAPRecord *
@@ -66,6 +66,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	gint track_number = 0;
 	gint disc_number = 0;
 	gint year = 0;
+	gboolean has_video = FALSE;
 	gint size = 0;
 	gint bitrate = 0;
 
@@ -106,6 +107,9 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 		case DMAP_CC_ASYR:
 			year = g_value_get_int (&(meta_item->content));
 			break;
+		case DMAP_CC_AEHV:
+			has_video = g_value_get_char (&(meta_item->content));
+			break;
 		case DMAP_CC_ASSZ:
 			size = g_value_get_int (&(meta_item->content));
 			break;
@@ -137,6 +141,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	}
 	g_object_set (record,
 		      "year", year,
+		      "has-video", has_video,
 		      "track", track_number,
 		      "disc", disc_number,
 		      "bitrate", bitrate,

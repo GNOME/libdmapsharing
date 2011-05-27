@@ -1612,6 +1612,7 @@ dmap_connection_get_headers (DMAPConnection * connection, const gchar * uri)
 	return headers;
 }
 
+// FIXME: unify this with share API? Build Container DB?
 GSList *
 dmap_connection_get_playlists (DMAPConnection * connection)
 {
