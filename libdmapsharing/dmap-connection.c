@@ -1235,6 +1235,8 @@ dmap_connection_setup (DMAPConnection * connection)
 			   connection->priv->port);
 }
 
+// FIXME: it would be nice if this mirrored the use of DMAPMdnsBrowser. That is, connect callback handler to a signal.
+// This would allow Vala to associated a lambda function with the signal.
 void
 dmap_connection_connect (DMAPConnection * connection,
 			 DMAPConnectionCallback callback, gpointer user_data)
