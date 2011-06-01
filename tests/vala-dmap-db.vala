@@ -28,7 +28,6 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 
 	public uint add (DMAP.Record record) {
 		db.add (((DMAP.Record) record));
-		db.add (((DMAP.Record) record));
 		return db.size;
 	}
 
