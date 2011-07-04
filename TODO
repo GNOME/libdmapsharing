@@ -1,5 +1,7 @@
 = Short term ===================================================================
 
+Use decodebin2, see dmapd.
+
 Noah: DNS-SD implementation
 	Finish browser side support.
 	Update MacPorts port to no longer require avahi.
@@ -28,6 +30,8 @@ Mike: Audit remaining GSoC patch:
 --- dacp-player.h
 --- dacp-share.c
 --- dacp-share.h
+
+Mike: Add support for browse= on DMAPConnection side to filter results (see dmap-share.c).
 
 Mike: Functions that could be simplified:
 	compare_record_property()

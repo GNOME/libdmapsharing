@@ -363,8 +363,8 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 	// FIXME: The name and service_name variables need to be renamed.
 	// Wait until working on DACP because I think this is when
 	// they are different. See Avahi code.
-	service->service_name = name;
-	service->name = name;
+	service->service_name = g_strdup (name);
+	service->name = g_strdup (name);
 	service->host = g_strdup (browser->priv->host_target);
 	service->port = browser->priv->port;
 	service->pair = NULL;
