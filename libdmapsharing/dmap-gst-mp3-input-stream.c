@@ -43,11 +43,11 @@ void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 					  DMAPGstInputStream * stream);
 
 static void
-new_decoded_pad_cb (GstElement * element,
-		    GstPad * pad,
-		    gboolean arg, DMAPGstMP3InputStream * stream)
+pad_added_cb (GstElement * element,
+              GstPad * pad,
+              DMAPGstMP3InputStream * stream)
 {
-	/* Link remaining pad after decodebin does its magic. */
+	/* Link remaining pad after decodebin2 does its magic. */
 	GstPad *conv_pad;
 
 	conv_pad = gst_element_get_static_pad (stream->priv->convert, "sink");
@@ -88,7 +88,7 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 	g_assert (GST_IS_ELEMENT (stream->priv->src));
 
 	stream->priv->decode =
-		gst_element_factory_make ("decodebin", "decode");
+		gst_element_factory_make ("decodebin2", "decode");
 	g_assert (GST_IS_ELEMENT (stream->priv->decode));
 
 	stream->priv->convert =
@@ -120,8 +120,8 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 	g_object_set (G_OBJECT (stream->priv->encode), "quality", 9, NULL);
 	g_object_set (G_OBJECT (stream->priv->encode), "bitrate", 128, NULL);
 	g_object_set (G_OBJECT (stream->priv->encode), "vbr", 0, NULL);
-	g_signal_connect (stream->priv->decode, "new-decoded-pad",
-			  G_CALLBACK (new_decoded_pad_cb), stream);
+	g_signal_connect (stream->priv->decode, "pad-added",
+			  G_CALLBACK (pad_added_cb), stream);
 
 	g_object_set (G_OBJECT (stream->priv->sink), "emit-signals", TRUE,
 		      "sync", FALSE, NULL);

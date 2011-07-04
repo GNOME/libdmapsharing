@@ -1,10 +1,7 @@
 = Short term ===================================================================
 
-Use decodebin2, see dmapd.
-
 Noah: DNS-SD implementation
 	Finish browser side support.
-	Update MacPorts port to no longer require avahi.
 
 Documentation:
 	Improve content (Noah?)
