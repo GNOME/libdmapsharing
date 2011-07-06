@@ -25,11 +25,6 @@
 
 #define DAAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAAP_TYPE_CONNECTION, DAAPConnectionPrivate))
 
-/* FIXME:
-struct DAAPConnectionPrivate {
-};
-*/
-
 static DMAPContentCode
 get_protocol_version_cc (DMAPConnection * connection)
 {
@@ -58,8 +53,6 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	const gchar *artist = NULL;
 	const gchar *format = NULL;
 	const gchar *genre = NULL;
-	// FIXME: not used?
-	// const gchar *streamURI = NULL;
 	const gchar *sort_artist = NULL;
 	const gchar *sort_album = NULL;
 	gint length = 0;
@@ -116,12 +109,6 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 		case DMAP_CC_ASBR:
 			bitrate = g_value_get_int (&(meta_item->content));
 			break;
-		/* FIXME: not used?
-		case DMAP_CC_ASUL:
-			streamURI =
-				g_value_get_string (&(meta_item->content));
-			break;
-		*/
 		case DMAP_CC_ASSA:
 			sort_artist =
 				g_value_get_string (&(meta_item->content));
@@ -169,10 +156,6 @@ daap_connection_class_init (DAAPConnectionClass * klass)
 	parent_class->get_protocol_version_cc = get_protocol_version_cc;
 	parent_class->get_query_metadata = get_query_metadata;
 	parent_class->handle_mlcl = handle_mlcl;
-
-	/* FIXME:
-	 * g_type_class_add_private (klass, sizeof (DAAPConnectionPrivate));
-	 */
 }
 
 DAAPConnection *
@@ -195,9 +178,6 @@ daap_connection_new (const char *name,
 static void
 daap_connection_init (DAAPConnection * connection)
 {
-	/* FIXME: 
-	 * connection->priv = DAAP_CONNECTION_GET_PRIVATE (connection);
-	 */
 }
 
 G_DEFINE_TYPE (DAAPConnection, daap_connection, DMAP_TYPE_CONNECTION);
