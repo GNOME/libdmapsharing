@@ -45,7 +45,6 @@ daap_record_init (DAAPRecordIface * iface)
 						      "Song title", "Unknown",
 						      G_PARAM_READWRITE));
 
-		/* FIXME: This is actually an enum */
 		g_object_interface_install_property (iface,
 						     g_param_spec_enum
 						     ("mediakind",
