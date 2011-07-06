@@ -962,10 +962,10 @@ dmap_structure_get_size (GNode * structure)
 {
 	DMAPStructureItem *item = (DMAPStructureItem *) structure->data;
 
-	g_assert (sizeof(cc_defs[item->content_code].string) == 4);
+	g_assert (strlen(cc_defs[item->content_code].string) == 4);
 	g_assert (sizeof(item->size) == 4);
 
-	return item->size + sizeof(cc_defs[item->content_code].string) + sizeof(item->size);
+	return item->size + strlen(cc_defs[item->content_code].string) + sizeof(item->size);
 }
 
 void
