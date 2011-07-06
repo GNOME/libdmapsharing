@@ -960,8 +960,12 @@ dmap_structure_print (GNode * structure)
 guint
 dmap_structure_get_size (GNode * structure)
 {
-	return ((DMAPStructureItem *) structure->data)->size +
-		8 /* FIXME: 8 = actual CC field + size field */ ;
+	DMAPStructureItem *item = (DMAPStructureItem *) structure->data;
+
+	g_assert (sizeof(cc_defs[item->content_code].string) == 4);
+	g_assert (sizeof(item->size) == 4);
+
+	return item->size + sizeof(cc_defs[item->content_code].string) + sizeof(item->size);
 }
 
 void

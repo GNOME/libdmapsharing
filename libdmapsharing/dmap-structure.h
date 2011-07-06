@@ -202,7 +202,7 @@ struct _DMAPStructureItem
 {
 	DMAPContentCode content_code;
 	GValue content;
-	guint size;
+	guint32 size;
 };
 
 GNode *dmap_structure_add (GNode * parent, DMAPContentCode cc, ...);
