@@ -412,20 +412,16 @@ _dmap_share_server_stop (DMAPShare * share)
 gboolean
 _dmap_share_publish_start (DMAPShare * share)
 {
-	gchar *nameprop;
 	GError *error;
 	gboolean res;
 	gboolean password_required;
-
-	/* FIXME: this is done throughout dmap-share.c. Is this the best way? */
-	g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
 	password_required =
 		(share->priv->auth_method != DMAP_SHARE_AUTH_METHOD_NONE);
 
 	error = NULL;
 	res = dmap_mdns_publisher_publish (share->priv->publisher,
-					   nameprop,
+					   share->priv->name,
 					   share->priv->port,
 					   DMAP_SHARE_GET_CLASS (share)->
 					   get_type_of_service (share),
@@ -446,8 +442,6 @@ _dmap_share_publish_start (DMAPShare * share)
 	} else {
 		g_debug ("Published DMAP server information to mdns");
 	}
-
-	g_free (nameprop);
 
 	return TRUE;
 }
@@ -1010,45 +1004,32 @@ void
 _dmap_share_published (DMAPShare * share,
 		       DMAPMdnsPublisher * publisher, const char *name)
 {
-	gchar *nameprop;
-
-	g_object_get ((gpointer) share, "name", &nameprop, NULL);
-
-	if (nameprop == NULL || name == NULL) {
-		g_free (nameprop);
+	if (share->priv->name == NULL || name == NULL) {
 		return;
 	}
 
-	if (strcmp (nameprop, name) == 0) {
+	if (strcmp (share->priv->name, name) == 0) {
 		g_debug ("mDNS publish successful");
 		share->priv->published = TRUE;
 	}
-
-	g_free (nameprop);
 }
 
 void
 _dmap_share_name_collision (DMAPShare * share,
 			    DMAPMdnsPublisher * publisher, const char *name)
 {
-	gchar *nameprop;
 	char *new_name = "FIXME";
 
-	g_object_get ((gpointer) share, "name", &nameprop, NULL);
-
-	if (nameprop == NULL || name == NULL) {
-		g_free (nameprop);
+	if (share->priv->name == NULL || name == NULL) {
 		return;
 	}
 
-	if (strcmp (nameprop, name) == 0) {
+	if (strcmp (share->priv->name, name) == 0) {
 		g_warning ("Duplicate share name on mDNS");
 
 		_dmap_share_set_name (DMAP_SHARE (share), new_name);
 		g_free (new_name);
 	}
-
-	g_free (nameprop);
 
 	return;
 }
@@ -1706,12 +1687,9 @@ _dmap_share_databases (DMAPShare * share,
 		 *                      MIMC item count
 		 *                      MCTC container count
 		 */
-		gchar *nameprop;
 		GNode *avdb;
 		GNode *mlcl;
 		GNode *mlit;
-
-		g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
 		avdb = dmap_structure_add (NULL, DMAP_CC_AVDB);
 		dmap_structure_add (avdb, DMAP_CC_MSTT,
@@ -1723,7 +1701,7 @@ _dmap_share_databases (DMAPShare * share,
 		mlit = dmap_structure_add (mlcl, DMAP_CC_MLIT);
 		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) 1);
 		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) 1);
-		dmap_structure_add (mlit, DMAP_CC_MINM, nameprop);
+		dmap_structure_add (mlit, DMAP_CC_MINM, share->priv->name);
 		dmap_structure_add (mlit, DMAP_CC_MIMC,
 				    dmap_db_count (share->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_MCTC, (gint32) 1);
@@ -1731,8 +1709,6 @@ _dmap_share_databases (DMAPShare * share,
 		_dmap_share_message_set_from_dmap_structure (share, message,
 							     avdb);
 		dmap_structure_destroy (avdb);
-
-		g_free (nameprop);
 	} else if (g_ascii_strcasecmp ("/1/groups", rest_of_path) == 0) {
 		/* ADBS database songs
 		 *      MSTT status
@@ -1966,7 +1942,6 @@ _dmap_share_databases (DMAPShare * share,
 		 *              MLIT
 		 *              ...
 		 */
-		gchar *nameprop;
 		GNode *aply;
 		GNode *mlit;
 		struct DMAPMetaDataMap *map;
@@ -1975,8 +1950,6 @@ _dmap_share_databases (DMAPShare * share,
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
 		mb.share = share;
-
-		g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
 		aply = dmap_structure_add (NULL, DMAP_CC_APLY);
 		dmap_structure_add (aply, DMAP_CC_MSTT,
@@ -1998,7 +1971,7 @@ _dmap_share_databases (DMAPShare * share,
 		mlit = dmap_structure_add (mb.mlcl, DMAP_CC_MLIT);
 		dmap_structure_add (mlit, DMAP_CC_MIID, (gint32) 1);
 		dmap_structure_add (mlit, DMAP_CC_MPER, (gint64) 1);
-		dmap_structure_add (mlit, DMAP_CC_MINM, nameprop);
+		dmap_structure_add (mlit, DMAP_CC_MINM, share->priv->name);
 		dmap_structure_add (mlit, DMAP_CC_MIMC,
 				    dmap_db_count (share->priv->db));
 		dmap_structure_add (mlit, DMAP_CC_FQUESCH, 0);
@@ -2018,8 +1991,6 @@ _dmap_share_databases (DMAPShare * share,
 		_dmap_share_message_set_from_dmap_structure (share, message,
 							     aply);
 		dmap_structure_destroy (aply);
-
-		g_free (nameprop);
 	} else if (g_ascii_strncasecmp ("/1/containers/", rest_of_path, 14) ==
 		   0) {
 		/* APSO playlist songs
