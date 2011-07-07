@@ -166,10 +166,12 @@ PKG_CHECK_MODULES(HOWL,
    HAVE_HOWL=no)
 
 AC_CHECK_HEADERS(dns_sd.h, HAVE_DNS_SD=yes)
+if test x"$HAVE_DNS_SD" = xyes; then
+  AC_CHECK_LIB(dns_sd, DNSServiceRegister, DNS_SD_LIBS="-ldns_sd",)
+fi
 
 if test x"$WITH_MDNS" = xauto; then
   if test x"$HAVE_DNS_SD" = xyes; then
-    AC_CHECK_LIB(dns_sd, DNSServiceRegister, DNS_SD_LIBS="-ldns_sd",)
     MDNS_CFLAGS=""
     MDNS_LIBS="$DNS_SD_LIBS"
     AC_DEFINE(WITH_DNS_SD, 1, [Define if mDNS/DNS-SD implementation uses Apple's DNSSD])

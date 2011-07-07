@@ -78,7 +78,7 @@ dmap_mdns_publisher_publish (DMAPMdnsPublisher *publisher,
 
 	/* FIXME: does not do anything with txt_records yet */
 	if (txt_records != NULL)
-		g_error ("dmap_mdns_publisher_publish() can not handle txt_records yet");
+		g_warning ("dmap_mdns_publisher_publish() can not handle txt_records yet");
 
 	g_warning ("%s %s %d", name, type_of_service, port);
 	if ((dns_err = DNSServiceRegister (&publisher->priv->sdref,
