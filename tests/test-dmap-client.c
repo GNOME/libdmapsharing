@@ -90,7 +90,7 @@ service_added_cb (DMAPMdnsBrowser *browser,
     DMAPConnection *conn;
     DMAPDb *db;
 
-    g_debug ("service added %s:%s:%s:%d (%s)",
+    g_debug ("service added %s:%s:%s:%d",
              service->service_name,
              service->name,
              service->host,
