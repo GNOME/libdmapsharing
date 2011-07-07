@@ -37,7 +37,6 @@ struct _DMAPMdnsBrowserPrivate
 	DNSServiceRef sd_browse_ref;
 
 	GSList *services;
-	GSList *resolvers;
 	GSList *backlog;
 };
 
@@ -97,6 +96,7 @@ service_context_free (ServiceContext *ctx)
 	g_free (ctx->full_name);
 	g_free (ctx->host_target);
 	g_free (ctx->domain);
+	g_free (ctx);
 }
 
 static gboolean
@@ -126,6 +126,8 @@ dmap_mdns_browser_resolve (ServiceContext *context)
 	g_signal_emit (context->browser,
 		       dmap_mdns_browser_signals[SERVICE_ADDED], 0, service);
 
+	service_context_free (context);
+
 	return TRUE;
 }
 
@@ -151,24 +153,6 @@ service_result_available_cb (GIOChannel * gio, GIOCondition condition,
 	dmap_mdns_browser_resolve (context);
 
 	return FALSE;
-}
-
-static gboolean
-add_resolve_to_event_loop (ServiceContext *context, DNSServiceRef sd_ref)
-{
-	g_debug ("add_resolve_to_event_loop ()");
-
-	int dns_sd_fd = DNSServiceRefSockFD (sd_ref);
-
-	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
-
-	if (!g_io_add_watch (dns_sd_chan,
-	                     G_IO_IN | G_IO_HUP | G_IO_ERR,
-	                     (GIOFunc) service_result_available_cb, context)) {
-		g_warning ("Error adding SD to event loop");
-	}
-
-	return TRUE;
 }
 
 static void
@@ -201,6 +185,24 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 }
 
 static gboolean
+add_resolve_to_event_loop (ServiceContext *context)
+{
+	g_debug ("add_resolve_to_event_loop ()");
+
+	int dns_sd_fd = DNSServiceRefSockFD (context->ref);
+
+	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
+
+	if (!g_io_add_watch (dns_sd_chan,
+	                     G_IO_IN | G_IO_HUP | G_IO_ERR,
+	                     (GIOFunc) service_result_available_cb, context)) {
+		g_warning ("Error adding SD to event loop");
+	}
+
+	return TRUE;
+}
+
+static gboolean
 browse_result_available_cb (GIOChannel * gio,
 			    GIOCondition condition, DMAPMdnsBrowser * browser)
 {
@@ -219,7 +221,7 @@ browse_result_available_cb (GIOChannel * gio,
 		return FALSE;
 	}
 
-	for (; browser->priv->backlog; browser->priv->backlog = g_slist_remove_link (browser->priv->backlog, browser->priv->backlog)) {
+	while (browser->priv->backlog) {
 		ServiceContext *ctx = (ServiceContext *) browser->priv->backlog->data;
 		DNSServiceRef ref;
 
@@ -242,7 +244,9 @@ browse_result_available_cb (GIOChannel * gio,
 		ctx->ref = ref;
 
 		g_debug ("Success processing DNS-SD browse result");
-		add_resolve_to_event_loop (ctx, ref);
+		add_resolve_to_event_loop (ctx);
+
+		browser->priv->backlog = g_slist_delete_link (browser->priv->backlog, browser->priv->backlog);
 	}
 
 	return TRUE;
@@ -266,7 +270,6 @@ add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 	return TRUE;
 }
 
-
 static void
 dns_service_browse_reply (DNSServiceRef sd_ref,
 			  DNSServiceFlags flags,
@@ -287,7 +290,7 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 		return;
 	}
 
-	g_debug ("adding a service: %s", service_name);
+	g_debug ("adding a service: %s %s", service_name, reply_domain);
 
 	// Cast the context pointer to a DMAPMdnsBrowser
 	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) udata;
