@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <glib.h>
 #include <glib-object.h>
+#include <arpa/inet.h>
 
 #include "dmap-mdns-browser.h"
 
@@ -73,7 +74,7 @@ G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 static void
 dnssd_browser_init (DMAPMdnsBrowser * browser)
 {
-	g_debug ("dnssd_browser_init()");
+	g_debug ("dnssd_browser_init ()");
 }
 
 static void
@@ -132,6 +133,8 @@ static gboolean
 service_result_available_cb (GIOChannel * gio, GIOCondition condition,
                              ServiceContext *context)
 {
+	g_debug ("service_result_available_cb ()");
+
 	if (condition & (G_IO_HUP | G_IO_ERR)) {
 		g_warning ("DNS-SD service socket closed");
 		service_context_free (context);
@@ -153,6 +156,8 @@ service_result_available_cb (GIOChannel * gio, GIOCondition condition,
 static gboolean
 add_resolve_to_event_loop (ServiceContext *context, DNSServiceRef sd_ref)
 {
+	g_debug ("add_resolve_to_event_loop ()");
+
 	int dns_sd_fd = DNSServiceRefSockFD (sd_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
@@ -177,6 +182,8 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   uint16_t txt_len,
 			   const char *txt_record, void *udata)
 {
+	g_debug ("dns_service_resolve_reply ()");
+
 	ServiceContext *ctx = (ServiceContext *) udata;
 
 	if (error_code != kDNSServiceErr_NoError) {
@@ -197,6 +204,8 @@ static gboolean
 browse_result_available_cb (GIOChannel * gio,
 			    GIOCondition condition, DMAPMdnsBrowser * browser)
 {
+	g_debug ("browse_result_available_cb ()");
+
 	if (condition & (G_IO_HUP | G_IO_ERR )) {
 		g_warning ("DNS-SD browser socket closed");
 		return FALSE;
@@ -242,6 +251,8 @@ browse_result_available_cb (GIOChannel * gio,
 static gboolean
 add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 {
+	g_debug ("add_browse_to_event_loop ()");
+
 	int dns_sd_fd = DNSServiceRefSockFD (browser->priv->sd_browse_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
@@ -265,6 +276,8 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 			  const char *regtype,
 			  const char *reply_domain, void *udata)
 {
+	g_debug ("dns_service_browse_reply ()");
+
 	if (error_code != kDNSServiceErr_NoError) {
 		g_debug ("dnsServiceBrowserReply ():  fail");
 		return;
@@ -292,6 +305,8 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 static void
 free_service (DMAPMdnsBrowserService * service)
 {
+	g_debug ("free_service ()");
+
 	g_free (service->service_name);
 	g_free (service->name);
 	g_free (service->host);
@@ -302,6 +317,8 @@ free_service (DMAPMdnsBrowserService * service)
 static void
 dmap_mdns_browser_dispose (GObject * object)
 {
+	g_debug ("dmap_mdns_browser_dispose ()");
+
 	DMAPMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
 	GSList *walk;
 	DMAPMdnsBrowserService *service;
@@ -319,6 +336,8 @@ dmap_mdns_browser_dispose (GObject * object)
 static void
 dmap_mdns_browser_finalize (GObject * object)
 {
+	g_debug ("dmap_mdns_browser_finalize ()");
+
 	g_signal_handlers_destroy (object);
 	G_OBJECT_CLASS (dmap_mdns_browser_parent_class)->finalize (object);
 }
@@ -408,6 +427,8 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 gboolean
 dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 {
+	g_debug ("dmap_mdns_browser_stop ()");
+
 	DNSServiceRefDeallocate (browser->priv->sd_browse_ref);
 	return TRUE;
 }
@@ -415,6 +436,8 @@ dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 GQuark
 dmap_mdns_browser_error_quark (void)
 {
+	g_debug ("dmap_mdns_browser_error_quark ()");
+
 	static GQuark quark = 0;
 
 	if (!quark) {
@@ -429,6 +452,8 @@ dmap_mdns_browser_error_quark (void)
 G_CONST_RETURN GSList *
 dmap_mdns_browser_get_services (DMAPMdnsBrowser * browser)
 {
+	g_debug ("dmap_mdns_browser_get_services ()");
+
 	g_return_val_if_fail (browser != NULL, NULL);
 
 	return browser->priv->services;
@@ -437,6 +462,8 @@ dmap_mdns_browser_get_services (DMAPMdnsBrowser * browser)
 DMAPMdnsBrowserServiceType
 dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
 {
+	g_debug ("dmap_mdns_browser_get_service_type ()");
+
 	g_return_val_if_fail (browser != NULL,
 			      DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID);
 
