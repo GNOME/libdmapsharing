@@ -47,6 +47,9 @@ print_record (gpointer id, DMAPRecord *record, gpointer user_data)
 		     NULL);
 
 	g_print ("%d: %s %s\n", GPOINTER_TO_UINT (id), artist, title);
+
+	g_free (artist);
+	g_free (title);
 }
 
 static void

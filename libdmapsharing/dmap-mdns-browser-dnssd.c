@@ -191,6 +191,7 @@ add_resolve_to_event_loop (ServiceContext *context)
 
 	int dns_sd_fd = DNSServiceRefSockFD (context->ref);
 
+	// FIXME: Memory leak?
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
 	if (!g_io_add_watch (dns_sd_chan,
@@ -259,6 +260,7 @@ add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 
 	int dns_sd_fd = DNSServiceRefSockFD (browser->priv->sd_browse_ref);
 
+	// FIXME: Memory leak?
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
 	if (!g_io_add_watch (dns_sd_chan,

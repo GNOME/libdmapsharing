@@ -296,12 +296,14 @@ test_daap_record_finalize (GObject *object)
 
 TestDAAPRecord *test_daap_record_new (void)
 {
-	gchar *ext;
+	gchar *ext, *dir;
 	TestDAAPRecord *record;
 
 	record = TEST_DAAP_RECORD (g_object_new (TYPE_TEST_DAAP_RECORD, NULL));
 
-	record->priv->location = g_strdup_printf ("file://%s/media/test.mp3", g_get_current_dir ());
+	dir = g_get_current_dir ();
+	record->priv->location = g_strdup_printf ("file://%s/media/test.mp3", dir);
+	g_free (dir);
 
 	record->priv->title = g_strdup ("Unknown");
 
