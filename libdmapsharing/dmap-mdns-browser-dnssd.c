@@ -48,12 +48,9 @@ typedef struct _ServiceContext
 
 	DNSServiceFlags flags;
 
-	uint16_t port;
 	uint32_t interface_index;
 
-	gchar *service_name;
-	gchar *full_name;
-	gchar *host_target;
+	DMAPMdnsBrowserService service;
 	gchar *domain;
 } ServiceContext;
 
@@ -86,15 +83,27 @@ dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 }
 
 static void
+free_service (DMAPMdnsBrowserService * service)
+{
+	g_debug ("free_service ()");
+
+	g_free (service->service_name);
+	g_free (service->name);
+	g_free (service->host);
+	g_free (service->pair);
+	g_free (service);
+}
+
+static void
 service_context_free (ServiceContext *ctx)
 {
 	g_debug ("service_context_free ()");
 
 	DNSServiceRefDeallocate (ctx->ref);
 	g_object_unref (ctx->browser);
-	g_free (ctx->service_name);
-	g_free (ctx->full_name);
-	g_free (ctx->host_target);
+	g_free (ctx->service.service_name);
+	g_free (ctx->service.name);
+	g_free (ctx->service.host);
 	g_free (ctx->domain);
 	g_free (ctx);
 }
@@ -111,10 +120,10 @@ dmap_mdns_browser_resolve (ServiceContext *context)
 	// FIXME: The name and service_name variables need to be renamed.
 	// Wait until working on DACP because I think this is when
 	// they are different. See Avahi code.
-	service->service_name = g_strdup (context->service_name);
-	service->name = g_strdup (context->service_name);
-	service->host = g_strdup (context->host_target);
-	service->port = context->port;
+	service->service_name = g_strdup (context->service.service_name);
+	service->name = g_strdup (context->service.name);
+	service->host = g_strdup (context->service.host);
+	service->port = context->service.port;
 	service->pair = NULL;
 	service->password_protected = FALSE;
 
@@ -160,8 +169,8 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   DNSServiceFlags flags,
 			   uint32_t interface_index,
 			   DNSServiceErrorType error_code,
-			   const char *fullname,
-			   const char *hosttarget,
+			   const char *name,
+			   const char *host,
 			   uint16_t port,
 			   uint16_t txt_len,
 			   const char *txt_record, void *udata)
@@ -179,9 +188,9 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 
 	ctx->flags = flags;
 	ctx->interface_index = interface_index;
-	ctx->port = htons (port);
-	ctx->full_name = g_strdup (fullname);
-	ctx->host_target = g_strdup (hosttarget);
+	ctx->service.port = htons (port);
+	ctx->service.name = g_strdup (name);
+	ctx->service.host = g_strdup (host);
 }
 
 static gboolean
@@ -229,7 +238,7 @@ browse_result_available_cb (GIOChannel * gio,
 		err = DNSServiceResolve (&ref,
 		                         ctx->flags,
 		                         ctx->interface_index,
-		                         ctx->service_name,
+		                         ctx->service.service_name,
 		                         service_type_name[browser->priv->service_type],
 		                         ctx->domain,
 		                         (DNSServiceResolveReply)
@@ -279,7 +288,7 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 			  DNSServiceErrorType error_code,
 			  const char *service_name,
 			  const char *regtype,
-			  const char *reply_domain, void *udata)
+			  const char *domain, void *udata)
 {
 	g_debug ("dns_service_browse_reply ()");
 
@@ -292,7 +301,7 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 		return;
 	}
 
-	g_debug ("adding a service: %s %s", service_name, reply_domain);
+	g_debug ("adding a service: %s %s", service_name, domain);
 
 	// Cast the context pointer to a DMAPMdnsBrowser
 	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) udata;
@@ -301,22 +310,10 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 	context->browser = g_object_ref (browser);
 	context->flags = flags;
 	context->interface_index = interface_index;
-	context->service_name = g_strdup (service_name);
-	context->domain = g_strdup (reply_domain);
+	context->service.service_name = g_strdup (service_name);
+	context->domain = g_strdup (domain);
 
 	browser->priv->backlog = g_slist_prepend (browser->priv->backlog, context);
-}
-
-static void
-free_service (DMAPMdnsBrowserService * service)
-{
-	g_debug ("free_service ()");
-
-	g_free (service->service_name);
-	g_free (service->name);
-	g_free (service->host);
-	g_free (service->pair);
-	g_free (service);
 }
 
 static void
