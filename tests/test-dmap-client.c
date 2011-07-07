@@ -58,8 +58,6 @@ connected_cb (DMAPConnection *connection,
 	g_print ("Connection cb., DB has %lu entries\n", dmap_db_count (db));
 
 	dmap_db_foreach (db, (GHFunc) print_record, NULL);
-
-	g_main_loop_quit (loop);
 }
 
 static void
