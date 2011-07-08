@@ -135,8 +135,6 @@ dmap_mdns_browser_resolve (ServiceContext *context)
 	g_signal_emit (context->browser,
 		       dmap_mdns_browser_signals[SERVICE_ADDED], 0, service);
 
-	service_context_free (context);
-
 	return TRUE;
 }
 
@@ -160,6 +158,8 @@ service_result_available_cb (GIOChannel * gio, GIOCondition condition,
 	}
 
 	dmap_mdns_browser_resolve (context);
+
+	service_context_free (context);
 
 	return FALSE;
 }
