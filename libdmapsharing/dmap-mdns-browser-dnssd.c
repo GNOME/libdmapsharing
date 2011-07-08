@@ -124,8 +124,8 @@ dmap_mdns_browser_resolve (ServiceContext *context)
 	service->name = g_strdup (context->service.name);
 	service->host = g_strdup (context->service.host);
 	service->port = context->service.port;
-	service->pair = NULL;
-	service->password_protected = FALSE;
+	service->pair = g_strdup (context->service.pair);
+	service->password_protected = context->service.password_protected;
 
 	// add to the services list
 	context->browser->priv->services =
@@ -191,6 +191,8 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 	ctx->service.port = htons (port);
 	ctx->service.name = g_strdup (name);
 	ctx->service.host = g_strdup (host);
+	ctx->service.pair = NULL;
+	ctx->service.password_protected = FALSE;
 }
 
 static gboolean
