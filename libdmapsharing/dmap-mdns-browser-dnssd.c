@@ -200,7 +200,6 @@ add_resolve_to_event_loop (ServiceContext *context)
 
 	int dns_sd_fd = DNSServiceRefSockFD (context->ref);
 
-	// FIXME: Memory leak?
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
 	if (!g_io_add_watch (dns_sd_chan,
@@ -208,6 +207,8 @@ add_resolve_to_event_loop (ServiceContext *context)
 	                     (GIOFunc) service_result_available_cb, context)) {
 		g_warning ("Error adding SD to event loop");
 	}
+
+	g_io_channel_unref (dns_sd_chan);
 
 	return TRUE;
 }
@@ -269,7 +270,6 @@ add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 
 	int dns_sd_fd = DNSServiceRefSockFD (browser->priv->sd_browse_ref);
 
-	// FIXME: Memory leak?
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
 	if (!g_io_add_watch (dns_sd_chan,
@@ -277,6 +277,8 @@ add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 	                     (GIOFunc) browse_result_available_cb, browser)) {
 		g_error ("Error adding SD to event loop");
 	}
+
+	g_io_channel_unref (dns_sd_chan);
 
 	return TRUE;
 }
