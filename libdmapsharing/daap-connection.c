@@ -162,15 +162,18 @@ DAAPConnection *
 daap_connection_new (const char *name,
 		     const char *host,
 		     guint port,
-		     DMAPDb * db, DMAPRecordFactory * factory)
+		     DMAPDb * db,
+		     DMAPRecordFactory * factory)
 {
 	DAAPConnection *connection;
 
 	connection = g_object_new (DAAP_TYPE_CONNECTION,
-				   "name", name,
-				   "db", db,
-				   "host", host,
-				   "port", port, "factory", factory, NULL);
+				  "name", name,
+				  "host", host,
+				  "port", port,
+				  "db", db,
+				  "factory", factory,
+				   NULL);
 
 	return connection;
 }
