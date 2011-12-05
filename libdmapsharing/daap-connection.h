@@ -22,8 +22,6 @@
 #include <libdmapsharing/dmap-connection.h>
 #include <libdmapsharing/dmap-db.h>
 
-#include "config.h"
-
 G_BEGIN_DECLS
 /**
  * DAAP_TYPE_CONNECTION:
