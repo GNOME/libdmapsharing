@@ -27,8 +27,7 @@
 #include <stdlib.h>
 
 #include <glib/gi18n.h>
-#include <glib/gslist.h>
-#include <glib/gmappedfile.h>
+#include <glib.h>
 
 #include <unistd.h>
 #include <sys/types.h>
