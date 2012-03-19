@@ -96,6 +96,7 @@ GTKDOC_CFLAGS= \
 
 GTKDOC_LIBS= \
 	$(top_builddir)/libdmapsharing/libdmapsharing-3.0.la \
+	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GOBJECT_LIBS) \

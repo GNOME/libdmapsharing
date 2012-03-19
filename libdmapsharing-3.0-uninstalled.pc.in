@@ -1,0 +1,11 @@
+prefix=
+exec_prefix=
+libdir=${pcfiledir}/libdmapsharing
+includedir=${pcfiledir}
+
+Name: libdmapsharing
+Description: libdmapsharing
+Version: @VERSION@
+Requires: glib-2.0 libsoup-2.4 @GSTLIB@
+Libs: -L${libdir} -ldmapsharing-@API_VERSION@
+Cflags: -I${includedir}

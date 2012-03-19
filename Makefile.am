@@ -7,6 +7,7 @@ pcfiles = libdmapsharing-@API_VERSION@.pc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = $(pcfiles)
 
-EXTRA_DIST =					\
-	autogen.sh				\
+EXTRA_DIST =                                        \
+	autogen.sh                                  \
+	libdmapsharing-@API_VERSION@-uninstalled.pc \
 	README-Memory

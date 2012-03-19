@@ -368,8 +368,10 @@ fi
 AM_CONDITIONAL(HAVE_CHECK, false)
 if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
 	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
-	AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
 	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
+	if test "x$have_check" = "xyes"; then
+		AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
+	fi
 fi
 
 AC_CHECK_LIB(z, uncompress)
@@ -388,6 +390,7 @@ AC_SUBST(DMAP_HAVE_UNALIGNED_ACCESS_DEFINE)
 AC_OUTPUT([
 Makefile
 doc/Makefile
+libdmapsharing-${API_VERSION}-uninstalled.pc
 libdmapsharing-${API_VERSION}.pc
 libdmapsharing/Makefile
 libdmapsharing/dmap-config.h
@@ -395,4 +398,8 @@ tests/Makefile
 m4/Makefile
 media/Makefile
 vala/Makefile
+vala/libdmapsharing-${API_VERSION}-daap/libdmapsharing-${API_VERSION}-uninstalled.files
+vala/libdmapsharing-${API_VERSION}-dacp/libdmapsharing-${API_VERSION}-uninstalled.files
+vala/libdmapsharing-${API_VERSION}-dmap/libdmapsharing-${API_VERSION}-uninstalled.files
+vala/libdmapsharing-${API_VERSION}-dpap/libdmapsharing-${API_VERSION}-uninstalled.files
 ])

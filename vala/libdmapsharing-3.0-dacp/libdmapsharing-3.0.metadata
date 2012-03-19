@@ -1,1 +1,3 @@
 DACP cheader_filename="libdmapsharing/dmap.h"
+AvahiClient name="Client" namespace="Avahi"
+AvahiEntryGroup name="EntryGroup" namespace="Avahi"

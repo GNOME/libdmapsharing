@@ -56,19 +56,19 @@ if MAINTAINER_MODE
 BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
 
 dacplisten.stamp: $(dacplisten_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject  $^ -C
 	touch $@
 
 dpapview.stamp: $(dpapview_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject $^ -C
 	touch $@
 
 dmapcopy.stamp: $(dmapcopy_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject $^ -C
 	touch $@
 
 dmapserve.stamp: $(dmapserve_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-1.0 --pkg gstreamer-0.10 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject $^ -C
 	touch $@
 endif
 
@@ -128,6 +128,10 @@ dmapserve_LDADD = \
 
 unit_test_SOURCES = \
 	unit-test.c
+
+unit_test_LDADD = \
+	$(GLIB_LIBS) \
+	$(GOBJECT_LIBS)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \

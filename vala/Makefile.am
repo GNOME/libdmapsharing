@@ -1,27 +1,31 @@
 if MAINTAINER_MODE
-libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.files libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.namespace
-	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@-daap
+libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.files libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.namespace
+	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@-uninstalled libdmapsharing-@API_VERSION@-daap
+	@mv libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.gi libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi
 
-libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.files libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.namespace
-	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@-dacp
+libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.files libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.namespace
+	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@-uninstalled libdmapsharing-@API_VERSION@-dacp
+	@mv libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.gi libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi
 
-libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.files libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.namespace
-	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@-dmap
+libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.files libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.namespace
+	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@-uninstalled libdmapsharing-@API_VERSION@-dmap
+	@mv libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.gi libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi
 
-libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.files libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.namespace
-	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@-dpap
+libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.files libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.namespace
+	PKG_CONFIG_PATH=$(top_builddir):${PKG_CONFIG_PATH} $(VALA_GEN_INTROSPECT) libdmapsharing-@API_VERSION@-uninstalled libdmapsharing-@API_VERSION@-dpap
+	@mv libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.gi libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi
 
 libdmapsharing-@API_VERSION@-daap.vapi: libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.metadata
-	$(VAPIGEN) --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-daap libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi
+	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-daap libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi
 
 libdmapsharing-@API_VERSION@-dacp.vapi: libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.metadata
-	$(VAPIGEN) --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-dacp libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi
+	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-dacp libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi
 
 libdmapsharing-@API_VERSION@-dmap.vapi: libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.metadata
-	$(VAPIGEN) --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-dmap libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi
+	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-dmap libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi
 
 libdmapsharing-@API_VERSION@-dpap.vapi: libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.metadata
-	$(VAPIGEN) --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-dpap libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi
+	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-0.10 --library libdmapsharing-@API_VERSION@-dpap libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.gi
 
 # NOTE: Sed is used to fix a problem I don't know how to handle in
 # vapigen. I have several namespaces (DMAP, DAAP, ...) in libdmapsharing. In
@@ -49,24 +53,28 @@ endif
 
 EXTRA_DIST = \
 	libdmapsharing-@API_VERSION@.vapi \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.excludes \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.excludes \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.metadata \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.namespace \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.excludes \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.namespace \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.excludes \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.metadata \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.namespace \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.excludes \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.namespace \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.excludes \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.metadata \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.namespace \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.excludes \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.files \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.namespace \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.excludes \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.metadata \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@.namespace
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.namespace
 
 CLEANFILES = \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.files \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.files \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.files \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi \
 	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi \
 	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi \
