@@ -1,8 +1,8 @@
 Name: libdmapsharing
-Version: 2.9.13
-Release: 1%{?dist}
+Version: 2.9.14
+Release: 2%{?dist}
 License: LGPLv2+
-Source: http://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
+Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
@@ -23,7 +23,8 @@ DAAP and DPAP.
 %package devel
 Summary: Files needed to develop applications using libdmapsharing
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}, glib2-devel, libsoup-devel, avahi-glib-devel, pkgconfig
+Requires: libdmapsharing = %{version}-%{release}, pkgconfig, glib2-devel, libsoup-devel >= 2.32
+Requires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer-plugins-base-devel >= 0.10.23.2
 
 %description devel
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -39,7 +40,7 @@ other resources needed for developing applications using libdmapsharing.
 
 %prep
 
-%setup -q -n libdmapsharing-%{version}
+%setup -q
 
 %build
 %configure --disable-static
@@ -58,8 +59,43 @@ rm -rf $RPM_BUILD_ROOT
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.14-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Mon Dec 05 2011 W. Michael Petullo <mike[@]flyn.org> - 2.9.14-1
+- new upstream version
+- Remove patch from previous release (upstreamed)
+
+* Tue Nov 08 2011 Adam Jackson <ajax@redhat.com> 2.9.12-2
+- libdmapsharing-2.9.12-glib.patch: Fix FTBFS against new glib
+
+* Mon Aug 22 2011 Adam Williamson <awilliam@redhat.com> - 2.9.12-1
+- new upstream version
+
+* Mon Mar 21 2011 W. Michael Petullo <mike[@]flyn.org> - 2.9.6-1
+- New upstream version.
+
+* Mon Feb 07 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.5-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Mon Feb 07 2011 W. Michael Petullo <mike[@]flyn.org> - 2.9.5-1
+- New upstream version, fixes problem compiling without libgee.
+
+* Mon Feb 07 2011 W. Michael Petullo <mike[@]flyn.org> - 2.9.4-1
+- New upstream version (API 3 series).
+
 * Sun Dec 19 2010 W. Michael Petullo <mike[@]flyn.org> - 2.1.13-1
 - New upstream version.
+
+* Sun Nov 28 2010 W. Michael Petullo <mike[@]flyn.org> - 2.1.12-1
+- New upstream version.
+
+* Sun Oct 31 2010 W. Michael Petullo <mike[@]flyn.org> - 2.1.8-1
+- New upstream version.
+- Update Source and URL.
+- BuildRequire gdk-pixbuf2-devel for DACP.
+- BuildRequire libsoup-devel >= 2.32 for DACP.
+- BuildRequire gstreamer-plugins-base-devel >= for transcoding.
 
 * Fri Jun 04 2010 W. Michael Petullo <mike[@]flyn.org> - 1.9.0.21-1
 - New upstream version.
