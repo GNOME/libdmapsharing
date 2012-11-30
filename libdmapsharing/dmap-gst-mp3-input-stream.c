@@ -88,14 +88,14 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 	g_assert (GST_IS_ELEMENT (stream->priv->src));
 
 	stream->priv->decode =
-		gst_element_factory_make ("decodebin2", "decode");
+		gst_element_factory_make ("decodebin", "decode");
 	g_assert (GST_IS_ELEMENT (stream->priv->decode));
 
 	stream->priv->convert =
 		gst_element_factory_make ("audioconvert", "convert");
 	g_assert (GST_IS_ELEMENT (stream->priv->convert));
 
-	stream->priv->encode = gst_element_factory_make ("lame", "encode");
+	stream->priv->encode = gst_element_factory_make ("lamemp3enc", "encode");
 	g_assert (GST_IS_ELEMENT (stream->priv->encode));
 
 	stream->priv->sink = gst_element_factory_make ("appsink", "sink");
@@ -117,7 +117,8 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 		      NULL);
 
 	/* quality=9 is important for fast, realtime transcoding: */
-	g_object_set (G_OBJECT (stream->priv->encode), "quality", 9, NULL);
+	// FIXME: Causes crash; why?
+	// g_object_set (G_OBJECT (stream->priv->encode), "quality", 9, NULL);
 	g_object_set (G_OBJECT (stream->priv->encode), "bitrate", 128, NULL);
 	g_object_set (G_OBJECT (stream->priv->encode), "vbr", 0, NULL);
 	g_signal_connect (stream->priv->decode, "pad-added",
@@ -129,7 +130,7 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 				      GST_APP_MAX_BUFFERS);
 	gst_app_sink_set_drop (GST_APP_SINK (stream->priv->sink), FALSE);
 
-	g_signal_connect (stream->priv->sink, "new-buffer",
+	g_signal_connect (stream->priv->sink, "new-sample",
 			  G_CALLBACK (dmap_gst_input_stream_new_buffer_cb),
 			  stream);
 

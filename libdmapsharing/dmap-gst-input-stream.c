@@ -23,7 +23,6 @@
 #include <string.h>
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
-#include <gst/app/gstappbuffer.h>
 
 #include "dmap-gst-input-stream.h"
 #include "dmap-gst-mp3-input-stream.h"
@@ -175,7 +174,10 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	gsize i;
 	guint8 *ptr;
 	GTimeVal time;
+	GstSample *sample;
 	GstBuffer *buffer;
+	GstMemory *memory;
+	GstMapInfo info;
 
 	/* FIXME: Is this necessary? I am trying to protect against this
 	 * thread manipulating data after the pipeline has been destroyed.
@@ -191,17 +193,33 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	g_get_current_time (&time);
 	g_time_val_add (&time, QUEUE_PUSH_WAIT_SECONDS * 1000000);
 
-	buffer = gst_app_sink_pull_buffer (GST_APP_SINK (element));
+	sample = gst_app_sink_pull_sample (GST_APP_SINK (element));
+	if (NULL == sample) {
+		g_warning ("Error getting GStreamer sample");
+		goto _return;
+	}
 
-	if (buffer == NULL) {
+	buffer = gst_sample_get_buffer (sample);
+	if (NULL == buffer) {
 		g_warning ("Error getting GStreamer buffer");
+		goto _return;
+	}
+
+	memory = gst_buffer_get_memory (buffer, 0);
+	if (NULL == memory) {
+		g_warning ("Error getting GStreamer memory");
+		goto _return;
+	}
+
+	if (gst_memory_map (memory, &info, GST_MAP_READ) == FALSE) {
+		g_warning ("Error mapping GStreamer memory");
 		goto _return;
 	}
 
 	/* FIXME: this actually allows buffer to grow larger than max. */
 	if (g_queue_get_length (stream->priv->buffer) +
-	    GST_BUFFER_SIZE (buffer) > DECODED_BUFFER_SIZE) {
-		stream->priv->write_request = GST_BUFFER_SIZE (buffer);
+	    info.size > DECODED_BUFFER_SIZE) {
+		stream->priv->write_request = info.size;
 		if (!g_cond_timed_wait (stream->priv->buffer_write_ready,
 					stream->priv->buffer_mutex, &time)) {
 			g_warning
@@ -217,16 +235,17 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	}
 
 	if (g_queue_get_length (stream->priv->buffer) +
-	    GST_BUFFER_SIZE (buffer) <= DECODED_BUFFER_SIZE) {
-		ptr = GST_BUFFER_DATA (buffer);
+	    info.size <= DECODED_BUFFER_SIZE) {
+		ptr = info.data;
 
-		for (i = 0; i < GST_BUFFER_SIZE (buffer); i++) {
+		for (i = 0; i < info.size; i++) {
 			g_queue_push_tail (stream->priv->buffer,
 					   GINT_TO_POINTER ((gint) * ptr++));
 		}
 	}
 
 	gst_buffer_unref (buffer);
+	gst_memory_unmap (memory, &info);
 
 	if (g_queue_get_length (stream->priv->buffer)
 	    >= stream->priv->read_request) {

@@ -318,14 +318,14 @@ PKG_CHECK_MODULES(SOUP_APPLE_REMOTE_APP, libsoup-2.4 >= 2.32.2, ,
 dnl Check for GStreamer App, needed for transcoding
 dnl gstreamer-plugins-base >= 0.10.23.2 for GNOME Bugzilla #588205 & #587896.
 PKG_CHECK_MODULES(GSTREAMERAPP,
-    gstreamer-app-0.10
-    gstreamer-plugins-base-0.10 >= 0.10.23.2,
+    gstreamer-app-1.0
+    gstreamer-plugins-base-1.0 >= 0.10.23.2,
     HAVE_GSTREAMERAPP=yes,
     HAVE_GSTREAMERAPP=no)
 
 if test x"$HAVE_GSTREAMERAPP" = "xyes"; then
   AC_DEFINE(HAVE_GSTREAMERAPP, 1, [Define if GStreamer App support is enabled])
-  GSTLIB=gstreamer-0.10
+  GSTLIB=gstreamer-1.0
   AC_SUBST(GSTLIB) # For libdmapsharing-3.0.pc.in.
 else
   AC_WARN(GStreamer app element not present, transcoding will not be supported.)

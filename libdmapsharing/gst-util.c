@@ -29,8 +29,8 @@ pads_compatible (GstPad * pad1, GstPad * pad2)
 	gboolean fnval;
 	GstCaps *res, *caps1, *caps2;
 
-	caps1 = gst_pad_get_caps (pad1);
-	caps2 = gst_pad_get_caps (pad2);
+	caps1 = gst_pad_query_caps (pad1, NULL);
+	caps2 = gst_pad_query_caps (pad2, NULL);
 	res = gst_caps_intersect (caps1, caps2);
 	fnval = res && !gst_caps_is_empty (res);
 
