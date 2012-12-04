@@ -452,13 +452,13 @@ actual_http_response_handler (DAAPResponseData * data)
 		const char *server;
 
 		encoding_header =
-			soup_message_headers_get (data->
-						  message->response_headers,
-						  "Content-Encoding");
+			soup_message_headers_get_one (data->
+						      message->response_headers,
+						     "Content-Encoding");
 
-		server = soup_message_headers_get (data->
-						   message->response_headers,
-						   "DAAP-Server");
+		server = soup_message_headers_get_one (data->
+						       message->response_headers,
+						      "DAAP-Server");
 		if (server != NULL
 		    && strstr (server, ITUNES_7_SERVER) != NULL) {
 			g_debug ("giving up.  we can't talk to %s", server);
@@ -639,13 +639,10 @@ http_response_handler (SoupSession * session,
 	/* to avoid blocking the UI, handle big responses in a separate thread */
 	if (SOUP_STATUS_IS_SUCCESSFUL (data->status)
 	    && data->connection->priv->use_response_handler_thread) {
-		GError *error = NULL;
-
 		g_debug ("creating thread to handle daap response");
-		g_thread_create ((GThreadFunc) actual_http_response_handler,
-				 data, FALSE, &error);
-		if (error) {
-			g_warning ("fuck");
+		GThread *thread = g_thread_new (NULL, (GThreadFunc) actual_http_response_handler, data);
+		if (NULL == thread) {
+			g_warning ("failed to create new thread");
 		}
 	} else {
 		actual_http_response_handler (data);
@@ -1220,7 +1217,7 @@ dmap_connection_setup (DMAPConnection * connection)
 {
 	connection->priv->session = soup_session_async_new ();
 
-	g_signal_connect (connection->priv->session, "authenticate", authenticate_cb, connection);
+	g_signal_connect (connection->priv->session, "authenticate", G_CALLBACK(authenticate_cb), connection);
 
 	connection->priv->base_uri = soup_uri_new (NULL);
 	soup_uri_set_scheme (connection->priv->base_uri,

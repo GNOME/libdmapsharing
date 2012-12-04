@@ -476,7 +476,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			g_object_get (record, "location", &location, NULL);
 			if (mapped_file) {
 				/* Free any previously mapped image */
-				g_mapped_file_free (mapped_file);
+				g_mapped_file_unref (mapped_file);
 				mapped_file = NULL;
 			}
 

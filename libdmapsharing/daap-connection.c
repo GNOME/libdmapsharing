@@ -101,7 +101,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 			year = g_value_get_int (&(meta_item->content));
 			break;
 		case DMAP_CC_AEHV:
-			has_video = g_value_get_char (&(meta_item->content));
+			has_video = g_value_get_schar (&(meta_item->content));
 			break;
 		case DMAP_CC_ASSZ:
 			size = g_value_get_int (&(meta_item->content));

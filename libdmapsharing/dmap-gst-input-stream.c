@@ -174,9 +174,9 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	gsize i;
 	guint8 *ptr;
 	GTimeVal time;
-	GstSample *sample;
-	GstBuffer *buffer;
-	GstMemory *memory;
+	GstSample *sample = NULL;
+	GstBuffer *buffer = NULL;
+	GstMemory *memory = NULL;
 	GstMapInfo info;
 
 	/* FIXME: Is this necessary? I am trying to protect against this
@@ -244,9 +244,6 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 		}
 	}
 
-	gst_buffer_unref (buffer);
-	gst_memory_unmap (memory, &info);
-
 	if (g_queue_get_length (stream->priv->buffer)
 	    >= stream->priv->read_request) {
 		stream->priv->read_request = 0;
@@ -254,6 +251,14 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	}
 
       _return:
+	if (NULL != memory) {
+		gst_memory_unmap (memory, &info);
+	}
+
+	if (NULL != sample) {
+		gst_sample_unref (sample);
+	}
+
 	g_mutex_unlock (stream->priv->buffer_mutex);
 }
 

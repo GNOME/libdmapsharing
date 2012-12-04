@@ -880,7 +880,7 @@ databases_items_xxx (DMAPShare * share,
 				     "bytes");
 
 	range_header =
-		soup_message_headers_get (msg->request_headers, "Range");
+		soup_message_headers_get_one (msg->request_headers, "Range");
 	if (range_header) {
 		const gchar *s;
 		gchar *content_range;

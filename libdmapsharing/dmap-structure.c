@@ -412,7 +412,7 @@ dmap_structure_node_serialize (GNode * node, GByteArray * array)
 	switch (dmap_type) {
 	case DMAP_TYPE_BYTE:
 	case DMAP_TYPE_SIGNED_INT:{
-			gchar c = g_value_get_char (&(item->content));
+			gchar c = g_value_get_schar (&(item->content));
 
 			g_byte_array_append (array, (const guint8 *) &c, 1);
 
@@ -598,7 +598,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 				}
 
 				item->size = 1;
-				g_value_set_char (&(item->content), c);
+				g_value_set_schar (&(item->content), c);
 				break;
 			}
 		case DMAP_TYPE_SHORT:{
