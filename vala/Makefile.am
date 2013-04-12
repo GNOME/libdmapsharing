@@ -71,10 +71,6 @@ EXTRA_DIST = \
 	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.namespace
 
 CLEANFILES = \
-	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.files \
-	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.files \
-	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.files \
-	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@.gi \
 	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@.gi \
 	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@.gi \
@@ -83,6 +79,12 @@ CLEANFILES = \
 	libdmapsharing-@API_VERSION@-dacp.vapi \
 	libdmapsharing-@API_VERSION@-dmap.vapi \
 	libdmapsharing-@API_VERSION@-dpap.vapi
+
+DISTCLEANFILES = \
+	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.files \
+	libdmapsharing-@API_VERSION@-dacp/libdmapsharing-@API_VERSION@-uninstalled.files \
+	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.files \
+	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.files
 
 if MAINTAINER_MODE
 CLEANFILES += \
