@@ -552,7 +552,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 
 		/* we need at least 8 bytes, 4 of content_code and 4 of size */
 		if (buf_length - l < 8) {
-			g_debug ("Malformed response recieved\n");
+			g_debug ("Malformed response received\n");
 			return;
 		}
 
@@ -571,7 +571,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 		 * then get out before we start processing it
 		 */
 		if (codesize > buf_length - l - 4 || codesize < 0) {
-			g_debug ("Invalid codesize %d recieved in buf_length %d\n", codesize, buf_length);
+			g_debug ("Invalid codesize %d received in buf_length %d\n", codesize, buf_length);
 			return;
 		}
 		l += 4;
