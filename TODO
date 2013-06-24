@@ -1,5 +1,11 @@
 = Short term ===================================================================
 
+Fix use of iTunes as client with recent libsoup:
+	rhythmbox:	GET /databases/1/items/...
+	iTunes:		GET daap://192.168.1.245:3689/databases/...
+	libsoup 2.28.2: OK
+	libsoup 2.42.2: soup-message-server-io.c calls SOUP_URI_VALID_FOR_HTTP!
+
 Noah: DNS-SD implementation
 	Finish browser side support.
 
