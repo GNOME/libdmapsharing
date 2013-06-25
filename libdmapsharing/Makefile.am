@@ -44,6 +44,7 @@ if USE_GSTREAMERAPP
 libdmapsharing_3_0_la_SOURCES += \
 	dmap-gst-input-stream.c \
 	dmap-gst-mp3-input-stream.c \
+	dmap-gst-qt-input-stream.c \
 	dmap-gst-wav-input-stream.c \
 	gst-util.c
 endif
@@ -100,6 +101,7 @@ noinst_HEADERS = \
 	dmap-mdns-avahi.h \
 	dmap-utils.h \
 	dmap-gst-mp3-input-stream.h \
+	dmap-gst-qt-input-stream.h \
 	dmap-gst-wav-input-stream.h \
 	gst-util.h
 

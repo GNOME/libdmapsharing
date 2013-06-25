@@ -34,7 +34,7 @@ struct DMAPGstMP3InputStreamPrivate
 	GstElement *src;
 	GstElement *decode;
 	GstElement *convert;
-	GstElement *encode;
+	GstElement *audio_encode;
 	GstElement *sink;
 };
 
@@ -59,13 +59,6 @@ pad_added_cb (GstElement * element,
 			   (stream->priv->convert, "sink")));
 
 		gst_pad_link (pad, conv_pad);
-
-		if (gst_element_link_many (stream->priv->convert,
-					   stream->priv->encode,
-					   stream->priv->sink,
-					   NULL) == FALSE) {
-			g_warning ("Error linking convert and sink elements");
-		}
 	} else {
 		g_warning ("Could not link GStreamer pipeline.");
 	}
@@ -95,8 +88,8 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 		gst_element_factory_make ("audioconvert", "convert");
 	g_assert (GST_IS_ELEMENT (stream->priv->convert));
 
-	stream->priv->encode = gst_element_factory_make ("lamemp3enc", "encode");
-	g_assert (GST_IS_ELEMENT (stream->priv->encode));
+	stream->priv->audio_encode = gst_element_factory_make ("lamemp3enc", "audioencode");
+	g_assert (GST_IS_ELEMENT (stream->priv->audio_encode));
 
 	stream->priv->sink = gst_element_factory_make ("appsink", "sink");
 	g_assert (GST_IS_ELEMENT (stream->priv->sink));
@@ -105,11 +98,20 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 			  stream->priv->src,
 			  stream->priv->decode,
 			  stream->priv->convert,
-			  stream->priv->encode, stream->priv->sink, NULL);
+			  stream->priv->audio_encode,
+	                  stream->priv->sink,
+	                  NULL);
 
-	if (gst_element_link (stream->priv->src, stream->priv->decode) ==
-	    FALSE) {
+	if (gst_element_link (stream->priv->src,
+	                      stream->priv->decode) == FALSE) {
 		g_warning ("Error linking source and decode elements");
+	}
+
+	if (gst_element_link_many (stream->priv->convert,
+	                           stream->priv->audio_encode,
+	                           stream->priv->sink,
+	                           NULL) == FALSE) {
+		g_warning ("Error linking convert through sink elements");
 	}
 
 	g_assert (G_IS_INPUT_STREAM (src_stream));
@@ -118,9 +120,9 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 
 	/* quality=9 is important for fast, realtime transcoding: */
 	// FIXME: Causes crash; why?
-	// g_object_set (G_OBJECT (stream->priv->encode), "quality", 9, NULL);
-	g_object_set (G_OBJECT (stream->priv->encode), "bitrate", 128, NULL);
-	g_object_set (G_OBJECT (stream->priv->encode), "vbr", 0, NULL);
+	// g_object_set (G_OBJECT (stream->priv->audio_encode), "quality", 9, NULL);
+	g_object_set (G_OBJECT (stream->priv->audio_encode), "bitrate", 128, NULL);
+	g_object_set (G_OBJECT (stream->priv->audio_encode), "vbr", 0, NULL);
 	g_signal_connect (stream->priv->decode, "pad-added",
 			  G_CALLBACK (pad_added_cb), stream);
 

@@ -276,6 +276,9 @@ dmap_gst_input_stream_new (const gchar * transcode_mimetype,
 	} else if (!strcmp (transcode_mimetype, "audio/wav")) {
 		stream = G_INPUT_STREAM (dmap_gst_wav_input_stream_new
 					 (src_stream));
+	} else if (!strcmp (transcode_mimetype, "video/quicktime")) {
+		stream = G_INPUT_STREAM (dmap_gst_qt_input_stream_new
+					 (src_stream));
 	} else {
 		g_warning ("Transcode format %s not supported",
 			   transcode_mimetype);

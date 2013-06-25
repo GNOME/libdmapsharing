@@ -1,6 +1,6 @@
 /*
- * DMAPGstWAVInputStream class: Open a URI using dmap_gst_wav_input_stream_new ().
- * Data is decoded using GStreamer and is then reencoded as a WAV
+ * DMAPGstQtInputStream class: Open a URI using dmap_gst_qt_input_stream_new ().
+ * Data is decoded using GStreamer and is then reencoded as a QuickTime video
  * stream by the class's read operations.
  *
  * Copyright (C) 2009 W. Michael Petullo <mike@flyn.org>
@@ -23,19 +23,19 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 
+#include "dmap-gst-qt-input-stream.h"
 #include "gst-util.h"
-#include "dmap-gst-wav-input-stream.h"
 
 #define GST_APP_MAX_BUFFERS 1024
 
-struct DMAPGstWAVInputStreamPrivate
+struct DMAPGstQtInputStreamPrivate
 {
 	GstElement *pipeline;
 	GstElement *src;
 	GstElement *decode;
 	GstElement *convert;
-	GstCaps *filter;
 	GstElement *audio_encode;
+	GstElement *mux;
 	GstElement *sink;
 };
 
@@ -46,7 +46,7 @@ void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 static void
 pad_added_cb (GstElement * element,
               GstPad * pad,
-              DMAPGstWAVInputStream * stream)
+              DMAPGstQtInputStream * stream)
 {
 	/* Link remaining pad after decodebin2 does its magic. */
 	GstPad *conv_pad;
@@ -66,14 +66,14 @@ pad_added_cb (GstElement * element,
 }
 
 GInputStream *
-dmap_gst_wav_input_stream_new (GInputStream * src_stream)
+dmap_gst_qt_input_stream_new (GInputStream * src_stream)
 {
 	GstStateChangeReturn sret;
 	GstState state;
-	DMAPGstWAVInputStream *stream;
+	DMAPGstQtInputStream *stream;
 
-	stream = DMAP_GST_WAV_INPUT_STREAM (g_object_new
-					    (DMAP_TYPE_GST_WAV_INPUT_STREAM,
+	stream = DMAP_GST_QT_INPUT_STREAM (g_object_new
+					    (DMAP_TYPE_GST_QT_INPUT_STREAM,
 					     NULL));
 
 	stream->priv->pipeline = gst_pipeline_new ("pipeline");
@@ -89,14 +89,11 @@ dmap_gst_wav_input_stream_new (GInputStream * src_stream)
 		gst_element_factory_make ("audioconvert", "convert");
 	g_assert (GST_IS_ELEMENT (stream->priv->convert));
 
-	/* Roku clients support a subset of the WAV format. */
-	stream->priv->filter = gst_caps_new_simple ("audio/x-raw-int",
-						    "channels", G_TYPE_INT, 2,
-						    "width", G_TYPE_INT, 16,
-						    "depth", G_TYPE_INT, 16,
-						    NULL);
-	stream->priv->audio_encode = gst_element_factory_make ("wavenc", "audioencode");
+	stream->priv->audio_encode = gst_element_factory_make ("avenc_aac", "audioencode");
 	g_assert (GST_IS_ELEMENT (stream->priv->audio_encode));
+
+	stream->priv->mux = gst_element_factory_make ("qtmux", "mux");
+	g_assert (GST_IS_ELEMENT (stream->priv->mux));
 
 	stream->priv->sink = gst_element_factory_make ("appsink", "sink");
 	g_assert (GST_IS_ELEMENT (stream->priv->sink));
@@ -106,25 +103,24 @@ dmap_gst_wav_input_stream_new (GInputStream * src_stream)
 			  stream->priv->decode,
 			  stream->priv->convert,
 			  stream->priv->audio_encode,
+			  stream->priv->mux,
 	                  stream->priv->sink,
 	                  NULL);
 
-	if (gst_element_link (stream->priv->src, 
+	if (gst_element_link (stream->priv->src,
 	                      stream->priv->decode) == FALSE) {
-		g_warning ("Error linking source through decode elements");
+		g_warning ("Error linking source and decode elements");
 	}
 
-	if (gst_element_link_filtered (stream->priv->convert,
-	                               stream->priv->audio_encode,
-	                               stream->priv->filter) == FALSE) {
-		g_warning ("Error linking convert and audioencode elements");
+	if (gst_element_link_many (stream->priv->convert,
+	                           stream->priv->audio_encode,
+	                           stream->priv->mux,
+	                           stream->priv->sink,
+	                           NULL) == FALSE) {
+		g_warning ("Error linking convert through sink elements");
 	}
 
-	if (gst_element_link (stream->priv->audio_encode,
-	                      stream->priv->sink) == FALSE) {
-		g_warning ("Error linking audioencode and sink elements");
-	}
-
+	g_assert (G_IS_INPUT_STREAM (src_stream));
 	g_object_set (G_OBJECT (stream->priv->src), "stream", src_stream,
 		      NULL);
 
@@ -137,7 +133,7 @@ dmap_gst_wav_input_stream_new (GInputStream * src_stream)
 				      GST_APP_MAX_BUFFERS);
 	gst_app_sink_set_drop (GST_APP_SINK (stream->priv->sink), FALSE);
 
-	g_signal_connect (stream->priv->sink, "new-buffer",
+	g_signal_connect (stream->priv->sink, "new-sample",
 			  G_CALLBACK (dmap_gst_input_stream_new_buffer_cb),
 			  stream);
 
@@ -160,34 +156,37 @@ dmap_gst_wav_input_stream_new (GInputStream * src_stream)
 }
 
 static void
-dmap_gst_wav_input_stream_kill_pipeline (DMAPGstInputStream * stream)
+dmap_gst_qt_input_stream_kill_pipeline (DMAPGstInputStream * stream)
 {
-	DMAPGstWAVInputStream *wav_stream =
-		DMAP_GST_WAV_INPUT_STREAM (stream);
+	DMAPGstQtInputStream *qt_stream =
+		DMAP_GST_QT_INPUT_STREAM (stream);
 
-	gst_element_set_state (wav_stream->priv->pipeline, GST_STATE_NULL);
-	gst_object_unref (GST_OBJECT (wav_stream->priv->pipeline));
+	// FIXME: It seems that I need to send an EOS, because QuickTime writes
+	// its headers after encoding the streams, but this does not yet work.
+	gst_element_send_event(qt_stream->priv->pipeline, gst_event_new_eos());
+	
+	gst_element_set_state (qt_stream->priv->pipeline, GST_STATE_NULL);
+	gst_object_unref (GST_OBJECT (qt_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE (DMAPGstWAVInputStream, dmap_gst_wav_input_stream,
-	       DMAP_TYPE_GST_INPUT_STREAM)
+G_DEFINE_TYPE (DMAPGstQtInputStream, dmap_gst_qt_input_stream,
+	       DMAP_TYPE_GST_INPUT_STREAM);
 
-     static void
-	     dmap_gst_wav_input_stream_class_init (DMAPGstWAVInputStreamClass
-						   * klass)
+static void
+dmap_gst_qt_input_stream_class_init (DMAPGstQtInputStreamClass * klass)
 {
 	DMAPGstInputStreamClass *parent_class =
 		DMAP_GST_INPUT_STREAM_CLASS (klass);
 
 	g_type_class_add_private (klass,
-				  sizeof (DMAPGstWAVInputStreamPrivate));
+				  sizeof (DMAPGstQtInputStreamPrivate));
 
-	parent_class->kill_pipeline = dmap_gst_wav_input_stream_kill_pipeline;
+	parent_class->kill_pipeline = dmap_gst_qt_input_stream_kill_pipeline;
 }
 
 static void
-dmap_gst_wav_input_stream_init (DMAPGstWAVInputStream * stream)
+dmap_gst_qt_input_stream_init (DMAPGstQtInputStream * stream)
 {
-	stream->priv = DMAP_GST_WAV_INPUT_STREAM_GET_PRIVATE (stream);
+	stream->priv = DMAP_GST_QT_INPUT_STREAM_GET_PRIVATE (stream);
 
 }

@@ -163,6 +163,8 @@ mime_to_format (const gchar * transcode_mimetype)
 		return g_strdup ("wav");
 	} else if (!strcmp (transcode_mimetype, "audio/mp3")) {
 		return g_strdup ("mp3");
+	} else if (!strcmp (transcode_mimetype, "video/quicktime")) {
+		return g_strdup ("mp4");
 	} else
 		return NULL;
 }
@@ -418,8 +420,10 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 
 	g_object_get (record, "format", &format, NULL);
 	// Not presently transcoding videos (see also same comments elsewhere).
-	if (has_video || transcode_mimetype == NULL
-	    || !strcmp (format, mime_to_format (transcode_mimetype))) {
+	char *format2 = NULL;
+	if (has_video 
+	    || transcode_mimetype == NULL
+	    || (format2 = mime_to_format (transcode_mimetype)) && !strcmp (format, format2)) {
 		g_debug ("Not transcoding");
 		cd->stream = stream;
 #ifdef HAVE_GSTREAMERAPP
