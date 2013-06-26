@@ -15,6 +15,7 @@ libdmapsharing_3_0_la_SOURCES = \
 	dmap-container-record.c \
 	dmap-db.c \
 	dmap-md5.c \
+	dmap-private-utils.c \
 	dmap-record.c \
 	dmap-record-factory.c \
 	dmap-share.c \
@@ -91,6 +92,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-record-factory.h \
 	dmap-share.h \
 	dmap-structure.h \
+	dmap-utils.h \
 	dpap-connection.h \
 	dpap-record.h \
 	dpap-share.h
@@ -99,7 +101,7 @@ noinst_HEADERS = \
 	dmap-marshal.h \
 	dmap-config.h \
 	dmap-mdns-avahi.h \
-	dmap-utils.h \
+	dmap-private-utils.h \
 	dmap-gst-mp3-input-stream.h \
 	dmap-gst-qt-input-stream.h \
 	dmap-gst-wav-input-stream.h \

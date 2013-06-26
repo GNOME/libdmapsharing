@@ -36,6 +36,7 @@
 
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap-private-utils.h>
 #include <libdmapsharing/dmap-utils.h>
 
 #ifdef HAVE_GSTREAMERAPP
@@ -152,21 +153,6 @@ static void
 daap_share_dispose (GObject * object)
 {
 	/* FIXME: implement in parent */
-}
-
-static gchar *
-mime_to_format (const gchar * transcode_mimetype)
-{
-	if (!transcode_mimetype) {
-		return NULL;
-	} else if (!strcmp (transcode_mimetype, "audio/wav")) {
-		return g_strdup ("wav");
-	} else if (!strcmp (transcode_mimetype, "audio/mp3")) {
-		return g_strdup ("mp3");
-	} else if (!strcmp (transcode_mimetype, "video/quicktime")) {
-		return g_strdup ("mp4");
-	} else
-		return NULL;
 }
 
 DAAPShare *
@@ -423,7 +409,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	char *format2 = NULL;
 	if (has_video 
 	    || transcode_mimetype == NULL
-	    || (format2 = mime_to_format (transcode_mimetype)) && !strcmp (format, format2)) {
+	    || (format2 = dmap_mime_to_format (transcode_mimetype)) && !strcmp (format, format2)) {
 		g_debug ("Not transcoding");
 		cd->stream = stream;
 #ifdef HAVE_GSTREAMERAPP
@@ -625,7 +611,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			      &transcode_mimetype, NULL);
 		// Not presently transcoding videos (see also same comments elsewhere).
 		if (! has_video && transcode_mimetype) {
-			format = g_strdup (mime_to_format
+			format = g_strdup (dmap_mime_to_format
 					   (transcode_mimetype));
 			g_free (transcode_mimetype);
 		} else {

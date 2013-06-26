@@ -20,7 +20,7 @@
 
 #include <string.h>
 
-#include "dmap-utils.h"
+#include "dmap-private-utils.h"
 
 #define DMAP_SHARE_CHUNK_SIZE 16384
 

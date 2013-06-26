@@ -41,7 +41,7 @@
 #include <libsoup/soup-server.h>
 
 #include <libdmapsharing/dmap.h>
-#include <libdmapsharing/dmap-utils.h>
+#include <libdmapsharing/dmap-private-utils.h>
 #include <libdmapsharing/dmap-structure.h>
 
 static void dpap_share_set_property (GObject * object,

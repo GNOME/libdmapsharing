@@ -80,12 +80,10 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 	stream->priv->src = gst_element_factory_make ("giostreamsrc", "src");
 	g_assert (GST_IS_ELEMENT (stream->priv->src));
 
-	stream->priv->decode =
-		gst_element_factory_make ("decodebin", "decode");
+	stream->priv->decode = gst_element_factory_make ("decodebin", "decode");
 	g_assert (GST_IS_ELEMENT (stream->priv->decode));
 
-	stream->priv->convert =
-		gst_element_factory_make ("audioconvert", "convert");
+	stream->priv->convert = gst_element_factory_make ("audioconvert", "convert");
 	g_assert (GST_IS_ELEMENT (stream->priv->convert));
 
 	stream->priv->audio_encode = gst_element_factory_make ("lamemp3enc", "audioencode");
@@ -128,8 +126,7 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 
 	g_object_set (G_OBJECT (stream->priv->sink), "emit-signals", TRUE,
 		      "sync", FALSE, NULL);
-	gst_app_sink_set_max_buffers (GST_APP_SINK (stream->priv->sink),
-				      GST_APP_MAX_BUFFERS);
+	gst_app_sink_set_max_buffers (GST_APP_SINK (stream->priv->sink), GST_APP_MAX_BUFFERS);
 	gst_app_sink_set_drop (GST_APP_SINK (stream->priv->sink), FALSE);
 
 	g_signal_connect (stream->priv->sink, "new-sample",

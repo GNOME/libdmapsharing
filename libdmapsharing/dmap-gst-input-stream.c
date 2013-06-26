@@ -327,14 +327,12 @@ dmap_gst_input_stream_read (GInputStream * stream,
 		/* Depending on timing, more data may have been written
 		 * since check: do not pull more than count:
 		 */
-		count = min (count,
-			     g_queue_get_length (gst_stream->priv->buffer));
+		count = min (count, g_queue_get_length (gst_stream->priv->buffer));
 	}
 
 	for (i = 0; i < count; i++) {
 		((guint8 *) buffer)[i] =
-			GPOINTER_TO_INT (g_queue_pop_head
-					 (gst_stream->priv->buffer));
+			GPOINTER_TO_INT (g_queue_pop_head (gst_stream->priv->buffer));
 	}
 
 	if (gst_stream->priv->write_request > count)

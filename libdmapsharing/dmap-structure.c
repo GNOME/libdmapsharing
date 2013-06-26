@@ -19,7 +19,7 @@
  */
 
 #include "dmap-structure.h"
-#include "dmap-utils.h"
+#include "dmap-private-utils.h"
 
 #include <glib.h>
 #include <glib-object.h>

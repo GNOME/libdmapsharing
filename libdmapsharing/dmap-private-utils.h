@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef __DMAP_UTILS_H__
-#define __DMAP_UTILS_H__
+#ifndef __DMAP_PRIVATE_UTILS_H__
+#define __DMAP_PRIVATE_UTILS_H__
 
 #include <glib.h>
 #include <libsoup/soup.h>
@@ -61,8 +61,8 @@ G_BEGIN_DECLS
 	GInputStream *stream;
 } ChunkData;
 
-void dmap_write_next_chunk (SoupMessage * message, ChunkData * cd);
-void dmap_chunked_message_finished (SoupMessage * message, ChunkData * cd);
+void   dmap_write_next_chunk (SoupMessage * message, ChunkData * cd);
+void   dmap_chunked_message_finished (SoupMessage * message, ChunkData * cd);
 
 G_END_DECLS
 #endif
