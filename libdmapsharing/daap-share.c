@@ -379,13 +379,23 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 		   const gchar * transcode_mimetype)
 {
 	gchar *format = NULL;
-	GInputStream *stream;
+	gchar *location = NULL;
+	GInputStream *stream = NULL;
 	gboolean has_video;
-	const char *location;
 	GError *error = NULL;
-	ChunkData *cd = g_new (ChunkData, 1);
+	ChunkData *cd = NULL;
+
+	cd = g_new (ChunkData, 1);
+	if (NULL == cd) {
+		g_warning ("Error allocating chunk\n");
+		goto _error;
+	}
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
+	if (NULL == location) {
+		g_warning ("Error getting location from record\n");
+		goto _error;
+	}
 
 	/* FIXME: This crashes on powerpc-440fp-linux-gnu:
 	 * g_debug ("Sending %s chunked from offset %" G_GUINT64_FORMAT ".", location, offset);
@@ -394,23 +404,23 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	cd->server = server;
 
 	stream = G_INPUT_STREAM (daap_record_read (record, &error));
-
 	if (error != NULL) {
 		g_warning ("Couldn't open %s: %s.", location, error->message);
-		g_error_free (error);
-		soup_message_set_status (message,
-					 SOUP_STATUS_INTERNAL_SERVER_ERROR);
-		g_free (cd);
-		return;
+		goto _error;
 	}
 
 	g_object_get (record, "format", &format, NULL);
+	if (NULL == format) {
+		g_warning ("Error getting format from record\n");
+		goto _error;
+	}
+
 	// Not presently transcoding videos (see also same comments elsewhere).
 	char *format2 = NULL;
 	if (has_video 
 	    || transcode_mimetype == NULL
 	    || (format2 = dmap_mime_to_format (transcode_mimetype)) && !strcmp (format, format2)) {
-		g_debug ("Not transcoding");
+		g_debug ("Not transcoding %s", location);
 		cd->stream = stream;
 #ifdef HAVE_GSTREAMERAPP
 	} else {
@@ -428,20 +438,13 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 
 	if (cd->stream == NULL) {
 		g_warning ("Could not set up input stream");
-		g_free (cd);
-		return;
+		goto _error;
 	}
 
 	if (offset != 0) {
-		if (g_seekable_seek
-		    (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL,
-		     &error) == FALSE) {
+		if (g_seekable_seek (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL, &error) == FALSE) {
 			g_warning ("Error seeking: %s.", error->message);
-			g_input_stream_close (cd->stream, NULL, NULL);
-			soup_message_set_status (message,
-						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
-			g_free (cd);
-			return;
+			goto _error;
 		}
 		filesize -= offset;
 	}
@@ -500,6 +503,36 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	g_signal_connect (message, "finished",
 			  G_CALLBACK (dmap_chunked_message_finished), cd);
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
+
+	return;
+_error:
+	soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+
+	if (NULL != cd) {
+		g_free (cd);
+	}
+
+	if (NULL != format) {
+		g_free (format);
+	}
+
+	if (NULL != location) {
+		g_free (location);
+	}
+
+	if (NULL != error) {
+		g_error_free (error);
+	}
+	
+	if (NULL != cd->stream) {
+		g_input_stream_close (cd->stream, NULL, NULL);
+	}
+	
+	if (NULL != stream) {
+		g_input_stream_close (cd->stream, NULL, NULL);
+	}
+
+	return;
 }
 
 static void

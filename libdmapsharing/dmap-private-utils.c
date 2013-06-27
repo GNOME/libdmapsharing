@@ -31,12 +31,14 @@ dmap_write_next_chunk (SoupMessage * message, ChunkData * cd)
 	GError *error = NULL;
 	gchar *chunk = g_malloc (DMAP_SHARE_CHUNK_SIZE);
 
+	g_debug ("Trying to read %d bytes.", DMAP_SHARE_CHUNK_SIZE);
 	read_size = g_input_stream_read (cd->stream,
 					 chunk,
 					 DMAP_SHARE_CHUNK_SIZE, NULL, &error);
 	if (read_size > 0) {
 		soup_message_body_append (message->response_body,
 					  SOUP_MEMORY_TAKE, chunk, read_size);
+		g_debug ("Read/wrote %d bytes.", read_size);
 	} else {
 		if (error != NULL) {
 			g_warning ("Error reading from input stream: %s",
