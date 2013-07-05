@@ -16,6 +16,7 @@
 #include <libdmapsharing/dmap-record.h>
 #include <libdmapsharing/dmap-record-factory.h>
 #include <libdmapsharing/dmap-share.h>
+#include <libdmapsharing/dmap-utils.h>
 #include <libdmapsharing/dpap-connection.h>
 #include <libdmapsharing/dpap-record.h>
 #include <libdmapsharing/dpap-share.h>
