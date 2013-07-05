@@ -1,21 +1,19 @@
 Name: libdmapsharing
-Version: 2.9.14
-Release: 2%{?dist}
+Version: 2.9.18
+Release: 1%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
 Group: Development/Libraries
 BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32
-BuildRequires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer-plugins-base-devel >= 0.10.23.2
+BuildRequires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
 
 %description 
 libdmapsharing implements the DMAP protocols. This includes support for
 DAAP and DPAP.
 
 %files 
-%defattr(-, root, root, -)
 %{_libdir}/libdmapsharing-3.0.so.*
 %doc AUTHORS COPYING ChangeLog NEWS README
 
@@ -23,8 +21,7 @@ DAAP and DPAP.
 %package devel
 Summary: Files needed to develop applications using libdmapsharing
 Group: Development/Libraries
-Requires: libdmapsharing = %{version}-%{release}, pkgconfig, glib2-devel, libsoup-devel >= 2.32
-Requires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer-plugins-base-devel >= 0.10.23.2
+Requires: %{name} = %{version}-%{release}
 
 %description devel
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -32,14 +29,12 @@ DAAP and DPAP.  This package provides the libraries, include files, and
 other resources needed for developing applications using libdmapsharing.
 
 %files devel
-%defattr(-, root, root, -)
 %{_libdir}/pkgconfig/libdmapsharing-3.0.pc
 %{_includedir}/libdmapsharing-3.0/
 %{_libdir}/libdmapsharing-3.0.so
 %{_datadir}/gtk-doc/html/libdmapsharing-3.0
 
 %prep
-
 %setup -q
 
 %build
@@ -47,18 +42,26 @@ other resources needed for developing applications using libdmapsharing.
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-3.0.la
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
 %changelog
+* Fri Jul 05 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.18-1
+- new upstream version
+
+* Sun Apr 07 2013 Kalev Lember <kalevlember@gmail.com> - 2.9.16-1
+- Update to 2.9.16
+
+* Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.14-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
+
+* Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.14-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.14-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
