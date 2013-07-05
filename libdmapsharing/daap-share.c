@@ -373,6 +373,21 @@ static struct DMAPMetaDataMap meta_data_map[] = {
 #define DAAP_ITEM_KIND_AUDIO 2
 #define DAAP_SONG_DATA_KIND_NONE 0
 
+static gboolean should_transcode (const gchar *format, const gboolean has_video, const gchar *transcode_mimetype)
+{
+	gboolean fnval;
+	char *format2 = NULL;
+
+	// Not presently transcoding videos (see also same comments elsewhere).
+	fnval = has_video 
+	     || transcode_mimetype == NULL
+	     || ((format2 = dmap_mime_to_format (transcode_mimetype)) && strcmp (format, format2));
+
+	g_debug ("    Should%s transcode %s %s", fnval ? "" : " not", format, format2 ? format2 : "[no target format]");
+
+	return fnval;
+}
+
 static void
 send_chunked_file (SoupServer * server, SoupMessage * message,
 		   DAAPRecord * record, guint64 filesize, guint64 offset,
@@ -416,25 +431,17 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	}
 
 	// Not presently transcoding videos (see also same comments elsewhere).
-	char *format2 = NULL;
-	if (has_video 
-	    || transcode_mimetype == NULL
-	    || (format2 = dmap_mime_to_format (transcode_mimetype)) && !strcmp (format, format2)) {
+	if (should_transcode (format, has_video, transcode_mimetype)) {
+#ifdef HAVE_GSTREAMERAPP
+		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
+#else
+		g_warning ("Transcode format %s not supported", transcode_mimetype);
+		cd->stream = stream;
+#endif /* HAVE_GSTREAMERAPP */
+	} else {
 		g_debug ("Not transcoding %s", location);
 		cd->stream = stream;
-#ifdef HAVE_GSTREAMERAPP
-	} else {
-		cd->stream =
-			dmap_gst_input_stream_new (transcode_mimetype,
-						   stream);
 	}
-#else
-	} else {
-		g_warning ("Transcode format %s not supported",
-			   transcode_mimetype);
-		cd->stream = stream;
-	}
-#endif /* HAVE_GSTREAMERAPP */
 
 	if (cd->stream == NULL) {
 		g_warning ("Could not set up input stream");
@@ -452,42 +459,34 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	/* Free memory after each chunk sent out over network. */
 	soup_message_body_set_accumulate (message->response_body, FALSE);
 
-	// Not presently transcoding videos (see also same comments elsewhere).
-	if (has_video
-	    /* NOTE: iTunes seems to require this or it stops reading 
-	     * video data after about 2.5MB. Perhaps this is so iTunes
-	     * knows how much data to buffer.
-	     */
-	    || transcode_mimetype == NULL) {
-		/* NOTE: iTunes 8 (and other versions?) will not seek
-		 * properly without a Content-Length header.
-		 */
+	if (! should_transcode (format, has_video, transcode_mimetype)) {
+	        /* NOTE: iTunes seems to require this or it stops reading 
+	         * video data after about 2.5MB. Perhaps this is so iTunes
+	         * knows how much data to buffer.
+	         */
 		g_debug ("Using HTTP 1.1 content length encoding.");
-		soup_message_headers_set_encoding (message->response_headers,
-						   SOUP_ENCODING_CONTENT_LENGTH);
-		g_debug ("Content length is %" G_GUINT64_FORMAT ".",
-			 filesize);
-		soup_message_headers_set_content_length
-			(message->response_headers, filesize);
+		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_CONTENT_LENGTH);
+
+	        /* NOTE: iTunes 8 (and other versions?) will not seek
+	         * properly without a Content-Length header.
+	         */
+		g_debug ("Content length is %" G_GUINT64_FORMAT ".", filesize);
+		soup_message_headers_set_content_length (message->response_headers, filesize);
 	} else if (soup_message_get_http_version (message) == SOUP_HTTP_1_0) {
 		/* NOTE: Roku clients support only HTTP 1.0. */
 #ifdef HAVE_ENCODING_EOF
 		g_debug ("Using HTTP 1.0 encoding.");
-		soup_message_headers_set_encoding (message->response_headers,
-						   SOUP_ENCODING_EOF);
+		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_EOF);
 #else
-		g_warning
-			("Received HTTP 1.0 request, but not built with HTTP 1.0 support");
-		soup_message_headers_set_encoding (message->response_headers,
-						   SOUP_ENCODING_CHUNKED);
+		g_warning ("Received HTTP 1.0 request, but not built with HTTP 1.0 support");
+		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_CHUNKED);
 #endif
 	} else {
 		/* NOTE: Can not provide Content-Length when performing
 		 * real-time transcoding.
 		 */
 		g_debug ("Using HTTP 1.1 chunked encoding.");
-		soup_message_headers_set_encoding (message->response_headers,
-						   SOUP_ENCODING_CHUNKED);
+		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_CHUNKED);
 	}
 
 	soup_message_headers_append (message->response_headers, "Connection",
