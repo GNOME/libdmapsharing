@@ -106,9 +106,6 @@ main (int argc, char *argv[])
 	if (argc == 2)
 		conn_type = atoi (argv[1]);
 
-	g_type_init ();
-	g_thread_init (NULL);
-
 	loop = g_main_loop_new (NULL, FALSE);
 
 	create_share (conn_type);

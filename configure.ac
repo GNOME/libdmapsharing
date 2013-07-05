@@ -71,7 +71,7 @@ if test "x$HAVE_PKGCONFIG" = "xno"; then
 fi
 
 dnl Check for Glib2.0
-PKG_CHECK_MODULES(GLIB, glib-2.0, HAVE_GLIB=yes,HAVE_GLIB=no)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.36, HAVE_GLIB=yes,HAVE_GLIB=no)
 
 dnl Give error and exit if we don't have glib
 if test "x$HAVE_GLIB" = "xno"; then
