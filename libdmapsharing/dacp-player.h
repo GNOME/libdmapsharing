@@ -77,8 +77,8 @@ struct _DACPPlayerIface
 	GTypeInterface parent_class;
 
 	DAAPRecord *(*now_playing_record) (DACPPlayer * player);
-	const guchar *(*now_playing_artwork) (DACPPlayer * player,
-					      guint width, guint height);
+	guchar *(*now_playing_artwork) (DACPPlayer * player,
+	                                guint width, guint height);
 	void (*play_pause) (DACPPlayer * player);
 	void (*pause) (DACPPlayer * player);
 	void (*next_item) (DACPPlayer * player);
@@ -102,8 +102,8 @@ DAAPRecord *dacp_player_now_playing_record (DACPPlayer * player);
  * @width: width
  * @height: height
  */
-const guchar *dacp_player_now_playing_artwork (DACPPlayer * player,
-					       guint width, guint height);
+guchar *dacp_player_now_playing_artwork (DACPPlayer * player,
+                                         guint width, guint height);
 
 /**
  * dacp_player_play_pause

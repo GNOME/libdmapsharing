@@ -27,6 +27,7 @@
 #include "dmap-gst-input-stream.h"
 #include "dmap-gst-mp3-input-stream.h"
 #include "dmap-gst-wav-input-stream.h"
+#include "dmap-gst-qt-input-stream.h"
 #include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
@@ -173,7 +174,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 {
 	gsize i;
 	guint8 *ptr;
-	GTimeVal time;
+	gint64 end_time;
 	GstSample *sample = NULL;
 	GstBuffer *buffer = NULL;
 	GstMemory *memory = NULL;
@@ -190,8 +191,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 		goto _return;
 	}
 
-	g_get_current_time (&time);
-	g_time_val_add (&time, QUEUE_PUSH_WAIT_SECONDS * 1000000);
+	end_time = end_time = g_get_monotonic_time () + QUEUE_PUSH_WAIT_SECONDS * G_TIME_SPAN_SECOND;
 
 	sample = gst_app_sink_pull_sample (GST_APP_SINK (element));
 	if (NULL == sample) {
@@ -220,12 +220,12 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	if (g_queue_get_length (stream->priv->buffer) +
 	    info.size > DECODED_BUFFER_SIZE) {
 		stream->priv->write_request = info.size;
-		if (!g_cond_timed_wait (stream->priv->buffer_write_ready,
-					stream->priv->buffer_mutex, &time)) {
+		if (!g_cond_wait_until (stream->priv->buffer_write_ready,
+					stream->priv->buffer_mutex, end_time)) {
 			g_warning
 				("Timeout waiting for buffer to empty; will drop");
 		}
-		/* Required again because g_cond_timed_wait released mutex. */
+		/* Required again because g_cond_wait_until released mutex. */
 		if (stream->priv->buffer_closed) {
 			g_warning ("Unread data");
 			goto _return;
@@ -308,17 +308,16 @@ dmap_gst_input_stream_read (GInputStream * stream,
 {
 	int i;
 	DMAPGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
-	GTimeVal time;
+	gint64 end_time;
 
-	g_get_current_time (&time);
-	g_time_val_add (&time, QUEUE_POP_WAIT_SECONDS * 1000000);
+	end_time = end_time = g_get_monotonic_time () + QUEUE_POP_WAIT_SECONDS * G_TIME_SPAN_SECOND;
 
 	g_mutex_lock (gst_stream->priv->buffer_mutex);
 
 	gst_stream->priv->read_request = count;
 	if (g_queue_get_length (gst_stream->priv->buffer) < count
-	    && !g_cond_timed_wait (gst_stream->priv->buffer_read_ready,
-				   gst_stream->priv->buffer_mutex, &time)) {
+	    && !g_cond_wait_until (gst_stream->priv->buffer_read_ready,
+				   gst_stream->priv->buffer_mutex, end_time)) {
 		/* Timeout: Count is now what's remaining.  Let's hope
 		 * we have enough of a lead on encoding so that this one
 		 * second timeout will go unnoticed.
@@ -463,10 +462,14 @@ dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 	stream->priv->buffer = g_queue_new ();
 	stream->priv->read_request = 0;
 	stream->priv->write_request = 0;
-	stream->priv->buffer_read_ready = g_cond_new ();
-	stream->priv->buffer_write_ready = g_cond_new ();
-	stream->priv->buffer_mutex = g_mutex_new ();
 	stream->priv->buffer_closed = FALSE;
+
+	// FIXME: Never g_mutex_clear'ed:
+	g_mutex_init (stream->priv->buffer_mutex);
+
+	// FIXME: Never g_cond_clear'ed:
+	g_cond_init (stream->priv->buffer_read_ready);
+	g_cond_init (stream->priv->buffer_write_ready);
 }
 
 G_DEFINE_TYPE_WITH_CODE (DMAPGstInputStream, dmap_gst_input_stream,
