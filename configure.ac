@@ -172,8 +172,8 @@ fi
 
 if test x"$WITH_MDNS" = xauto; then
   if test x"$HAVE_DNS_SD" = xyes; then
-    MDNS_CFLAGS=""
-    MDNS_LIBS="$DNS_SD_LIBS"
+    MDNS_CFLAGS=$DNS_SD_CFLAGS
+    MDNS_LIBS=$DNS_SD_LIBS
     AC_DEFINE(WITH_DNS_SD, 1, [Define if mDNS/DNS-SD implementation uses Apple's DNSSD])
     USE_DNS_SD=yes
     AC_MSG_NOTICE([Detected Apple's DNSSD, using it for mDNS/DNS-SD])
