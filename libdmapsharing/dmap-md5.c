@@ -300,8 +300,8 @@ static const gchar hexchars[] = "0123456789ABCDEF";
 static gchar ac[] = "Dpqzsjhiu!3114!Bqqmf!Dpnqvufs-!Jod/";	/* +1 */
 static gboolean ac_unfudged = FALSE;
 
-static void
-DigestToString (const unsigned char *digest, gchar * string)
+void
+dmap_hash_progressive_to_string (const unsigned char *digest, gchar * string)
 {
 	gint i;
 
@@ -368,7 +368,7 @@ GenerateStatic_42 ()
 #undef MD5_STRUPDATE
 
 		DMAP_MD5Final (&ctx, buf);
-		DigestToString (buf, (char *) p);
+		dmap_hash_progressive_to_string (buf, (char *) p);
 		p += 65;
 	}
 }
@@ -429,7 +429,7 @@ GenerateStatic_45 ()
 #undef MD5_STRUPDATE
 
 		DMAP_MD5Final (&ctx, buf);
-		DigestToString (buf, (char *) p);
+		dmap_hash_progressive_to_string (buf, (char *) p);
 		p += 65;
 	}
 }
@@ -475,7 +475,7 @@ dmap_hash_generate (short version_major,
 	}
 
 	DMAP_MD5Final (&ctx, buf);
-	DigestToString (buf, (gchar *) out);
+	dmap_hash_progressive_to_string (buf, (gchar *) out);
 
 	return;
 }
@@ -506,7 +506,6 @@ void dmap_hash_progressive_final (DMAPHashContext *context,
          *        when it is called with (3, x, 2, y, 0).
          */
 	int i;
-	unsigned char buf[16];
 
 	/* FIXME: Share this stuff with dmap_hash_generate() */
 	if (ac_unfudged == FALSE) {
@@ -520,8 +519,7 @@ void dmap_hash_progressive_final (DMAPHashContext *context,
 
 	DMAP_MD5Update (context, &staticHash_45[2 * 65], 32);
 
-	DMAP_MD5Final (context, buf);
-	DigestToString (buf, (gchar *) digest);
+	DMAP_MD5Final (context, digest);
 }
 
 #ifdef HAVE_CHECK
@@ -536,6 +534,7 @@ END_TEST
 
 START_TEST(test_dmap_hash_progressive)
 {
+	char buf[16] = { 0 };
 	char hash1[33] = { 0 };
 	char hash2[33] = { 0 };
 	char *value = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -548,7 +547,8 @@ START_TEST(test_dmap_hash_progressive)
 	dmap_hash_progressive_update (&context, value + 15, 5);
 	dmap_hash_progressive_update (&context, value + 20, 5);
 	dmap_hash_progressive_update (&context, value + 25, 1);
-	dmap_hash_progressive_final  (&context, hash1);
+	dmap_hash_progressive_final  (&context, buf);
+	dmap_hash_progressive_to_string (buf, (gchar *) hash1);
 
 	dmap_hash_generate (3, value, 2, hash2, 0);
 
