@@ -25,6 +25,9 @@
 #include <stdlib.h>
 #include <libdmapsharing/dmap.h>
 
+Suite *dmap_test_dmap_md5_suite (void);
+Suite *dmap_test_daap_connection_suite (void);
+
 static void
 debug_null (const char *log_domain,
             GLogLevelFlags log_level,
@@ -48,7 +51,6 @@ void run_suite (Suite *s)
 
 int main(void)
 {
-	g_type_init ();
 	g_log_set_handler ("libdmapsharing", G_LOG_LEVEL_DEBUG, debug_null, NULL);
 	g_log_set_handler (NULL, G_LOG_LEVEL_DEBUG, debug_null, NULL);
 

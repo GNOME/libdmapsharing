@@ -31,14 +31,6 @@
  * Copyright (c) 2004 David Hammerton
  */
 
-typedef struct
-{
-	guint32 buf[4];
-	guint32 bits[2];
-	unsigned char in[64];
-	gint version;
-} MD5_CTX;
-
 /*
  * This code implements the MD5 message-digest algorithm.
  * The algorithm is due to Ron Rivest.  This code was
@@ -86,9 +78,9 @@ byteReverse (unsigned char *buf, unsigned longs)
 #endif /* #if 0 */
 
 static void
-DMAP_MD5Init (MD5_CTX * ctx, gint version)
+DMAP_MD5Init (DMAPHashContext * ctx, gint version)
 {
-	memset (ctx, 0, sizeof (MD5_CTX));
+	memset (ctx, 0, sizeof (DMAPHashContext));
 	ctx->buf[0] = 0x67452301;
 	ctx->buf[1] = 0xefcdab89;
 	ctx->buf[2] = 0x98badcfe;
@@ -101,7 +93,7 @@ DMAP_MD5Init (MD5_CTX * ctx, gint version)
 }
 
 static void
-DMAP_MD5Update (MD5_CTX * ctx, unsigned char const *buf, unsigned int len)
+DMAP_MD5Update (DMAPHashContext * ctx, unsigned char const *buf, unsigned int len)
 {
 	guint32 t;
 
@@ -146,7 +138,7 @@ DMAP_MD5Update (MD5_CTX * ctx, unsigned char const *buf, unsigned int len)
 }
 
 static void
-DMAP_MD5Final (MD5_CTX * ctx, unsigned char digest[16])
+DMAP_MD5Final (DMAPHashContext * ctx, unsigned char digest[16])
 {
 	unsigned count;
 	unsigned char *p;
@@ -324,7 +316,7 @@ DigestToString (const unsigned char *digest, gchar * string)
 static void
 GenerateStatic_42 ()
 {
-	MD5_CTX ctx;
+	DMAPHashContext ctx;
 	unsigned char *p = staticHash_42;
 	int i;
 	unsigned char buf[16];
@@ -384,7 +376,7 @@ GenerateStatic_42 ()
 static void
 GenerateStatic_45 ()
 {
-	MD5_CTX ctx;
+	DMAPHashContext ctx;
 	unsigned char *p = staticHash_45;
 	int i;
 	unsigned char buf[16];
@@ -448,7 +440,7 @@ dmap_hash_generate (short version_major,
 		    guchar hash_select, guchar * out, gint request_id)
 {
 	unsigned char buf[16];
-	MD5_CTX ctx;
+	DMAPHashContext ctx;
 	gint i;
 
 	unsigned char *hashTable = (version_major == 3) ?
@@ -469,6 +461,7 @@ dmap_hash_generate (short version_major,
 		}
 		ac_unfudged = TRUE;
 	}
+
 	DMAP_MD5Update (&ctx, (const guchar *) ac, strlen (ac));
 
 	DMAP_MD5Update (&ctx, &hashTable[hash_select * 65], 32);
@@ -487,6 +480,50 @@ dmap_hash_generate (short version_major,
 	return;
 }
 
+void dmap_hash_progressive_init (DMAPHashContext *context)
+{
+	/* FIXME: Share this stuff with dmap_hash_generate() */
+	if (!staticHashDone) {
+		GenerateStatic_42 ();
+		GenerateStatic_45 ();
+		staticHashDone = 1;
+	}
+
+	DMAP_MD5Init (context, 1);
+}
+
+void dmap_hash_progressive_update (DMAPHashContext *context,
+                                   unsigned char const *buffer,
+                                   unsigned int length)
+{
+	DMAP_MD5Update (context, buffer, length);
+}
+
+void dmap_hash_progressive_final (DMAPHashContext *context,
+                                  unsigned char digest[16])
+{
+	/* FIXME: This is only equivalent to dmap_hash_generate()
+         *        when it is called with (3, x, 2, y, 0).
+         */
+	int i;
+	unsigned char buf[16];
+
+	/* FIXME: Share this stuff with dmap_hash_generate() */
+	if (ac_unfudged == FALSE) {
+		for (i = 0; i < strlen (ac); i++) {
+			ac[i] = ac[i] - 1;
+		}
+		ac_unfudged = TRUE;
+	}
+
+	DMAP_MD5Update (context, (const guchar *) ac, strlen (ac));
+
+	DMAP_MD5Update (context, &staticHash_45[2 * 65], 32);
+
+	DMAP_MD5Final (context, buf);
+	DigestToString (buf, (gchar *) digest);
+}
+
 #ifdef HAVE_CHECK
 START_TEST(test_dmap_hash_generate_v3_h2)
 {
@@ -497,6 +534,28 @@ START_TEST(test_dmap_hash_generate_v3_h2)
 }
 END_TEST
 
+START_TEST(test_dmap_hash_progressive)
+{
+	char hash1[33] = { 0 };
+	char hash2[33] = { 0 };
+	char *value = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	DMAPHashContext context;
+
+	dmap_hash_progressive_init   (&context);
+	dmap_hash_progressive_update (&context, value,      5);
+	dmap_hash_progressive_update (&context, value + 5,  5);
+	dmap_hash_progressive_update (&context, value + 10, 5);
+	dmap_hash_progressive_update (&context, value + 15, 5);
+	dmap_hash_progressive_update (&context, value + 20, 5);
+	dmap_hash_progressive_update (&context, value + 25, 1);
+	dmap_hash_progressive_final  (&context, hash1);
+
+	dmap_hash_generate (3, value, 2, hash2, 0);
+
+	fail_unless (! strcmp (hash1, hash2)); 
+}
+END_TEST
+
 Suite *dmap_test_dmap_md5_suite (void)
 {
 	TCase *tc;
@@ -504,6 +563,7 @@ Suite *dmap_test_dmap_md5_suite (void)
 
 	tc = tcase_create("test_dmap_hash_generate_v3_h2");
 	tcase_add_test(tc, test_dmap_hash_generate_v3_h2);
+	tcase_add_test(tc, test_dmap_hash_progressive);
 	suite_add_tcase(s, tc);
 
 	return s;
