@@ -39,6 +39,13 @@ dpap_record_init (DPAPRecordIface * iface)
 						      NULL,
 						      G_PARAM_READWRITE));
 
+		g_object_interface_install_property (iface,
+						     g_param_spec_pointer
+						     ("hash",
+						      "Hash of media file contents",
+						      "Hash of media file contents",
+						      G_PARAM_READWRITE));
+
 		/* iTunes does not require to this to match the datatype for the image
 		 * to be displayed (set to "JPEG" and served a PNG). I think this is
 		 * for display to the user only.

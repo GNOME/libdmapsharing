@@ -62,7 +62,7 @@ dmap_record_to_blob (DMAPRecord * record)
 	return DMAP_RECORD_GET_INTERFACE (record)->to_blob (record);
 }
 
-DMAPRecord *
+gboolean
 dmap_record_set_from_blob (DMAPRecord * record, GByteArray * blob)
 {
 	return DMAP_RECORD_GET_INTERFACE (record)->set_from_blob (record,

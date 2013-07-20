@@ -23,6 +23,8 @@
 
 #include <glib.h>
 
+#define DMAP_HASH_SIZE 16
+
 G_BEGIN_DECLS
 
 typedef struct DMAPHashContext

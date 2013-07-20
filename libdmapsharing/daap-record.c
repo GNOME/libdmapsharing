@@ -40,6 +40,13 @@ daap_record_init (DAAPRecordIface * iface)
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
+						     g_param_spec_pointer
+						     ("hash",
+						      "Hash of media file contents",
+						      "Hash of media file contents",
+						      G_PARAM_READWRITE));
+
+		g_object_interface_install_property (iface,
 						     g_param_spec_string
 						     ("title", "Song title",
 						      "Song title", "Unknown",
