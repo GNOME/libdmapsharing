@@ -187,7 +187,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	g_mutex_lock (&stream->priv->buffer_mutex);
 
 	if (stream->priv->buffer_closed) {
-		g_warning ("Unread data");
+		g_warning ("Buffer is closed, but unread data remains");
 		goto _return;
 	}
 
@@ -217,13 +217,11 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 	}
 
 	/* FIXME: this actually allows buffer to grow larger than max. */
-	if (g_queue_get_length (stream->priv->buffer) +
-	    info.size > DECODED_BUFFER_SIZE) {
+	if (g_queue_get_length (stream->priv->buffer) + info.size > DECODED_BUFFER_SIZE) {
 		stream->priv->write_request = info.size;
 		if (!g_cond_wait_until (&stream->priv->buffer_write_ready,
 		                        &stream->priv->buffer_mutex, end_time)) {
-			g_warning
-				("Timeout waiting for buffer to empty; will drop");
+			g_warning ("Timeout waiting for buffer to empty; will drop");
 		}
 		/* Required again because g_cond_wait_until released mutex. */
 		if (stream->priv->buffer_closed) {
@@ -234,8 +232,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 		stream->priv->write_request = 0;
 	}
 
-	if (g_queue_get_length (stream->priv->buffer) +
-	    info.size <= DECODED_BUFFER_SIZE) {
+	if (g_queue_get_length (stream->priv->buffer) + info.size <= DECODED_BUFFER_SIZE) {
 		ptr = info.data;
 
 		for (i = 0; i < info.size; i++) {
@@ -244,8 +241,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 		}
 	}
 
-	if (g_queue_get_length (stream->priv->buffer)
-	    >= stream->priv->read_request) {
+	if (g_queue_get_length (stream->priv->buffer) >= stream->priv->read_request) {
 		stream->priv->read_request = 0;
 		g_cond_signal (&stream->priv->buffer_read_ready);
 	}
@@ -253,6 +249,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
       _return:
 	if (NULL != memory) {
 		gst_memory_unmap (memory, &info);
+		gst_memory_unref (memory);
 	}
 
 	if (NULL != sample) {
