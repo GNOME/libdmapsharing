@@ -191,7 +191,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 		goto _return;
 	}
 
-	end_time = end_time = g_get_monotonic_time () + QUEUE_PUSH_WAIT_SECONDS * G_TIME_SPAN_SECOND;
+	end_time = g_get_monotonic_time () + QUEUE_PUSH_WAIT_SECONDS * G_TIME_SPAN_SECOND;
 
 	sample = gst_app_sink_pull_sample (GST_APP_SINK (element));
 	if (NULL == sample) {
