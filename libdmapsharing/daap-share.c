@@ -375,14 +375,29 @@ static struct DMAPMetaDataMap meta_data_map[] = {
 
 static gboolean should_transcode (const gchar *format, const gboolean has_video, const gchar *transcode_mimetype)
 {
-	gboolean fnval;
+	gboolean fnval = FALSE;
 	char *format2 = NULL;
 
 	// Not presently transcoding videos (see also same comments elsewhere).
-	fnval = has_video 
-	     || transcode_mimetype == NULL
-	     || ((format2 = dmap_mime_to_format (transcode_mimetype)) && strcmp (format, format2));
+	if (TRUE == has_video) {
+		goto done;
+	}
 
+	if (NULL == transcode_mimetype) {
+		goto done;
+	}
+
+	format2 = dmap_mime_to_format (transcode_mimetype);
+	if (NULL == format2) {
+		g_warning ("Configured to transcode, but target format is bad");
+		goto done;
+	}
+
+	if (strcmp (format, format2)) {
+		fnval = TRUE;
+	}
+
+done:
 	g_debug ("    Should%s transcode %s %s", fnval ? "" : " not", format, format2 ? format2 : "[no target format]");
 
 	return fnval;

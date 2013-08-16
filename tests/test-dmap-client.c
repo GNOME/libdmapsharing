@@ -39,14 +39,16 @@ static guint conn_type = DAAP;
 static void
 print_record (gpointer id, DMAPRecord *record, gpointer user_data)
 {
-	gchar *artist, *title;
+	gboolean has_video;
+	gchar   *artist, *title;
 
 	g_object_get (record,
-		     "songartist", &artist,
-		     "title",  &title,
-		     NULL);
+	             "has-video", &has_video,
+	             "songartist", &artist,
+	             "title",  &title,
+	              NULL);
 
-	g_print ("%d: %s %s\n", GPOINTER_TO_UINT (id), artist, title);
+	g_print ("%d: %s %s (has video: %s)\n", GPOINTER_TO_UINT (id), artist, title, has_video ? "Y" : "N");
 
 	g_free (artist);
 	g_free (title);
