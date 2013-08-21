@@ -543,7 +543,7 @@ _error:
 	}
 	
 	if (NULL != stream) {
-		g_input_stream_close (cd->stream, NULL, NULL);
+		g_input_stream_close (stream, NULL, NULL);
 	}
 
 	return;

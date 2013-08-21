@@ -46,18 +46,18 @@ void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 static void
 pad_added_cb (GstElement * element,
               GstPad * pad,
-              DMAPGstWAVInputStream * stream)
+              GstElement *convert)
 {
 	/* Link remaining pad after decodebin2 does its magic. */
 	GstPad *conv_pad;
 
-	conv_pad = gst_element_get_static_pad (stream->priv->convert, "sink");
+	conv_pad = gst_element_get_static_pad (convert, "sink");
 	g_assert (conv_pad != NULL);
 
 	if (pads_compatible (pad, conv_pad)) {
 		g_assert (!GST_PAD_IS_LINKED
 			  (gst_element_get_static_pad
-			   (stream->priv->convert, "sink")));
+			   (convert, "sink")));
 
 		gst_pad_link (pad, conv_pad);
 	} else {
@@ -70,92 +70,147 @@ dmap_gst_wav_input_stream_new (GInputStream * src_stream)
 {
 	GstStateChangeReturn sret;
 	GstState state;
-	DMAPGstWAVInputStream *stream;
+	DMAPGstWAVInputStream *stream = NULL;
 
-	stream = DMAP_GST_WAV_INPUT_STREAM (g_object_new
-					    (DMAP_TYPE_GST_WAV_INPUT_STREAM,
-					     NULL));
+	GstElement *pipeline = NULL;
+        GstElement *src = NULL;
+        GstElement *decode = NULL;
+        GstElement *convert = NULL;
+        GstCaps    *filter = NULL;
+        GstElement *audio_encode = NULL;
+        GstElement *sink = NULL;
 
-	stream->priv->pipeline = gst_pipeline_new ("pipeline");
+	g_assert (G_IS_INPUT_STREAM (src_stream));
 
-	stream->priv->src = gst_element_factory_make ("giostreamsrc", "src");
-	g_assert (GST_IS_ELEMENT (stream->priv->src));
+	pipeline = gst_pipeline_new ("pipeline");
+        if (NULL == pipeline) {
+                g_warning ("Could not create GStreamer pipeline");
+                goto done;
+        }
 
-	stream->priv->decode =
-		gst_element_factory_make ("decodebin", "decode");
-	g_assert (GST_IS_ELEMENT (stream->priv->decode));
+        src = gst_element_factory_make ("giostreamsrc", "src");
+        if (NULL == src) {
+                g_warning ("Could not create GStreamer giostreamsrc element");
+                goto done;
+        }
 
-	stream->priv->convert =
-		gst_element_factory_make ("audioconvert", "convert");
-	g_assert (GST_IS_ELEMENT (stream->priv->convert));
+        decode = gst_element_factory_make ("decodebin", "decode");
+        if (NULL == decode) {
+                g_warning ("Could not create GStreamer decodebin element");
+                goto done;
+        }
 
+        convert = gst_element_factory_make ("audioconvert", "convert");
+        if (NULL == convert) {
+                g_warning ("Could not create GStreamer audioconvert element");
+                goto done;
+        }
+
+	/* FIXME: This needs to be retested with Roku hardware after GStreamer 1.0 upgrade. */
 	/* Roku clients support a subset of the WAV format. */
-	stream->priv->filter = gst_caps_new_simple ("audio/x-raw-int",
-						    "channels", G_TYPE_INT, 2,
-						    "width", G_TYPE_INT, 16,
-						    "depth", G_TYPE_INT, 16,
-						    NULL);
-	stream->priv->audio_encode = gst_element_factory_make ("wavenc", "audioencode");
-	g_assert (GST_IS_ELEMENT (stream->priv->audio_encode));
+	filter = gst_caps_new_simple ("audio/x-raw",
+	                              "format", G_TYPE_STRING, "S16LE",
+	                              "channels", G_TYPE_INT, 2,
+	/* Pre-GStreamer 1.0          "width", G_TYPE_INT, 16,
+	 *                            "depth", G_TYPE_INT, 16,
+         */
+	                               NULL);
 
-	stream->priv->sink = gst_element_factory_make ("appsink", "sink");
-	g_assert (GST_IS_ELEMENT (stream->priv->sink));
+        audio_encode = gst_element_factory_make ("wavenc", "audioencode");
+        if (NULL == audio_encode) {
+                g_warning ("Could not create GStreamer wavenc element");
+                goto done;
+        }
 
-	gst_bin_add_many (GST_BIN (stream->priv->pipeline),
-			  stream->priv->src,
-			  stream->priv->decode,
-			  stream->priv->convert,
-			  stream->priv->audio_encode,
-	                  stream->priv->sink,
-	                  NULL);
+        sink = gst_element_factory_make ("appsink", "sink");
+        if (NULL == sink) {
+                g_warning ("Could not create GStreamer appsink element");
+                goto done;
+        }
 
-	if (gst_element_link (stream->priv->src, 
-	                      stream->priv->decode) == FALSE) {
-		g_warning ("Error linking source through decode elements");
+	gst_bin_add_many (GST_BIN (pipeline), src, decode, convert, audio_encode, sink, NULL);
+
+	if (FALSE == gst_element_link (src, decode)) {
+		g_warning ("Error linking source and decode elements");
+		goto done;
 	}
 
-	if (gst_element_link_filtered (stream->priv->convert,
-	                               stream->priv->audio_encode,
-	                               stream->priv->filter) == FALSE) {
+	if (FALSE == gst_element_link_filtered (convert, audio_encode, filter)) {
 		g_warning ("Error linking convert and audioencode elements");
+		goto done;
 	}
 
-	if (gst_element_link (stream->priv->audio_encode,
-	                      stream->priv->sink) == FALSE) {
+	if (FALSE == gst_element_link (audio_encode, sink)) {
 		g_warning ("Error linking audioencode and sink elements");
+		goto done;
 	}
 
-	g_object_set (G_OBJECT (stream->priv->src), "stream", src_stream,
-		      NULL);
+	g_object_set (G_OBJECT (src), "stream", src_stream, NULL);
 
-	g_signal_connect (stream->priv->decode, "pad-added",
-			  G_CALLBACK (pad_added_cb), stream);
+	g_object_set (G_OBJECT (sink), "emit-signals", TRUE, "sync", FALSE, NULL);
+	gst_app_sink_set_max_buffers (GST_APP_SINK (sink), GST_APP_MAX_BUFFERS);
+	gst_app_sink_set_drop (GST_APP_SINK (sink), FALSE);
 
-	g_object_set (G_OBJECT (stream->priv->sink), "emit-signals", TRUE,
-		      "sync", FALSE, NULL);
-	gst_app_sink_set_max_buffers (GST_APP_SINK (stream->priv->sink),
-				      GST_APP_MAX_BUFFERS);
-	gst_app_sink_set_drop (GST_APP_SINK (stream->priv->sink), FALSE);
-
-	g_signal_connect (stream->priv->sink, "new-buffer",
-			  G_CALLBACK (dmap_gst_input_stream_new_buffer_cb),
-			  stream);
+	g_signal_connect (decode, "pad-added", G_CALLBACK (pad_added_cb), convert);
 
 	/* FIXME: this technique is shared with dmapd-daap-share.c */
-	sret = gst_element_set_state (stream->priv->pipeline,
-				      GST_STATE_PLAYING);
+	sret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
 	if (GST_STATE_CHANGE_ASYNC == sret) {
 		if (GST_STATE_CHANGE_SUCCESS !=
-		    gst_element_get_state (GST_ELEMENT
-					   (stream->priv->pipeline), &state,
-					   NULL, 5 * GST_SECOND)) {
+		    gst_element_get_state (GST_ELEMENT (pipeline), &state, NULL, 5 * GST_SECOND)) {
 			g_warning ("State change failed for stream.");
+			goto done;
 		}
 	} else if (sret != GST_STATE_CHANGE_SUCCESS) {
 		g_warning ("Could not read stream.");
+		goto done;
 	}
 
-	g_assert (G_IS_SEEKABLE (stream));
+	stream = DMAP_GST_WAV_INPUT_STREAM (g_object_new (DMAP_TYPE_GST_WAV_INPUT_STREAM, NULL));
+        if (NULL == stream) {
+                goto done;
+        }
+        g_assert (G_IS_SEEKABLE (stream));
+
+	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_gst_input_stream_new_buffer_cb), stream);
+
+	stream->priv->pipeline = gst_object_ref (pipeline);
+        stream->priv->src = gst_object_ref (src);
+        stream->priv->decode = gst_object_ref (decode);
+        stream->priv->convert = gst_object_ref (convert);
+        stream->priv->filter = gst_caps_ref (filter);
+        stream->priv->audio_encode = gst_object_ref (audio_encode);
+        stream->priv->sink = gst_object_ref (sink);
+
+done:
+        if (pipeline) {
+                gst_object_unref (pipeline);
+        }
+
+        if (src) {
+                gst_object_unref (src);
+        }
+
+        if (decode) {
+                gst_object_unref (decode);
+        }
+
+        if (convert) {
+                gst_object_unref (convert);
+        }
+
+	if (filter) {
+		gst_caps_unref (filter);
+	}
+
+        if (audio_encode) {
+                gst_object_unref (audio_encode);
+        }
+
+        if (sink) {
+                gst_object_unref (sink);
+        }
+
 	return G_INPUT_STREAM (stream);
 }
 
