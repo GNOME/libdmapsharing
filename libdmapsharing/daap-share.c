@@ -922,7 +922,7 @@ databases_items_xxx (DMAPShare * share,
 		const gchar *s;
 		gchar *content_range;
 
-		s = range_header + 6;	/* bytes= */
+		s = range_header + strlen ("bytes=");	/* bytes= */
 		offset = atoll (s);
 
 		content_range =
