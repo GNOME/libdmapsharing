@@ -922,8 +922,13 @@ databases_items_xxx (DMAPShare * share,
 		const gchar *s;
 		gchar *content_range;
 
-		s = range_header + strlen ("bytes=");	/* bytes= */
-		offset = atoll (s);
+		if (!g_ascii_strncasecmp (range_header, "bytes=", strlen("bytes="))) {
+			/* Not starting with "bytes=" ? */
+			offset = 0;
+		} else {
+			s = range_header + strlen ("bytes=");	/* bytes= */
+			offset = atoll (s);
+		}
 
 		content_range =
 			g_strdup_printf ("bytes %" G_GUINT64_FORMAT "-%"
