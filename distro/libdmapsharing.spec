@@ -1,5 +1,5 @@
 Name: libdmapsharing
-Version: 2.9.18
+Version: 2.9.23
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
