@@ -191,7 +191,7 @@ dpap_share_message_add_standard_headers (DMAPShare * share,
 					 SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DPAP-Server",
-				     "libdmapsharing" VERSION);
+				     "libdmapsharing" "VERSION");
 }
 
 #define DMAP_VERSION 2.0

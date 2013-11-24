@@ -167,7 +167,7 @@ SoupMessage *dmap_connection_build_message (DMAPConnection * connection,
 					    gint req_id, gboolean send_close);
 
 /**
- * dmap_connection_authenticate_message
+ * dmap_connection_authenticate_message:
  * @connection: A #DMAPConnection
  * @session: A #SoupSession
  * @message: A #SoupMessage

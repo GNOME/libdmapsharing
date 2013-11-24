@@ -1295,7 +1295,7 @@ _dmap_share_build_filter (gchar * filterstr)
 	gboolean negate;
 	gint parentheses_count;
 	gint quotes_count;
-	FilterDefinition *def;
+	DMAPDbFilterDefinition *def;
 
 	GSList *list = NULL;
 	GSList *filter = NULL;
@@ -1419,11 +1419,11 @@ _dmap_share_build_filter (gchar * filterstr)
 		} else if (value != NULL && *next_char != '!') {
 			// If we won't accept this character, we are ending a 
 			// query key or value, so we should save them in a new
-			// FilterDefinition. If is_value is TRUE, we will still
+			// DMAPDbFilterDefinition. If is_value is TRUE, we will still
 			// parse the query value, so we must keep our def around.
 			// Otherwise, save it in the list of filters.
 			if (!def) {
-				def = g_new0 (FilterDefinition, 1);
+				def = g_new0 (DMAPDbFilterDefinition, 1);
 			}
 			if (is_key) {
 				def->key = value->str;
@@ -1468,8 +1468,8 @@ _dmap_share_build_filter (gchar * filterstr)
 	for (ptr1 = list; ptr1 != NULL; ptr1 = ptr1->next) {
 		for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
 			g_debug ("%s = %s",
-				 ((FilterDefinition *) ptr2->data)->key,
-				 ((FilterDefinition *) ptr2->data)->value);
+				 ((DMAPDbFilterDefinition *) ptr2->data)->key,
+				 ((DMAPDbFilterDefinition *) ptr2->data)->value);
 		}
 	}
 
@@ -1483,7 +1483,7 @@ dmap_share_free_filter (GSList * filter)
 
 	for (ptr1 = filter; ptr1 != NULL; ptr1 = ptr1->next) {
 		for (ptr2 = ptr1->data; ptr2 != NULL; ptr2 = ptr2->next) {
-			g_free (((FilterDefinition *) ptr2->data)->value);
+			g_free (((DMAPDbFilterDefinition *) ptr2->data)->value);
 			g_free (ptr2->data);
 		}
 	}

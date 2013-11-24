@@ -79,12 +79,12 @@ struct _DMAPDbIface
 
 typedef const char *(*RecordGetValueFunc) (DMAPRecord * record);
 
-typedef struct FilterDefinition
+typedef struct DMAPDbFilterDefinition
 {
 	gchar *key;
 	gchar *value;
 	gboolean negate;
-} FilterDefinition;
+} DMAPDbFilterDefinition;
 
 GType dmap_db_get_type (void);
 
@@ -104,7 +104,7 @@ GType dmap_db_get_type (void);
 guint dmap_db_add (DMAPDb * db, DMAPRecord * record);
 
 /**
- * dmap_db_add:
+ * dmap_db_add_with_id:
  * @db: A media database.
  * @record: A database record.
  * @id: A database record ID.
@@ -165,7 +165,7 @@ guint dmap_db_lookup_id_by_location (const DMAPDb * db,
 /**
  * dmap_db_foreach:
  * @db: A media database.
- * @fn: The function to apply to each record in the database.
+ * @func: The function to apply to each record in the database.
  * @data: User data to pass to the function.
  *
  * Apply a function to each record in a media database.

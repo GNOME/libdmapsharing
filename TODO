@@ -18,6 +18,10 @@ Documentation:
 
 = Mid term =====================================================================
 
+Fix callbacks so that they do not provide a gpointer (see service-added
+callback). They need to provide a proper GObject type (e.g., a new
+DMAPMdnsBrowserService type) so that Python/GObject introspection works.
+
 Noah: Comment purpose of each source file and describe interfaces, using test
 programs as examples (Note: wait on doxygen vs. gtk-doc decision.
 

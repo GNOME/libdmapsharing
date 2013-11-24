@@ -49,7 +49,7 @@ G_BEGIN_DECLS
 #define IS_DMAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      DMAP_TYPE_RECORD))
 /**
- * DAAP_RECORD_GET_INTERFACE:
+ * DMAP_RECORD_GET_INTERFACE:
  * @o: a #DAAPRecord instance.
  *
  * Get the class structure associated to a #DAAPRecord instance.

@@ -268,7 +268,7 @@ apply_filter (gpointer id, DMAPRecord * record, gpointer data)
 	for (list = fd->filter_def; list != NULL; list = list->next) {
 		for (filter = list->data; filter != NULL;
 		     filter = filter->next) {
-			FilterDefinition *def = filter->data;
+			DMAPDbFilterDefinition *def = filter->data;
 			const gchar *property_name;
 
 			query_key = def->key;

@@ -103,7 +103,7 @@ DMAPContainerRecord *dmap_container_db_lookup_by_id (DMAPContainerDb * db,
 /**
  * dmap_container_db_foreach:
  * @db: A container database.
- * @fn: The function to apply to each record in the database.
+ * @func: The function to apply to each record in the database.
  * @data: User data to pass to the function.
  *
  * Apply a function to each record in a container database.

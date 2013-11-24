@@ -60,6 +60,7 @@ libdmapsharing_3_0_la_CFLAGS = \
 
 libdmapsharing_3_0_la_LDFLAGS = \
 	-version-info @SO_VERSION@ \
+	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
 	$(GOBJECT_LIBS) \
@@ -134,5 +135,33 @@ dmap-enums.c: $(libdmapsharinginclude_headers) Makefile dmap-enums.h
 	&& rm -f $@.tmp
 
 CLEANFILES = $(BUILT_SOURCES)
+
+if HAVE_INTROSPECTION
+include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+introspection_sources = $(libdmapsharinginclude_HEADERS) $(libdmapsharinginclude_SOURCES)
+
+DMAP-3.0.gir: libdmapsharing-3.0.la
+DMAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
+DMAP_3_0_gir_CFLAGS = \
+	$(INCLUDES) \
+	$(libdmapsharing_3_0_la_CFLAGS)
+DMAP_3_0_gir_LIBS = \
+	libdmapsharing-3.0.la
+DMAP_3_0_gir_FILES = $(introspection_sources)
+
+INTROSPECTION_GIRS += DMAP-3.0.gir
+
+girdir = $(datadir)/gir-1.0
+gir_DATA = $(INTROSPECTION_GIRS)
+
+typelibdir = $(libdir)/girepository-1.0
+typelib_DATA = $(INTROSPECTION_GIRS:.gir=.typelib)
+
+CLEANFILES += $(gir_DATA) $(typelib_DATA)
+endif
 
 EXTRA_DIST = dmap-marshal.list

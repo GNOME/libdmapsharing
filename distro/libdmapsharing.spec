@@ -1,12 +1,12 @@
 Name: libdmapsharing
-Version: 2.9.23
+Version: 2.9.24
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
 Group: Development/Libraries
-BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32
+BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32 gobject-introspection-devel
 BuildRequires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
 
 %description 
@@ -15,6 +15,7 @@ DAAP and DPAP.
 
 %files 
 %{_libdir}/libdmapsharing-3.0.so.*
+%{_libdir}/girepository-1.0/DMAP*.typelib
 %doc AUTHORS COPYING ChangeLog NEWS README
 
 
@@ -32,6 +33,7 @@ other resources needed for developing applications using libdmapsharing.
 %{_libdir}/pkgconfig/libdmapsharing-3.0.pc
 %{_includedir}/libdmapsharing-3.0/
 %{_libdir}/libdmapsharing-3.0.so
+%{_datadir}/gir-1.0/DMAP*.gir
 %{_datadir}/gtk-doc/html/libdmapsharing-3.0
 
 %prep
@@ -50,6 +52,9 @@ rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-3.0.la
 %postun -p /sbin/ldconfig
 
 %changelog
+* Sat Nov 23 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.24-1
+- new upstream version
+
 * Fri Jul 05 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.18-1
 - new upstream version
 

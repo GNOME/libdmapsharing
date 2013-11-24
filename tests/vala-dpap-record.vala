@@ -95,7 +95,7 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		GLib.error ("read not implemented");
 	}
 
-	public unowned DMAP.Record set_from_blob (GLib.ByteArray blob) {
+	public unowned bool set_from_blob (GLib.ByteArray blob) {
 		GLib.error ("set_from_blob not implemented");
 	}
 

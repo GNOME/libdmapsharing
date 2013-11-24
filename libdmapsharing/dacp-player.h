@@ -91,13 +91,13 @@ struct _DACPPlayerIface
 GType dacp_player_get_type (void);
 
 /**
- * dacp_player_now_playing_record
+ * dacp_player_now_playing_record:
  * @player: a player
  */
 DAAPRecord *dacp_player_now_playing_record (DACPPlayer * player);
 
 /**
- * dacp_player_now_playing_artwork
+ * dacp_player_now_playing_artwork:
  * @player: a player
  * @width: width
  * @height: height
@@ -106,37 +106,37 @@ guchar *dacp_player_now_playing_artwork (DACPPlayer * player,
                                          guint width, guint height);
 
 /**
- * dacp_player_play_pause
+ * dacp_player_play_pause:
  * @player: a player
  */
 void dacp_player_play_pause (DACPPlayer * player);
 
 /**
- * dacp_player_pause
+ * dacp_player_pause:
  * @player: a player
  */
 void dacp_player_pause (DACPPlayer * player);
 
 /**
- * dacp_player_next_item
+ * dacp_player_next_item:
  * @player: a player
  */
 void dacp_player_next_item (DACPPlayer * player);
 
 /**
- * dacp_player_now_prev_item
+ * dacp_player_now_prev_item:
  * @player: a player
  */
 void dacp_player_prev_item (DACPPlayer * player);
 
 /**
- * dacp_player_cue_clear
+ * dacp_player_cue_clear:
  * @player: a player
  */
 void dacp_player_cue_clear (DACPPlayer * player);
 
 /**
- * dacp_player_cue_play
+ * dacp_player_cue_play:
  * @player: a player
  * @records : a list of records
  * @index: an index

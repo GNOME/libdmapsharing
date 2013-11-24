@@ -181,5 +181,13 @@ G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DMAPMdnsBrowser *
 DMAPMdnsBrowserServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser
 							       * browser);
 
+/**
+ * DMAPMdnsBrowser::service-added:
+ * @browser: the #DMAPMdnsBrowser which received the signal.
+ * @service: #DMAPMdnsBrowserService
+ *
+ * Emitted each time a service becomes available to @browser
+ */
+
 G_END_DECLS
 #endif
