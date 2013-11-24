@@ -81,6 +81,13 @@ namespace DAAP {
 		public DAAP.DMAPType type;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPDbFilterDefinition {
+		public weak string key;
+		public bool negate;
+		public weak string value;
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPGstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_input_stream_new", has_construct_function = false, type = "GInputStream*")]
 		public DMAPGstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
@@ -93,9 +100,25 @@ namespace DAAP {
 		public DMAPGstMP3InputStream (GLib.InputStream stream);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class DMAPGstQtInputStream : DAAP.DMAPGstInputStream, GLib.Seekable {
+		[CCode (cname = "dmap_gst_qt_input_stream_new", has_construct_function = false, type = "GInputStream*")]
+		public DMAPGstQtInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPGstWAVInputStream : DAAP.DMAPGstInputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_wav_input_stream_new", has_construct_function = false, type = "GInputStream*")]
 		public DMAPGstWAVInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPHashContext {
+		[CCode (array_length = false)]
+		public weak uint32[] bits;
+		[CCode (array_length = false)]
+		public weak uint32[] buf;
+		[CCode (array_length = false)]
+		public weak uint[] @in;
+		public int version;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsBrowser : GLib.Object {
@@ -219,13 +242,6 @@ namespace DAAP {
 		public uint32 size;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class FilterDefinition {
-		public weak string key;
-		public bool negate;
-		public weak string value;
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class Share : DAAP.DMAPShare {
 		[CCode (has_construct_function = false)]
 		public Share (string name, string password, DMAP.Db db, DMAP.ContainerDb container_db, string transcode_mimetype);
@@ -278,7 +294,7 @@ namespace DAAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPRecord : GLib.Object {
 		[CCode (cname = "dmap_record_set_from_blob")]
-		public abstract unowned DAAP.DMAPRecord set_from_blob (DAAP.DMAPRecord record, GLib.ByteArray blob);
+		public abstract bool set_from_blob (DAAP.DMAPRecord record, GLib.ByteArray blob);
 		[CCode (cname = "dmap_record_to_blob")]
 		public abstract unowned GLib.ByteArray to_blob (DAAP.DMAPRecord record);
 	}
@@ -526,6 +542,8 @@ namespace DAAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
 	public delegate unowned string RecordGetValueFunc (DAAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int DMAP_HASH_SIZE;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HAVE_UNALIGNED_ACCESS;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_STATUS_OK;
@@ -545,6 +563,14 @@ namespace DAAP {
 	public static unowned DAAP.DMAPContentCodeDefinition dmap_content_codes (uint number);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_generate")]
 	public static void dmap_hash_generate (short version_major, uchar[] url, uchar hash_select, uchar[] @out, int request_id);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_final")]
+	public static void dmap_hash_progressive_final (DAAP.DMAPHashContext context, uint[] digest);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_init")]
+	public static void dmap_hash_progressive_init (DAAP.DMAPHashContext context);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_to_string")]
+	public static void dmap_hash_progressive_to_string (uint digest, string str);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_update")]
+	public static void dmap_hash_progressive_update (DAAP.DMAPHashContext context, uint buffer, uint length);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_BOOLEAN__STRING")]
 	public static void dmap_marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__STRING")]
@@ -565,6 +591,8 @@ namespace DAAP {
 	public static unowned Avahi.Client dmap_mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_set_entry_group")]
 	public static void dmap_mdns_avahi_set_entry_group (Avahi.EntryGroup group);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mime_to_format")]
+	public static unowned string dmap_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_add")]
 	public static unowned GLib.Node dmap_structure_add (GLib.Node parent, DAAP.DMAPContentCode cc);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_destroy")]
@@ -683,6 +711,13 @@ namespace DACP {
 		public DACP.DMAPType type;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPDbFilterDefinition {
+		public weak string key;
+		public bool negate;
+		public weak string value;
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPGstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_input_stream_new", has_construct_function = false, type = "GInputStream*")]
 		public DMAPGstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
@@ -695,9 +730,25 @@ namespace DACP {
 		public DMAPGstMP3InputStream (GLib.InputStream stream);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class DMAPGstQtInputStream : DACP.DMAPGstInputStream, GLib.Seekable {
+		[CCode (cname = "dmap_gst_qt_input_stream_new", has_construct_function = false, type = "GInputStream*")]
+		public DMAPGstQtInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPGstWAVInputStream : DACP.DMAPGstInputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_wav_input_stream_new", has_construct_function = false, type = "GInputStream*")]
 		public DMAPGstWAVInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPHashContext {
+		[CCode (array_length = false)]
+		public weak uint32[] bits;
+		[CCode (array_length = false)]
+		public weak uint32[] buf;
+		[CCode (array_length = false)]
+		public weak uint[] @in;
+		public int version;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsBrowser : GLib.Object {
@@ -821,13 +872,6 @@ namespace DACP {
 		public uint32 size;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class FilterDefinition {
-		public weak string key;
-		public bool negate;
-		public weak string value;
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class Share : DACP.DAAPShare {
 		[CCode (has_construct_function = false)]
 		public Share (string library_name, DACP.Player player, DMAP.Db db, DMAP.ContainerDb container_db);
@@ -902,7 +946,7 @@ namespace DACP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPRecord : GLib.Object {
 		[CCode (cname = "dmap_record_set_from_blob")]
-		public abstract unowned DACP.DMAPRecord set_from_blob (DACP.DMAPRecord record, GLib.ByteArray blob);
+		public abstract bool set_from_blob (DACP.DMAPRecord record, GLib.ByteArray blob);
 		[CCode (cname = "dmap_record_to_blob")]
 		public abstract unowned GLib.ByteArray to_blob (DACP.DMAPRecord record);
 	}
@@ -1165,6 +1209,8 @@ namespace DACP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
 	public delegate unowned string RecordGetValueFunc (DACP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int DMAP_HASH_SIZE;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HAVE_UNALIGNED_ACCESS;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_STATUS_OK;
@@ -1184,6 +1230,14 @@ namespace DACP {
 	public static unowned DACP.DMAPContentCodeDefinition dmap_content_codes (uint number);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_generate")]
 	public static void dmap_hash_generate (short version_major, uchar[] url, uchar hash_select, uchar[] @out, int request_id);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_final")]
+	public static void dmap_hash_progressive_final (DACP.DMAPHashContext context, uint[] digest);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_init")]
+	public static void dmap_hash_progressive_init (DACP.DMAPHashContext context);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_to_string")]
+	public static void dmap_hash_progressive_to_string (uint digest, string str);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_update")]
+	public static void dmap_hash_progressive_update (DACP.DMAPHashContext context, uint buffer, uint length);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_BOOLEAN__STRING")]
 	public static void dmap_marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__STRING")]
@@ -1204,6 +1258,8 @@ namespace DACP {
 	public static unowned Avahi.Client dmap_mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_set_entry_group")]
 	public static void dmap_mdns_avahi_set_entry_group (Avahi.EntryGroup group);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mime_to_format")]
+	public static unowned string dmap_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_add")]
 	public static unowned GLib.Node dmap_structure_add (GLib.Node parent, DACP.DMAPContentCode cc);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_destroy")]
@@ -1299,7 +1355,7 @@ namespace DMAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
-	public class FilterDefinition {
+	public class DbFilterDefinition {
 		public weak string key;
 		public bool negate;
 		public weak string value;
@@ -1317,9 +1373,25 @@ namespace DMAP {
 		public GstMP3InputStream (GLib.InputStream stream);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class GstQtInputStream : DMAP.GstInputStream, GLib.Seekable {
+		[CCode (has_construct_function = false, type = "GInputStream*")]
+		public GstQtInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class GstWAVInputStream : DMAP.GstInputStream, GLib.Seekable {
 		[CCode (has_construct_function = false, type = "GInputStream*")]
 		public GstWAVInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class HashContext {
+		[CCode (array_length = false)]
+		public weak uint32[] bits;
+		[CCode (array_length = false)]
+		public weak uint32[] buf;
+		[CCode (array_length = false)]
+		public weak uint[] @in;
+		public int version;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class MdnsBrowser : GLib.Object {
@@ -1463,7 +1535,7 @@ namespace DMAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface Record : GLib.Object {
-		public abstract unowned DMAP.Record set_from_blob (GLib.ByteArray blob);
+		public abstract bool set_from_blob (GLib.ByteArray blob);
 		public abstract unowned GLib.ByteArray to_blob ();
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1703,6 +1775,8 @@ namespace DMAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void ResponseHandler (DMAP.Connection connection, uint status, GLib.Node structure);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int HASH_SIZE;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int HAVE_UNALIGNED_ACCESS;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int STATUS_OK;
@@ -1725,6 +1799,14 @@ namespace DMAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void hash_generate (short version_major, uchar[] url, uchar hash_select, uchar[] @out, int request_id);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public static void hash_progressive_final (DMAP.HashContext context, uint[] digest);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public static void hash_progressive_init (DMAP.HashContext context);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public static void hash_progressive_to_string (uint digest, string str);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public static void hash_progressive_update (DMAP.HashContext context, uint buffer, uint length);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void marshal_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
@@ -1744,6 +1826,8 @@ namespace DMAP {
 	public static unowned Avahi.Client mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void mdns_avahi_set_entry_group (Avahi.EntryGroup group);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public static unowned string mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "pads_compatible")]
 	public static bool pads_compatible (Gst.Pad pad1, Gst.Pad pad2);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1850,6 +1934,13 @@ namespace DPAP {
 		public DPAP.DMAPType type;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPDbFilterDefinition {
+		public weak string key;
+		public bool negate;
+		public weak string value;
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPGstInputStream : GLib.InputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_input_stream_new", has_construct_function = false, type = "GInputStream*")]
 		public DMAPGstInputStream (string transcode_mimetype, GLib.InputStream src_stream);
@@ -1862,9 +1953,25 @@ namespace DPAP {
 		public DMAPGstMP3InputStream (GLib.InputStream stream);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class DMAPGstQtInputStream : DPAP.DMAPGstInputStream, GLib.Seekable {
+		[CCode (cname = "dmap_gst_qt_input_stream_new", has_construct_function = false, type = "GInputStream*")]
+		public DMAPGstQtInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPGstWAVInputStream : DPAP.DMAPGstInputStream, GLib.Seekable {
 		[CCode (cname = "dmap_gst_wav_input_stream_new", has_construct_function = false, type = "GInputStream*")]
 		public DMAPGstWAVInputStream (GLib.InputStream stream);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPHashContext {
+		[CCode (array_length = false)]
+		public weak uint32[] bits;
+		[CCode (array_length = false)]
+		public weak uint32[] buf;
+		[CCode (array_length = false)]
+		public weak uint[] @in;
+		public int version;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsBrowser : GLib.Object {
@@ -1988,13 +2095,6 @@ namespace DPAP {
 		public uint32 size;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class FilterDefinition {
-		public weak string key;
-		public bool negate;
-		public weak string value;
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class Share : DPAP.DMAPShare {
 		[CCode (has_construct_function = false)]
 		public Share (string name, string password, void* db, void* container_db, string transcode_mimetype);
@@ -2047,7 +2147,7 @@ namespace DPAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPRecord : GLib.Object {
 		[CCode (cname = "dmap_record_set_from_blob")]
-		public abstract unowned DPAP.DMAPRecord set_from_blob (DPAP.DMAPRecord record, GLib.ByteArray blob);
+		public abstract bool set_from_blob (DPAP.DMAPRecord record, GLib.ByteArray blob);
 		[CCode (cname = "dmap_record_to_blob")]
 		public abstract unowned GLib.ByteArray to_blob (DPAP.DMAPRecord record);
 	}
@@ -2293,6 +2393,8 @@ namespace DPAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
 	public delegate unowned string RecordGetValueFunc (DPAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int DMAP_HASH_SIZE;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HAVE_UNALIGNED_ACCESS;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_STATUS_OK;
@@ -2312,6 +2414,14 @@ namespace DPAP {
 	public static unowned DPAP.DMAPContentCodeDefinition dmap_content_codes (uint number);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_generate")]
 	public static void dmap_hash_generate (short version_major, uchar[] url, uchar hash_select, uchar[] @out, int request_id);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_final")]
+	public static void dmap_hash_progressive_final (DPAP.DMAPHashContext context, uint[] digest);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_init")]
+	public static void dmap_hash_progressive_init (DPAP.DMAPHashContext context);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_to_string")]
+	public static void dmap_hash_progressive_to_string (uint digest, string str);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_update")]
+	public static void dmap_hash_progressive_update (DPAP.DMAPHashContext context, uint buffer, uint length);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_BOOLEAN__STRING")]
 	public static void dmap_marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__STRING")]
@@ -2332,6 +2442,8 @@ namespace DPAP {
 	public static unowned Avahi.Client dmap_mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_set_entry_group")]
 	public static void dmap_mdns_avahi_set_entry_group (Avahi.EntryGroup group);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mime_to_format")]
+	public static unowned string dmap_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_add")]
 	public static unowned GLib.Node dmap_structure_add (GLib.Node parent, DPAP.DMAPContentCode cc);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_destroy")]
