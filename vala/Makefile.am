@@ -51,6 +51,11 @@ libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@-daap.vapi libdma
 all: libdmapsharing-@API_VERSION@.vapi
 endif
 
+vapidir = $(datadir)/vala/vapi
+
+dist_vapi_DATA = \
+        libdmapsharing-@API_VERSION@.vapi
+
 EXTRA_DIST = \
 	libdmapsharing-@API_VERSION@.vapi \
 	libdmapsharing-@API_VERSION@-daap/libdmapsharing-@API_VERSION@-uninstalled.excludes \
