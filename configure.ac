@@ -338,15 +338,14 @@ AM_CONDITIONAL(USE_GSTREAMERAPP, test x"$HAVE_GSTREAMERAPP" = "xyes")
 AC_SUBST(GSTREAMERAPP_CFLAGS)
 AC_SUBST(GSTREAMERAPP_LIBS)
 
-AM_CONDITIONAL(HAVE_VALA, false)
-if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
-        AM_PROG_VALAC([0.11.4])
-        if test "x$VALAC" = "x" ; then
-                AC_MSG_ERROR([Cannot find the "valac" compiler in your PATH])
-        fi
-	AC_PATH_PROG(VALA_GEN_INTROSPECT, vala-gen-introspect)
-	AC_PATH_PROG(VAPIGEN, vapigen)
-	AM_CONDITIONAL(HAVE_VALA, true)
+AM_PROG_VALAC([0.11.4])
+AM_CONDITIONAL(HAVE_VALAC, test -x "$VALAC")
+
+AC_PATH_PROG(VALA_GEN_INTROSPECT, vala-gen-introspect)
+AC_PATH_PROG(VAPIGEN, vapigen)
+AM_CONDITIONAL(BUILD_VAPI, test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN")
+if test -n "$BUILD_VAPI" ; then
+	AC_WARN([will not build vapi])
 fi
 
 PKG_CHECK_MODULES(GTK, gtk+-2.0, HAVE_GTK=yes, HAVE_GTK=no)
@@ -360,20 +359,15 @@ AM_CONDITIONAL(HAVE_GEE, test "x$HAVE_GEE" = "xyes")
 AC_SUBST(GEE_CFLAGS)
 AC_SUBST(GEE_LIBS)
 
-if test "x$HAVE_VALA" = "xyes" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes"; then
-	AM_CONDITIONAL(BUILD_DPAPVIEW, true)
-else
-	AM_CONDITIONAL(BUILD_DPAPVIEW, false)
-	AC_WARN([Will not build dpapview])
+AM_CONDITIONAL(BUILD_DPAPVIEW, test "x$HAVE_VALA" = "xyes" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes")
+if test -n "$BUILD_DPAPVIEW" ; then
+	AC_WARN([will not build dpapview])
 fi
 
-AM_CONDITIONAL(HAVE_CHECK, false)
-if test "x$USE_MAINTAINER_MODE" = "xyes" ; then
-	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
-	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
-	if test "x$have_check" = "xyes"; then
-		AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
-	fi
+PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
+AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
+if test "x$have_check" = "xyes"; then
+	AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
 fi
 
 AC_CHECK_LIB(z, uncompress)

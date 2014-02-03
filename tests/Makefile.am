@@ -52,7 +52,7 @@ test_dmap_server_LDADD = \
 	$(IMAGEMAGICK_LIBS) \
 	$(MDNS_LIBS)
 
-if MAINTAINER_MODE
+if HAVE_VALAC
 BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
 
 dacplisten.stamp: $(dacplisten_VALASOURCES)
@@ -170,7 +170,7 @@ EXTRA_DIST = \
 	$(dmapserve_VALABUILTSOURCES) \
 	dpapview.ui
 
-if MAINTAINER_MODE
+if HAVE_VALAC
 CLEANFILES = \
 	$(BUILT_SOURCES) \
 	$(dpapview_VALABUILTSOURCES)
