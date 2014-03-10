@@ -398,7 +398,7 @@ static gboolean should_transcode (const gchar *format, const gboolean has_video,
 	}
 
 done:
-	g_debug ("    Should%s transcode %s %s", fnval ? "" : " not", format, format2 ? format2 : "[no target format]");
+	g_debug ("    Should%s transcode %s to %s", fnval ? "" : " not", format, format2 ? format2 : "[no target format]");
 
 	return fnval;
 }
