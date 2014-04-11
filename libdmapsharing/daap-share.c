@@ -922,7 +922,7 @@ databases_items_xxx (DMAPShare * share,
 		const gchar *s;
 		gchar *content_range;
 
-		if (!g_ascii_strncasecmp (range_header, "bytes=", strlen("bytes="))) {
+		if (!g_str_has_prefix (range_header, "bytes=")) {
 			/* Not starting with "bytes=" ? */
 			offset = 0;
 		} else {
