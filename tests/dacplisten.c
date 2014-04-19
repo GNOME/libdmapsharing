@@ -110,7 +110,7 @@ enum  {
 	VALA_DACP_PLAYER_DUMMY_PROPERTY
 };
 static DAAPRecord* vala_dacp_player_real_now_playing_record (DACPPlayer* base);
-static guchar* vala_dacp_player_real_now_playing_artwork (DACPPlayer* base, guint width, guint heigth, int* result_length1);
+static guchar* vala_dacp_player_real_now_playing_artwork (DACPPlayer* base, guint width, guint height, int* result_length1);
 static void vala_dacp_player_real_play_pause (DACPPlayer* base);
 static void vala_dacp_player_real_pause (DACPPlayer* base);
 static void vala_dacp_player_real_next_item (DACPPlayer* base);
@@ -152,7 +152,7 @@ static DAAPRecord* vala_dacp_player_real_now_playing_record (DACPPlayer* base) {
 }
 
 
-static guchar* vala_dacp_player_real_now_playing_artwork (DACPPlayer* base, guint width, guint heigth, int* result_length1) {
+static guchar* vala_dacp_player_real_now_playing_artwork (DACPPlayer* base, guint width, guint height, int* result_length1) {
 	ValaDACPPlayer * self;
 	guchar* result = NULL;
 	FILE* _tmp0_ = NULL;
