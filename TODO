@@ -1,5 +1,12 @@
 = Short term ===================================================================
 
+GNOME Bugs:
+	344616: support database updates
+	686220: play nicely with firewalld
+	705539: confirm two share scenario fixed (seems to be in rhythmbox 3.0.2)
+	727839: wierd startup warning
+	705949: grilo
+
 Fix use of iTunes as client with recent libsoup:
 	rhythmbox:	GET /databases/1/items/...
 	iTunes:		GET daap://192.168.1.245:3689/databases/...
@@ -29,6 +36,10 @@ Mike: Realtime transcode: must g_input_stream_close what is returned from
 daap_record_read, unless I change API (see also dmapd.c)
 
 = Long term ====================================================================
+
+API Changes:
+	now_playing_artwork seems to return a filename, so should return a gchar *, not guchar *?
+	Stuff related to Python introspection
 
 Mike: Audit remaining GSoC patch:
 --- dmap-db.c
