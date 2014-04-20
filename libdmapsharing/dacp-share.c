@@ -861,7 +861,7 @@ dacp_share_ctrl_int (DMAPShare * share,
 		   == 0) {
 		guint width = 320;
 		guint height = 320;
-		gchar *artwork_filename;
+		guchar *artwork_filename;
 		gchar *buffer;
 		gsize buffer_len;
 
@@ -881,7 +881,7 @@ dacp_share_ctrl_int (DMAPShare * share,
 		}
 #ifdef HAVE_GDKPIXBUF
 		GdkPixbuf *artwork =
-			gdk_pixbuf_new_from_file_at_scale (artwork_filename,
+			gdk_pixbuf_new_from_file_at_scale ((char *) artwork_filename,
 							   width, height,
 							   TRUE, NULL);
 

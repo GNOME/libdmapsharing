@@ -307,7 +307,7 @@ dmap_gst_input_stream_read (GInputStream * stream,
 	DMAPGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
 	gint64 end_time;
 
-	end_time = end_time = g_get_monotonic_time () + QUEUE_POP_WAIT_SECONDS * G_TIME_SPAN_SECOND;
+	end_time = g_get_monotonic_time () + QUEUE_POP_WAIT_SECONDS * G_TIME_SPAN_SECOND;
 
 	g_mutex_lock (&gst_stream->priv->buffer_mutex);
 

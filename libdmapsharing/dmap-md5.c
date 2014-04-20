@@ -142,6 +142,7 @@ DMAP_MD5Final (DMAPHashContext * ctx, unsigned char digest[16])
 {
 	unsigned count;
 	unsigned char *p;
+	guint32 *tmp;
 
 	/* Compute number of bytes mod 64 */
 	count = (ctx->bits[0] >> 3) & 0x3F;
@@ -170,8 +171,9 @@ DMAP_MD5Final (DMAPHashContext * ctx, unsigned char digest[16])
 	byteReverse (ctx->in, 14);
 
 	/* Append length in bits and transform */
-	((guint32 *) ctx->in)[14] = ctx->bits[0];
-	((guint32 *) ctx->in)[15] = ctx->bits[1];
+	tmp = (guint32 *) ctx->in;
+	tmp[14] = ctx->bits[0];
+	tmp[15] = ctx->bits[1];
 
 	MD5Transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
 	byteReverse ((unsigned char *) ctx->buf, 4);
@@ -525,19 +527,19 @@ void dmap_hash_progressive_final (DMAPHashContext *context,
 #ifdef HAVE_CHECK
 START_TEST(test_dmap_hash_generate_v3_h2)
 {
-	char hash[33] = { 0 };
-	char *url = "test://foo";
+	guchar hash[33] = { 0 };
+	guchar *url = (guchar *) "test://foo";
 	dmap_hash_generate (3, url, 2, hash, 0);
-	fail_unless (! strcmp (hash, "798A9D80B6F08E339603BE83E0FEAD03"));
+	fail_unless (! memcmp (hash, "798A9D80B6F08E339603BE83E0FEAD03", strlen ("798A9D80B6F08E339603BE83E0FEAD03")));
 }
 END_TEST
 
 START_TEST(test_dmap_hash_progressive)
 {
-	char buf[16] = { 0 };
-	char hash1[33] = { 0 };
-	char hash2[33] = { 0 };
-	char *value = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	guchar buf[16] = { 0 };
+	guchar hash1[33] = { 0 };
+	guchar hash2[33] = { 0 };
+	guchar *value = (guchar *) "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	DMAPHashContext context;
 
 	dmap_hash_progressive_init   (&context);
@@ -552,7 +554,7 @@ START_TEST(test_dmap_hash_progressive)
 
 	dmap_hash_generate (3, value, 2, hash2, 0);
 
-	fail_unless (! strcmp (hash1, hash2)); 
+	fail_unless (! memcmp (hash1, hash2, 32));
 }
 END_TEST
 
