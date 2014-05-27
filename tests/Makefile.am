@@ -162,10 +162,12 @@ noinst_HEADERS = \
 	test-dpap-record-factory.h
 
 EXTRA_DIST = \
-	$(dpapview_VALASOURCES) \
-	$(dpapview_VALABUILTSOURCES) \
 	$(dacplisten_VALASOURCES) \
 	$(dacplisten_VALABUILTSOURCES) \
+	$(dpapview_VALASOURCES) \
+	$(dpapview_VALABUILTSOURCES) \
+	$(dmapcopy_VALASOURCES) \
+	$(dmapcopy_VALABUILTSOURCES) \
 	$(dmapserve_VALASOURCES) \
 	$(dmapserve_VALABUILTSOURCES) \
 	dpapview.ui
