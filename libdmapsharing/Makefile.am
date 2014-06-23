@@ -138,22 +138,25 @@ CLEANFILES = $(BUILT_SOURCES)
 
 if HAVE_INTROSPECTION
 include $(INTROSPECTION_MAKEFILE)
-INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
-INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
-
 introspection_sources = $(libdmapsharinginclude_HEADERS) $(libdmapsharinginclude_SOURCES)
 
 DMAP-3.0.gir: libdmapsharing-3.0.la
 DMAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
-DMAP_3_0_gir_CFLAGS = \
-	$(INCLUDES) \
-	$(libdmapsharing_3_0_la_CFLAGS)
-DMAP_3_0_gir_LIBS = \
-	libdmapsharing-3.0.la
+DMAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
+DMAP_3_0_gir_LIBS = libdmapsharing-3.0.la
 DMAP_3_0_gir_FILES = $(introspection_sources)
+DMAP_3_0_gir_INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
+DMAP_3_0_gir_INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
-INTROSPECTION_GIRS += DMAP-3.0.gir
+DAAP-3.0.gir: libdmapsharing-3.0.la
+DAAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
+DAAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
+DAAP_3_0_gir_LIBS = libdmapsharing-3.0.la
+DAAP_3_0_gir_FILES = $(introspection_sources)
+DAAP_3_0_gir_INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
+DAAP_3_0_gir_INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+INTROSPECTION_GIRS = DMAP-3.0.gir DAAP-3.0.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)

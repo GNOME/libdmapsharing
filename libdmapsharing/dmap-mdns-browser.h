@@ -77,6 +77,18 @@ typedef struct _DMAPMdnsBrowserClass DMAPMdnsBrowserClass;
 typedef struct _DMAPMdnsBrowserPrivate DMAPMdnsBrowserPrivate;
 typedef struct _DMAPMdnsBrowserService DMAPMdnsBrowserService;
 
+/**
+ * DMAPMdnsBrowserServiceType:
+ * @DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID: an invalid service type
+ * @DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP: a DAAP service type
+ * @DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP: a DPAP service type
+ * @DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP: a DACP service type
+ * @DMAP_MDNS_BROWSER_SERVICE_TYPE_RAOP: a RAOP service type
+ * @DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST: an invalid service type
+ *
+ * Enum values used to specify the service type to browse.
+ *
+ */
 typedef enum
 {
 	DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID = 0,
