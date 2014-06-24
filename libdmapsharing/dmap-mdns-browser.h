@@ -45,7 +45,7 @@ G_BEGIN_DECLS
  * DMAP_MDNS_BROWSER_CLASS:
  * @k: a valid #DMAPMdnsBrowserClass
  *
- * Casts a derived #DAAPShareClass structure into a #DAAPShareClass structure.
+ * Casts a derived #DMAPMdnsBrowserClass structure into a #DMAPMdnsBrowserClass structure.
  */
 #define DMAP_MDNS_BROWSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserClass))
 /**
