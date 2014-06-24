@@ -86,18 +86,23 @@ authenticate_cb (DMAPConnection *connection,
 
 static void
 service_added_cb (DMAPMdnsBrowser *browser,
-                  DMAPMdnsBrowserService *service,
+                  DMAPMdnsService *service,
                   gpointer user_data)
 {
+    gchar *service_name, *name, *host;
+    guint port;
     DMAPRecordFactory *factory;
     DMAPConnection *conn;
     DMAPDb *db;
 
-    g_debug ("service added %s:%s:%s:%d",
-             service->service_name,
-             service->name,
-             service->host,
-             service->port);
+    g_object_get (service, 
+                 "service-name", &service_name,
+                 "name", &name,
+                 "host", &host,
+                 "port", &port,
+                  NULL);
+
+    g_debug ("service added %s:%s:%s:%d", service_name, name, host, port);
 
     db = DMAP_DB (test_dmap_db_new ());
     if (db == NULL) {
@@ -109,13 +114,13 @@ service_added_cb (DMAPMdnsBrowser *browser,
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (daap_connection_new (service->name, service->host, service->port, db, factory));
+        conn = DMAP_CONNECTION (daap_connection_new (name, host, port, db, factory));
     } else {
         factory = DMAP_RECORD_FACTORY (test_dpap_record_factory_new ());
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (dpap_connection_new (service->name, service->host, service->port, db, factory));
+        conn = DMAP_CONNECTION (dpap_connection_new (name, host, port, db, factory));
     }
     g_signal_connect (DMAP_CONNECTION (conn), "authenticate", G_CALLBACK(authenticate_cb), NULL);
     dmap_connection_connect (DMAP_CONNECTION (conn), (DMAPConnectionCallback) connected_cb, db);
@@ -132,9 +137,9 @@ int main(int argc, char **argv)
     loop = g_main_loop_new (NULL, FALSE);
 
     if (conn_type == DAAP)
-        browser = dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP);
+        browser = dmap_mdns_browser_new (DMAP_MDNS_SERVICE_TYPE_DAAP);
     else
-        browser = dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP);
+        browser = dmap_mdns_browser_new (DMAP_MDNS_SERVICE_TYPE_DPAP);
     g_signal_connect (G_OBJECT (browser),
                       "service-added",
                       G_CALLBACK (service_added_cb),

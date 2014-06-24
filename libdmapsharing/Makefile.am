@@ -15,6 +15,7 @@ libdmapsharing_3_0_la_SOURCES = \
 	dmap-container-record.c \
 	dmap-db.c \
 	dmap-md5.c \
+	dmap-mdns-service.c \
 	dmap-private-utils.c \
 	dmap-record.c \
 	dmap-record-factory.c \
@@ -89,6 +90,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
 	dmap-mdns-publisher.h \
+	dmap-mdns-service.h \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
@@ -138,23 +140,25 @@ CLEANFILES = $(BUILT_SOURCES)
 
 if HAVE_INTROSPECTION
 include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 introspection_sources = $(libdmapsharinginclude_HEADERS) $(libdmapsharinginclude_SOURCES)
 
 DMAP-3.0.gir: libdmapsharing-3.0.la
-DMAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
-DMAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
+DMAP_3_0_gir_NAMESPACE = DMAP 
+DMAP_3_0_gir_SCANNERFLAGS = --symbol-prefix=dmap
 DMAP_3_0_gir_LIBS = libdmapsharing-3.0.la
 DMAP_3_0_gir_FILES = $(introspection_sources)
-DMAP_3_0_gir_INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
-DMAP_3_0_gir_INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+DMAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
+DMAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
 
 DAAP-3.0.gir: libdmapsharing-3.0.la
-DAAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
-DAAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
+DAAP_3_0_gir_NAMESPACE = DAAP
+DAAP_3_0_gir_SCANNERFLAGS = --symbol-prefix=daap
 DAAP_3_0_gir_LIBS = libdmapsharing-3.0.la
 DAAP_3_0_gir_FILES = $(introspection_sources)
-DAAP_3_0_gir_INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
-DAAP_3_0_gir_INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+DAAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
+DAAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
 
 INTROSPECTION_GIRS = DMAP-3.0.gir DAAP-3.0.gir
 

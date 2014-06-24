@@ -7,14 +7,24 @@ from gi.repository import DAAP
 def connected_cb (self, result, reason, db):
 	print reason
 
-def service_added_cb (self, service):
-	print service.name
+def service_added_cb (self, service, user_data):
+	service_name = service.get_property ("service-name")
+	name         = service.get_property ("name")
+	host         = service.get_property ("host")
+	port         = service.get_property ("port")
 
+	print service_name
+	print name
+	print host
+	print port
+
+	# implement a DMAP database
+	# implement a DAAP record factory
 	# daap_connection_new
 	# dmap_connection_connect
 
-browser = DMAP.MdnsBrowser.new(DMAP.MdnsBrowserServiceType.DAAP)
-browser.connect("service-added", service_added_cb)
+browser = DMAP.MdnsBrowser.new(DMAP.MdnsServiceType.DAAP)
+browser.connect("service-added", service_added_cb, None)
 browser.start()
 
-GLib.MainLoop().run()
+GLib.MainLoop().run ()

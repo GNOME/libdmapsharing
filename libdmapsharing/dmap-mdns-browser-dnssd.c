@@ -83,18 +83,6 @@ dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 }
 
 static void
-free_service (DMAPMdnsBrowserService * service)
-{
-	g_debug ("free_service ()");
-
-	g_free (service->service_name);
-	g_free (service->name);
-	g_free (service->host);
-	g_free (service->pair);
-	g_free (service);
-}
-
-static void
 service_context_free (ServiceContext *ctx)
 {
 	g_debug ("service_context_free ()");
@@ -331,7 +319,7 @@ dmap_mdns_browser_dispose (GObject * object)
 
 	for (walk = browser->priv->services; walk; walk = walk->next) {
 		service = (DMAPMdnsBrowserService *) walk->data;
-		free_service (service);
+		g_object_unref (service);
 	}
 
 	g_slist_free (browser->priv->services);

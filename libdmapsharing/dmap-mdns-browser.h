@@ -25,6 +25,8 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#include <libdmapsharing/dmap-mdns-service.h>
+
 G_BEGIN_DECLS
 /**
  * DMAP_TYPE_MDNS_BROWSER:
@@ -75,46 +77,6 @@ G_BEGIN_DECLS
 typedef struct _DMAPMdnsBrowser DMAPMdnsBrowser;
 typedef struct _DMAPMdnsBrowserClass DMAPMdnsBrowserClass;
 typedef struct _DMAPMdnsBrowserPrivate DMAPMdnsBrowserPrivate;
-typedef struct _DMAPMdnsBrowserService DMAPMdnsBrowserService;
-
-/**
- * DMAPMdnsBrowserServiceType:
- * @DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID: an invalid service type
- * @DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP: a DAAP service type
- * @DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP: a DPAP service type
- * @DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP: a DACP service type
- * @DMAP_MDNS_BROWSER_SERVICE_TYPE_RAOP: a RAOP service type
- * @DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST: an invalid service type
- *
- * Enum values used to specify the service type to browse.
- *
- */
-typedef enum
-{
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID = 0,
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_DAAP,
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP,
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP,
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_RAOP,
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST = DMAP_MDNS_BROWSER_SERVICE_TYPE_RAOP
-} DMAPMdnsBrowserServiceType;
-
-// FIXME: this is only for RAOP and corresponds to the "tp" txt record.
-// This should be in a sub-class.
-typedef enum
-{
-	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP = 0,
-	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_UDP,
-	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_LAST = DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_UDP
-} DMAPMdnsBrowserTransportProtocol;
-
-static const char * const service_type_name[] = {
-	NULL,
-	"_daap._tcp",
-	"_dpap._tcp",
-	"_touch-remote._tcp",
-	"_raop._tcp"
-};
 
 typedef enum
 {
@@ -122,25 +84,14 @@ typedef enum
 	DMAP_MDNS_BROWSER_ERROR_FAILED,
 } DMAPMdnsBrowserError;
 
-struct _DMAPMdnsBrowserService
-{
-	gchar *service_name;
-	gchar *name;
-	gchar *host;
-	guint port;
-	gboolean password_protected;
-	gchar *pair;                                         // FIXME: subclass
-	DMAPMdnsBrowserTransportProtocol transport_protocol; // FIXME: subclass
-};
-
 struct _DMAPMdnsBrowserClass
 {
 	GObjectClass parent_class;
 
 	void (*service_added) (DMAPMdnsBrowser * browser,
-			       DMAPMdnsBrowserService * service);
+			       DMAPMdnsService * service);
 	void (*service_removed) (DMAPMdnsBrowser * browser,
-				 DMAPMdnsBrowserService * service);
+				 DMAPMdnsService * service);
 };
 
 struct _DMAPMdnsBrowser
@@ -164,7 +115,7 @@ GType dmap_mdns_browser_get_type (void);
  *
  * Returns: a pointer to a DMAPMdnsBrowser.
  */
-DMAPMdnsBrowser *dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type);
+DMAPMdnsBrowser *dmap_mdns_browser_new (DMAPMdnsServiceType type);
 
 /**
  * dmap_mdns_browser_start:
@@ -190,13 +141,13 @@ gboolean dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error);
 
 G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DMAPMdnsBrowser *
 						       browser);
-DMAPMdnsBrowserServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser
+DMAPMdnsServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser
 							       * browser);
 
 /**
  * DMAPMdnsBrowser::service-added:
  * @browser: the #DMAPMdnsBrowser which received the signal.
- * @service: #DMAPMdnsBrowserService
+ * @service: #DMAPMdnsService
  *
  * Emitted each time a service becomes available to @browser
  */
