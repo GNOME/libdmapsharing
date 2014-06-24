@@ -52,7 +52,7 @@ G_BEGIN_DECLS
  * IS_DMAP_MDNS_BROWSER:
  * @o: Instance to check for being a %DMAP_TYPE_MDNS_BROWSER.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_SHARE.
+ * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_MDNS_BROWSER.
  */
 #define IS_DMAP_MDNS_BROWSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_MDNS_BROWSER))
 /**
