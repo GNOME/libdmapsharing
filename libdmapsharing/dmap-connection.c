@@ -30,7 +30,6 @@
 
 #include <libsoup/soup.h>
 
-#include "daap-record-factory-simple.h"
 #include "dmap-md5.h"
 #include "dmap-connection.h"
 #include "dmap-record-factory.h"
@@ -176,7 +175,8 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 					 g_param_spec_object ("factory",
 							      "record factory",
 							      "record factory",
-	                                                      DAAP_TYPE_RECORD_FACTORY_SIMPLE,
+	                                                      // FIXME: Should be more specific.
+	                                                      G_TYPE_OBJECT,
 							      G_PARAM_READWRITE
 							      |
 							      G_PARAM_CONSTRUCT_ONLY));
