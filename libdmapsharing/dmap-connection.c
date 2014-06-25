@@ -30,6 +30,7 @@
 
 #include <libsoup/soup.h>
 
+#include "daap-record-factory-simple.h"
 #include "dmap-md5.h"
 #include "dmap-connection.h"
 #include "dmap-record-factory.h"
@@ -162,21 +163,23 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_DB,
-					 g_param_spec_pointer ("db",
-							       "DMAPDb",
-							       "DMAPDb object",
-							       G_PARAM_READWRITE
-							       |
-							       G_PARAM_CONSTRUCT_ONLY));
+					 g_param_spec_object ("db",
+							      "DMAPDb",
+							      "DMAPDb object",
+	                                                      DMAP_TYPE_DB,
+							      G_PARAM_READWRITE
+							      |
+							      G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property (object_class,
 					 PROP_FACTORY,
-					 g_param_spec_pointer ("factory",
-							       "record factory",
-							       "record factory",
-							       G_PARAM_READWRITE
-							       |
-							       G_PARAM_CONSTRUCT_ONLY));
+					 g_param_spec_object ("factory",
+							      "record factory",
+							      "record factory",
+	                                                      DAAP_TYPE_RECORD_FACTORY_SIMPLE,
+							      G_PARAM_READWRITE
+							      |
+							      G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property (object_class, PROP_NAME,
 					 g_param_spec_string ("name",
@@ -1135,7 +1138,7 @@ typedef struct
 {
 	DMAPConnection *connection;
 	DMAPConnectionCallback callback;
-	gpointer data;
+	DMAPDb *db;
 	GDestroyNotify destroy;
 } ConnectionResponseData;
 
@@ -1168,7 +1171,7 @@ connected_cb (DMAPConnection * connection, ConnectionResponseData * rdata)
 		rdata->callback (rdata->connection,
 				 result,
 				 rdata->connection->priv->last_error_message,
-				 rdata->data);
+				 rdata->db);
 	}
 
 	if (rdata->destroy) {
@@ -1231,8 +1234,8 @@ dmap_connection_setup (DMAPConnection * connection)
 // FIXME: it would be nice if this mirrored the use of DMAPMdnsBrowser. That is, connect callback handler to a signal.
 // This would allow Vala to associated a lambda function with the signal.
 void
-dmap_connection_connect (DMAPConnection * connection,
-			 DMAPConnectionCallback callback, gpointer user_data)
+dmap_connection_start (DMAPConnection * connection,
+                       DMAPConnectionCallback callback, DMAPDb *db)
 {
 	ConnectionResponseData *rdata;
 
@@ -1258,7 +1261,7 @@ dmap_connection_connect (DMAPConnection * connection,
 	rdata = g_new (ConnectionResponseData, 1);
 	rdata->connection = g_object_ref (connection);
 	rdata->callback = callback;
-	rdata->data = user_data;
+	rdata->db = db;
 	rdata->destroy = connection_response_data_free;
 	g_signal_connect (connection, "operation-done",
 			  G_CALLBACK (connected_cb), rdata);
@@ -1291,7 +1294,7 @@ disconnected_cb (DMAPConnection * connection, ConnectionResponseData * rdata)
 		rdata->callback (rdata->connection,
 				 result,
 				 rdata->connection->priv->last_error_message,
-				 rdata->data);
+				 rdata->db);
 	}
 
 	if (rdata->destroy) {
@@ -1314,7 +1317,7 @@ dmap_connection_finish (DMAPConnection * connection)
 void
 dmap_connection_disconnect (DMAPConnection * connection,
 			    DMAPConnectionCallback callback,
-			    gpointer user_data)
+			    DMAPDb *db)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	ConnectionResponseData *rdata;
@@ -1336,7 +1339,7 @@ dmap_connection_disconnect (DMAPConnection * connection,
 	rdata = g_new (ConnectionResponseData, 1);
 	rdata->connection = g_object_ref (connection);
 	rdata->callback = callback;
-	rdata->data = user_data;
+	rdata->db = db;
 	rdata->destroy = connection_response_data_free;
 
 	g_signal_connect (connection, "operation-done",
@@ -1720,11 +1723,11 @@ dmap_connection_set_property (GObject * object,
 		priv->name = g_value_dup_string (value);
 		break;
 	case PROP_DB:
-		priv->db = DMAP_DB (g_value_get_pointer (value));
+		priv->db = DMAP_DB (g_value_get_object (value));
 		break;
 	case PROP_FACTORY:
 		priv->record_factory =
-			DMAP_RECORD_FACTORY (g_value_get_pointer (value));
+			DMAP_RECORD_FACTORY (g_value_get_object (value));
 		break;
 	case PROP_HOST:
 		g_free (priv->host);
@@ -1769,10 +1772,10 @@ dmap_connection_get_property (GObject * object,
 
 	switch (prop_id) {
 	case PROP_DB:
-		g_value_set_pointer (value, priv->db);
+		g_value_set_object (value, priv->db);
 		break;
 	case PROP_FACTORY:
-		g_value_set_pointer (value, priv->record_factory);
+		g_value_set_object (value, priv->record_factory);
 		break;
 	case PROP_NAME:
 		g_value_set_string (value, priv->name);

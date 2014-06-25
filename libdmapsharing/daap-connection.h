@@ -85,6 +85,18 @@ typedef struct
 
 GType daap_connection_get_type (void);
 
+/**
+ * daap_connection_new:
+ * @name: The name of the share to connect to.
+ * @host: The host of the share to connect to.
+ * @port: The port of the share to connect to.
+ * @db: (transfer full): The db that will receive the records found in the share.
+ * @factory: (transfer full): A factory to create records.
+ *
+ * Create a new DAAP connection.
+ *
+ * Returns: a pointer to a DAAPConnection.
+ */
 DAAPConnection *daap_connection_new (const char *name,
 				     const char *host,
 				     guint port,

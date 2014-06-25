@@ -73,7 +73,7 @@ static void databases_items_xxx (DMAPShare * share,
 				 GHashTable * query,
 				 SoupClientContext * context);
 static struct DMAPMetaDataMap *get_meta_data_map (DMAPShare * share);
-static void add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer mb);
+static void add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer mb);
 
 #define DAAP_TYPE_OF_SERVICE "_daap._tcp"
 #define DAAP_PORT 3689
@@ -550,7 +550,7 @@ _error:
 }
 
 static void
-add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
+add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	gboolean has_video = 0;
@@ -563,8 +563,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 		dmap_structure_add (mlit, DMAP_CC_MIKD,
 				    (gchar) DAAP_ITEM_KIND_AUDIO);
 	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
-		dmap_structure_add (mlit, DMAP_CC_MIID,
-				    GPOINTER_TO_UINT (id));
+		dmap_structure_add (mlit, DMAP_CC_MIID, id);
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *title = NULL;
 
@@ -576,11 +575,9 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			g_debug ("Title requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
-		dmap_structure_add (mlit, DMAP_CC_MPER,
-				    GPOINTER_TO_UINT (id));
+		dmap_structure_add (mlit, DMAP_CC_MPER, id);
 	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID))
-		dmap_structure_add (mlit, DMAP_CC_MCTI,
-				    GPOINTER_TO_UINT (id));
+		dmap_structure_add (mlit, DMAP_CC_MCTI, id);
 	if (_dmap_share_client_requested (mb->bits, SONG_DATA_KIND))
 		dmap_structure_add (mlit, DMAP_CC_ASDK,
 				    (gchar) DAAP_SONG_DATA_KIND_NONE);

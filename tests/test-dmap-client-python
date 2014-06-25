@@ -1,30 +1,52 @@
 #!/usr/bin/env python
 
+# FIXME: dmap-connection.c presently has DAAP_TYPE_SIMPLE_RECORD_FACTORY hard coded.
+
+from gi.repository import GObject
 from gi.repository import GLib
 from gi.repository import DMAP
 from gi.repository import DAAP
 
-def connected_cb (self, result, reason, db):
-	print reason
+class PyDMAPDb(GObject.GObject, DMAP.Db):
+	db = {}
+	nextId = 0
 
-def service_added_cb (self, service, user_data):
-	service_name = service.get_property ("service-name")
-	name         = service.get_property ("name")
-	host         = service.get_property ("host")
-	port         = service.get_property ("port")
+	def do_foreach(self, func, user_data=None):
+		for id in self.db:
+			func (id, self.db[id])
 
-	print service_name
-	print name
-	print host
-	print port
+	def do_add(self, record):
+		self.db[self.nextId] = record
+		self.nextId += 1
 
-	# implement a DMAP database
-	# implement a DAAP record factory
-	# daap_connection_new
-	# dmap_connection_connect
+	def __init__(self):
+		super(PyDMAPDb, self).__init__()
+
+def print_record(id, record, user_data):
+	title = record.get_property("title")
+	has_video = record.get_property("has-video")
+	artist = record.get_property("songartist")
+
+	print id, artist, title, has_video
+
+def connected_cb(self, result, reason, db):
+	db.foreach(print_record, None)
+
+def service_added_cb(self, service, user_data):
+	service_name = service.get_property("service-name")
+	name         = service.get_property("name")
+	host         = service.get_property("host")
+	port         = service.get_property("port")
+
+	factory = DAAP.RecordFactorySimple()
+	db = PyDMAPDb()
+
+	connection = DAAP.Connection.new(service_name, host, port, db, factory)
+
+	connection.start(connected_cb, db)
 
 browser = DMAP.MdnsBrowser.new(DMAP.MdnsServiceType.DAAP)
 browser.connect("service-added", service_added_cb, None)
 browser.start()
 
-GLib.MainLoop().run ()
+GLib.MainLoop().run()

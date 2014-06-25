@@ -123,7 +123,7 @@ service_added_cb (DMAPMdnsBrowser *browser,
         conn = DMAP_CONNECTION (dpap_connection_new (name, host, port, db, factory));
     }
     g_signal_connect (DMAP_CONNECTION (conn), "authenticate", G_CALLBACK(authenticate_cb), NULL);
-    dmap_connection_connect (DMAP_CONNECTION (conn), (DMAPConnectionCallback) connected_cb, db);
+    dmap_connection_start (DMAP_CONNECTION (conn), (DMAPConnectionCallback) connected_cb, db);
 }
 
 int main(int argc, char **argv)

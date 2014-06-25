@@ -58,17 +58,15 @@ private class DPAPCopy {
 		return true;
 	}
 
-	private void service_added_cb (DMAP.MdnsBrowserService *service) {
-		connection = (DMAP.Connection) new DPAP.Connection (service->service_name, service->host, service->port, db, factory);
-		connection.connect (connected_cb);
-	}
-
 	public DPAPCopy () throws GLib.Error {
 		db = new ValaDMAPDb ();
 		factory = new ValaDPAPRecordFactory ();
 
-		browser = new DMAP.MdnsBrowser (DMAP.MdnsBrowserServiceType.DPAP);
-		browser.service_added.connect (service_added_cb);
+		browser = new DMAP.MdnsBrowser (DMAP.MdnsServiceType.DPAP);
+		browser.service_added.connect ((browser, service) => {
+			connection = (DMAP.Connection) new DPAP.Connection (service.service_name, service.host, service.port, db, factory);
+			connection.connect (connected_cb);
+		});
 		browser.start ();
 	}
 }

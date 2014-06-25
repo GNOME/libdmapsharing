@@ -78,7 +78,7 @@ dmap_db_lookup_id_by_location (const DMAPDb * db, const gchar * location)
 }
 
 void
-dmap_db_foreach (const DMAPDb * db, GHFunc func, gpointer data)
+dmap_db_foreach (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data)
 {
 	DMAP_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }
@@ -245,7 +245,7 @@ compare_record_property (DMAPRecord * record, const gchar * property_name,
 }
 
 static void
-apply_filter (gpointer id, DMAPRecord * record, gpointer data)
+apply_filter (guint id, DMAPRecord * record, gpointer data)
 {
 	FilterData *fd;
 	gboolean accept = FALSE;
@@ -326,7 +326,7 @@ dmap_db_apply_filter (DMAPDb * db, GSList * filter_def)
 	data.filter_def = filter_def;
 	data.ht = ht;
 
-	dmap_db_foreach (db, (GHFunc) apply_filter, &data);
+	dmap_db_foreach (db, (DMAPIdRecordFunc) apply_filter, &data);
 
 	return data.ht;
 }

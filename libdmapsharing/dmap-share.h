@@ -108,8 +108,7 @@ typedef struct
 	void (*message_add_standard_headers) (DMAPShare * share,
 					      SoupMessage * msg);
 	struct DMAPMetaDataMap *(*get_meta_data_map) (DMAPShare * share);
-	void (*add_entry_to_mlcl) (gpointer id,
-				   DMAPRecord * record, gpointer mb);
+	void (*add_entry_to_mlcl) (guint id, DMAPRecord * record, gpointer mb);
 	void (*databases_browse_xxx) (DMAPShare * share,
 				      SoupServer * server,
 				      SoupMessage * msg,

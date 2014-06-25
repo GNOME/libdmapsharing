@@ -6,6 +6,8 @@ libdmapsharing_3_0_la_SOURCES = \
 	$(BUILT_SOURCES) \
 	daap-connection.c \
 	daap-record.c \
+	daap-record-simple.c \
+	daap-record-factory-simple.c \
 	daap-share.c \
 	dacp-connection.c \
 	dacp-share.c \
@@ -76,6 +78,8 @@ libdmapsharingincludedir = \
 libdmapsharinginclude_HEADERS = \
 	daap-connection.h \
 	daap-record.h \
+	daap-record-simple.h \
+	daap-record-factory-simple.h \
 	daap-share.h \
 	dacp-connection.h \
 	dacp-share.h \
@@ -157,7 +161,7 @@ DAAP_3_0_gir_NAMESPACE = DAAP
 DAAP_3_0_gir_SCANNERFLAGS = --symbol-prefix=daap
 DAAP_3_0_gir_LIBS = libdmapsharing-3.0.la
 DAAP_3_0_gir_FILES = $(introspection_sources)
-DAAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
+DAAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4 DMAP-3.0
 DAAP_3_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_0_la_CFLAGS)
 
 INTROSPECTION_GIRS = DMAP-3.0.gir DAAP-3.0.gir

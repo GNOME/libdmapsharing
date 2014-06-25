@@ -1554,11 +1554,11 @@ _dmap_share_ctrl_int (DMAPShare * share,
 }
 
 static void
-accumulate_mlcl_size_and_ids (gpointer id,
+accumulate_mlcl_size_and_ids (guint id,
 			      DMAPRecord * record,
 			      struct share_bitwise_t *share_bitwise)
 {
-	share_bitwise->id_list = g_slist_append (share_bitwise->id_list, id);
+	share_bitwise->id_list = g_slist_append (share_bitwise->id_list, GUINT_TO_POINTER (id));
 
 	/* Make copy and set mlcl to NULL so real MLCL does not get changed */
 	struct MLCL_Bits mb_copy = share_bitwise->mb;
@@ -1612,7 +1612,7 @@ write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		mb.share = share_bitwise->mb.share;
 
 		DMAP_SHARE_GET_CLASS (share_bitwise->mb.share)->
-			add_entry_to_mlcl (share_bitwise->id_list->data,
+			add_entry_to_mlcl (GPOINTER_TO_UINT (share_bitwise->id_list->data),
 					   record, &mb);
 		data = dmap_structure_serialize (g_node_first_child (mb.mlcl),
 						 &length);
@@ -1871,16 +1871,14 @@ _dmap_share_databases (DMAPShare * share,
 				g_hash_table_lookup_adapter;
 			share_bitwise->destroy = (ShareBitwiseDestroyFunc) g_hash_table_destroy;
 			g_hash_table_foreach (records,
-					      (GHFunc)
-					      accumulate_mlcl_size_and_ids,
+					     (GHFunc) accumulate_mlcl_size_and_ids,
 					      share_bitwise);
 		} else {
 			share_bitwise->db = share->priv->db;
 			share_bitwise->lookup_by_id = (ShareBitwiseLookupByIdFunc) dmap_db_lookup_by_id;
 			share_bitwise->destroy = NULL;
 			dmap_db_foreach (share->priv->db,
-					 (GHFunc)
-					 accumulate_mlcl_size_and_ids,
+			                (DMAPIdRecordFunc) accumulate_mlcl_size_and_ids,
 					 share_bitwise);
 		}
 
@@ -2061,7 +2059,7 @@ _dmap_share_databases (DMAPShare * share,
 			for (id = keys; id; id = id->next) {
 				(*
 				 (DMAP_SHARE_GET_CLASS (share)->
-				  add_entry_to_mlcl)) (id->data,
+				  add_entry_to_mlcl)) (GPOINTER_TO_UINT (id->data),
 						       g_hash_table_lookup
 						       (records, id->data),
 						       &mb);
@@ -2083,7 +2081,6 @@ _dmap_share_databases (DMAPShare * share,
 							    DMAP_CC_MLCL);
 
 				dmap_db_foreach (share->priv->db,
-						 (GHFunc)
 						 DMAP_SHARE_GET_CLASS
 						 (share)->add_entry_to_mlcl,
 						 &mb);
@@ -2109,7 +2106,6 @@ _dmap_share_databases (DMAPShare * share,
 							    DMAP_CC_MLCL);
 
 				dmap_db_foreach (entries,
-						 (GHFunc)
 						 DMAP_SHARE_GET_CLASS
 						 (share)->add_entry_to_mlcl,
 						 &mb);
