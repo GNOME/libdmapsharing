@@ -22,31 +22,70 @@ class PyDMAPDb(GObject.GObject, DMAP.Db):
 	def __init__(self):
 		super(PyDMAPDb, self).__init__()
 
-def print_record(id, record, user_data):
-	title = record.get_property("title")
-	has_video = record.get_property("has-video")
-	artist = record.get_property("songartist")
+class PyDAAPRecord(GObject.GObject, DAAP.Record, DMAP.Record):
+	location    = GObject.property(type=str,  default=None)
+	title       = GObject.property(type=str,  default=None)
+	mediakind   = GObject.property(type=int,  default=0)
+	songalbum   = GObject.property(type=str,  default=None)
+	songalbumid = GObject.property(type=int,  default=0)
+	sort_album  = GObject.property(type=str,  default=None)
+	songartist  = GObject.property(type=str,  default=None)
+	sort_artist = GObject.property(type=str,  default=None)
+	songgenre   = GObject.property(type=str,  default=None)
+	format      = GObject.property(type=str,  default=None)
+	rating      = GObject.property(type=int,  default=None)
+	filesize    = GObject.property(type=int,  default=None)
+	duration    = GObject.property(type=int,  default=0)
+	track       = GObject.property(type=int,  default=0)
+	year        = GObject.property(type=int,  default=0)
+	firstseen   = GObject.property(type=int,  default=0)
+	mtime       = GObject.property(type=int,  default=0)
+	disc        = GObject.property(type=int,  default=0)
+	bitrate     = GObject.property(type=int,  default=0)
+	has_video   = GObject.property(type=bool, default=0)
 
-	print id, artist, title, has_video
+	def __init__(self):
+		super(PyDAAPRecord, self).__init__()
 
-def connected_cb(self, result, reason, db):
-	db.foreach(print_record, None)
+class PyDAAPRecordFactory(GObject.GObject, DMAP.RecordFactory):
+	def do_create (self, user_data=None):
+		return PyDAAPRecord()
 
-def service_added_cb(self, service, user_data):
-	service_name = service.get_property("service-name")
-	name         = service.get_property("name")
-	host         = service.get_property("host")
-	port         = service.get_property("port")
+	def __init__(self):
+		super(PyDAAPRecordFactory, self).__init__()
 
-	factory = DAAP.RecordFactorySimple()
-	db = PyDMAPDb()
+class TestDMAPClient(GObject.GObject):
 
-	connection = DAAP.Connection.new(service_name, host, port, db, factory)
+	def __init__(self):
+		super(TestDMAPClient, self).__init__()
 
-	connection.start(connected_cb, db)
+		self.factory = PyDAAPRecordFactory()
+		self.db = PyDMAPDb()
+		self.browser = DMAP.MdnsBrowser.new(DMAP.MdnsServiceType.DAAP)
 
-browser = DMAP.MdnsBrowser.new(DMAP.MdnsServiceType.DAAP)
-browser.connect("service-added", service_added_cb, None)
-browser.start()
+	def start(self):
+		self.browser.connect("service-added", self.service_added_cb, None)
+		self.browser.start()
 
+	def print_record(self, id, record, user_data):
+		title = record.get_property("title")
+		has_video = record.get_property("has-video")
+		artist = record.get_property("songartist")
+
+		print id, artist, title, has_video
+
+	def connected_cb(self, connection, result, reason, user_data):
+		self.db.foreach(self.print_record, None)
+
+	def service_added_cb(self, browser, service, user_data):
+		service_name = service.get_property("service-name")
+		name         = service.get_property("name")
+		host         = service.get_property("host")
+		port         = service.get_property("port")
+
+		connection = DAAP.Connection.new(service_name, host, port, self.db, self.factory)
+		connection.start(self.connected_cb, self.db)
+
+client = TestDMAPClient ()
+client.start ()
 GLib.MainLoop().run()

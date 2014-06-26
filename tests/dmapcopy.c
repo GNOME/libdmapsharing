@@ -73,6 +73,7 @@ typedef struct _ValaDPAPRecordFactoryClass ValaDPAPRecordFactoryClass;
 
 typedef struct _ValaDPAPRecord ValaDPAPRecord;
 typedef struct _ValaDPAPRecordClass ValaDPAPRecordClass;
+#define _g_free0(var) (var = (g_free (var), NULL))
 #define _dpap_copy_unref0(var) ((var == NULL) ? NULL : (var = (dpap_copy_unref (var), NULL)))
 typedef struct _ParamSpecDPAPCopy ParamSpecDPAPCopy;
 #define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
@@ -116,19 +117,19 @@ enum  {
 	DPAP_COPY_DUMMY_PROPERTY
 };
 static gboolean dpap_copy_connected_cb (DPAPCopy* self, DMAPConnection* connection, gboolean _result_, const gchar* reason);
-static void __lambda2_ (DPAPCopy* self, gconstpointer k, gconstpointer v);
+static void __lambda2_ (DPAPCopy* self, guint k, DMAPRecord* v);
 GType vala_dpap_record_get_type (void) G_GNUC_CONST;
 const gchar* vala_dpap_record_get_location (ValaDPAPRecord* self);
-static void ___lambda2__gh_func (gconstpointer key, gconstpointer value, gpointer self);
-static void dpap_copy_service_added_cb (DPAPCopy* self, DMAPMdnsBrowserService* service);
-static gboolean _dpap_copy_connected_cb_dmap_connection_callback (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self);
+static void ___lambda2__dmap_id_record_func (guint id, DMAPRecord* record, gpointer self);
 DPAPCopy* dpap_copy_new (GError** error);
 DPAPCopy* dpap_copy_construct (GType object_type, GError** error);
 ValaDMAPDb* vala_dmap_db_new (void);
 ValaDMAPDb* vala_dmap_db_construct (GType object_type);
 ValaDPAPRecordFactory* vala_dpap_record_factory_new (void);
 ValaDPAPRecordFactory* vala_dpap_record_factory_construct (GType object_type);
-static void _dpap_copy_service_added_cb_dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, void* service, gpointer self);
+static void __lambda3_ (DPAPCopy* self, DMAPMdnsBrowser* browser, DMAPMdnsService* service);
+static gboolean _dpap_copy_connected_cb_dmap_connection_func (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self);
+static void ___lambda3__dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, DMAPMdnsService* service, gpointer self);
 static void dpap_copy_finalize (DPAPCopy* obj);
 void debug_printf (const gchar* log_domain, GLogLevelFlags log_level, const gchar* message);
 void debug_null (const gchar* log_domain, GLogLevelFlags log_level, const gchar* message);
@@ -136,11 +137,12 @@ gint _vala_main (gchar** args, int args_length1);
 static void _debug_null_glog_func (const gchar* log_domain, GLogLevelFlags log_levels, const gchar* message, gpointer self);
 
 
-static void __lambda2_ (DPAPCopy* self, gconstpointer k, gconstpointer v) {
+static void __lambda2_ (DPAPCopy* self, guint k, DMAPRecord* v) {
 	FILE* _tmp0_ = NULL;
-	gconstpointer _tmp1_ = NULL;
+	DMAPRecord* _tmp1_ = NULL;
 	const gchar* _tmp2_ = NULL;
 	const gchar* _tmp3_ = NULL;
+	g_return_if_fail (v != NULL);
 	_tmp0_ = stdout;
 	_tmp1_ = v;
 	_tmp2_ = vala_dpap_record_get_location (G_TYPE_CHECK_INSTANCE_CAST (_tmp1_, TYPE_VALA_DPAP_RECORD, ValaDPAPRecord));
@@ -149,8 +151,8 @@ static void __lambda2_ (DPAPCopy* self, gconstpointer k, gconstpointer v) {
 }
 
 
-static void ___lambda2__gh_func (gconstpointer key, gconstpointer value, gpointer self) {
-	__lambda2_ (self, key, value);
+static void ___lambda2__dmap_id_record_func (guint id, DMAPRecord* record, gpointer self) {
+	__lambda2_ (self, id, record);
 }
 
 
@@ -165,49 +167,62 @@ static gboolean dpap_copy_connected_cb (DPAPCopy* self, DMAPConnection* connecti
 	_tmp1_ = dmap_db_count ((DMAPDb*) _tmp0_);
 	g_debug ("dmapcopy.vala:30: %lld entries\n", _tmp1_);
 	_tmp2_ = self->priv->db;
-	dmap_db_foreach ((DMAPDb*) _tmp2_, ___lambda2__gh_func, self);
+	dmap_db_foreach ((DMAPDb*) _tmp2_, ___lambda2__dmap_id_record_func, self);
 	result = TRUE;
 	return result;
 }
 
 
-static gboolean _dpap_copy_connected_cb_dmap_connection_callback (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self) {
+static gboolean _dpap_copy_connected_cb_dmap_connection_func (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self) {
 	gboolean result;
 	result = dpap_copy_connected_cb (self, connection, _result_, reason);
 	return result;
 }
 
 
-static void dpap_copy_service_added_cb (DPAPCopy* self, DMAPMdnsBrowserService* service) {
-	DMAPMdnsBrowserService* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
-	DMAPMdnsBrowserService* _tmp2_ = NULL;
-	const gchar* _tmp3_ = NULL;
-	DMAPMdnsBrowserService* _tmp4_ = NULL;
-	guint _tmp5_ = 0U;
-	ValaDMAPDb* _tmp6_ = NULL;
-	ValaDPAPRecordFactory* _tmp7_ = NULL;
-	DPAPConnection* _tmp8_ = NULL;
-	DMAPConnection* _tmp9_ = NULL;
-	g_return_if_fail (self != NULL);
+static void __lambda3_ (DPAPCopy* self, DMAPMdnsBrowser* browser, DMAPMdnsService* service) {
+	DMAPMdnsService* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	DMAPMdnsService* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	gchar* _tmp7_ = NULL;
+	DMAPMdnsService* _tmp8_ = NULL;
+	guint _tmp9_ = 0U;
+	guint _tmp10_ = 0U;
+	ValaDMAPDb* _tmp11_ = NULL;
+	ValaDPAPRecordFactory* _tmp12_ = NULL;
+	DPAPConnection* _tmp13_ = NULL;
+	DMAPConnection* _tmp14_ = NULL;
+	g_return_if_fail (browser != NULL);
+	g_return_if_fail (service != NULL);
 	_tmp0_ = service;
-	_tmp1_ = _tmp0_->service_name;
-	_tmp2_ = service;
-	_tmp3_ = _tmp2_->host;
+	g_object_get (_tmp0_, "service-name", &_tmp1_, NULL);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = _tmp2_;
 	_tmp4_ = service;
-	_tmp5_ = _tmp4_->port;
-	_tmp6_ = self->priv->db;
-	_tmp7_ = self->priv->factory;
-	_tmp8_ = dpap_connection_new (_tmp1_, _tmp3_, _tmp5_, (DMAPDb*) _tmp6_, (DMAPRecordFactory*) _tmp7_);
+	g_object_get (_tmp4_, "host", &_tmp5_, NULL);
+	_tmp6_ = _tmp5_;
+	_tmp7_ = _tmp6_;
+	_tmp8_ = service;
+	g_object_get (_tmp8_, "port", &_tmp9_, NULL);
+	_tmp10_ = _tmp9_;
+	_tmp11_ = self->priv->db;
+	_tmp12_ = self->priv->factory;
+	_tmp13_ = dpap_connection_new (_tmp3_, _tmp7_, _tmp10_, (DMAPDb*) _tmp11_, (DMAPRecordFactory*) _tmp12_);
 	_g_object_unref0 (self->priv->connection);
-	self->priv->connection = G_TYPE_CHECK_INSTANCE_CAST (_tmp8_, DMAP_TYPE_CONNECTION, DMAPConnection);
-	_tmp9_ = self->priv->connection;
-	dmap_connection_connect (_tmp9_, _dpap_copy_connected_cb_dmap_connection_callback, self);
+	self->priv->connection = G_TYPE_CHECK_INSTANCE_CAST (_tmp13_, DMAP_TYPE_CONNECTION, DMAPConnection);
+	_g_free0 (_tmp7_);
+	_g_free0 (_tmp3_);
+	_tmp14_ = self->priv->connection;
+	dmap_connection_start (_tmp14_, _dpap_copy_connected_cb_dmap_connection_func, self);
 }
 
 
-static void _dpap_copy_service_added_cb_dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, void* service, gpointer self) {
-	dpap_copy_service_added_cb (self, service);
+static void ___lambda3__dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, DMAPMdnsService* service, gpointer self) {
+	__lambda3_ (self, _sender, service);
 }
 
 
@@ -226,11 +241,11 @@ DPAPCopy* dpap_copy_construct (GType object_type, GError** error) {
 	_tmp1_ = vala_dpap_record_factory_new ();
 	_g_object_unref0 (self->priv->factory);
 	self->priv->factory = _tmp1_;
-	_tmp2_ = dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP);
+	_tmp2_ = dmap_mdns_browser_new (DMAP_MDNS_SERVICE_TYPE_DPAP);
 	_g_object_unref0 (self->priv->browser);
 	self->priv->browser = _tmp2_;
 	_tmp3_ = self->priv->browser;
-	g_signal_connect (_tmp3_, "service-added", (GCallback) _dpap_copy_service_added_cb_dmap_mdns_browser_service_added, self);
+	g_signal_connect (_tmp3_, "service-added", (GCallback) ___lambda3__dmap_mdns_browser_service_added, self);
 	_tmp4_ = self->priv->browser;
 	dmap_mdns_browser_start (_tmp4_, &_inner_error_);
 	if (_inner_error_ != NULL) {

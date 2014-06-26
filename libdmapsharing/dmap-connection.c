@@ -1137,8 +1137,8 @@ dmap_connection_is_connected (DMAPConnection * connection)
 typedef struct
 {
 	DMAPConnection *connection;
-	DMAPConnectionCallback callback;
-	DMAPDb *db;
+	DMAPConnectionFunc callback;
+	gpointer user_data;
 	GDestroyNotify destroy;
 } ConnectionResponseData;
 
@@ -1171,7 +1171,7 @@ connected_cb (DMAPConnection * connection, ConnectionResponseData * rdata)
 		rdata->callback (rdata->connection,
 				 result,
 				 rdata->connection->priv->last_error_message,
-				 rdata->db);
+				 rdata->user_data);
 	}
 
 	if (rdata->destroy) {
@@ -1235,7 +1235,7 @@ dmap_connection_setup (DMAPConnection * connection)
 // This would allow Vala to associated a lambda function with the signal.
 void
 dmap_connection_start (DMAPConnection * connection,
-                       DMAPConnectionCallback callback, DMAPDb *db)
+                       DMAPConnectionFunc callback, gpointer user_data)
 {
 	ConnectionResponseData *rdata;
 
@@ -1261,7 +1261,7 @@ dmap_connection_start (DMAPConnection * connection,
 	rdata = g_new (ConnectionResponseData, 1);
 	rdata->connection = g_object_ref (connection);
 	rdata->callback = callback;
-	rdata->db = db;
+	rdata->user_data = user_data;
 	rdata->destroy = connection_response_data_free;
 	g_signal_connect (connection, "operation-done",
 			  G_CALLBACK (connected_cb), rdata);
@@ -1294,7 +1294,7 @@ disconnected_cb (DMAPConnection * connection, ConnectionResponseData * rdata)
 		rdata->callback (rdata->connection,
 				 result,
 				 rdata->connection->priv->last_error_message,
-				 rdata->db);
+				 (gpointer) rdata->user_data);
 	}
 
 	if (rdata->destroy) {
@@ -1316,8 +1316,8 @@ dmap_connection_finish (DMAPConnection * connection)
 
 void
 dmap_connection_disconnect (DMAPConnection * connection,
-			    DMAPConnectionCallback callback,
-			    DMAPDb *db)
+			    DMAPConnectionFunc callback,
+			    gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	ConnectionResponseData *rdata;
@@ -1339,7 +1339,7 @@ dmap_connection_disconnect (DMAPConnection * connection,
 	rdata = g_new (ConnectionResponseData, 1);
 	rdata->connection = g_object_ref (connection);
 	rdata->callback = callback;
-	rdata->db = db;
+	rdata->user_data = user_data;
 	rdata->destroy = connection_response_data_free;
 
 	g_signal_connect (connection, "operation-done",

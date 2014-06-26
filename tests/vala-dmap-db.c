@@ -231,7 +231,7 @@ static void vala_dmap_db_dmap_db_interface_init (DMAPDbIface * iface) {
 	iface->add_path = (guint (*)(DMAPDb*, const gchar*)) vala_dmap_db_real_add_path;
 	iface->add_with_id = (guint (*)(DMAPDb*, DMAPRecord*, guint)) vala_dmap_db_real_add_with_id;
 	iface->count = (gint64 (*)(DMAPDb*)) vala_dmap_db_real_count;
-	iface->foreach = (void (*)(DMAPDb*, GHFunc, void*)) vala_dmap_db_real_foreach;
+	iface->foreach = (void (*)(DMAPDb*, DMAPIdRecordFunc, void*)) vala_dmap_db_real_foreach;
 	iface->lookup_by_id = (DMAPRecord* (*)(DMAPDb*, guint)) vala_dmap_db_real_lookup_by_id;
 	iface->lookup_id_by_location = (guint (*)(DMAPDb*, const gchar*)) vala_dmap_db_real_lookup_id_by_location;
 }

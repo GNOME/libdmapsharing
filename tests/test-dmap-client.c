@@ -37,7 +37,7 @@ static GMainLoop *loop;
 static guint conn_type = DAAP;
 
 static void
-print_record (gpointer id, DMAPRecord *record, gpointer user_data)
+print_record (guint id, DMAPRecord *record, gpointer user_data)
 {
 	gboolean has_video;
 	gchar   *artist, *title;
@@ -48,7 +48,7 @@ print_record (gpointer id, DMAPRecord *record, gpointer user_data)
 	             "title",  &title,
 	              NULL);
 
-	g_print ("%d: %s %s (has video: %s)\n", GPOINTER_TO_UINT (id), artist, title, has_video ? "Y" : "N");
+	g_print ("%d: %s %s (has video: %s)\n", id, artist, title, has_video ? "Y" : "N");
 
 	g_free (artist);
 	g_free (title);
@@ -62,7 +62,7 @@ connected_cb (DMAPConnection *connection,
 {
 	g_print ("Connection cb., DB has %lu entries\n", dmap_db_count (db));
 
-	dmap_db_foreach (db, (GHFunc) print_record, NULL);
+	dmap_db_foreach (db, print_record, NULL);
 }
 
 static void
@@ -123,7 +123,7 @@ service_added_cb (DMAPMdnsBrowser *browser,
         conn = DMAP_CONNECTION (dpap_connection_new (name, host, port, db, factory));
     }
     g_signal_connect (DMAP_CONNECTION (conn), "authenticate", G_CALLBACK(authenticate_cb), NULL);
-    dmap_connection_start (DMAP_CONNECTION (conn), (DMAPConnectionCallback) connected_cb, db);
+    dmap_connection_start (DMAP_CONNECTION (conn), (DMAPConnectionFunc) connected_cb, db);
 }
 
 int main(int argc, char **argv)

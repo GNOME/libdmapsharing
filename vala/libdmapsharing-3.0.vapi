@@ -20,10 +20,8 @@ namespace DAAP {
 		public static void authenticate_message (DAAP.DMAPConnection connection, Soup.Session session, Soup.Message message, Soup.Auth auth, string password);
 		[CCode (cname = "dmap_connection_build_message")]
 		public virtual unowned Soup.Message build_message (DAAP.DMAPConnection connection, string path, bool need_hash, double version, int req_id, bool send_close);
-		[CCode (cname = "dmap_connection_connect")]
-		public static void connect (DAAP.DMAPConnection connection, DAAP.DMAPConnectionCallback callback);
 		[CCode (cname = "dmap_connection_disconnect")]
-		public static void disconnect (DAAP.DMAPConnection connection, DAAP.DMAPConnectionCallback callback);
+		public static void disconnect (DAAP.DMAPConnection connection, DAAP.DMAPConnectionFunc callback);
 		[CCode (cname = "dmap_connection_get")]
 		public bool @get (string path, bool need_hash, DAAP.DMAPResponseHandler handler);
 		[CCode (cname = "dmap_connection_get_headers")]
@@ -40,16 +38,18 @@ namespace DAAP {
 		public static bool is_connected (DAAP.DMAPConnection connection);
 		[CCode (cname = "dmap_connection_setup")]
 		public static void setup (DAAP.DMAPConnection connection);
+		[CCode (cname = "dmap_connection_start")]
+		public static void start (DAAP.DMAPConnection connection, DAAP.DMAPConnectionFunc callback);
 		[NoAccessorMethod]
 		public void* base_uri { get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public void* factory { get; construct; }
+		public GLib.Object factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -123,30 +123,19 @@ namespace DAAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsBrowser : GLib.Object {
 		[CCode (cname = "dmap_mdns_browser_new", has_construct_function = false, type = "DMAPMdnsBrowser*")]
-		public DMAPMdnsBrowser (DAAP.DMAPMdnsBrowserServiceType type);
+		public DMAPMdnsBrowser (DAAP.DMAPMdnsServiceType type);
 		[CCode (cname = "dmap_mdns_browser_error_quark")]
 		public static GLib.Quark error_quark ();
 		[CCode (cname = "dmap_mdns_browser_get_service_type")]
-		public static DAAP.DMAPMdnsBrowserServiceType get_service_type (DAAP.DMAPMdnsBrowser browser);
+		public static DAAP.DMAPMdnsServiceType get_service_type (DAAP.DMAPMdnsBrowser browser);
 		[CCode (cname = "dmap_mdns_browser_get_services")]
 		public static unowned GLib.SList get_services (DAAP.DMAPMdnsBrowser browser);
 		[CCode (cname = "dmap_mdns_browser_start")]
 		public static bool start (DAAP.DMAPMdnsBrowser browser) throws GLib.Error;
 		[CCode (cname = "dmap_mdns_browser_stop")]
 		public static bool stop (DAAP.DMAPMdnsBrowser browser) throws GLib.Error;
-		public virtual signal void service_added (void* service);
+		public virtual signal void service_added (DAAP.DMAPMdnsService service);
 		public virtual signal void service_removed (string service);
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class DMAPMdnsBrowserService {
-		public weak string host;
-		public weak string name;
-		public weak string pair;
-		public bool password_protected;
-		public uint port;
-		public weak string service_name;
-		public DAAP.DMAPMdnsBrowserTransportProtocol transport_protocol;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsPublisher : GLib.Object {
@@ -164,6 +153,29 @@ namespace DAAP {
 		public virtual signal void published (string name);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class DMAPMdnsService : GLib.Object {
+		[CCode (has_construct_function = false)]
+		protected DMAPMdnsService ();
+		[NoAccessorMethod]
+		public string host { owned get; set; }
+		[NoAccessorMethod]
+		public string name { owned get; set; }
+		[NoAccessorMethod]
+		public string pair { owned get; set; }
+		[NoAccessorMethod]
+		public bool password_protected { get; set; }
+		[NoAccessorMethod]
+		public uint port { get; set; }
+		[NoAccessorMethod]
+		public string service_name { owned get; set; }
+		[NoAccessorMethod]
+		public uint transport_protocol { get; set; }
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPMdnsServiceService {
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class DMAPMetaDataMap {
 	}
@@ -179,7 +191,7 @@ namespace DAAP {
 		[CCode (has_construct_function = false)]
 		protected DMAPShare ();
 		[NoWrapper]
-		public virtual void add_entry_to_mlcl (void* id, DAAP.DMAPRecord record, void* mb);
+		public virtual void add_entry_to_mlcl (uint id, DAAP.DMAPRecord record, void* mb);
 		[NoWrapper]
 		public virtual void content_codes (DAAP.DMAPShare share, Soup.Server server, Soup.Message message, string path, GLib.HashTable query, Soup.ClientContext ctx);
 		[NoWrapper]
@@ -285,7 +297,7 @@ namespace DAAP {
 		[CCode (cname = "dmap_db_count")]
 		public abstract int64 count (DMAP.Db db);
 		[CCode (cname = "dmap_db_foreach")]
-		public abstract void @foreach (DMAP.Db db, GLib.HFunc func, void* data);
+		public abstract void @foreach (DMAP.Db db, DAAP.DMAPIdRecordFunc func, void* data);
 		[CCode (cname = "dmap_db_lookup_by_id")]
 		public abstract unowned DAAP.DMAPRecord lookup_by_id (DMAP.Db db, uint id);
 		[CCode (cname = "dmap_db_lookup_id_by_location")]
@@ -495,25 +507,25 @@ namespace DAAP {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_")]
-	public enum DMAPMdnsBrowserServiceType {
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
+	public enum DMAPMdnsPublisherError {
+		NOT_RUNNING,
+		FAILED
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_")]
+	public enum DMAPMdnsServiceTransportProtocol {
+		TCP,
+		UDP,
+		LAST
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TYPE_")]
+	public enum DMAPMdnsServiceType {
 		INVALID,
 		DAAP,
 		DPAP,
 		DACP,
 		RAOP,
 		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_")]
-	public enum DMAPMdnsBrowserTransportProtocol {
-		TCP,
-		UDP,
-		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
-	public enum DMAPMdnsPublisherError {
-		NOT_RUNNING,
-		FAILED
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MEDIA_KIND_")]
 	public enum DMAPMediaKind {
@@ -536,11 +548,11 @@ namespace DAAP {
 		POINTER
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public delegate bool DMAPConnectionCallback (DAAP.DMAPConnection connection, bool result, string reason);
+	public delegate bool DMAPConnectionFunc (DAAP.DMAPConnection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void DMAPIdRecordFunc (uint id, DAAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void DMAPResponseHandler (DAAP.DMAPConnection connection, uint status, GLib.Node structure);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
-	public delegate unowned string RecordGetValueFunc (DAAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HASH_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -650,10 +662,8 @@ namespace DACP {
 		public static void authenticate_message (DACP.DMAPConnection connection, Soup.Session session, Soup.Message message, Soup.Auth auth, string password);
 		[CCode (cname = "dmap_connection_build_message")]
 		public virtual unowned Soup.Message build_message (DACP.DMAPConnection connection, string path, bool need_hash, double version, int req_id, bool send_close);
-		[CCode (cname = "dmap_connection_connect")]
-		public static void connect (DACP.DMAPConnection connection, DACP.DMAPConnectionCallback callback);
 		[CCode (cname = "dmap_connection_disconnect")]
-		public static void disconnect (DACP.DMAPConnection connection, DACP.DMAPConnectionCallback callback);
+		public static void disconnect (DACP.DMAPConnection connection, DACP.DMAPConnectionFunc callback);
 		[CCode (cname = "dmap_connection_get")]
 		public bool @get (string path, bool need_hash, DACP.DMAPResponseHandler handler);
 		[CCode (cname = "dmap_connection_get_headers")]
@@ -670,16 +680,18 @@ namespace DACP {
 		public static bool is_connected (DACP.DMAPConnection connection);
 		[CCode (cname = "dmap_connection_setup")]
 		public static void setup (DACP.DMAPConnection connection);
+		[CCode (cname = "dmap_connection_start")]
+		public static void start (DACP.DMAPConnection connection, DACP.DMAPConnectionFunc callback);
 		[NoAccessorMethod]
 		public void* base_uri { get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public void* factory { get; construct; }
+		public GLib.Object factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -753,30 +765,19 @@ namespace DACP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsBrowser : GLib.Object {
 		[CCode (cname = "dmap_mdns_browser_new", has_construct_function = false, type = "DMAPMdnsBrowser*")]
-		public DMAPMdnsBrowser (DACP.DMAPMdnsBrowserServiceType type);
+		public DMAPMdnsBrowser (DACP.DMAPMdnsServiceType type);
 		[CCode (cname = "dmap_mdns_browser_error_quark")]
 		public static GLib.Quark error_quark ();
 		[CCode (cname = "dmap_mdns_browser_get_service_type")]
-		public static DACP.DMAPMdnsBrowserServiceType get_service_type (DACP.DMAPMdnsBrowser browser);
+		public static DACP.DMAPMdnsServiceType get_service_type (DACP.DMAPMdnsBrowser browser);
 		[CCode (cname = "dmap_mdns_browser_get_services")]
 		public static unowned GLib.SList get_services (DACP.DMAPMdnsBrowser browser);
 		[CCode (cname = "dmap_mdns_browser_start")]
 		public static bool start (DACP.DMAPMdnsBrowser browser) throws GLib.Error;
 		[CCode (cname = "dmap_mdns_browser_stop")]
 		public static bool stop (DACP.DMAPMdnsBrowser browser) throws GLib.Error;
-		public virtual signal void service_added (void* service);
+		public virtual signal void service_added (DACP.DMAPMdnsService service);
 		public virtual signal void service_removed (string service);
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class DMAPMdnsBrowserService {
-		public weak string host;
-		public weak string name;
-		public weak string pair;
-		public bool password_protected;
-		public uint port;
-		public weak string service_name;
-		public DACP.DMAPMdnsBrowserTransportProtocol transport_protocol;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsPublisher : GLib.Object {
@@ -794,6 +795,29 @@ namespace DACP {
 		public virtual signal void published (string name);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class DMAPMdnsService : GLib.Object {
+		[CCode (has_construct_function = false)]
+		protected DMAPMdnsService ();
+		[NoAccessorMethod]
+		public string host { owned get; set; }
+		[NoAccessorMethod]
+		public string name { owned get; set; }
+		[NoAccessorMethod]
+		public string pair { owned get; set; }
+		[NoAccessorMethod]
+		public bool password_protected { get; set; }
+		[NoAccessorMethod]
+		public uint port { get; set; }
+		[NoAccessorMethod]
+		public string service_name { owned get; set; }
+		[NoAccessorMethod]
+		public uint transport_protocol { get; set; }
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPMdnsServiceService {
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class DMAPMetaDataMap {
 	}
@@ -809,7 +833,7 @@ namespace DACP {
 		[CCode (has_construct_function = false)]
 		protected DMAPShare ();
 		[NoWrapper]
-		public virtual void add_entry_to_mlcl (void* id, DACP.DMAPRecord record, void* mb);
+		public virtual void add_entry_to_mlcl (uint id, DACP.DMAPRecord record, void* mb);
 		[NoWrapper]
 		public virtual void content_codes (DACP.DMAPShare share, Soup.Server server, Soup.Message message, string path, GLib.HashTable query, Soup.ClientContext ctx);
 		[NoWrapper]
@@ -937,7 +961,7 @@ namespace DACP {
 		[CCode (cname = "dmap_db_count")]
 		public abstract int64 count (DMAP.Db db);
 		[CCode (cname = "dmap_db_foreach")]
-		public abstract void @foreach (DMAP.Db db, GLib.HFunc func, void* data);
+		public abstract void @foreach (DMAP.Db db, DACP.DMAPIdRecordFunc func, void* data);
 		[CCode (cname = "dmap_db_lookup_by_id")]
 		public abstract unowned DACP.DMAPRecord lookup_by_id (DMAP.Db db, uint id);
 		[CCode (cname = "dmap_db_lookup_id_by_location")]
@@ -1150,25 +1174,25 @@ namespace DACP {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_")]
-	public enum DMAPMdnsBrowserServiceType {
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
+	public enum DMAPMdnsPublisherError {
+		NOT_RUNNING,
+		FAILED
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_")]
+	public enum DMAPMdnsServiceTransportProtocol {
+		TCP,
+		UDP,
+		LAST
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TYPE_")]
+	public enum DMAPMdnsServiceType {
 		INVALID,
 		DAAP,
 		DPAP,
 		DACP,
 		RAOP,
 		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_")]
-	public enum DMAPMdnsBrowserTransportProtocol {
-		TCP,
-		UDP,
-		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
-	public enum DMAPMdnsPublisherError {
-		NOT_RUNNING,
-		FAILED
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MEDIA_KIND_")]
 	public enum DMAPMediaKind {
@@ -1203,11 +1227,11 @@ namespace DACP {
 		ALL
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public delegate bool DMAPConnectionCallback (DACP.DMAPConnection connection, bool result, string reason);
+	public delegate bool DMAPConnectionFunc (DACP.DMAPConnection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void DMAPIdRecordFunc (uint id, DACP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void DMAPResponseHandler (DACP.DMAPConnection connection, uint status, GLib.Node structure);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
-	public delegate unowned string RecordGetValueFunc (DACP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HASH_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1300,8 +1324,7 @@ namespace DMAP {
 		protected Connection ();
 		public void authenticate_message (Soup.Session session, Soup.Message message, Soup.Auth auth, string password);
 		public virtual unowned Soup.Message build_message (string path, bool need_hash, double version, int req_id, bool send_close);
-		public void connect (DMAP.ConnectionCallback callback);
-		public void disconnect (DMAP.ConnectionCallback callback);
+		public void disconnect (DMAP.ConnectionFunc callback);
 		public bool @get (string path, bool need_hash, DMAP.ResponseHandler handler);
 		public unowned Soup.MessageHeaders get_headers (string uri);
 		public unowned GLib.SList get_playlists ();
@@ -1313,16 +1336,17 @@ namespace DMAP {
 		public virtual unowned DMAP.Record handle_mlcl (DMAP.RecordFactory factory, GLib.Node mlcl, int item_id);
 		public bool is_connected ();
 		public void setup ();
+		public void start (DMAP.ConnectionFunc callback);
 		[NoAccessorMethod]
 		public void* base_uri { get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public void* factory { get; construct; }
+		public GLib.Object factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -1396,25 +1420,14 @@ namespace DMAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class MdnsBrowser : GLib.Object {
 		[CCode (has_construct_function = false)]
-		public MdnsBrowser (DMAP.MdnsBrowserServiceType type);
+		public MdnsBrowser (DMAP.MdnsServiceType type);
 		public static GLib.Quark error_quark ();
-		public DMAP.MdnsBrowserServiceType get_service_type ();
+		public DMAP.MdnsServiceType get_service_type ();
 		public unowned GLib.SList get_services ();
 		public bool start () throws GLib.Error;
 		public bool stop () throws GLib.Error;
-		public virtual signal void service_added (void* service);
+		public virtual signal void service_added (DMAP.MdnsService service);
 		public virtual signal void service_removed (string service);
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class MdnsBrowserService {
-		public weak string host;
-		public weak string name;
-		public weak string pair;
-		public bool password_protected;
-		public uint port;
-		public weak string service_name;
-		public DMAP.MdnsBrowserTransportProtocol transport_protocol;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class MdnsPublisher : GLib.Object {
@@ -1426,6 +1439,29 @@ namespace DMAP {
 		public bool withdraw (uint port) throws GLib.Error;
 		public virtual signal void name_collision (string name);
 		public virtual signal void published (string name);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class MdnsService : GLib.Object {
+		[CCode (has_construct_function = false)]
+		protected MdnsService ();
+		[NoAccessorMethod]
+		public string host { owned get; set; }
+		[NoAccessorMethod]
+		public string name { owned get; set; }
+		[NoAccessorMethod]
+		public string pair { owned get; set; }
+		[NoAccessorMethod]
+		public bool password_protected { get; set; }
+		[NoAccessorMethod]
+		public uint port { get; set; }
+		[NoAccessorMethod]
+		public string service_name { owned get; set; }
+		[NoAccessorMethod]
+		public uint transport_protocol { get; set; }
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class MdnsServiceService {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -1443,7 +1479,7 @@ namespace DMAP {
 		[CCode (has_construct_function = false)]
 		protected Share ();
 		[NoWrapper]
-		public virtual void add_entry_to_mlcl (void* id, DMAP.Record record, void* mb);
+		public virtual void add_entry_to_mlcl (uint id, DMAP.Record record, void* mb);
 		[NoWrapper]
 		public virtual void content_codes (Soup.Server server, Soup.Message message, string path, GLib.HashTable query, Soup.ClientContext ctx);
 		[NoWrapper]
@@ -1529,7 +1565,7 @@ namespace DMAP {
 		public abstract uint add_with_id (DMAP.Record record, uint id);
 		public unowned GLib.HashTable apply_filter (GLib.SList filter_def);
 		public abstract int64 count ();
-		public abstract void @foreach (GLib.HFunc func);
+		public abstract void @foreach (DMAP.IdRecordFunc func);
 		public abstract unowned DMAP.Record lookup_by_id (uint id);
 		public abstract uint lookup_id_by_location (string location);
 	}
@@ -1728,25 +1764,25 @@ namespace DMAP {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_")]
-	public enum MdnsBrowserServiceType {
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
+	public enum MdnsPublisherError {
+		NOT_RUNNING,
+		FAILED
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_")]
+	public enum MdnsServiceTransportProtocol {
+		TCP,
+		UDP,
+		LAST
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TYPE_")]
+	public enum MdnsServiceType {
 		INVALID,
 		DAAP,
 		DPAP,
 		DACP,
 		RAOP,
 		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_")]
-	public enum MdnsBrowserTransportProtocol {
-		TCP,
-		UDP,
-		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
-	public enum MdnsPublisherError {
-		NOT_RUNNING,
-		FAILED
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MEDIA_KIND_")]
 	public enum MediaKind {
@@ -1769,9 +1805,9 @@ namespace DMAP {
 		POINTER
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public delegate bool ConnectionCallback (DMAP.Connection connection, bool result, string reason);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
-	public delegate unowned string RecordGetValueFunc (DMAP.Record record);
+	public delegate bool ConnectionFunc (DMAP.Connection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void IdRecordFunc (uint id, DMAP.Record record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void ResponseHandler (DMAP.Connection connection, uint status, GLib.Node structure);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1873,10 +1909,8 @@ namespace DPAP {
 		public static void authenticate_message (DPAP.DMAPConnection connection, Soup.Session session, Soup.Message message, Soup.Auth auth, string password);
 		[CCode (cname = "dmap_connection_build_message")]
 		public virtual unowned Soup.Message build_message (DPAP.DMAPConnection connection, string path, bool need_hash, double version, int req_id, bool send_close);
-		[CCode (cname = "dmap_connection_connect")]
-		public static void connect (DPAP.DMAPConnection connection, DPAP.DMAPConnectionCallback callback);
 		[CCode (cname = "dmap_connection_disconnect")]
-		public static void disconnect (DPAP.DMAPConnection connection, DPAP.DMAPConnectionCallback callback);
+		public static void disconnect (DPAP.DMAPConnection connection, DPAP.DMAPConnectionFunc callback);
 		[CCode (cname = "dmap_connection_get")]
 		public bool @get (string path, bool need_hash, DPAP.DMAPResponseHandler handler);
 		[CCode (cname = "dmap_connection_get_headers")]
@@ -1893,16 +1927,18 @@ namespace DPAP {
 		public static bool is_connected (DPAP.DMAPConnection connection);
 		[CCode (cname = "dmap_connection_setup")]
 		public static void setup (DPAP.DMAPConnection connection);
+		[CCode (cname = "dmap_connection_start")]
+		public static void start (DPAP.DMAPConnection connection, DPAP.DMAPConnectionFunc callback);
 		[NoAccessorMethod]
 		public void* base_uri { get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public void* factory { get; construct; }
+		public GLib.Object factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -1976,30 +2012,19 @@ namespace DPAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsBrowser : GLib.Object {
 		[CCode (cname = "dmap_mdns_browser_new", has_construct_function = false, type = "DMAPMdnsBrowser*")]
-		public DMAPMdnsBrowser (DPAP.DMAPMdnsBrowserServiceType type);
+		public DMAPMdnsBrowser (DPAP.DMAPMdnsServiceType type);
 		[CCode (cname = "dmap_mdns_browser_error_quark")]
 		public static GLib.Quark error_quark ();
 		[CCode (cname = "dmap_mdns_browser_get_service_type")]
-		public static DPAP.DMAPMdnsBrowserServiceType get_service_type (DPAP.DMAPMdnsBrowser browser);
+		public static DPAP.DMAPMdnsServiceType get_service_type (DPAP.DMAPMdnsBrowser browser);
 		[CCode (cname = "dmap_mdns_browser_get_services")]
 		public static unowned GLib.SList get_services (DPAP.DMAPMdnsBrowser browser);
 		[CCode (cname = "dmap_mdns_browser_start")]
 		public static bool start (DPAP.DMAPMdnsBrowser browser) throws GLib.Error;
 		[CCode (cname = "dmap_mdns_browser_stop")]
 		public static bool stop (DPAP.DMAPMdnsBrowser browser) throws GLib.Error;
-		public virtual signal void service_added (void* service);
+		public virtual signal void service_added (DPAP.DMAPMdnsService service);
 		public virtual signal void service_removed (string service);
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	[Compact]
-	public class DMAPMdnsBrowserService {
-		public weak string host;
-		public weak string name;
-		public weak string pair;
-		public bool password_protected;
-		public uint port;
-		public weak string service_name;
-		public DPAP.DMAPMdnsBrowserTransportProtocol transport_protocol;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public class DMAPMdnsPublisher : GLib.Object {
@@ -2017,6 +2042,29 @@ namespace DPAP {
 		public virtual signal void published (string name);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class DMAPMdnsService : GLib.Object {
+		[CCode (has_construct_function = false)]
+		protected DMAPMdnsService ();
+		[NoAccessorMethod]
+		public string host { owned get; set; }
+		[NoAccessorMethod]
+		public string name { owned get; set; }
+		[NoAccessorMethod]
+		public string pair { owned get; set; }
+		[NoAccessorMethod]
+		public bool password_protected { get; set; }
+		[NoAccessorMethod]
+		public uint port { get; set; }
+		[NoAccessorMethod]
+		public string service_name { owned get; set; }
+		[NoAccessorMethod]
+		public uint transport_protocol { get; set; }
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[Compact]
+	public class DMAPMdnsServiceService {
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class DMAPMetaDataMap {
 	}
@@ -2032,7 +2080,7 @@ namespace DPAP {
 		[CCode (has_construct_function = false)]
 		protected DMAPShare ();
 		[NoWrapper]
-		public virtual void add_entry_to_mlcl (void* id, DPAP.DMAPRecord record, void* mb);
+		public virtual void add_entry_to_mlcl (uint id, DPAP.DMAPRecord record, void* mb);
 		[NoWrapper]
 		public virtual void content_codes (DPAP.DMAPShare share, Soup.Server server, Soup.Message message, string path, GLib.HashTable query, Soup.ClientContext ctx);
 		[NoWrapper]
@@ -2138,7 +2186,7 @@ namespace DPAP {
 		[CCode (cname = "dmap_db_count")]
 		public abstract int64 count (DMAP.Db db);
 		[CCode (cname = "dmap_db_foreach")]
-		public abstract void @foreach (DMAP.Db db, GLib.HFunc func, void* data);
+		public abstract void @foreach (DMAP.Db db, DPAP.DMAPIdRecordFunc func, void* data);
 		[CCode (cname = "dmap_db_lookup_by_id")]
 		public abstract unowned DPAP.DMAPRecord lookup_by_id (DMAP.Db db, uint id);
 		[CCode (cname = "dmap_db_lookup_id_by_location")]
@@ -2346,25 +2394,25 @@ namespace DPAP {
 		NOT_RUNNING,
 		FAILED
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_SERVICE_TYPE_")]
-	public enum DMAPMdnsBrowserServiceType {
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
+	public enum DMAPMdnsPublisherError {
+		NOT_RUNNING,
+		FAILED
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_")]
+	public enum DMAPMdnsServiceTransportProtocol {
+		TCP,
+		UDP,
+		LAST
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_SERVICE_TYPE_")]
+	public enum DMAPMdnsServiceType {
 		INVALID,
 		DAAP,
 		DPAP,
 		DACP,
 		RAOP,
 		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_")]
-	public enum DMAPMdnsBrowserTransportProtocol {
-		TCP,
-		UDP,
-		LAST
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MDNS_PUBLISHER_ERROR_")]
-	public enum DMAPMdnsPublisherError {
-		NOT_RUNNING,
-		FAILED
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_MEDIA_KIND_")]
 	public enum DMAPMediaKind {
@@ -2387,11 +2435,11 @@ namespace DPAP {
 		POINTER
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public delegate bool DMAPConnectionCallback (DPAP.DMAPConnection connection, bool result, string reason);
+	public delegate bool DMAPConnectionFunc (DPAP.DMAPConnection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void DMAPIdRecordFunc (uint id, DPAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void DMAPResponseHandler (DPAP.DMAPConnection connection, uint status, GLib.Node structure);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", has_target = false)]
-	public delegate unowned string RecordGetValueFunc (DPAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HASH_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]

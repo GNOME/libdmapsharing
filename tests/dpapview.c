@@ -122,27 +122,27 @@ enum  {
 	DPAP_VIEWER_DUMMY_PROPERTY
 };
 static gboolean dpap_viewer_connected_cb (DPAPViewer* self, DMAPConnection* connection, gboolean _result_, const gchar* reason);
-static void __lambda2_ (DPAPViewer* self, gconstpointer k, gconstpointer v);
+static void __lambda2_ (DPAPViewer* self, guint k, DMAPRecord* v);
 GType vala_dpap_record_get_type (void) G_GNUC_CONST;
 GByteArray* vala_dpap_record_get_thumbnail (ValaDPAPRecord* self);
 const gchar* vala_dpap_record_get_filename (ValaDPAPRecord* self);
-static void ___lambda2__gh_func (gconstpointer key, gconstpointer value, gpointer self);
-static void dpap_viewer_service_added_cb (DPAPViewer* self, DMAPMdnsBrowserService* service);
-static gboolean _dpap_viewer_connected_cb_dmap_connection_callback (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self);
+static void ___lambda2__dmap_id_record_func (guint id, DMAPRecord* record, gpointer self);
 DPAPViewer* dpap_viewer_new (GtkBuilder* builder, GError** error);
 DPAPViewer* dpap_viewer_construct (GType object_type, GtkBuilder* builder, GError** error);
 ValaDMAPDb* vala_dmap_db_new (void);
 ValaDMAPDb* vala_dmap_db_construct (GType object_type);
 ValaDPAPRecordFactory* vala_dpap_record_factory_new (void);
 ValaDPAPRecordFactory* vala_dpap_record_factory_construct (GType object_type);
-static void _dpap_viewer_service_added_cb_dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, void* service, gpointer self);
+static void __lambda3_ (DPAPViewer* self, DMAPMdnsBrowser* browser, DMAPMdnsService* service);
+static gboolean _dpap_viewer_connected_cb_dmap_connection_func (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self);
+static void ___lambda3__dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, DMAPMdnsService* service, gpointer self);
 static void dpap_viewer_finalize (DPAPViewer* obj);
 gint _vala_main (gchar** args, int args_length1);
 
 
-static void __lambda2_ (DPAPViewer* self, gconstpointer k, gconstpointer v) {
+static void __lambda2_ (DPAPViewer* self, guint k, DMAPRecord* v) {
 	GdkPixbuf* pixbuf = NULL;
-	gconstpointer _tmp0_ = NULL;
+	DMAPRecord* _tmp0_ = NULL;
 	GByteArray* _tmp1_ = NULL;
 	GByteArray* _tmp2_ = NULL;
 	GtkTreeIter iter = {0};
@@ -151,10 +151,11 @@ static void __lambda2_ (DPAPViewer* self, gconstpointer k, gconstpointer v) {
 	GtkListStore* _tmp17_ = NULL;
 	GtkTreeIter _tmp18_ = {0};
 	GdkPixbuf* _tmp19_ = NULL;
-	gconstpointer _tmp20_ = NULL;
+	DMAPRecord* _tmp20_ = NULL;
 	const gchar* _tmp21_ = NULL;
 	const gchar* _tmp22_ = NULL;
 	GError * _inner_error_ = NULL;
+	g_return_if_fail (v != NULL);
 	pixbuf = NULL;
 	_tmp0_ = v;
 	_tmp1_ = vala_dpap_record_get_thumbnail (G_TYPE_CHECK_INSTANCE_CAST (_tmp0_, TYPE_VALA_DPAP_RECORD, ValaDPAPRecord));
@@ -165,7 +166,7 @@ static void __lambda2_ (DPAPViewer* self, gconstpointer k, gconstpointer v) {
 		gchar* _tmp3_ = NULL;
 		gint _tmp4_ = 0;
 		const gchar* _tmp5_ = NULL;
-		gconstpointer _tmp6_ = NULL;
+		DMAPRecord* _tmp6_ = NULL;
 		GByteArray* _tmp7_ = NULL;
 		GByteArray* _tmp8_ = NULL;
 		guint8* _tmp9_ = NULL;
@@ -232,8 +233,8 @@ static void __lambda2_ (DPAPViewer* self, gconstpointer k, gconstpointer v) {
 }
 
 
-static void ___lambda2__gh_func (gconstpointer key, gconstpointer value, gpointer self) {
-	__lambda2_ (self, key, value);
+static void ___lambda2__dmap_id_record_func (guint id, DMAPRecord* record, gpointer self) {
+	__lambda2_ (self, id, record);
 }
 
 
@@ -248,44 +249,9 @@ static gboolean dpap_viewer_connected_cb (DPAPViewer* self, DMAPConnection* conn
 	_tmp1_ = dmap_db_count ((DMAPDb*) _tmp0_);
 	g_debug ("dpapview.vala:31: %lld entries\n", _tmp1_);
 	_tmp2_ = self->priv->db;
-	dmap_db_foreach ((DMAPDb*) _tmp2_, ___lambda2__gh_func, self);
+	dmap_db_foreach ((DMAPDb*) _tmp2_, ___lambda2__dmap_id_record_func, self);
 	result = TRUE;
 	return result;
-}
-
-
-static gboolean _dpap_viewer_connected_cb_dmap_connection_callback (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self) {
-	gboolean result;
-	result = dpap_viewer_connected_cb (self, connection, _result_, reason);
-	return result;
-}
-
-
-static void dpap_viewer_service_added_cb (DPAPViewer* self, DMAPMdnsBrowserService* service) {
-	DMAPMdnsBrowserService* _tmp0_ = NULL;
-	const gchar* _tmp1_ = NULL;
-	DMAPMdnsBrowserService* _tmp2_ = NULL;
-	const gchar* _tmp3_ = NULL;
-	DMAPMdnsBrowserService* _tmp4_ = NULL;
-	guint _tmp5_ = 0U;
-	ValaDMAPDb* _tmp6_ = NULL;
-	ValaDPAPRecordFactory* _tmp7_ = NULL;
-	DPAPConnection* _tmp8_ = NULL;
-	DMAPConnection* _tmp9_ = NULL;
-	g_return_if_fail (self != NULL);
-	_tmp0_ = service;
-	_tmp1_ = _tmp0_->service_name;
-	_tmp2_ = service;
-	_tmp3_ = _tmp2_->host;
-	_tmp4_ = service;
-	_tmp5_ = _tmp4_->port;
-	_tmp6_ = self->priv->db;
-	_tmp7_ = self->priv->factory;
-	_tmp8_ = dpap_connection_new (_tmp1_, _tmp3_, _tmp5_, (DMAPDb*) _tmp6_, (DMAPRecordFactory*) _tmp7_);
-	_g_object_unref0 (self->priv->connection);
-	self->priv->connection = G_TYPE_CHECK_INSTANCE_CAST (_tmp8_, DMAP_TYPE_CONNECTION, DMAPConnection);
-	_tmp9_ = self->priv->connection;
-	dmap_connection_connect (_tmp9_, _dpap_viewer_connected_cb_dmap_connection_callback, self);
 }
 
 
@@ -294,8 +260,56 @@ static gpointer _g_object_ref0 (gpointer self) {
 }
 
 
-static void _dpap_viewer_service_added_cb_dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, void* service, gpointer self) {
-	dpap_viewer_service_added_cb (self, service);
+static gboolean _dpap_viewer_connected_cb_dmap_connection_func (DMAPConnection* connection, gboolean _result_, const gchar* reason, gpointer self) {
+	gboolean result;
+	result = dpap_viewer_connected_cb (self, connection, _result_, reason);
+	return result;
+}
+
+
+static void __lambda3_ (DPAPViewer* self, DMAPMdnsBrowser* browser, DMAPMdnsService* service) {
+	DMAPMdnsService* _tmp0_ = NULL;
+	gchar* _tmp1_ = NULL;
+	gchar* _tmp2_ = NULL;
+	gchar* _tmp3_ = NULL;
+	DMAPMdnsService* _tmp4_ = NULL;
+	gchar* _tmp5_ = NULL;
+	gchar* _tmp6_ = NULL;
+	gchar* _tmp7_ = NULL;
+	DMAPMdnsService* _tmp8_ = NULL;
+	guint _tmp9_ = 0U;
+	guint _tmp10_ = 0U;
+	ValaDMAPDb* _tmp11_ = NULL;
+	ValaDPAPRecordFactory* _tmp12_ = NULL;
+	DPAPConnection* _tmp13_ = NULL;
+	DMAPConnection* _tmp14_ = NULL;
+	g_return_if_fail (browser != NULL);
+	g_return_if_fail (service != NULL);
+	_tmp0_ = service;
+	g_object_get (_tmp0_, "service-name", &_tmp1_, NULL);
+	_tmp2_ = _tmp1_;
+	_tmp3_ = _tmp2_;
+	_tmp4_ = service;
+	g_object_get (_tmp4_, "host", &_tmp5_, NULL);
+	_tmp6_ = _tmp5_;
+	_tmp7_ = _tmp6_;
+	_tmp8_ = service;
+	g_object_get (_tmp8_, "port", &_tmp9_, NULL);
+	_tmp10_ = _tmp9_;
+	_tmp11_ = self->priv->db;
+	_tmp12_ = self->priv->factory;
+	_tmp13_ = dpap_connection_new (_tmp3_, _tmp7_, _tmp10_, (DMAPDb*) _tmp11_, (DMAPRecordFactory*) _tmp12_);
+	_g_object_unref0 (self->priv->connection);
+	self->priv->connection = G_TYPE_CHECK_INSTANCE_CAST (_tmp13_, DMAP_TYPE_CONNECTION, DMAPConnection);
+	_g_free0 (_tmp7_);
+	_g_free0 (_tmp3_);
+	_tmp14_ = self->priv->connection;
+	dmap_connection_start (_tmp14_, _dpap_viewer_connected_cb_dmap_connection_func, self);
+}
+
+
+static void ___lambda3__dmap_mdns_browser_service_added (DMAPMdnsBrowser* _sender, DMAPMdnsService* service, gpointer self) {
+	__lambda3_ (self, _sender, service);
 }
 
 
@@ -345,11 +359,11 @@ DPAPViewer* dpap_viewer_construct (GType object_type, GtkBuilder* builder, GErro
 	gtk_icon_view_set_pixbuf_column (iconview, 0);
 	gtk_icon_view_set_text_column (iconview, 1);
 	gtk_widget_show_all (widget);
-	_tmp12_ = dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DPAP);
+	_tmp12_ = dmap_mdns_browser_new (DMAP_MDNS_SERVICE_TYPE_DPAP);
 	_g_object_unref0 (self->priv->browser);
 	self->priv->browser = _tmp12_;
 	_tmp13_ = self->priv->browser;
-	g_signal_connect (_tmp13_, "service-added", (GCallback) _dpap_viewer_service_added_cb_dmap_mdns_browser_service_added, self);
+	g_signal_connect (_tmp13_, "service-added", (GCallback) ___lambda3__dmap_mdns_browser_service_added, self);
 	_tmp14_ = self->priv->browser;
 	dmap_mdns_browser_start (_tmp14_, &_inner_error_);
 	if (_inner_error_ != NULL) {

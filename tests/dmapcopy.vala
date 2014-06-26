@@ -65,7 +65,7 @@ private class DPAPCopy {
 		browser = new DMAP.MdnsBrowser (DMAP.MdnsServiceType.DPAP);
 		browser.service_added.connect ((browser, service) => {
 			connection = (DMAP.Connection) new DPAP.Connection (service.service_name, service.host, service.port, db, factory);
-			connection.connect (connected_cb);
+			connection.start (connected_cb);
 		});
 		browser.start ();
 	}
