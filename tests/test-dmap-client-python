@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-# FIXME: dmap-connection.c presently has DAAP_TYPE_SIMPLE_RECORD_FACTORY hard coded.
-
 from gi.repository import GObject
 from gi.repository import GLib
 from gi.repository import DMAP
