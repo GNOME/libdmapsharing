@@ -96,7 +96,7 @@ typedef struct
 	DMAPSharePrivate *priv;
 } DMAPShare;
 
-typedef struct _DMAPMetaDataMap DMAPMetaDataMap;
+typedef struct DMAPMetaDataMap DMAPMetaDataMap;
 
 typedef struct
 {
