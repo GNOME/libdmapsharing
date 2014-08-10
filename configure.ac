@@ -346,8 +346,9 @@ AM_CONDITIONAL(HAVE_VALAC, test -x "$VALAC")
 
 AC_PATH_PROG(VALA_GEN_INTROSPECT, vala-gen-introspect)
 AC_PATH_PROG(VAPIGEN, vapigen)
-AM_CONDITIONAL(BUILD_VAPI, test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN")
-if test -n "$BUILD_VAPI" ; then
+dnl GOBJECT_INTROSPECTION_CHECK sets found_introspection.
+AM_CONDITIONAL(BUILD_VAPI, test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspection")
+if ! test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspection"; then
 	AC_WARN([will not build vapi])
 fi
 
