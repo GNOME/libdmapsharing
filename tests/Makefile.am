@@ -1,3 +1,4 @@
+if WITH_TESTS
 noinst_PROGRAMS = test-dmap-client test-dmap-server
 
 if HAVE_GEE
@@ -12,6 +13,7 @@ if HAVE_CHECK
 noinst_PROGRAMS += unit-test
 
 LIBS += $(CHECK_LIBS)
+endif
 endif
 
 test_dmap_client_SOURCES = \
@@ -53,7 +55,9 @@ test_dmap_server_LDADD = \
 	$(MDNS_LIBS)
 
 if HAVE_VALAC
+if WITH_TESTS
 BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
+endif
 
 dacplisten.stamp: $(dacplisten_VALASOURCES)
 	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject  $^ -C

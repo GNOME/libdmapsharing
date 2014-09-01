@@ -45,6 +45,14 @@ GOBJECT_INTROSPECTION_CHECK([1.30.0])
 GTK_DOC_CHECK(1.0)
 AC_CONFIG_MACRO_DIR(m4)
 
+dnl Test if --disable-tests given
+AC_ARG_ENABLE(tests, [AC_HELP_STRING([--disable-tests],[do not build tests])], tests=$enableval, tests=yes)
+if test x$tests = xyes; then
+	AC_DEFINE(WITH_TESTS,1,[Defined when tests are to be built])
+	AM_CONDITIONAL(WITH_TESTS, true)
+else
+	AM_CONDITIONAL(WITH_TESTS, false)
+fi
 
 dnl Test if --enable-debug given
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],[enable debugging mode])])
