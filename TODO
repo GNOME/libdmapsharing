@@ -34,6 +34,7 @@ daap_record_read, unless I change API (see also dmapd.c)
 API Changes:
 	now_playing_artwork seems to return a filename, so should return a gchar *, not guchar *?
 	Stuff related to Python introspection
+	Allow single client to more easily make use of both DAAP and DPAP (embed type in browser service?)
 
 Mike: Audit remaining GSoC patch:
 --- dmap-db.c
