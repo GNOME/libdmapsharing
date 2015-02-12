@@ -60,19 +60,19 @@ BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
 endif
 
 dacplisten.stamp: $(dacplisten_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject  $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject  $^ -C
 	touch $@
 
 dpapview.stamp: $(dpapview_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gtk+-2.0 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gtk+-2.0 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 	touch $@
 
 dmapcopy.stamp: $(dmapcopy_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 	touch $@
 
 dmapserve.stamp: $(dmapserve_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg glib-2.0 --pkg avahi-gobject $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-3.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 	touch $@
 endif
 
