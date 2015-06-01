@@ -523,6 +523,10 @@ _error:
 	soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 
 	if (NULL != cd) {
+		if (NULL != cd->stream) {
+			g_input_stream_close (cd->stream, NULL, NULL);
+		}
+
 		g_free (cd);
 	}
 
@@ -537,11 +541,7 @@ _error:
 	if (NULL != error) {
 		g_error_free (error);
 	}
-	
-	if (NULL != cd->stream) {
-		g_input_stream_close (cd->stream, NULL, NULL);
-	}
-	
+
 	if (NULL != stream) {
 		g_input_stream_close (stream, NULL, NULL);
 	}

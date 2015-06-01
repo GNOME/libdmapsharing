@@ -126,7 +126,7 @@ dmap_gst_qt_input_stream_new (GInputStream * src_stream)
 
 	gst_bin_add_many (GST_BIN (pipeline), src, decode, convert, audio_encode, mux, sink, NULL);
 
-	if (FALSE == gst_element_link (stream->priv->src, stream->priv->decode)) {
+	if (FALSE == gst_element_link (src, decode)) {
 		g_warning ("Error linking source and decode elements");
 		goto done;
 	}
