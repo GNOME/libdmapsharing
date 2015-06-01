@@ -8,14 +8,14 @@
   <bookinfo>
     <title>libdmapsharing-3.0 Reference Manual</title>
     <releaseinfo>
-      for libdmapsharing-3.0 [VERSION].
-      The latest version of this documentation can be found on-line at
-      <ulink role="online-location" url="http://[SERVER]/libdmapsharing-3.0/index.html">http://[SERVER]/libdmapsharing-3.0/</ulink>.
+      for libdmapsharing 2.9.30.
+      The latest version of this documentation can be found online at
+      <ulink role="online-location" url="https://www.flyn.org/projects/libdmapsharing/doc/">https://www.flyn.org/projects/libdmapsharing/doc/</ulink>.
     </releaseinfo>
   </bookinfo>
 
   <chapter>
-    <title>[Insert title here]</title>
+    <title>Libdmapsharing overview</title>
         <xi:include href="xml/daap-connection.xml"/>
     <xi:include href="xml/daap-record.xml"/>
     <xi:include href="xml/daap-share.xml"/>
