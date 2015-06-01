@@ -166,6 +166,8 @@ namespace DAAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class DMAPMetaDataMap {
+		public uint md;
+		public weak string tag;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -796,6 +798,8 @@ namespace DACP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class DMAPMetaDataMap {
+		public uint md;
+		public weak string tag;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -1430,6 +1434,8 @@ namespace DMAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class MetaDataMap {
+		public uint md;
+		public weak string tag;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -2019,6 +2025,8 @@ namespace DPAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class DMAPMetaDataMap {
+		public uint md;
+		public weak string tag;
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
