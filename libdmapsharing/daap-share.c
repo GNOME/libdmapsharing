@@ -416,10 +416,6 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	ChunkData *cd = NULL;
 
 	cd = g_new (ChunkData, 1);
-	if (NULL == cd) {
-		g_warning ("Error allocating chunk\n");
-		goto _error;
-	}
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 	if (NULL == location) {
