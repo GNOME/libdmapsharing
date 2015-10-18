@@ -420,6 +420,7 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 	if (kDNSServiceErr_NoError == browse_err) {
 		g_debug ("*** Browse Success ****");
 
+		is_success = TRUE;
 		add_browse_to_event_loop (browser);
 	}
 
