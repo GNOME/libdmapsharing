@@ -164,6 +164,40 @@ service_result_available_cb (GIOChannel * gio, GIOCondition condition,
 	return FALSE;
 }
 
+static char *
+extract_name (const char *dns_name)
+{
+        /* Turns "Children's\032Music._daap._tcp.local
+	 * into "Children's Music"
+	 */
+
+	char *name = calloc(strlen(dns_name) + 1, sizeof(char));
+	if (NULL == name) {
+		goto done;
+	}
+
+	char *space;
+	do {
+		space = strstr(dns_name, "\\032");
+		if (NULL != space) {
+			strncat(name, dns_name, space - dns_name);
+			strcat(name, " ");
+		} else {
+			strcat(name, dns_name);
+		}
+
+		dns_name = space + 4;
+	} while (NULL != space);
+
+	char *dot = strchr(name, '.');
+	if (NULL != dot) {
+		*dot = 0x00;
+	}
+
+done:
+	return name;
+}
+
 static void
 dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   DNSServiceFlags flags,
@@ -189,7 +223,7 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 	ctx->flags = flags;
 	ctx->interface_index = interface_index;
 	ctx->service.port = htons (port);
-	ctx->service.name = g_strdup (name);
+	ctx->service.name = extract_name (name);
 	ctx->service.host = g_strdup (host);
 	ctx->service.pair = NULL;
 	ctx->service.password_protected = FALSE;
