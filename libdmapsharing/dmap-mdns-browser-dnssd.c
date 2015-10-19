@@ -411,17 +411,25 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 
 	DNSServiceErrorType browse_err = kDNSServiceErr_Unknown;
 
-	browse_err = DNSServiceBrowse (&(browser->priv->sd_browse_ref), 0,
-	                               kDNSServiceInterfaceIndexAny,
-	                               service_type_name[browser->priv->service_type], 0,
-	                               (DNSServiceBrowseReply) dns_service_browse_reply,
-	                               (void *) browser);
+	browse_err = DNSServiceBrowse (&(browser->priv->sd_browse_ref),
+	                                 0,
+	                                 kDNSServiceInterfaceIndexAny,
+	                                 service_type_name[browser->priv->service_type],
+	                                "",
+	                                (DNSServiceBrowseReply) dns_service_browse_reply,
+	                                (void *) browser);
 
 	if (kDNSServiceErr_NoError == browse_err) {
 		g_debug ("*** Browse Success ****");
 
 		is_success = TRUE;
 		add_browse_to_event_loop (browser);
+	} else {
+		g_debug ("Error starting mDNS discovery using DNS-SD");
+                g_set_error (error,
+                             DMAP_MDNS_BROWSER_ERROR,
+                             DMAP_MDNS_BROWSER_ERROR_FAILED,
+                             "%s", "Unable to activate browser");
 	}
 
 	return is_success;
