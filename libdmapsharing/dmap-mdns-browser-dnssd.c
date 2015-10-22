@@ -33,9 +33,7 @@
 struct _DMAPMdnsBrowserPrivate
 {
 	DMAPMdnsBrowserServiceType service_type;
-
 	DNSServiceRef sd_browse_ref;
-
 	GSList *services;
 	GSList *backlog;
 };
@@ -43,13 +41,9 @@ struct _DMAPMdnsBrowserPrivate
 typedef struct _ServiceContext
 {
 	DNSServiceRef ref;
-
 	DMAPMdnsBrowser *browser;
-
 	DNSServiceFlags flags;
-
 	uint32_t interface_index;
-
 	DMAPMdnsBrowserService service;
 	gchar *domain;
 } ServiceContext;
@@ -68,24 +62,17 @@ static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
 static void
-dnssd_browser_init (DMAPMdnsBrowser * browser)
-{
-	g_debug ("dnssd_browser_init ()");
-}
-
-static void
 dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 {
-	g_debug ("dmap_mdns_browser_init ()");
+	g_assert (NULL != browser);
 
 	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
-	dnssd_browser_init (browser);
 }
 
 static void
 free_service (DMAPMdnsBrowserService * service)
 {
-	g_debug ("free_service ()");
+	g_assert (NULL != service);
 
 	g_free (service->service_name);
 	g_free (service->name);
@@ -97,13 +84,16 @@ free_service (DMAPMdnsBrowserService * service)
 static void
 service_context_free (ServiceContext *ctx)
 {
-	g_debug ("service_context_free ()");
+	g_assert (NULL != ctx);
+	g_assert (NULL != ctx->ref);
+	g_assert (NULL != ctx->browser);
+	g_assert (NULL != ctx->service);
 
 	DNSServiceRefDeallocate (ctx->ref);
 	g_object_unref (ctx->browser);
-	g_free (ctx->service.service_name);
-	g_free (ctx->service.name);
-	g_free (ctx->service.host);
+
+	free_service (&ctx->service);
+
 	g_free (ctx->domain);
 	g_free (ctx);
 }
@@ -111,7 +101,7 @@ service_context_free (ServiceContext *ctx)
 static gboolean
 dmap_mdns_browser_resolve (ServiceContext *context)
 {
-	g_debug ("dmap_mdns_browser_resolve ()");
+	g_assert (NULL != context);
 
 	DMAPMdnsBrowserService *service;
 
@@ -142,25 +132,26 @@ static gboolean
 service_result_available_cb (GIOChannel * gio, GIOCondition condition,
                              ServiceContext *context)
 {
-	g_debug ("service_result_available_cb ()");
+	gboolean fnval = FALSE;
 
 	if (condition & (G_IO_HUP | G_IO_ERR)) {
 		g_warning ("DNS-SD service socket closed");
 		service_context_free (context);
-		return FALSE;
+		goto done;
 	}
 
 	DNSServiceErrorType err = DNSServiceProcessResult (context->ref);
 
 	if (err != kDNSServiceErr_NoError) {
 		g_warning ("Error processing DNS-SD service result");
-		return FALSE;
+		goto done;
 	}
 
 	dmap_mdns_browser_resolve (context);
 
 	service_context_free (context);
 
+done:
 	return FALSE;
 }
 
@@ -209,16 +200,12 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   uint16_t txt_len,
 			   const char *txt_record, void *udata)
 {
-	g_debug ("dns_service_resolve_reply ()");
-
 	ServiceContext *ctx = (ServiceContext *) udata;
 
 	if (error_code != kDNSServiceErr_NoError) {
-		g_debug ("dns_service_resolve_reply ():  fail");
+		g_warning ("dns_service_resolve_reply ():  fail");
 		return;
 	}
-
-	g_debug ("dns_service_resolve_reply ():  success");
 
 	ctx->flags = flags;
 	ctx->interface_index = interface_index;
@@ -232,8 +219,6 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 static gboolean
 add_resolve_to_event_loop (ServiceContext *context)
 {
-	g_debug ("add_resolve_to_event_loop ()");
-
 	int dns_sd_fd = DNSServiceRefSockFD (context->ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
@@ -253,11 +238,11 @@ static gboolean
 browse_result_available_cb (GIOChannel * gio,
 			    GIOCondition condition, DMAPMdnsBrowser * browser)
 {
-	g_debug ("browse_result_available_cb ()");
+	gboolean fnval = FALSE;
 
 	if (condition & (G_IO_HUP | G_IO_ERR )) {
 		g_warning ("DNS-SD browser socket closed");
-		return FALSE;
+		goto done;
 	}
 
 	DNSServiceErrorType err =
@@ -265,7 +250,7 @@ browse_result_available_cb (GIOChannel * gio,
 
 	if (err != kDNSServiceErr_NoError) {
 		g_warning ("Error processing DNS-SD browse result");
-		return FALSE;
+		goto done;
 	}
 
 	while (browser->priv->backlog) {
@@ -290,19 +275,21 @@ browse_result_available_cb (GIOChannel * gio,
 
 		ctx->ref = ref;
 
-		g_debug ("Success processing DNS-SD browse result");
 		add_resolve_to_event_loop (ctx);
 
 		browser->priv->backlog = g_slist_delete_link (browser->priv->backlog, browser->priv->backlog);
+
+		fnval = TRUE;
 	}
 
-	return TRUE;
+done:
+	return fnval;
 }
 
 static gboolean
 add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 {
-	g_debug ("add_browse_to_event_loop ()");
+	gboolean fnval = FALSE;
 
 	int dns_sd_fd = DNSServiceRefSockFD (browser->priv->sd_browse_ref);
 
@@ -311,12 +298,16 @@ add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 	if (!g_io_add_watch (dns_sd_chan,
 	                     G_IO_IN | G_IO_HUP | G_IO_ERR,
 	                     (GIOFunc) browse_result_available_cb, browser)) {
-		g_error ("Error adding SD to event loop");
+		g_warning ("Error adding SD to event loop");
+		goto done;
 	}
 
 	g_io_channel_unref (dns_sd_chan);
 
-	return TRUE;
+	fnval = TRUE;
+
+done:
+	return fnval;
 }
 
 static void
@@ -328,20 +319,15 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 			  const char *regtype,
 			  const char *domain, void *udata)
 {
-	g_debug ("dns_service_browse_reply ()");
-
 	if (error_code != kDNSServiceErr_NoError) {
-		g_debug ("dnsServiceBrowserReply ():  fail");
-		return;
+		g_warning ("dnsServiceBrowserReply ():  fail");
+		goto done;
 	}
 
 	if (!(flags & kDNSServiceFlagsAdd)) {
-		return;
+		goto done;
 	}
 
-	g_debug ("adding a service: %s %s", service_name, domain);
-
-	// Cast the context pointer to a DMAPMdnsBrowser
 	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) udata;
 
 	ServiceContext *context = g_new0 (ServiceContext, 1);
@@ -352,18 +338,19 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 	context->domain = g_strdup (domain);
 
 	browser->priv->backlog = g_slist_prepend (browser->priv->backlog, context);
+
+done:
+	return;
 }
 
 static void
 dmap_mdns_browser_dispose (GObject * object)
 {
-	g_debug ("dmap_mdns_browser_dispose ()");
-
 	DMAPMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
 	GSList *walk;
 	DMAPMdnsBrowserService *service;
 
-	for (walk = browser->priv->services; walk; walk = walk->next) {
+	for (walk = browser->priv->services; NULL != walk; walk = walk->next) {
 		service = (DMAPMdnsBrowserService *) walk->data;
 		free_service (service);
 	}
@@ -376,8 +363,6 @@ dmap_mdns_browser_dispose (GObject * object)
 static void
 dmap_mdns_browser_finalize (GObject * object)
 {
-	g_debug ("dmap_mdns_browser_finalize ()");
-
 	g_signal_handlers_destroy (object);
 	G_OBJECT_CLASS (dmap_mdns_browser_parent_class)->finalize (object);
 }
@@ -385,8 +370,6 @@ dmap_mdns_browser_finalize (GObject * object)
 static void
 dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 {
-	g_debug ("dmap_mdns_browser_class_init()");
-
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
 	dmap_mdns_browser_parent_class = g_type_class_peek_parent (klass);
@@ -419,17 +402,15 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 DMAPMdnsBrowser *
 dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
 {
-	g_debug ("dmap_mdns_browser_new ()");
-
 	DMAPMdnsBrowser *browser_object = 0;
 
 	g_return_val_if_fail (type >= DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID
 			      && type <= DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST,
 			      NULL);
 
-	browser_object =
-		DMAP_MDNS_BROWSER (g_object_new
-				   (DMAP_TYPE_MDNS_BROWSER, NULL));
+	browser_object = DMAP_MDNS_BROWSER (g_object_new
+	                                   (DMAP_TYPE_MDNS_BROWSER,
+	                                    NULL));
 
 	browser_object->priv->service_type = type;
 
@@ -439,9 +420,7 @@ dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
 gboolean
 dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 {
-	g_debug ("dmap_mdns_browser_start ()");
-
-	gboolean is_success = FALSE;
+	gboolean fnval = FALSE;
 
 	DNSServiceErrorType browse_err = kDNSServiceErr_Unknown;
 
@@ -454,19 +433,17 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 	                                (void *) browser);
 
 	if (kDNSServiceErr_NoError == browse_err) {
-		g_debug ("*** Browse Success ****");
-
-		is_success = TRUE;
+		fnval = TRUE;
 		add_browse_to_event_loop (browser);
 	} else {
-		g_debug ("Error starting mDNS discovery using DNS-SD");
+		g_warning ("Error starting mDNS discovery using DNS-SD");
                 g_set_error (error,
                              DMAP_MDNS_BROWSER_ERROR,
                              DMAP_MDNS_BROWSER_ERROR_FAILED,
                              "%s", "Unable to activate browser");
 	}
 
-	return is_success;
+	return fnval;
 }
 
 /**
@@ -476,8 +453,6 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 gboolean
 dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 {
-	g_debug ("dmap_mdns_browser_stop ()");
-
 	DNSServiceRefDeallocate (browser->priv->sd_browse_ref);
 	return TRUE;
 }
@@ -485,8 +460,6 @@ dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 GQuark
 dmap_mdns_browser_error_quark (void)
 {
-	g_debug ("dmap_mdns_browser_error_quark ()");
-
 	static GQuark quark = 0;
 
 	if (!quark) {
@@ -501,8 +474,6 @@ dmap_mdns_browser_error_quark (void)
 G_CONST_RETURN GSList *
 dmap_mdns_browser_get_services (DMAPMdnsBrowser * browser)
 {
-	g_debug ("dmap_mdns_browser_get_services ()");
-
 	g_return_val_if_fail (browser != NULL, NULL);
 
 	return browser->priv->services;
@@ -511,8 +482,6 @@ dmap_mdns_browser_get_services (DMAPMdnsBrowser * browser)
 DMAPMdnsBrowserServiceType
 dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
 {
-	g_debug ("dmap_mdns_browser_get_service_type ()");
-
 	g_return_val_if_fail (browser != NULL,
 			      DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID);
 
