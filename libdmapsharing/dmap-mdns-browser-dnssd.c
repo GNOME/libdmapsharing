@@ -87,7 +87,6 @@ service_context_free (ServiceContext *ctx)
 	g_assert (NULL != ctx);
 	g_assert (NULL != ctx->ref);
 	g_assert (NULL != ctx->browser);
-	g_assert (NULL != ctx->service);
 
 	DNSServiceRefDeallocate (ctx->ref);
 	g_object_unref (ctx->browser);
@@ -152,7 +151,7 @@ service_result_available_cb (GIOChannel * gio, GIOCondition condition,
 	service_context_free (context);
 
 done:
-	return FALSE;
+	return fnval;
 }
 
 static char *
