@@ -40,7 +40,8 @@ struct _DMAPMdnsBrowserPrivate
 
 typedef struct _ServiceContext
 {
-	DNSServiceRef ref;
+	DNSServiceRef service_discovery_ref;
+	DNSServiceRef host_lookup_ref;
 	DMAPMdnsBrowser *browser;
 	DNSServiceFlags flags;
 	uint32_t interface_index;
@@ -85,20 +86,18 @@ static void
 service_context_free (ServiceContext *ctx)
 {
 	g_assert (NULL != ctx);
-	g_assert (NULL != ctx->ref);
 	g_assert (NULL != ctx->browser);
 
-	DNSServiceRefDeallocate (ctx->ref);
-	g_object_unref (ctx->browser);
-
 	free_service (&ctx->service);
+
+	g_object_unref (ctx->browser);
 
 	g_free (ctx->domain);
 	g_free (ctx);
 }
 
 static gboolean
-dmap_mdns_browser_resolve (ServiceContext *context)
+signal_service_added (ServiceContext *context)
 {
 	g_assert (NULL != context);
 
@@ -125,33 +124,6 @@ dmap_mdns_browser_resolve (ServiceContext *context)
 		       dmap_mdns_browser_signals[SERVICE_ADDED], 0, service);
 
 	return TRUE;
-}
-
-static gboolean
-service_result_available_cb (GIOChannel * gio, GIOCondition condition,
-                             ServiceContext *context)
-{
-	gboolean fnval = FALSE;
-
-	if (condition & (G_IO_HUP | G_IO_ERR)) {
-		g_warning ("DNS-SD service socket closed");
-		service_context_free (context);
-		goto done;
-	}
-
-	DNSServiceErrorType err = DNSServiceProcessResult (context->ref);
-
-	if (err != kDNSServiceErr_NoError) {
-		g_warning ("Error processing DNS-SD service result");
-		goto done;
-	}
-
-	dmap_mdns_browser_resolve (context);
-
-	service_context_free (context);
-
-done:
-	return fnval;
 }
 
 static char *
@@ -189,6 +161,123 @@ done:
 }
 
 static void
+dns_service_browse_reply (DNSServiceRef sd_ref,
+			  DNSServiceFlags flags,
+			  uint32_t interface_index,
+			  DNSServiceErrorType error_code,
+			  const char *service_name,
+			  const char *regtype,
+			  const char *domain, void *udata)
+{
+	if (error_code != kDNSServiceErr_NoError) {
+		g_warning ("dnsServiceBrowserReply ():  fail");
+		goto done;
+	}
+
+	if (!(flags & kDNSServiceFlagsAdd)) {
+		goto done;
+	}
+
+	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) udata;
+
+	ServiceContext *context = g_new0 (ServiceContext, 1);
+	context->browser = g_object_ref (browser);
+	context->flags = flags;
+	context->interface_index = interface_index;
+	context->service.service_name = g_strdup (service_name);
+	context->domain = g_strdup (domain);
+
+	browser->priv->backlog = g_slist_prepend (browser->priv->backlog, context);
+
+done:
+	return;
+}
+
+static void
+dns_host_resolve_reply (DNSServiceRef sd_ref,
+                        DNSServiceFlags flags,
+                        uint32_t interface_index,
+                        DNSServiceErrorType error_code,
+                        const char *hostname,
+                        const struct sockaddr *address,
+                        uint32_t ttl,
+                        void *udata)
+{
+	ServiceContext *ctx = (ServiceContext *) udata;
+
+	if (error_code != kDNSServiceErr_NoError) {
+		g_warning ("dns_host_resolve_reply ():  fail");
+		return;
+	}
+
+	switch(address->sa_family) {
+	case AF_INET: {
+		struct sockaddr_in *addr_in = (struct sockaddr_in *) address;
+		ctx->service.host = malloc(INET_ADDRSTRLEN);
+		inet_ntop(AF_INET, &(addr_in->sin_addr), ctx->service.host, INET_ADDRSTRLEN);
+		break;
+	}
+	case AF_INET6: {
+		struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *) address;
+		ctx->service.host = malloc(INET6_ADDRSTRLEN);
+		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), ctx->service.host, INET6_ADDRSTRLEN);
+		break;
+	}
+	default:
+		ctx->service.host = NULL;
+		break;
+	}
+}
+
+static gboolean
+lookup_result_available_cb (GIOChannel * gio, GIOCondition condition,
+                             ServiceContext *context)
+{
+	gboolean fnval = FALSE;
+
+	if (condition & (G_IO_HUP | G_IO_ERR)) {
+		g_warning ("DNS-SD service socket closed");
+		goto done;
+	}
+
+	/* Obtain IP address (dns_host_resolve_reply) */
+	DNSServiceErrorType err = DNSServiceProcessResult (context->host_lookup_ref);
+	if (err != kDNSServiceErr_NoError) {
+		g_warning ("Error processing DNS-SD service result");
+		goto done;
+	}
+
+	signal_service_added (context);
+
+done:
+	DNSServiceRefDeallocate (context->host_lookup_ref);
+
+	if (NULL != context) {
+		service_context_free (context);
+	}
+
+	return fnval;
+}
+
+static gboolean
+add_host_lookup_to_event_loop (ServiceContext *context)
+{
+	int dns_sd_fd = DNSServiceRefSockFD (context->host_lookup_ref);
+
+	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
+
+	if (!g_io_add_watch (dns_sd_chan,
+	                     G_IO_IN | G_IO_HUP | G_IO_ERR,
+	                     (GIOFunc) lookup_result_available_cb, context)) {
+		g_warning ("Error adding host lookup to event loop");
+	}
+
+	g_io_channel_unref (dns_sd_chan);
+
+	return TRUE;
+}
+
+static void
 dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   DNSServiceFlags flags,
 			   uint32_t interface_index,
@@ -197,8 +286,10 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 			   const char *host,
 			   uint16_t port,
 			   uint16_t txt_len,
-			   const char *txt_record, void *udata)
+			   const char *txt_record,
+                           void *udata)
 {
+	DNSServiceRef ref;
 	ServiceContext *ctx = (ServiceContext *) udata;
 
 	if (error_code != kDNSServiceErr_NoError) {
@@ -210,15 +301,54 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 	ctx->interface_index = interface_index;
 	ctx->service.port = htons (port);
 	ctx->service.name = extract_name (name);
-	ctx->service.host = g_strdup (host);
 	ctx->service.pair = NULL;
 	ctx->service.password_protected = FALSE;
+
+	DNSServiceErrorType err = DNSServiceGetAddrInfo (&ref,
+	                              0,
+	                              ctx->interface_index,
+	                              kDNSServiceProtocol_IPv4,
+	                              host,
+	                             (DNSServiceGetAddrInfoReply) dns_host_resolve_reply,
+	                             (void *) ctx);
+	if (err != kDNSServiceErr_NoError) {
+		g_warning ("Error setting up DNS-SD address info handler");
+		service_context_free (ctx);
+	}
+
+	ctx->host_lookup_ref = ref;
+
+	add_host_lookup_to_event_loop (ctx);
 }
 
 static gboolean
-add_resolve_to_event_loop (ServiceContext *context)
+service_result_available_cb (GIOChannel * gio, GIOCondition condition,
+                             ServiceContext *context)
 {
-	int dns_sd_fd = DNSServiceRefSockFD (context->ref);
+	gboolean fnval = FALSE;
+
+	if (condition & (G_IO_HUP | G_IO_ERR)) {
+		g_warning ("DNS-SD service socket closed");
+		goto done;
+	}
+
+	/* Obtain service description (dns_service_resolve_reply) */
+	DNSServiceErrorType err = DNSServiceProcessResult (context->service_discovery_ref);
+	if (err != kDNSServiceErr_NoError) {
+		g_warning ("Error processing DNS-SD service result");
+		goto done;
+	}
+
+done:
+	DNSServiceRefDeallocate (context->service_discovery_ref);
+
+	return fnval;
+}
+
+static gboolean
+add_service_discovery_to_event_loop (ServiceContext *context)
+{
+	int dns_sd_fd = DNSServiceRefSockFD (context->service_discovery_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
@@ -244,17 +374,15 @@ browse_result_available_cb (GIOChannel * gio,
 		goto done;
 	}
 
-	DNSServiceErrorType err =
-		DNSServiceProcessResult (browser->priv->sd_browse_ref);
-
+	DNSServiceErrorType err = DNSServiceProcessResult (browser->priv->sd_browse_ref);
 	if (err != kDNSServiceErr_NoError) {
 		g_warning ("Error processing DNS-SD browse result");
 		goto done;
 	}
 
 	while (browser->priv->backlog) {
-		ServiceContext *ctx = (ServiceContext *) browser->priv->backlog->data;
 		DNSServiceRef ref;
+		ServiceContext *ctx = (ServiceContext *) browser->priv->backlog->data;
 
 		err = DNSServiceResolve (&ref,
 		                         ctx->flags,
@@ -272,9 +400,9 @@ browse_result_available_cb (GIOChannel * gio,
 			continue;
 		}
 
-		ctx->ref = ref;
+		ctx->service_discovery_ref = ref;
 
-		add_resolve_to_event_loop (ctx);
+		add_service_discovery_to_event_loop (ctx);
 
 		browser->priv->backlog = g_slist_delete_link (browser->priv->backlog, browser->priv->backlog);
 
@@ -307,39 +435,6 @@ add_browse_to_event_loop (DMAPMdnsBrowser *browser)
 
 done:
 	return fnval;
-}
-
-static void
-dns_service_browse_reply (DNSServiceRef sd_ref,
-			  DNSServiceFlags flags,
-			  uint32_t interface_index,
-			  DNSServiceErrorType error_code,
-			  const char *service_name,
-			  const char *regtype,
-			  const char *domain, void *udata)
-{
-	if (error_code != kDNSServiceErr_NoError) {
-		g_warning ("dnsServiceBrowserReply ():  fail");
-		goto done;
-	}
-
-	if (!(flags & kDNSServiceFlagsAdd)) {
-		goto done;
-	}
-
-	DMAPMdnsBrowser *browser = (DMAPMdnsBrowser *) udata;
-
-	ServiceContext *context = g_new0 (ServiceContext, 1);
-	context->browser = g_object_ref (browser);
-	context->flags = flags;
-	context->interface_index = interface_index;
-	context->service.service_name = g_strdup (service_name);
-	context->domain = g_strdup (domain);
-
-	browser->priv->backlog = g_slist_prepend (browser->priv->backlog, context);
-
-done:
-	return;
 }
 
 static void
@@ -445,14 +540,13 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 	return fnval;
 }
 
-/**
- *  Note that you must terminate the connection with the daemon and
- *  free any memory associated with DNSServiceRef
- */
 gboolean
 dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 {
-	DNSServiceRefDeallocate (browser->priv->sd_browse_ref);
+	if (NULL != browser->priv->sd_browse_ref) {
+		DNSServiceRefDeallocate (browser->priv->sd_browse_ref);
+	}
+
 	return TRUE;
 }
 
