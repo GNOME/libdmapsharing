@@ -1226,6 +1226,7 @@ dmap_connection_setup (DMAPConnection * connection)
 			   connection->priv->host);
 	soup_uri_set_port (connection->priv->base_uri,
 			   connection->priv->port);
+	soup_uri_set_path (connection->priv->base_uri, "");
 }
 
 // FIXME: it would be nice if this mirrored the use of DMAPMdnsBrowser. That is, connect callback handler to a signal.
