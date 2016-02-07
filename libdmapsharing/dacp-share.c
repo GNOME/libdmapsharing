@@ -531,38 +531,20 @@ dacp_share_send_playstatusupdate (DACPShare * share)
 	GSList *list;
 	SoupServer *server = NULL;
 
-	g_object_get (share, "server-ipv4", &server, NULL);
+	g_object_get (share, "server", &server, NULL);
 	if (server) {
 		for (list = share->priv->update_queue; list;
 		     list = list->next) {
 			dacp_share_fill_playstatusupdate (share,
-							  (SoupMessage *)
-							  list->data);
+			                                  (SoupMessage*) list->data);
 			soup_server_unpause_message (server,
-						     (SoupMessage *)
-						     list->data);
+			                             (SoupMessage*) list->data);
 		}
 		g_object_unref (server);
 	}
-
-	server = NULL;
-
-	g_object_get (share, "server-ipv6", &server, NULL);
-	if (server) {
-		for (list = share->priv->update_queue; list;
-		     list = list->next) {
-			dacp_share_fill_playstatusupdate (share,
-							  (SoupMessage *)
-							  list->data);
-			soup_server_unpause_message (server,
-						     (SoupMessage *)
-						     list->data);
-		}
-		g_object_unref (server);
-	}
-
 	g_slist_free (share->priv->update_queue);
 	share->priv->update_queue = NULL;
+	g_object_unref (server);
 }
 
 static void

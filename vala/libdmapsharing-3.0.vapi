@@ -227,9 +227,7 @@ namespace DAAP {
 		[NoAccessorMethod]
 		public uint revision_number { get; set; }
 		[NoAccessorMethod]
-		public Soup.Server server_ipv4 { owned get; }
-		[NoAccessorMethod]
-		public Soup.Server server_ipv6 { owned get; }
+		public Soup.Server server { owned get; }
 		[NoAccessorMethod]
 		public string transcode_mimetype { owned get; construct; }
 		[CCode (array_length = false, array_null_terminated = true)]
@@ -859,9 +857,7 @@ namespace DACP {
 		[NoAccessorMethod]
 		public uint revision_number { get; set; }
 		[NoAccessorMethod]
-		public Soup.Server server_ipv4 { owned get; }
-		[NoAccessorMethod]
-		public Soup.Server server_ipv6 { owned get; }
+		public Soup.Server server { owned get; }
 		[NoAccessorMethod]
 		public string transcode_mimetype { owned get; construct; }
 		[CCode (array_length = false, array_null_terminated = true)]
@@ -1494,9 +1490,7 @@ namespace DMAP {
 		[NoAccessorMethod]
 		public uint revision_number { get; set; }
 		[NoAccessorMethod]
-		public Soup.Server server_ipv4 { owned get; }
-		[NoAccessorMethod]
-		public Soup.Server server_ipv6 { owned get; }
+		public Soup.Server server { owned get; }
 		[NoAccessorMethod]
 		public string transcode_mimetype { owned get; construct; }
 		[CCode (array_length = false, array_null_terminated = true)]
@@ -2086,9 +2080,7 @@ namespace DPAP {
 		[NoAccessorMethod]
 		public uint revision_number { get; set; }
 		[NoAccessorMethod]
-		public Soup.Server server_ipv4 { owned get; }
-		[NoAccessorMethod]
-		public Soup.Server server_ipv6 { owned get; }
+		public Soup.Server server { owned get; }
 		[NoAccessorMethod]
 		public string transcode_mimetype { owned get; construct; }
 		[CCode (array_length = false, array_null_terminated = true)]
