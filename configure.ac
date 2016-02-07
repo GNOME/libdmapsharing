@@ -292,7 +292,8 @@ AC_SUBST(MDNS_CFLAGS)
 AC_SUBST(MDNS_LIBS)
 
 dnl Check for libsoup, needed for DAAP and audioscrobbler
-PKG_CHECK_MODULES(SOUP, libsoup-2.4,
+dnl 2.48.0 is required so we can use the new SoupServer API.
+PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.48.0,
   HAVE_LIBSOUP=yes,
   HAVE_LIBSOUP=no)
 
@@ -309,24 +310,6 @@ fi
 
 AC_SUBST(SOUP_CFLAGS)
 AC_SUBST(SOUP_LIBS)
-
-dnl Check for libsoup again, this time >= 2.25.92, needed for HTTP 1.0
-PKG_CHECK_MODULES(SOUP_ENCODING_EOF, libsoup-2.4 >= 2.25.92,
-  HAVE_ENCODING_EOF=yes,
-  HAVE_ENCODING_EOF=no)
-
-if test x"$HAVE_ENCODING_EOF" = "xyes"; then
-  AC_DEFINE(HAVE_ENCODING_EOF, 1, [Define if libsoup supports SOUP_ENCODING_EOF])
-else
-  AC_WARN(Installed version of libsoup does not support)
-  AC_WARN(SOUP_ENCODING_EOF. HTTP 1.0 support will not be)
-  AC_WARN(built. Roku clients may be affected.)
-fi
-
-dnl Check for libsoup again, this time >= 2.32.2, needed for
-dnl DACP + Apple Remote App (actually 2.32) and IPv6 (tested 2.32.2)
-PKG_CHECK_MODULES(SOUP_APPLE_REMOTE_APP, libsoup-2.4 >= 2.32.2, ,
-  AC_WARN(Apple Remote App (DACP) and IPv6 may not work with libsoup < 2.32.2))
 
 dnl Check for GStreamer App, needed for transcoding
 dnl gstreamer-plugins-base >= 0.10.23.2 for GNOME Bugzilla #588205 & #587896.

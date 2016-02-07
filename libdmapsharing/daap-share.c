@@ -489,13 +489,8 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 		soup_message_headers_set_content_length (message->response_headers, filesize);
 	} else if (soup_message_get_http_version (message) == SOUP_HTTP_1_0) {
 		/* NOTE: Roku clients support only HTTP 1.0. */
-#ifdef HAVE_ENCODING_EOF
 		g_debug ("Using HTTP 1.0 encoding.");
 		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_EOF);
-#else
-		g_warning ("Received HTTP 1.0 request, but not built with HTTP 1.0 support");
-		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_CHUNKED);
-#endif
 	} else {
 		/* NOTE: Can not provide Content-Length when performing
 		 * real-time transcoding.

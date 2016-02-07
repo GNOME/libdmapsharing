@@ -6,7 +6,7 @@ Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
 Group: Development/Libraries
-BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32 gobject-introspection-devel
+BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.48 gobject-introspection-devel
 BuildRequires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
 
 %description 
