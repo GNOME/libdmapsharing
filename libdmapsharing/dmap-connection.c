@@ -1215,7 +1215,7 @@ dmap_connection_authenticate_message (DMAPConnection * connection, SoupSession *
 void
 dmap_connection_setup (DMAPConnection * connection)
 {
-	connection->priv->session = soup_session_async_new ();
+	connection->priv->session = soup_session_new ();
 
 	g_signal_connect (connection->priv->session, "authenticate", G_CALLBACK(authenticate_cb), connection);
 
