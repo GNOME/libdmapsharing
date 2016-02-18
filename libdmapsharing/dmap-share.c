@@ -1809,6 +1809,7 @@ _dmap_share_databases (DMAPShare * share,
 					 accumulate_mlcl_size_and_ids,
 					 share_bitwise);
 		}
+		share_bitwise->share = share;
 
 		/* 2: */
 		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
