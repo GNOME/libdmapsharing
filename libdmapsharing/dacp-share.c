@@ -540,10 +540,10 @@ dacp_share_send_playstatusupdate (DACPShare * share)
 			soup_server_unpause_message (server,
 			                             (SoupMessage*) list->data);
 		}
+		g_object_unref (server);
 	}
 	g_slist_free (share->priv->update_queue);
 	share->priv->update_queue = NULL;
-	g_object_unref (server);
 }
 
 static void
