@@ -27,7 +27,7 @@ private class DPAPCopy {
 	private ValaDPAPRecordFactory factory;
 
 	private bool connected_cb (DMAP.Connection connection, bool result, string? reason) {
-		GLib.debug ("%lld entries\n", db.count ());
+		GLib.debug ("%" + int64.FORMAT + " entries\n", db.count ());
 
 		db.foreach ((k, v) => {
 
