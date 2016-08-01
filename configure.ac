@@ -359,10 +359,15 @@ if test -n "$BUILD_DPAPVIEW" ; then
 	AC_WARN([will not build dpapview])
 fi
 
-PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
-AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
-if test "x$have_check" = "xyes"; then
-	AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
+AC_ARG_ENABLE(check, [  --disable-check         do not build check support], enable_check=$enableval, enable_check=yes)
+if test x$enable_check = xyes; then
+	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
+	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
+	if test "x$have_check" = "xyes"; then
+		AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
+	fi
+else
+	AM_CONDITIONAL(HAVE_CHECK, false)
 fi
 
 AC_CHECK_LIB(z, uncompress)
