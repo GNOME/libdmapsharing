@@ -1256,7 +1256,7 @@ dmap_connection_connect (DMAPConnection * connection,
 		g_strdup_printf ("daap://%s:%d", connection->priv->host,
 				 connection->priv->port);
 
-	rdata = g_new (ConnectionResponseData, 1);
+	rdata = g_new0 (ConnectionResponseData, 1);
 	rdata->connection = g_object_ref (connection);
 	rdata->callback = callback;
 	rdata->data = user_data;
@@ -1334,7 +1334,7 @@ dmap_connection_disconnect (DMAPConnection * connection,
 		// FIXME: GDK_THREADS_ENTER ();
 	}
 
-	rdata = g_new (ConnectionResponseData, 1);
+	rdata = g_new0 (ConnectionResponseData, 1);
 	rdata->connection = g_object_ref (connection);
 	rdata->callback = callback;
 	rdata->data = user_data;

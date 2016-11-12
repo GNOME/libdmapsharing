@@ -388,11 +388,11 @@ mdns_remote_added (DMAPMdnsBrowser * browser,
 {
 	DACPRemoteInfo *remote_info;
 
-	remote_info = g_new (DACPRemoteInfo, 1);
+	remote_info = g_new0 (DACPRemoteInfo, 1);
 	remote_info->host = g_strdup (service->host);
 	remote_info->port = service->port;
-	remote_info->connection = NULL;
 	remote_info->pair_txt = g_strdup (service->pair);
+	remote_info->connection = NULL;
 
 	g_debug ("New Remote found: %s name=%s host=%s port=%u pair=%s",
 		 service->service_name,

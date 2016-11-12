@@ -103,7 +103,7 @@ signal_service_added (ServiceContext *context)
 
 	DMAPMdnsBrowserService *service;
 
-	service = g_new (DMAPMdnsBrowserService, 1);
+	service = g_new0 (DMAPMdnsBrowserService, 1);
 
 	// FIXME: The name and service_name variables need to be renamed.
 	// Wait until working on DACP because I think this is when
@@ -114,6 +114,7 @@ signal_service_added (ServiceContext *context)
 	service->port = context->service.port;
 	service->pair = g_strdup (context->service.pair);
 	service->password_protected = context->service.password_protected;
+	service->transport_protocol = DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP;
 
 	// add to the services list
 	context->browser->priv->services =

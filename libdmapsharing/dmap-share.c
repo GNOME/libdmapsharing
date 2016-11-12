@@ -1786,8 +1786,9 @@ _dmap_share_databases (DMAPShare * share,
 		 */
 
 		/* 1: */
-		share_bitwise = g_new (struct share_bitwise_t, 1);
+		share_bitwise = g_new0 (struct share_bitwise_t, 1);
 
+		share_bitwise->share = share;
 		share_bitwise->mb = mb;
 		share_bitwise->id_list = NULL;
 		share_bitwise->size = 0;
@@ -1809,7 +1810,6 @@ _dmap_share_databases (DMAPShare * share,
 					 accumulate_mlcl_size_and_ids,
 					 share_bitwise);
 		}
-		share_bitwise->share = share;
 
 		/* 2: */
 		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);

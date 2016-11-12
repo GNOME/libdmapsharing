@@ -415,7 +415,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	GError *error = NULL;
 	ChunkData *cd = NULL;
 
-	cd = g_new (ChunkData, 1);
+	cd = g_new0 (ChunkData, 1);
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 	if (NULL == location) {

@@ -284,7 +284,7 @@ dmap_mdns_publisher_publish (DMAPMdnsPublisher * publisher,
 		return FALSE;
 	}
 
-	service = g_new (struct DMAPMdnsPublisherService, 1);
+	service = g_new0 (struct DMAPMdnsPublisherService, 1);
 
 	service->name = g_strdup (name);
 	service->port = port;

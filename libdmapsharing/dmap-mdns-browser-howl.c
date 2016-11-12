@@ -267,13 +267,15 @@ resolve_cb (sw_discovery discovery,
 		name = g_strdup (service_name);
 	}
 
-	service = g_new (DMAPMdnsBrowserService, 1);
+	service = g_new0 (DMAPMdnsBrowserService, 1);
 	service->service_name = g_strdup (service_name);
 	service->name = name;
 	service->host = g_strdup (host);
 	service->port = port;
 	service->password_protected = pp;
 	service->pair = pair;
+	service->transport_protocol = DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP;
+
 	browser->priv->services =
 		g_slist_append (browser->priv->services, service);
 

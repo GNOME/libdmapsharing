@@ -431,7 +431,7 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 
 		avahi_address_snprint (host, AVAHI_ADDRESS_STR_MAX, address);
 
-		service = g_new (DMAPMdnsBrowserService, 1);
+		service = g_new0 (DMAPMdnsBrowserService, 1);
 		service->service_name = g_strdup (service_name);
 		service->name = name;
 		service->host = g_strdup (host);
