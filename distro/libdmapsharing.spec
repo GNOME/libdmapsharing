@@ -1,13 +1,15 @@
 Name: libdmapsharing
-Version: 2.9.24
+Version: 2.9.36
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
 Group: Development/Libraries
-BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.48 gobject-introspection-devel
-BuildRequires: avahi-glib-devel, gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
+BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32
+BuildRequires: gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
+BuildRequires: pkgconfig(avahi-client) pkgconfig(avahi-glib)
+BuildRequires: vala-tools libgee-devel
 
 %description 
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -15,12 +17,10 @@ DAAP and DPAP.
 
 %files 
 %{_libdir}/libdmapsharing-3.0.so.*
-%{_libdir}/girepository-1.0/DMAP*.typelib
-%doc AUTHORS COPYING ChangeLog NEWS README
-
+%doc AUTHORS COPYING ChangeLog README
 
 %package devel
-Summary: Files needed to develop applications using libdmapsharing
+Summary: Libraries/include files for libdmapsharing
 Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
 
@@ -33,14 +33,28 @@ other resources needed for developing applications using libdmapsharing.
 %{_libdir}/pkgconfig/libdmapsharing-3.0.pc
 %{_includedir}/libdmapsharing-3.0/
 %{_libdir}/libdmapsharing-3.0.so
-%{_datadir}/gir-1.0/DMAP*.gir
+%{_libdir}/girepository-1.0/DMAP-3.0.typelib
 %{_datadir}/gtk-doc/html/libdmapsharing-3.0
+%{_datadir}/gir-1.0/DMAP-3.0.gir
+
+%package vala
+Summary: Vala language bindings for libdmapsharing
+Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}
+
+%description vala
+libdmapsharing implements the DMAP protocols. This includes support for
+DAAP and DPAP.  This package provides the Vala language bindings for
+libdmapsharing.
+
+%files vala
+%{_datadir}/vala/vapi/libdmapsharing-3.0.vapi
 
 %prep
 %setup -q
 
 %build
-%configure --disable-static
+%configure --disable-static --disable-tests --disable-check
 make %{?_smp_mflags}
 
 %install
@@ -52,8 +66,55 @@ rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-3.0.la
 %postun -p /sbin/ldconfig
 
 %changelog
-* Sat Nov 23 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.24-1
+* Mon Aug 01 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.36-1
+- new upstream version to fix Bugzilla #1158652
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.30-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.30-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+
+* Mon Mar 16 2015 Than Ngo <than@redhat.com> - 2.9.30-2
+- bump release and rebuild so that koji-shadow can rebuild it
+  against new gcc on secondary arch
+
+* Sat Feb 07 2015 W. Michael Petullo <mike[@]flyn.org> - 2.9.30-1
 - new upstream version
+
+* Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.29-2
+- add DMAP-3.0.typelib and DMAP-3.0.gir
+
+* Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.29-1
+- new upstream version
+- do not build tests
+
+* Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.28-3
+- require libgee-devel in order to build
+
+* Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.28-2
+- package Vala support
+
+* Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.28-1
+- new upstream version
+
+* Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.24-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
+
+* Sat Jun 07 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.24-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
+
+* Sun Dec 22 2013 Ville Skyttä <ville.skytta@iki.fi> - 2.9.24-2
+- Drop empty NEWS from docs.
+
+* Thu Nov 07 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.24-1
+- new upstream version
+
+* Thu Sep 26 2013 Rex Dieter <rdieter@fedoraproject.org> 2.9.18-3
+- add explicit avahi build deps
+
+* Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.18-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
 * Fri Jul 05 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.18-1
 - new upstream version
