@@ -296,12 +296,8 @@ _dmap_share_server_start (DMAPShare *share)
 	}
 
 	listening_uri_list = soup_server_get_uris (share->priv->server);
-
-	if (error != NULL || listening_uri_list == NULL) {
-		g_warning ("Unable to start music sharing server on any port: %s. ",
-		           error->message);
-		g_clear_error (&error);
-
+	if (listening_uri_list == NULL) {
+		g_warning ("Unable to start music sharing server on any port.");
 		return FALSE;
 	}
 
