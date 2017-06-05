@@ -292,7 +292,7 @@ _dmap_share_server_start (DMAPShare *share)
 		g_clear_error (&error);
 
 		soup_server_listen_all (share->priv->server, SOUP_ADDRESS_ANY_PORT,
-		                        SOUP_SERVER_LISTEN_IPV6_ONLY, &error);
+		                        0, &error);
 	}
 
 	listening_uri_list = soup_server_get_uris (share->priv->server);
