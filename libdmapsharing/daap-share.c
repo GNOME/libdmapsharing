@@ -50,7 +50,6 @@ static void daap_share_set_property (GObject * object,
 static void daap_share_get_property (GObject * object,
 				     guint prop_id,
 				     GValue * value, GParamSpec * pspec);
-static void daap_share_dispose (GObject * object);
 guint daap_share_get_desired_port (DMAPShare * share);
 const char *daap_share_get_type_of_service (DMAPShare * share);
 void daap_share_server_info (DMAPShare * share,
@@ -100,7 +99,6 @@ daap_share_class_init (DAAPShareClass * klass)
 
 	object_class->get_property = daap_share_get_property;
 	object_class->set_property = daap_share_set_property;
-	object_class->dispose = daap_share_dispose;
 
 	parent_class->get_desired_port = daap_share_get_desired_port;
 	parent_class->get_type_of_service = daap_share_get_type_of_service;
@@ -147,12 +145,6 @@ daap_share_get_property (GObject * object,
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
 	}
-}
-
-static void
-daap_share_dispose (GObject * object)
-{
-	/* FIXME: implement in parent */
 }
 
 DAAPShare *
