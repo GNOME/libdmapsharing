@@ -77,18 +77,6 @@ static void add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer mb);
 #define DAAP_TYPE_OF_SERVICE "_daap._tcp"
 #define DAAP_PORT 3689
 
-struct DAAPSharePrivate
-{
-	gchar unused;
-};
-
-#define DAAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAAP_TYPE_SHARE, DAAPSharePrivate))
-
-enum
-{
-	PROP_0,
-};
-
 G_DEFINE_TYPE (DAAPShare, daap_share, DMAP_TYPE_SHARE);
 
 static void
@@ -96,9 +84,6 @@ daap_share_class_init (DAAPShareClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DMAPShareClass *parent_class = DMAP_SHARE_CLASS (object_class);
-
-	object_class->get_property = daap_share_get_property;
-	object_class->set_property = daap_share_set_property;
 
 	parent_class->get_desired_port = daap_share_get_desired_port;
 	parent_class->get_type_of_service = daap_share_get_type_of_service;
@@ -109,42 +94,11 @@ daap_share_class_init (DAAPShareClass * klass)
 	parent_class->databases_browse_xxx = databases_browse_xxx;
 	parent_class->databases_items_xxx = databases_items_xxx;
 	parent_class->server_info = daap_share_server_info;
-
-	g_type_class_add_private (klass, sizeof (DAAPSharePrivate));
 }
 
 static void
 daap_share_init (DAAPShare * share)
 {
-	share->priv = DAAP_SHARE_GET_PRIVATE (share);
-	/* FIXME: do I need to manually call parent _init? */
-}
-
-static void
-daap_share_set_property (GObject * object,
-			 guint prop_id,
-			 const GValue * value, GParamSpec * pspec)
-{
-	// DAAPShare *share = DAAP_SHARE (object);
-
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-daap_share_get_property (GObject * object,
-			 guint prop_id, GValue * value, GParamSpec * pspec)
-{
-	// DAAPShare *share = DAAP_SHARE (object);
-
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
 }
 
 DAAPShare *
