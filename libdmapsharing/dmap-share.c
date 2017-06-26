@@ -288,8 +288,8 @@ _dmap_share_server_start (DMAPShare *share)
 	ret = soup_server_listen_all (share->priv->server, desired_port, 0, &error);
 
 	if (ret == FALSE) {
-		g_warning ("Unable to start music sharing server on port %d: %s. "
-		           "Trying any open IPv6 port", desired_port, error->message);
+		g_debug ("Unable to start music sharing server on port %d: %s. "
+			 "Trying any open IPv6 port", desired_port, error->message);
 		g_clear_error (&error);
 
 		ret = soup_server_listen_all (share->priv->server, SOUP_ADDRESS_ANY_PORT,
