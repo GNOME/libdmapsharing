@@ -53,6 +53,7 @@ endif
 libdmapsharing_3_0_la_CFLAGS = \
 	-DG_LOG_DOMAIN=\"libdmapsharing\" \
 	-I$(top_srcdir) \
+	-I$(top_builddir) \
 	$(GDKPIXBUF_CFLAGS) \
 	$(SOUP_CFLAGS) \
 	$(GSTREAMERAPP_CFLAGS) \
