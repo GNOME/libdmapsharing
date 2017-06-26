@@ -148,7 +148,6 @@ introspection_sources = $(libdmapsharinginclude_HEADERS) $(libdmapsharinginclude
 DMAP-3.0.gir: libdmapsharing-3.0.la
 DMAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
 DMAP_3_0_gir_CFLAGS = \
-	$(INCLUDES) \
 	$(libdmapsharing_3_0_la_CFLAGS)
 DMAP_3_0_gir_LIBS = \
 	libdmapsharing-3.0.la
