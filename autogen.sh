@@ -1,5 +1,11 @@
 #!/bin/sh
 
+test -n "$srcdir" || srcdir=`dirname "$0"`
+test -n "$srcdir" || srcdir=.
+
+olddir=`pwd`
+cd "$srcdir"
+
 touch ChangeLog
 
 gtkdocize || exit 1
@@ -8,11 +14,14 @@ autoconf || exit 1
 autoheader || exit 1
 libtoolize --force || glibtoolize --force || exit 1
 automake -a || exit 1
-./configure --enable-maintainer-mode $* || exit 1
+
+cd "$olddir"
+
+test -n "$NOCONFIGURE" || "$srcdir/configure" --enable-maintainer-mode $@ || exit 1
 
 # Now populate ChangeLog.
-git log   >  ChangeLog
-cat <<EOF >> ChangeLog
+git log   >  "$srcdir/ChangeLog"
+cat <<EOF >> "$srcdir/ChangeLog"
 
 ======================== Convert to Git-based ChangeLog ========================
 = Please note that there is is a period where some changes were logged in the  =
