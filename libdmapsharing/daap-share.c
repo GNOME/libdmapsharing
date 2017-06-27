@@ -43,13 +43,6 @@
 #include <libdmapsharing/dmap-gst-input-stream.h>
 #endif /* HAVE_GSTREAMERAPP */
 
-static void daap_share_set_property (GObject * object,
-				     guint prop_id,
-				     const GValue * value,
-				     GParamSpec * pspec);
-static void daap_share_get_property (GObject * object,
-				     guint prop_id,
-				     GValue * value, GParamSpec * pspec);
 guint daap_share_get_desired_port (DMAPShare * share);
 const char *daap_share_get_type_of_service (DMAPShare * share);
 void daap_share_server_info (DMAPShare * share,
