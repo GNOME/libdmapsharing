@@ -31,6 +31,27 @@ AM_MAINTAINER_MODE
 dnl make aclocal work in maintainer mode
 AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
 
+AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],[enable debugging build])])
+AC_ARG_ENABLE(coverage, [AC_HELP_STRING([--enable-coverage],[enable code-coverage build])])
+if test "x$enable_debug" = "xyes"; then
+	CFLAGS="$CFLAGS -g"
+elif test "x$enable_coverage" = "xyes"; then
+	CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"
+else
+	CFLAGS="$CFLAGS -O2"
+fi
+
+dnl decide on error flags
+AS_COMPILER_FLAG(-Wall, LIBDMAPSHARING_WALL="yes", LIBDMAPSHARING_WALL="no")
+
+if test "x$LIBDMAPSHARING_WALL" = "xyes"; then
+    CFLAGS="$CFLAGS -Wall"
+
+    if test "x$LIBDMAPSHARING_CVS" = "xyes"; then
+       AS_COMPILER_FLAG(-Werror,CFLAGS="$CFLAGS -Werror",)
+    fi
+fi
+
 dnl check for tools
 dnl Make sure CFLAGS is defined to stop AC_PROC_CC adding -g
 CFLAGS="$CFLAGS "
@@ -52,26 +73,6 @@ if test x$tests = xyes; then
 	AM_CONDITIONAL(WITH_TESTS, true)
 else
 	AM_CONDITIONAL(WITH_TESTS, false)
-fi
-
-dnl Test if --enable-debug given
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],[enable debugging mode])])
-if test "x$enable_debug" = "xyes" ; then
-      CFLAGS="$CFLAGS -g"
-fi          
-
-dnl optimisation flag
-CFLAGS="$CFLAGS -O2"
-
-dnl decide on error flags
-AS_COMPILER_FLAG(-Wall, LIBDMAPSHARING_WALL="yes", LIBDMAPSHARING_WALL="no")
-
-if test "x$LIBDMAPSHARING_WALL" = "xyes"; then
-    CFLAGS="$CFLAGS -Wall"
-
-    if test "x$LIBDMAPSHARING_CVS" = "xyes"; then
-       AS_COMPILER_FLAG(-Werror,CFLAGS="$CFLAGS -Werror",)
-    fi
 fi
                   
 dnl Now check required packages
