@@ -18,21 +18,69 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <string.h>
 
 #include "dmap-utils.h"
 
 gchar *
-dmap_mime_to_format (const gchar * transcode_mimetype)
+dmap_utils_mime_to_format (const gchar * transcode_mimetype)
 {
-        if (!transcode_mimetype) {
-                return NULL;
-        } else if (!strcmp (transcode_mimetype, "audio/wav")) {
-                return g_strdup ("wav");
+	gchar *format = NULL;
+
+	if (NULL == transcode_mimetype) {
+		goto done;
+	}
+
+        if (!strcmp (transcode_mimetype, "audio/wav")) {
+                format = g_strdup ("wav");
         } else if (!strcmp (transcode_mimetype, "audio/mp3")) {
-                return g_strdup ("mp3");
+                format = g_strdup ("mp3");
         } else if (!strcmp (transcode_mimetype, "video/quicktime")) {
-                return g_strdup ("mp4");
-        } else
-                return NULL;
+                format = g_strdup ("mp4");
+        }
+
+done:
+	return format;
 }
+
+#ifdef HAVE_CHECK
+
+#include <check.h>
+
+START_TEST(test_dmap_utils_mime_to_format_wav)
+{
+	ck_assert_str_eq(dmap_utils_mime_to_format("audio/wav"), "wav");
+}
+END_TEST
+
+START_TEST(test_dmap_utils_mime_to_format_mp3)
+{
+	ck_assert_str_eq(dmap_utils_mime_to_format("audio/mp3"), "mp3");
+}
+END_TEST
+
+START_TEST(test_dmap_utils_mime_to_format_quicktime)
+{
+	ck_assert_str_eq(dmap_utils_mime_to_format("video/quicktime"), "mp4");
+}
+END_TEST
+
+START_TEST(test_dmap_utils_mime_to_format_null)
+{
+	ck_assert_ptr_null(dmap_utils_mime_to_format(NULL));
+}
+END_TEST
+
+START_TEST(test_dmap_utils_mime_to_format_bad)
+{
+	ck_assert_ptr_null(dmap_utils_mime_to_format("bad/mime"));
+}
+END_TEST
+
+#include "dmap-utils-suite.c"
+
+#endif

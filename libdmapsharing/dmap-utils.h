@@ -17,13 +17,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef __DMAP_UTILS_H__
-#define __DMAP_UTILS_H__
+#ifndef _DMAP_UTILS_H
+#define _DMAP_UTILS_H
 
 #include <glib.h>
 #include <libsoup/soup.h>
 
-gchar * dmap_mime_to_format (const gchar * transcode_mimetype);
+gchar * dmap_utils_mime_to_format (const gchar * transcode_mimetype);
 
 G_END_DECLS
 #endif

@@ -326,7 +326,7 @@ static gboolean should_transcode (const gchar *format, const gboolean has_video,
 		goto done;
 	}
 
-	format2 = dmap_mime_to_format (transcode_mimetype);
+	format2 = dmap_utils_mime_to_format (transcode_mimetype);
 	if (NULL == format2) {
 		g_warning ("Configured to transcode, but target format is bad");
 		goto done;
@@ -588,7 +588,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			      &transcode_mimetype, NULL);
 		// Not presently transcoding videos (see also same comments elsewhere).
 		if (! has_video && transcode_mimetype) {
-			format = g_strdup (dmap_mime_to_format
+			format = g_strdup (dmap_utils_mime_to_format
 					   (transcode_mimetype));
 			g_free (transcode_mimetype);
 		} else {

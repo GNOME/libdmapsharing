@@ -186,6 +186,9 @@ daap_connection_init (DAAPConnection * connection)
 G_DEFINE_TYPE (DAAPConnection, daap_connection, DMAP_TYPE_CONNECTION);
 
 #ifdef HAVE_CHECK
+
+#include <check.h>
+
 START_TEST(test_get_protocol_version_cc)
 {
 	DMAPConnection *conn = g_object_new (DAAP_TYPE_CONNECTION, NULL);
@@ -195,15 +198,6 @@ START_TEST(test_get_protocol_version_cc)
 }
 END_TEST
 
-Suite *dmap_test_daap_connection_suite (void)
-{
-	TCase *tc;
-	Suite *s = suite_create("test_daap_connection_suite");
+#include "daap-connection-suite.c"
 
-	tc = tcase_create("test_get_protocol_version_cc");
-	tcase_add_test(tc, test_get_protocol_version_cc);
-	suite_add_tcase(s, tc);
-
-	return s;
-}
 #endif

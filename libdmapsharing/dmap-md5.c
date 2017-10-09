@@ -525,6 +525,9 @@ void dmap_hash_progressive_final (DMAPHashContext *context,
 }
 
 #ifdef HAVE_CHECK
+
+#include <check.h>
+
 START_TEST(test_dmap_hash_generate_v3_h2)
 {
 	guchar hash[33] = { 0 };
@@ -558,16 +561,6 @@ START_TEST(test_dmap_hash_progressive)
 }
 END_TEST
 
-Suite *dmap_test_dmap_md5_suite (void)
-{
-	TCase *tc;
-	Suite *s = suite_create("test_dmap_hash_generate");
+#include "dmap-md5-suite.c"
 
-	tc = tcase_create("test_dmap_hash_generate_v3_h2");
-	tcase_add_test(tc, test_dmap_hash_generate_v3_h2);
-	tcase_add_test(tc, test_dmap_hash_progressive);
-	suite_add_tcase(s, tc);
-
-	return s;
-}
 #endif

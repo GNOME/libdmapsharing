@@ -343,6 +343,9 @@ if ! test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspe
 	AC_WARN([will not build vapi])
 fi
 
+AC_PATH_PROG(PEDANSEE, pedansee)
+AM_CONDITIONAL(HAVE_PEDANSEE, test -n "$PEDANSEE")
+
 PKG_CHECK_MODULES(GTK, gtk+-2.0, HAVE_GTK=yes, HAVE_GTK=no)
 
 AC_SUBST(GTK_CFLAGS)

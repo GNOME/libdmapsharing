@@ -52,11 +52,5 @@ void dmap_hash_generate              (short version_major,
                                       guchar *out,
                                       gint request_id);
 
-#ifdef HAVE_CHECK
-#include <check.h>
-
-Suite *dmap_test_daap_connection_suite (void);
-#endif
-
 G_END_DECLS
 #endif

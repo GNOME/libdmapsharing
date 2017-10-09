@@ -91,11 +91,5 @@ DAAPConnection *daap_connection_new (const char *name,
 				     DMAPDb * db,
 				     DMAPRecordFactory * factory);
 
-#ifdef HAVE_CHECK
-#include <check.h>
-
-Suite *dmap_test_daap_connection_suite (void);
-#endif
-
 G_END_DECLS
 #endif /* __DAAP_CONNECTION_H */

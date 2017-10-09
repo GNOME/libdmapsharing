@@ -11,8 +11,6 @@ LIBS = $(top_builddir)/libdmapsharing/libdmapsharing-3.0.la
 
 if HAVE_CHECK
 noinst_PROGRAMS += unit-test
-
-LIBS += $(CHECK_LIBS)
 endif
 endif
 
@@ -151,10 +149,6 @@ INCLUDES = \
 	$(IMAGEMAGICK_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(GEE_CFLAGS)
-
-if HAVE_CHECK
-INCLUDES += $(CHECK_CFLAGS)
-endif
 
 noinst_HEADERS = \
 	test-dmap-container-record.h \
