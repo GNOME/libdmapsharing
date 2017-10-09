@@ -109,7 +109,7 @@ noinst_HEADERS = \
 
 BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
 
-CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c
+CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c
 
 dmap-marshal.c: dmap-marshal.list
 	@glib-genmarshal --prefix=dmap_marshal $(srcdir)/dmap-marshal.list --header --body > dmap-marshal.c
