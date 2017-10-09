@@ -107,9 +107,9 @@ noinst_HEADERS = \
 	dmap-gst-wav-input-stream.h \
 	gst-util.h
 
-BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h ../tests/unit-test.c
+BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
 
-CLEANFILES = $(BUILT_SOURCES)
+CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c
 
 dmap-marshal.c: dmap-marshal.list
 	@glib-genmarshal --prefix=dmap_marshal $(srcdir)/dmap-marshal.list --header --body > dmap-marshal.c
@@ -137,9 +137,10 @@ dmap-enums.h: $(libdmapsharinginclude_HEADERS) Makefile
 	&& sed -e "s/d_map/dmap/" -e "s/D_MAP/DMAP/" -e "s/d_acp/dacp/" -e "s/D_ACP/DACP/" $@.tmp > $@ \
 	&& rm -f $@.tmp
 
-../tests/unit-test.c: $(grep -l START_TEST *.c)
+unit-test.stamp: $(grep -l START_TEST *.c)
 	./generate-test-suites
 	mv unit-test.c ../tests
+	touch unit-test.stamp
 
 if HAVE_INTROSPECTION
 include $(INTROSPECTION_MAKEFILE)
