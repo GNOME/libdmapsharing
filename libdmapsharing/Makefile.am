@@ -1,17 +1,18 @@
 lib_LTLIBRARIES = libdmapsharing-3.0.la
 
 libdmapsharing_3_0_la_SOURCES = \
-	$(BUILT_SOURCES) \
 	daap-connection.c \
 	daap-record.c \
 	daap-share.c \
 	dacp-connection.c \
-	dacp-share.c \
 	dacp-player.c \
+	dacp-share.c \
 	dmap-connection.c \
 	dmap-container-db.c \
 	dmap-container-record.c \
 	dmap-db.c \
+	dmap-enums.c \
+	dmap-marshal.c \
 	dmap-md5.c \
 	dmap-private-utils.c \
 	dmap-record.c \
@@ -112,10 +113,10 @@ BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-tes
 CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c
 
 dmap-marshal.c: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal $(srcdir)/dmap-marshal.list --header --body > dmap-marshal.c
+	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --body > dmap-marshal.c
 
 dmap-marshal.h: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal $(srcdir)/dmap-marshal.list --header > dmap-marshal.h
+	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --header > dmap-marshal.h
 
 dmap-enums.c: $(libdmapsharinginclude_headers) Makefile dmap-enums.h
 	@glib-mkenums \
@@ -171,10 +172,12 @@ endif
 
 check:
 if HAVE_PEDANSEE
-	set -e; for i in $(libdmapsharing_3_0_la_SOURCES) \
-	                 $(libdmapsharinginclude_HEADERS) \
+	set -e; for i in $(libdmapsharing_3_0_la_SOURCES); do \
+		$(PEDANSEE) $(DEFS) $(libdmapsharing_3_0_la_CFLAGS) $$i; \
+	done
+	set -e; for i in $(libdmapsharinginclude_HEADERS) \
 	                 $(noinst_HEADERS); do \
-		$(PEDANSEE) $(libdmapsharing_3_0_la_CFLAGS) $$i; \
+		$(PEDANSEE) $(DEFS) $(libdmapsharing_3_0_la_CFLAGS) $$i; \
 	done
 endif
 

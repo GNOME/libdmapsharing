@@ -262,7 +262,7 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 					      G_STRUCT_OFFSET
 					      (DMAPConnectionClass,
 					       authenticate), NULL, NULL,
-					      dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN,
+					      dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN,
 					      G_TYPE_NONE, 5,
 					      G_TYPE_STRING,
 					      SOUP_TYPE_SESSION,
@@ -274,7 +274,7 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DMAPConnectionClass,
 					       connecting), NULL, NULL,
-			      dmap_marshal_VOID__ULONG_FLOAT, G_TYPE_NONE, 2,
+			      dmap_marshal_generated_VOID__ULONG_FLOAT, G_TYPE_NONE, 2,
 			      G_TYPE_ULONG, G_TYPE_FLOAT);
 	signals[CONNECTED] =
 		g_signal_new ("connected", G_TYPE_FROM_CLASS (object_class),

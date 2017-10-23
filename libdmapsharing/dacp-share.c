@@ -172,7 +172,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, remote_found),
 			      NULL,
 			      NULL,
-			      dmap_marshal_VOID__STRING_STRING,
+			      dmap_marshal_generated_VOID__STRING_STRING,
 			      G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	/**
@@ -207,7 +207,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, remote_paired),
 			      NULL,
 			      NULL,
-			      dmap_marshal_VOID__STRING_BOOLEAN,
+			      dmap_marshal_generated_VOID__STRING_BOOLEAN,
 			      G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	/**
@@ -226,7 +226,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, lookup_guid),
 			      NULL,
 			      NULL,
-			      dmap_marshal_BOOLEAN__STRING,
+			      dmap_marshal_generated_BOOLEAN__STRING,
 			      G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
 
 	/**
