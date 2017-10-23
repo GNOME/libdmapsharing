@@ -26,13 +26,13 @@
 #define DAAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAAP_TYPE_CONNECTION, DAAPConnectionPrivate))
 
 static DMAPContentCode
-get_protocol_version_cc (DMAPConnection * connection)
+_get_protocol_version_cc (DMAPConnection * connection)
 {
 	return DMAP_CC_APRO;
 }
 
 static gchar *
-get_query_metadata (DMAPConnection * connection)
+_get_query_metadata (DMAPConnection * connection)
 {
 	return g_strdup ("dmap.itemid,dmap.itemname,daap.songalbum,"
 			 "daap.songartist,daap.songgenre,daap.songsize,"
@@ -43,8 +43,8 @@ get_query_metadata (DMAPConnection * connection)
 }
 
 static DMAPRecord *
-handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
-	     GNode * n, int *item_id)
+_handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
+	      GNode * n, int *item_id)
 {
 	GNode *n2;
 	DMAPRecord *record = NULL;
@@ -153,9 +153,9 @@ daap_connection_class_init (DAAPConnectionClass * klass)
 	DMAPConnectionClass *parent_class =
 		DMAP_CONNECTION_CLASS (object_class);
 
-	parent_class->get_protocol_version_cc = get_protocol_version_cc;
-	parent_class->get_query_metadata = get_query_metadata;
-	parent_class->handle_mlcl = handle_mlcl;
+	parent_class->get_protocol_version_cc = _get_protocol_version_cc;
+	parent_class->get_query_metadata = _get_query_metadata;
+	parent_class->handle_mlcl = _handle_mlcl;
 }
 
 DAAPConnection *
@@ -189,12 +189,27 @@ G_DEFINE_TYPE (DAAPConnection, daap_connection, DMAP_TYPE_CONNECTION);
 
 #include <check.h>
 
-START_TEST(test_get_protocol_version_cc)
+START_TEST(_get_protocol_version_cc_test)
 {
 	DMAPConnection *conn = g_object_new (DAAP_TYPE_CONNECTION, NULL);
-	DMAPContentCode cc = get_protocol_version_cc (conn);
+	DMAPContentCode cc = _get_protocol_version_cc (conn);
 	fail_unless (cc == DMAP_CC_APRO);
 	g_object_unref (conn);
+}
+END_TEST
+
+START_TEST(_get_query_metadata_test)
+{
+	char *str = _get_query_metadata(NULL);
+
+	ck_assert_str_eq(str, "dmap.itemid,dmap.itemname,daap.songalbum,"
+	                      "daap.songartist,daap.songgenre,daap.songsize,"
+	                      "daap.songtime,daap.songtrackcount,daap.songtracknumber,"
+	                      "daap.songyear,daap.songformat,"
+	                      "daap.songbitrate,daap.songdiscnumber,daap.songdataurl,"
+	                      "daap.sortartist,daap.sortalbum,com.apple.itunes.has-video");
+
+	g_free(str);
 }
 END_TEST
 
