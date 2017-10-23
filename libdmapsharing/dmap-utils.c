@@ -51,31 +51,31 @@ done:
 
 #include <check.h>
 
-START_TEST(test_dmap_utils_mime_to_format_wav)
+START_TEST(dmap_utils_mime_to_format_test_wav)
 {
 	ck_assert_str_eq(dmap_utils_mime_to_format("audio/wav"), "wav");
 }
 END_TEST
 
-START_TEST(test_dmap_utils_mime_to_format_mp3)
+START_TEST(dmap_utils_mime_to_format_test_mp3)
 {
 	ck_assert_str_eq(dmap_utils_mime_to_format("audio/mp3"), "mp3");
 }
 END_TEST
 
-START_TEST(test_dmap_utils_mime_to_format_quicktime)
+START_TEST(dmap_utils_mime_to_format_test_quicktime)
 {
 	ck_assert_str_eq(dmap_utils_mime_to_format("video/quicktime"), "mp4");
 }
 END_TEST
 
-START_TEST(test_dmap_utils_mime_to_format_null)
+START_TEST(dmap_utils_mime_to_format_test_null)
 {
 	ck_assert_ptr_null(dmap_utils_mime_to_format(NULL));
 }
 END_TEST
 
-START_TEST(test_dmap_utils_mime_to_format_bad)
+START_TEST(dmap_utils_mime_to_format_test_bad)
 {
 	ck_assert_ptr_null(dmap_utils_mime_to_format("bad/mime"));
 }
