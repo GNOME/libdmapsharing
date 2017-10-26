@@ -173,12 +173,12 @@ endif
 check:
 if HAVE_PEDANSEE
 	set -e; for i in $(libdmapsharing_3_0_la_SOURCES); do \
-		$(PEDANSEE) $(DEFS) $(libdmapsharing_3_0_la_CFLAGS) $$i; \
+		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_0_la_CFLAGS); \
 	done
 	set -e; for i in $(libdmapsharinginclude_HEADERS) \
 	                 $(noinst_HEADERS); do \
-		$(PEDANSEE) $(DEFS) $(libdmapsharing_3_0_la_CFLAGS) $$i; \
+		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_0_la_CFLAGS); \
 	done
 endif
 
-EXTRA_DIST = dmap-marshal.list generate-test-suites
+EXTRA_DIST = dmap-marshal.list generate-test-suites pedansee.conf
