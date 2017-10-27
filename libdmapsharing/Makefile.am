@@ -110,7 +110,7 @@ noinst_HEADERS = \
 
 BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
 
-CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c
+CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c pedansee.conf
 
 dmap-marshal.c: dmap-marshal.list
 	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --body > dmap-marshal.c
@@ -172,6 +172,15 @@ endif
 
 check:
 if HAVE_PEDANSEE
+	echo    "[ignore]" > pedansee.conf
+	echo -n "	name = " >> pedansee.conf
+	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
+		echo -n $${i}_init\;; \
+		echo -n $${i}_class_init\;; \
+		echo -n $${i}_parent_class\;; \
+		echo -n $${i}_get_instance_private\;; \
+		echo -n $${i}_class_intern_init\;; \
+	done >> pedansee.conf
 	set -e; for i in $(libdmapsharing_3_0_la_SOURCES); do \
 		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_0_la_CFLAGS); \
 	done
@@ -181,4 +190,4 @@ if HAVE_PEDANSEE
 	done
 endif
 
-EXTRA_DIST = dmap-marshal.list generate-test-suites pedansee.conf
+EXTRA_DIST = dmap-marshal.list generate-test-suites
