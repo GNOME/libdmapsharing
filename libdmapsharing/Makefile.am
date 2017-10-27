@@ -181,6 +181,9 @@ if HAVE_PEDANSEE
 		echo -n $${i}_get_instance_private\;; \
 		echo -n $${i}_class_intern_init\;; \
 	done >> pedansee.conf
+	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
+		echo -n $${i}_private_offset\;; \
+	done >> pedansee.conf
 	set -e; for i in $(libdmapsharing_3_0_la_SOURCES); do \
 		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_0_la_CFLAGS); \
 	done
