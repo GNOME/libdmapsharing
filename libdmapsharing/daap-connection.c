@@ -226,8 +226,8 @@ START_TEST(daap_connection_new_test)
 	DAAPConnection *connection = daap_connection_new("foo",
 	                                                 "foo.example.com",
 	                                                  3689,
-	                                                  0xdeadbeef,
-	                                                  0xfeedface);
+	                                                  NULL,
+	                                                  NULL);
 
 	g_object_get(connection, "name", &str, NULL);
 	ck_assert_str_eq("foo", str);
@@ -239,10 +239,10 @@ START_TEST(daap_connection_new_test)
 	ck_assert_int_eq(3689, port);
 
 	g_object_get(connection, "db", &db, NULL);
-	ck_assert(0xdeadbeef == db);
+	ck_assert(NULL == db);
 
 	g_object_get(connection, "factory", &factory, NULL);
-	ck_assert(0xfeedface == factory);
+	ck_assert(NULL == factory);
 
 	g_object_unref(connection);
 }
