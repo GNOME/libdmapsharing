@@ -30,8 +30,10 @@ struct TestDAAPRecordPrivate {
 	char *format;
 	char *real_format;
 	char *album;
+	char *sort_album;
 	char *artist;
-	gulong bitrate;
+	char *sort_artist;
+	gint32 bitrate;
 	gint32 firstseen;
 	gint32 mtime;
 	gint32 disc;
@@ -49,7 +51,9 @@ enum {
         PROP_RATING,
         PROP_FILESIZE,
         PROP_ALBUM,
+        PROP_SORT_ALBUM,
         PROP_ARTIST,
+        PROP_SORT_ARTIST,
         PROP_GENRE,
         PROP_FORMAT,
         PROP_DURATION,
@@ -84,9 +88,17 @@ test_daap_record_set_property (GObject *object,
 			g_free (record->priv->album);
                         record->priv->album = g_value_dup_string (value);
                         break;
+                case PROP_SORT_ALBUM:
+			g_free (record->priv->sort_album);
+                        record->priv->sort_album = g_value_dup_string (value);
+                        break;
                 case PROP_ARTIST:
 			g_free (record->priv->artist);
                         record->priv->artist = g_value_dup_string (value);
+                        break;
+                case PROP_SORT_ARTIST:
+			g_free (record->priv->sort_artist);
+                        record->priv->sort_artist = g_value_dup_string (value);
                         break;
                 case PROP_GENRE:
 			g_free (record->priv->genre);
@@ -104,7 +116,7 @@ test_daap_record_set_property (GObject *object,
                         record->priv->rating = g_value_get_int (value);
                         break;
                 case PROP_FILESIZE:
-                        record->priv->filesize = g_value_get_int (value);
+                        record->priv->filesize = g_value_get_uint64 (value);
                         break;
                 case PROP_DURATION:
                         record->priv->duration = g_value_get_int (value);
@@ -125,7 +137,7 @@ test_daap_record_set_property (GObject *object,
                         record->priv->disc = g_value_get_int (value);
                         break;
                 case PROP_BITRATE:
-                        record->priv->bitrate = g_value_get_long (value);
+                        record->priv->bitrate = g_value_get_int (value);
                         break;
                 case PROP_HAS_VIDEO:
                         record->priv->has_video = g_value_get_boolean (value);
@@ -154,8 +166,14 @@ test_daap_record_get_property (GObject *object,
                 case PROP_ALBUM:
                         g_value_set_string (value, record->priv->album);
                         break;
+                case PROP_SORT_ALBUM:
+                        g_value_set_string (value, record->priv->sort_album);
+                        break;
                 case PROP_ARTIST:
                         g_value_set_string (value, record->priv->artist);
+                        break;
+                case PROP_SORT_ARTIST:
+                        g_value_set_string (value, record->priv->sort_artist);
                         break;
                 case PROP_GENRE:
                         g_value_set_string (value, record->priv->genre);
@@ -167,7 +185,7 @@ test_daap_record_get_property (GObject *object,
                         g_value_set_int (value, record->priv->rating);
                         break;
                 case PROP_FILESIZE:
-                        g_value_set_int (value, record->priv->filesize);
+                        g_value_set_uint64 (value, record->priv->filesize);
                         break;
                 case PROP_DURATION:
                         g_value_set_int (value, record->priv->duration);
@@ -188,7 +206,7 @@ test_daap_record_get_property (GObject *object,
                         g_value_set_int (value, record->priv->disc);
                         break;
                 case PROP_BITRATE:
-                        g_value_set_long (value, record->priv->bitrate);
+                        g_value_set_int (value, record->priv->bitrate);
                         break;
                 case PROP_HAS_VIDEO:
                         g_value_set_boolean (value, record->priv->has_video);
@@ -234,7 +252,9 @@ test_daap_record_class_init (TestDAAPRecordClass *klass)
         g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
         g_object_class_override_property (gobject_class, PROP_TITLE, "title");
         g_object_class_override_property (gobject_class, PROP_ALBUM, "songalbum");
+        g_object_class_override_property (gobject_class, PROP_SORT_ALBUM, "sort-album");
         g_object_class_override_property (gobject_class, PROP_ARTIST, "songartist");
+        g_object_class_override_property (gobject_class, PROP_SORT_ARTIST, "sort-artist");
         g_object_class_override_property (gobject_class, PROP_GENRE, "songgenre");
         g_object_class_override_property (gobject_class, PROP_FORMAT, "format");
         g_object_class_override_property (gobject_class, PROP_RATING, "rating");

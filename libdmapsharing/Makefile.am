@@ -24,6 +24,14 @@ libdmapsharing_3_0_la_SOURCES = \
 	dpap-record.c \
 	dpap-share.c
 
+if HAVE_CHECK
+libdmapsharing_3_0_la_SOURCES += \
+	test-daap-record.c \
+	test-daap-record-factory.c \
+	test-dpap-record.c \
+	test-dpap-record-factory.c
+endif
+
 if USE_HOWL
 libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-browser-howl.c
@@ -99,14 +107,18 @@ libdmapsharinginclude_HEADERS = \
 	dpap-share.h
 
 noinst_HEADERS = \
-	dmap-marshal.h \
 	dmap-config.h \
-	dmap-mdns-avahi.h \
-	dmap-private-utils.h \
 	dmap-gst-mp3-input-stream.h \
 	dmap-gst-qt-input-stream.h \
 	dmap-gst-wav-input-stream.h \
-	gst-util.h
+	dmap-marshal.h \
+	dmap-mdns-avahi.h \
+	dmap-private-utils.h \
+	gst-util.h \
+	test-daap-record-factory.h \
+	test-daap-record.h \
+	test-dpap-record-factory.h \
+	test-dpap-record.h
 
 BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
 
@@ -180,6 +192,7 @@ if HAVE_PEDANSEE
 		echo -n $${i}_parent_class\;; \
 		echo -n $${i}_get_instance_private\;; \
 		echo -n $${i}_class_intern_init\;; \
+		echo -n $${i}_get_type\;; \
 	done >> pedansee.conf
 	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
 		echo -n $${i}_private_offset\;; \

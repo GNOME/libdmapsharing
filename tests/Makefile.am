@@ -16,10 +16,6 @@ endif
 
 test_dmap_client_SOURCES = \
 	test-dmap-db.c \
-	test-daap-record.c \
-	test-dpap-record.c \
-	test-daap-record-factory.c \
-	test-dpap-record-factory.c \
 	test-dmap-client.c
 
 test_dmap_client_LDADD = \
@@ -36,11 +32,7 @@ test_dmap_server_SOURCES = \
 	test-dmap-db.c \
 	test-dmap-container-record.c \
 	test-dmap-container-db.c \
-	test-dmap-server.c \
-	test-daap-record.c \
-	test-daap-record-factory.c \
-	test-dpap-record.c \
-	test-dpap-record-factory.c
+	test-dmap-server.c
 
 test_dmap_server_LDADD = \
 	$(GLIB_LIBS) \
@@ -153,11 +145,7 @@ INCLUDES = \
 noinst_HEADERS = \
 	test-dmap-container-record.h \
 	test-dmap-container-db.h \
-	test-dmap-db.h \
-	test-daap-record.h \
-	test-daap-record-factory.h \
-	test-dpap-record.h \
-	test-dpap-record-factory.h
+	test-dmap-db.h
 
 EXTRA_DIST = \
 	$(dacplisten_VALASOURCES) \
