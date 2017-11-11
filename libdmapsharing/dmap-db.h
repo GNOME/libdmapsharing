@@ -63,6 +63,16 @@ G_BEGIN_DECLS
 typedef struct _DMAPDb DMAPDb;
 typedef struct _DMAPDbIface DMAPDbIface;
 
+/**
+ * DMAPIdRecordFunc:
+ * @id: a DMAP record ID
+ * @record: a #DMAPRecord
+ * @user_data: (closure): user data
+ *
+ * The type of function passed to dmap_db_foreach().
+ */
+typedef void (*DMAPIdRecordFunc) (guint id, DMAPRecord *record, gpointer user_data);
+
 struct _DMAPDbIface
 {
 	GTypeInterface parent;
@@ -73,11 +83,9 @@ struct _DMAPDbIface
 	DMAPRecord *(*lookup_by_id) (const DMAPDb * db, guint id);
 	  guint (*lookup_id_by_location) (const DMAPDb * db,
 					  const gchar * location);
-	void (*foreach) (const DMAPDb * db, GHFunc func, gpointer data);
+	void (*foreach) (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data);
 	  gint64 (*count) (const DMAPDb * db);
 };
-
-typedef const char *(*RecordGetValueFunc) (DMAPRecord * record);
 
 typedef struct DMAPDbFilterDefinition
 {
@@ -165,12 +173,12 @@ guint dmap_db_lookup_id_by_location (const DMAPDb * db,
 /**
  * dmap_db_foreach:
  * @db: A media database.
- * @func: The function to apply to each record in the database.
+ * @func: (scope call): The function to apply to each record in the database.
  * @data: User data to pass to the function.
  *
  * Apply a function to each record in a media database.
  */
-void dmap_db_foreach (const DMAPDb * db, GHFunc func, gpointer data);
+void dmap_db_foreach (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data);
 
 /**
  * dmap_db_count:

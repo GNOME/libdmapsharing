@@ -135,7 +135,7 @@ typedef struct
 } DMAPConnectionClass;
 
 /* hmm, maybe should give more error information? */
-typedef gboolean (*DMAPConnectionCallback) (DMAPConnection * connection,
+typedef gboolean (*DMAPConnectionFunc) (DMAPConnection * connection,
 					    gboolean result,
 					    const char *reason,
 					    gpointer user_data);
@@ -148,11 +148,20 @@ GType dmap_connection_get_type (void);
 
 gboolean dmap_connection_is_connected (DMAPConnection * connection);
 void dmap_connection_setup (DMAPConnection * connection);
-void dmap_connection_connect (DMAPConnection * connection,
-			      DMAPConnectionCallback callback,
-			      gpointer user_data);
+
+/**
+ * dmap_connection_start:
+ * @connection: The connection.
+ * @callback: (scope async): The function to call once the connection is complete.
+ * @user_data: The data to pass to the callback.
+ *
+ * Connect to the remote DMAP share.
+ */
+void dmap_connection_start (DMAPConnection * connection,
+			    DMAPConnectionFunc callback,
+			    gpointer user_data);
 void dmap_connection_disconnect (DMAPConnection * connection,
-				 DMAPConnectionCallback callback,
+				 DMAPConnectionFunc callback,
 				 gpointer user_data);
 
 SoupMessageHeaders *dmap_connection_get_headers (DMAPConnection * connection,

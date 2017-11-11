@@ -70,7 +70,6 @@ dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
 }
 
-static void
 free_service (DMAPMdnsBrowserService * service)
 {
 	g_assert (NULL != service);
@@ -447,7 +446,7 @@ dmap_mdns_browser_dispose (GObject * object)
 
 	for (walk = browser->priv->services; NULL != walk; walk = walk->next) {
 		service = (DMAPMdnsBrowserService *) walk->data;
-		free_service (service);
+		g_object_unref (service);
 	}
 
 	g_slist_free (browser->priv->services);

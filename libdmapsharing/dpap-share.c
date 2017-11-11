@@ -74,7 +74,7 @@ static void databases_items_xxx (DMAPShare * share,
 				 GHashTable * query,
 				 SoupClientContext * context);
 static struct DMAPMetaDataMap *get_meta_data_map (DMAPShare * share);
-static void add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer mb);
+static void add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer mb);
 
 #define DPAP_TYPE_OF_SERVICE "_dpap._tcp"
 #define DPAP_PORT 8770
@@ -348,7 +348,7 @@ file_to_mmap (const char *location)
 }
 
 static void
-add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
+add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
@@ -359,8 +359,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 		dmap_structure_add (mlit, DMAP_CC_MIKD,
 				    (gchar) DPAP_ITEM_KIND_PHOTO);
 	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
-		dmap_structure_add (mlit, DMAP_CC_MIID,
-				    GPOINTER_TO_UINT (id));
+		dmap_structure_add (mlit, DMAP_CC_MIID, id);
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *filename = NULL;
 
@@ -372,8 +371,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 			g_debug ("Filename requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
-		dmap_structure_add (mlit, DMAP_CC_MPER,
-				    GPOINTER_TO_UINT (id));
+		dmap_structure_add (mlit, DMAP_CC_MPER, id);
 	if (TRUE) {
 		/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP
 		 * and this does seem to be the case when testing. */

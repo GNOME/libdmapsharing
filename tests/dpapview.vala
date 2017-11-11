@@ -49,11 +49,6 @@ private class DPAPViewer {
 		return true;
 	}
 
-	private void service_added_cb (DMAP.MdnsBrowserService *service) {
-		connection = (DMAP.Connection) new DPAP.Connection (service->service_name, service->host, service->port, db, factory);
-		connection.connect (connected_cb);
-	}
-
 	public DPAPViewer (Gtk.Builder builder) throws GLib.Error {
 		builder.connect_signals (this);
 
@@ -68,8 +63,11 @@ private class DPAPViewer {
 
 		widget.show_all ();
 
-		browser = new DMAP.MdnsBrowser (DMAP.MdnsBrowserServiceType.DPAP);
-		browser.service_added.connect (service_added_cb);
+		browser = new DMAP.MdnsBrowser (DMAP.MdnsServiceType.DPAP);
+		browser.service_added.connect ((browser, service) =>  {
+			connection = (DMAP.Connection) new DPAP.Connection (service.service_name, service.host, service.port, db, factory);
+			connection.start (connected_cb);
+		});
 		browser.start ();
 	}
 }

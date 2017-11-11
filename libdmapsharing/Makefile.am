@@ -1,6 +1,6 @@
-lib_LTLIBRARIES = libdmapsharing-3.0.la
+lib_LTLIBRARIES = libdmapsharing-3.2.la
 
-libdmapsharing_3_0_la_SOURCES = \
+libdmapsharing_3_2_la_SOURCES = \
 	daap-connection.c \
 	daap-record.c \
 	daap-share.c \
@@ -14,6 +14,7 @@ libdmapsharing_3_0_la_SOURCES = \
 	dmap-enums.c \
 	dmap-marshal.c \
 	dmap-md5.c \
+	dmap-mdns-service.c \
 	dmap-private-utils.c \
 	dmap-record.c \
 	dmap-record-factory.c \
@@ -25,7 +26,7 @@ libdmapsharing_3_0_la_SOURCES = \
 	dpap-share.c
 
 if HAVE_CHECK
-libdmapsharing_3_0_la_SOURCES += \
+libdmapsharing_3_2_la_SOURCES += \
 	test-daap-record.c \
 	test-daap-record-factory.c \
 	test-dpap-record.c \
@@ -33,15 +34,15 @@ libdmapsharing_3_0_la_SOURCES += \
 endif
 
 if USE_HOWL
-libdmapsharing_3_0_la_SOURCES += \
+libdmapsharing_3_2_la_SOURCES += \
 	dmap-mdns-browser-howl.c
 else
 if USE_DNS_SD
-libdmapsharing_3_0_la_SOURCES += \
+libdmapsharing_3_2_la_SOURCES += \
 	dmap-mdns-browser-dnssd.c \
 	dmap-mdns-publisher-dnssd.c
 else
-libdmapsharing_3_0_la_SOURCES += \
+libdmapsharing_3_2_la_SOURCES += \
 	dmap-mdns-avahi.c \
 	dmap-mdns-browser-avahi.c \
 	dmap-mdns-publisher-avahi.c
@@ -49,7 +50,7 @@ endif
 endif
 
 if USE_GSTREAMERAPP
-libdmapsharing_3_0_la_SOURCES += \
+libdmapsharing_3_2_la_SOURCES += \
 	dmap-gst-input-stream.c \
 	dmap-gst-mp3-input-stream.c \
 	dmap-gst-qt-input-stream.c \
@@ -57,7 +58,7 @@ libdmapsharing_3_0_la_SOURCES += \
 	gst-util.c
 endif
 
-libdmapsharing_3_0_la_CFLAGS = \
+libdmapsharing_3_2_la_CFLAGS = \
 	-DG_LOG_DOMAIN=\"libdmapsharing\" \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
@@ -66,7 +67,7 @@ libdmapsharing_3_0_la_CFLAGS = \
 	$(GSTREAMERAPP_CFLAGS) \
 	$(MDNS_CFLAGS)
 
-libdmapsharing_3_0_la_LDFLAGS = \
+libdmapsharing_3_2_la_LDFLAGS = \
 	-version-info @SO_VERSION@ \
 	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
@@ -97,6 +98,7 @@ libdmapsharinginclude_HEADERS = \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
 	dmap-mdns-publisher.h \
+	dmap-mdns-service.h \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
@@ -157,21 +159,27 @@ unit-test.stamp: $(grep -l START_TEST *.c)
 
 if HAVE_INTROSPECTION
 include $(INTROSPECTION_MAKEFILE)
-INTROSPECTION_GIRS =
-INTROSPECTION_SCANNER_ARGS = --symbol-prefix=dmap --add-include-path=$(srcdir) --warn-all
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir) --warn-all
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
-
 introspection_sources = $(libdmapsharinginclude_HEADERS) $(libdmapsharinginclude_SOURCES)
 
-DMAP-3.0.gir: libdmapsharing-3.0.la
-DMAP_3_0_gir_INCLUDES = GObject-2.0 Soup-2.4
-DMAP_3_0_gir_CFLAGS = \
-	$(libdmapsharing_3_0_la_CFLAGS)
-DMAP_3_0_gir_LIBS = \
-	libdmapsharing-3.0.la
-DMAP_3_0_gir_FILES = $(introspection_sources)
+DMAP-3.2.gir: libdmapsharing-3.2.la
+DMAP_3_2_gir_NAMESPACE = DMAP 
+DMAP_3_2_gir_SCANNERFLAGS = --symbol-prefix=dmap
+DMAP_3_2_gir_LIBS = libdmapsharing-3.2.la
+DMAP_3_2_gir_FILES = $(introspection_sources)
+DMAP_3_2_gir_INCLUDES = GObject-2.0 Soup-2.4
+DMAP_3_2_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_2_la_CFLAGS)
 
-INTROSPECTION_GIRS += DMAP-3.0.gir
+DAAP-3.2.gir: libdmapsharing-3.2.la
+DAAP_3_2_gir_NAMESPACE = DAAP
+DAAP_3_2_gir_SCANNERFLAGS = --symbol-prefix=daap
+DAAP_3_2_gir_LIBS = libdmapsharing-3.2.la
+DAAP_3_2_gir_FILES = $(introspection_sources)
+DAAP_3_2_gir_INCLUDES = GObject-2.0 Soup-2.4 DMAP-3.2
+DAAP_3_2_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_2_la_CFLAGS)
+
+INTROSPECTION_GIRS = DMAP-3.2.gir DAAP-3.2.gir
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = $(INTROSPECTION_GIRS)
@@ -197,12 +205,12 @@ if HAVE_PEDANSEE
 	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
 		echo -n $${i}_private_offset\;; \
 	done >> pedansee.conf
-	set -e; for i in $(libdmapsharing_3_0_la_SOURCES); do \
-		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_0_la_CFLAGS); \
+	set -e; for i in $(libdmapsharing_3_2_la_SOURCES); do \
+		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_2_la_CFLAGS); \
 	done
 	set -e; for i in $(libdmapsharinginclude_HEADERS) \
 	                 $(noinst_HEADERS); do \
-		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_0_la_CFLAGS); \
+		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_3_2_la_CFLAGS); \
 	done
 endif
 

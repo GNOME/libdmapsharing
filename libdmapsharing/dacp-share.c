@@ -384,27 +384,35 @@ dacp_share_dispose (GObject * object)
 
 void
 mdns_remote_added (DMAPMdnsBrowser * browser,
-		   DMAPMdnsBrowserService * service, DACPShare * share)
+		   DMAPMdnsService * service, DACPShare * share)
 {
+	guint port;
 	DACPRemoteInfo *remote_info;
+	gchar *service_name, *name, *host, *pair;
 
-	remote_info = g_new0 (DACPRemoteInfo, 1);
-	remote_info->host = g_strdup (service->host);
-	remote_info->port = service->port;
-	remote_info->pair_txt = g_strdup (service->pair);
+	g_object_get (service, "service-name", &service_name,
+	                       "name", &name,
+	                       "host", &host,
+	                       "port", &port,
+	                       "pair", &pair, NULL);
+
+	remote_info = g_new (DACPRemoteInfo, 1);
+	remote_info->host = g_strdup (host);
+	remote_info->port = port;
 	remote_info->connection = NULL;
+	remote_info->pair_txt = g_strdup (pair);
 
 	g_debug ("New Remote found: %s name=%s host=%s port=%u pair=%s",
-		 service->service_name,
-		 service->name,
+		 service_name,
+		 name,
 		 remote_info->host, remote_info->port, remote_info->pair_txt);
 
 	g_hash_table_insert (share->priv->remotes,
-			     service->service_name, remote_info);
+			     service_name, remote_info);
 
 	g_signal_emit (share,
 		       signals[REMOTE_FOUND],
-		       0, service->service_name, service->name);
+		       0, service_name, name);
 }
 
 void
@@ -453,7 +461,7 @@ dacp_share_start_lookup (DACPShare * share)
 	}
 
 	share->priv->mdns_browser =
-		dmap_mdns_browser_new (DMAP_MDNS_BROWSER_SERVICE_TYPE_DACP);
+		dmap_mdns_browser_new (DMAP_MDNS_SERVICE_TYPE_DACP);
 
 	g_signal_connect_object (share->priv->mdns_browser,
 				 "service-added",

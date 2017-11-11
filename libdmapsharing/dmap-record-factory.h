@@ -81,7 +81,7 @@ GType dmap_record_factory_get_type (void);
  * @factory: A DMAPRecordFactory.
  * @user_data: Some piece of data that may be used to initialize return value.
  *
- * Returns: a new DMAPRecord as read from path.
+ * Returns: (transfer full): a new DMAPRecord.
  */
 DMAPRecord *dmap_record_factory_create (DMAPRecordFactory * factory,
 					gpointer user_data);
