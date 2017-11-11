@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from gi.repository import GObject
 from gi.repository import GLib
@@ -69,7 +69,7 @@ class TestDMAPClient(GObject.GObject):
         has_video = record.get_property("has-video")
         artist = record.get_property("songartist")
 
-        print id, artist, title, has_video
+        print(id, artist, title, has_video)
 
     def connected_cb(self, connection, result, reason, user_data):
         self.db.foreach(self.print_record, None)
