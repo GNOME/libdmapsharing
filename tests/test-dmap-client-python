@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 
+import gi
+import sys
+
+gi.require_version('DMAP', '3.2')
+gi.require_version('DAAP', '3.2')
+
 from gi.repository import GObject
 from gi.repository import GLib
 from gi.repository import DMAP
@@ -10,37 +16,39 @@ class PyDMAPDb(GObject.GObject, DMAP.Db):
     nextId = 0
 
     def do_foreach(self, func, user_data=None):
-        for id in self.db:
+        for id in self.db.copy():
             func (id, self.db[id])
 
     def do_add(self, record):
-        self.db[self.nextId] = record
+        id           = self.nextId
+        self.db[id]  = record
         self.nextId += 1
+        return id
 
     def __init__(self):
         super(PyDMAPDb, self).__init__()
 
 class PyDAAPRecord(GObject.GObject, DAAP.Record, DMAP.Record):
-    location    = GObject.property(type=str,  default=None)
-    title       = GObject.property(type=str,  default=None)
-    mediakind   = GObject.property(type=int,  default=0)
-    songalbum   = GObject.property(type=str,  default=None)
-    songalbumid = GObject.property(type=int,  default=0)
-    sort_album  = GObject.property(type=str,  default=None)
-    songartist  = GObject.property(type=str,  default=None)
-    sort_artist = GObject.property(type=str,  default=None)
-    songgenre   = GObject.property(type=str,  default=None)
-    format      = GObject.property(type=str,  default=None)
-    rating      = GObject.property(type=int,  default=None)
-    filesize    = GObject.property(type=int,  default=None)
-    duration    = GObject.property(type=int,  default=0)
-    track       = GObject.property(type=int,  default=0)
-    year        = GObject.property(type=int,  default=0)
-    firstseen   = GObject.property(type=int,  default=0)
-    mtime       = GObject.property(type=int,  default=0)
-    disc        = GObject.property(type=int,  default=0)
-    bitrate     = GObject.property(type=int,  default=0)
-    has_video   = GObject.property(type=bool, default=0)
+    location    = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    title       = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    songalbum   = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    sort_album  = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    songartist  = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    sort_artist = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    songgenre   = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    format      = GObject.property(type=GObject.TYPE_STRING,  default=None)
+    rating      = GObject.property(type=GObject.TYPE_INT,     default=0)
+    filesize    = GObject.property(type=GObject.TYPE_UINT64,  default=0)
+    duration    = GObject.property(type=GObject.TYPE_INT,     default=0)
+    track       = GObject.property(type=GObject.TYPE_INT,     default=0)
+    year        = GObject.property(type=GObject.TYPE_INT,     default=0)
+    firstseen   = GObject.property(type=GObject.TYPE_INT,     default=0)
+    mtime       = GObject.property(type=GObject.TYPE_INT,     default=0)
+    disc        = GObject.property(type=GObject.TYPE_INT,     default=0)
+    bitrate     = GObject.property(type=GObject.TYPE_INT,     default=0)
+    has_video   = GObject.property(type=GObject.TYPE_BOOLEAN, default=0)
+    mediakind   = GObject.property(type=GObject.TYPE_INT,     default=0)
+    songalbumid = GObject.property(type=GObject.TYPE_INT64,   default=0)
 
     def __init__(self):
         super(PyDAAPRecord, self).__init__()
@@ -57,30 +65,76 @@ class TestDMAPClient(GObject.GObject):
         super(TestDMAPClient, self).__init__()
 
         self.factory = PyDAAPRecordFactory()
-        self.db = PyDMAPDb()
+        self.db      = PyDMAPDb()
         self.browser = DMAP.MdnsBrowser.new(DMAP.MdnsServiceType.DAAP)
 
     def start(self):
-        self.browser.connect("service-added", self.service_added_cb, None)
+        self.browser.connect('service-added', self.service_added_cb, None)
         self.browser.start()
 
     def print_record(self, id, record, user_data):
-        title = record.get_property("title")
-        has_video = record.get_property("has-video")
-        artist = record.get_property("songartist")
+        location    = record.get_property('location')
+        title       = record.get_property('title')
+        songalbum   = record.get_property('songalbum')
+        sort_album  = record.get_property('sort-album')
+        songartist  = record.get_property('songartist')
+        sort_artist = record.get_property('sort-artist')
+        songgenre   = record.get_property('songgenre')
+        format      = record.get_property('format')
+        rating      = record.get_property('rating')
+        filesize    = record.get_property('filesize')
+        duration    = record.get_property('duration')
+        track       = record.get_property('track')
+        year        = record.get_property('year')
+        firstseen   = record.get_property('firstseen')
+        mtime       = record.get_property('mtime')
+        disc        = record.get_property('disc')
+        bitrate     = record.get_property('bitrate')
+        has_video   = record.get_property('has_video')
+        mediakind   = record.get_property('mediakind')
+        songalbumid = record.get_property('songalbumid')
 
-        print(id, artist, title, has_video)
+        print('id:',            id)
+        print('  location:',    location)
+        print('  title:',       title)
+        print('  songalbum:',   songalbum)
+        print('  sort_album:',  sort_album)
+        print('  songartist:',  songartist)
+        print('  sort_artist:', sort_artist)
+        print('  songgenre:',   songgenre)
+        print('  format:',      format)
+        print('  rating:',      rating)
+        print('  filesize:',    filesize)
+        print('  duration:',    duration)
+        print('  track:',       track)
+        print('  year:',        year)
+        print('  firstseen:',   firstseen)
+        print('  mtime:',       mtime)
+        print('  disc:',        disc)
+        print('  bitrate:',     bitrate)
+        print('  has_video:',   has_video)
+        print('  mediakind:',   mediakind)
+        print('  songalbumid:', songalbumid)
+
+    def authenticate_cb(self, connection, name, session, msg, auth, retrying):
+        username = connection.get_property('username')
+        print('Require password for %s@%s: ' % (username, name), end='', file=sys.stderr)
+        password = input()
+        connection.set_property('password', password)
+        auth.authenticate(username, password)
+        session.unpause_message(msg)
 
     def connected_cb(self, connection, result, reason, user_data):
         self.db.foreach(self.print_record, None)
 
     def service_added_cb(self, browser, service, user_data):
-        service_name = service.get_property("service-name")
-        name         = service.get_property("name")
-        host         = service.get_property("host")
-        port         = service.get_property("port")
+        service_name = service.get_property('service-name')
+        name         = service.get_property('name')
+        host         = service.get_property('host')
+        port         = service.get_property('port')
 
         connection = DAAP.Connection.new(service_name, host, port, self.db, self.factory)
+        connection.connect('authenticate', self.authenticate_cb)
         connection.start(self.connected_cb, self.db)
 
 client = TestDMAPClient ()
