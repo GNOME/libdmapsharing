@@ -171,7 +171,7 @@ DMAP_3_2_gir_FILES = $(introspection_sources)
 DMAP_3_2_gir_INCLUDES = GObject-2.0 Soup-2.4
 DMAP_3_2_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_3_2_la_CFLAGS)
 
-DAAP-3.2.gir: libdmapsharing-3.2.la
+DAAP-3.2.gir: libdmapsharing-3.2.la DMAP-3.2.gir
 DAAP_3_2_gir_NAMESPACE = DAAP
 DAAP_3_2_gir_SCANNERFLAGS = --symbol-prefix=daap
 DAAP_3_2_gir_LIBS = libdmapsharing-3.2.la
