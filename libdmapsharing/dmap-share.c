@@ -1906,7 +1906,7 @@ _dmap_share_databases (DMAPShare * share,
 		dmap_structure_add (mlit, DMAP_CC_ABPL, (gchar) 1);
 
 		dmap_container_db_foreach (share->priv->container_db,
-					   (GHFunc)
+					   (DMAPIdContainerRecordFunc)
 					   _dmap_share_add_playlist_to_mlcl,
 					   &mb);
 

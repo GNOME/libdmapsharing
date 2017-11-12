@@ -249,7 +249,7 @@ START_TEST(daap_connection_new_test)
 END_TEST
 
 static void
-_append_str_test(GNode *parent, int code, const char *value)
+_append_str_test(GNode *parent, int code, char *value)
 {
 	DMAPStructureItem *item;
 	GNode *child;
@@ -336,7 +336,7 @@ START_TEST(_handle_mlcl_test)
 	_append_int_test(parent, DMAP_CC_ASBR, expected_bitrate);
 
 	factory = test_daap_record_factory_new();
-	record  = _handle_mlcl(NULL, factory, parent, &item_id);
+	record  = _handle_mlcl(NULL, DMAP_RECORD_FACTORY(factory), parent, &item_id);
 
 	ck_assert_int_eq(expected_item_id, item_id);
 
@@ -403,7 +403,7 @@ START_TEST(_handle_mlcl_bad_code_test)
 	_append_str_test(parent, DMAP_CC_MINM, expected_title);
 
 	factory = test_daap_record_factory_new();
-	record  = _handle_mlcl(NULL, factory, parent, &item_id);
+	record  = _handle_mlcl(NULL, DMAP_RECORD_FACTORY(factory), parent, &item_id);
 
 	g_object_get(record, "title", &title, NULL);
 	ck_assert_str_eq(expected_title, title);
