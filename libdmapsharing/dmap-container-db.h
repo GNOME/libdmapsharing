@@ -64,6 +64,16 @@ G_BEGIN_DECLS
 typedef struct _DMAPContainerDb DMAPContainerDb;
 typedef struct _DMAPContainerDbIface DMAPContainerDbIface;
 
+/**
+ * DMAPIdContainerRecordFunc:
+ * @id: a DMAP container record ID
+ * @record: a #DMAPContainerRecord
+ * @user_data: (closure): user data
+ *
+ * The type of function passed to dmap_container_db_foreach().
+ */
+typedef void (*DMAPIdContainerRecordFunc) (guint id, DMAPContainerRecord *record, gpointer user_data);
+
 struct _DMAPContainerDbIface
 {
 	GTypeInterface parent;
@@ -72,7 +82,7 @@ struct _DMAPContainerDbIface
 
 	DMAPContainerRecord *(*lookup_by_id) (DMAPContainerDb * db, guint id);
 
-	void (*foreach) (DMAPContainerDb * db, GHFunc func, gpointer data);
+	void (*foreach) (DMAPContainerDb * db, DMAPIdContainerRecordFunc func, gpointer data);
 
 	  gint64 (*count) (DMAPContainerDb * db);
 };
@@ -94,7 +104,7 @@ void dmap_container_db_add (DMAPContainerDb * db,
  * @db: A container database.
  * @id: A record ID.
  *
- * Returns: the database record corresponding to @id. This record should
+ * Returns: (transfer full): the database record corresponding to @id. This record should
  * be unrefed when no longer required.
  */
 DMAPContainerRecord *dmap_container_db_lookup_by_id (DMAPContainerDb * db,
@@ -103,13 +113,13 @@ DMAPContainerRecord *dmap_container_db_lookup_by_id (DMAPContainerDb * db,
 /**
  * dmap_container_db_foreach:
  * @db: A container database.
- * @func: The function to apply to each record in the database.
+ * @func: (scope call): The function to apply to each record in the database.
  * @data: User data to pass to the function.
  *
  * Apply a function to each record in a container database.
  */
 void dmap_container_db_foreach (DMAPContainerDb * db,
-				GHFunc func, gpointer data);
+				DMAPIdContainerRecordFunc func, gpointer data);
 
 /**
  * dmap_container_db_count:

@@ -269,7 +269,7 @@ namespace DAAP {
 		[CCode (cname = "dmap_container_db_count")]
 		public abstract int64 count (DMAP.ContainerDb db);
 		[CCode (cname = "dmap_container_db_foreach")]
-		public abstract void @foreach (DMAP.ContainerDb db, GLib.HFunc func, void* data);
+		public abstract void @foreach (DMAP.ContainerDb db, DAAP.DMAPIdContainerRecordFunc func, void* data);
 		[CCode (cname = "dmap_container_db_lookup_by_id")]
 		public abstract unowned DAAP.DMAPContainerRecord lookup_by_id (DMAP.ContainerDb db, uint id);
 	}
@@ -549,6 +549,8 @@ namespace DAAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool DMAPConnectionFunc (DAAP.DMAPConnection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void DMAPIdContainerRecordFunc (uint id, DAAP.DMAPContainerRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void DMAPIdRecordFunc (uint id, DAAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -933,7 +935,7 @@ namespace DACP {
 		[CCode (cname = "dmap_container_db_count")]
 		public abstract int64 count (DMAP.ContainerDb db);
 		[CCode (cname = "dmap_container_db_foreach")]
-		public abstract void @foreach (DMAP.ContainerDb db, GLib.HFunc func, void* data);
+		public abstract void @foreach (DMAP.ContainerDb db, DACP.DMAPIdContainerRecordFunc func, void* data);
 		[CCode (cname = "dmap_container_db_lookup_by_id")]
 		public abstract unowned DACP.DMAPContainerRecord lookup_by_id (DMAP.ContainerDb db, uint id);
 	}
@@ -1228,6 +1230,8 @@ namespace DACP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool DMAPConnectionFunc (DACP.DMAPConnection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void DMAPIdContainerRecordFunc (uint id, DACP.DMAPContainerRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void DMAPIdRecordFunc (uint id, DACP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1548,7 +1552,7 @@ namespace DMAP {
 	public interface ContainerDb : GLib.Object {
 		public abstract void add (DMAP.ContainerRecord record);
 		public abstract int64 count ();
-		public abstract void @foreach (GLib.HFunc func);
+		public abstract void @foreach (DMAP.IdContainerRecordFunc func);
 		public abstract unowned DMAP.ContainerRecord lookup_by_id (uint id);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1806,6 +1810,8 @@ namespace DMAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool ConnectionFunc (DMAP.Connection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void IdContainerRecordFunc (uint id, DMAP.ContainerRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void IdRecordFunc (uint id, DMAP.Record record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -2158,7 +2164,7 @@ namespace DPAP {
 		[CCode (cname = "dmap_container_db_count")]
 		public abstract int64 count (DMAP.ContainerDb db);
 		[CCode (cname = "dmap_container_db_foreach")]
-		public abstract void @foreach (DMAP.ContainerDb db, GLib.HFunc func, void* data);
+		public abstract void @foreach (DMAP.ContainerDb db, DPAP.DMAPIdContainerRecordFunc func, void* data);
 		[CCode (cname = "dmap_container_db_lookup_by_id")]
 		public abstract unowned DPAP.DMAPContainerRecord lookup_by_id (DMAP.ContainerDb db, uint id);
 	}
@@ -2436,6 +2442,8 @@ namespace DPAP {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool DMAPConnectionFunc (DPAP.DMAPConnection connection, bool result, string reason);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public delegate void DMAPIdContainerRecordFunc (uint id, DPAP.DMAPContainerRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate void DMAPIdRecordFunc (uint id, DPAP.DMAPRecord record);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]

@@ -111,7 +111,7 @@ guint64 dmap_container_record_get_entry_count (DMAPContainerRecord * record);
  * dmap_container_record_get_entries:
  * @record: A DMAPContainerRecord.
  *
- * Returns: A pointer to a DMAPDb containing the entries contained in record.
+ * Returns: (transfer full): A pointer to a DMAPDb containing the entries contained in record.
  */
 DMAPDb *dmap_container_record_get_entries (DMAPContainerRecord * record);
 

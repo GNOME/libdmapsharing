@@ -172,7 +172,7 @@ static void vala_dmap_container_db_class_init (ValaDMAPContainerDbClass * klass)
 static void vala_dmap_container_db_dmap_container_db_interface_init (DMAPContainerDbIface * iface) {
 	vala_dmap_container_db_dmap_container_db_parent_iface = g_type_interface_peek_parent (iface);
 	iface->count = (gint64 (*) (DMAPContainerDb *)) vala_dmap_container_db_real_count;
-	iface->foreach = (void (*) (DMAPContainerDb *, GHFunc, void*)) vala_dmap_container_db_real_foreach;
+	iface->foreach = (void (*) (DMAPContainerDb *, DMAPIdContainerRecordFunc, void*)) vala_dmap_container_db_real_foreach;
 	iface->lookup_by_id = (DMAPContainerRecord* (*) (DMAPContainerDb *, guint)) vala_dmap_container_db_real_lookup_by_id;
 	iface->add = (void (*) (DMAPContainerDb *, DMAPContainerRecord*)) vala_dmap_container_db_real_add;
 }

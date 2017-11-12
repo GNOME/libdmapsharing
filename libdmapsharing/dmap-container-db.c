@@ -69,7 +69,7 @@ dmap_container_db_lookup_by_id (DMAPContainerDb * db, guint id)
 }
 
 void
-dmap_container_db_foreach (DMAPContainerDb * db, GHFunc func, gpointer data)
+dmap_container_db_foreach (DMAPContainerDb * db, DMAPIdContainerRecordFunc func, gpointer data)
 {
 	DMAP_CONTAINER_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }

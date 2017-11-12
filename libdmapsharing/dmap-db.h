@@ -143,7 +143,7 @@ guint dmap_db_add_path (DMAPDb * db, const gchar * path);
  * @db: A media database. 
  * @id: A record ID.
  *
- * Returns: the database record corresponding to @id. This record should
+ * Returns: (transfer full): the database record corresponding to @id. This record should
  * be unrefed by the calling code when no longer required.
  *
  * If you are implementing a full database using this API, then you
