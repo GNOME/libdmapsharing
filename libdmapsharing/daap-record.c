@@ -21,14 +21,10 @@
 #include <libdmapsharing/daap-record.h>
 #include <libdmapsharing/dmap-enums.h>
 
-static gint daap_record_init_count = 0;
-
 static void
-daap_record_init (DAAPRecordIface * iface)
+daap_record_default_init (DAAPRecordInterface * iface)
 {
 	static gboolean is_initialized = FALSE;
-
-	daap_record_init_count++;
 
 	if (!is_initialized) {
 		g_object_interface_install_property (iface,
@@ -198,31 +194,7 @@ daap_record_init (DAAPRecordIface * iface)
 	}
 }
 
-static void
-daap_record_finalize (DAAPRecordIface * iface)
-{
-	daap_record_init_count--;
-}
-
-/* FIXME: No G_DEFINE_INTERFACE available in GObject headers: */
-GType
-daap_record_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DAAPRecordIface),
-			(GBaseInitFunc) daap_record_init,
-			(GBaseFinalizeFunc) daap_record_finalize
-		};
-		object_type =
-			g_type_register_static (G_TYPE_INTERFACE,
-						"DAAPRecord",
-						&object_info, 0);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DAAPRecord, daap_record, G_TYPE_OBJECT)
 
 gboolean
 daap_record_itunes_compat (DAAPRecord * record)

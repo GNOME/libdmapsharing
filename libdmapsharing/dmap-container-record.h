@@ -59,11 +59,11 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DMAP_CONTAINER_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecordIface))
+				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecordInterface))
 typedef struct _DMAPContainerRecord DMAPContainerRecord;
-typedef struct _DMAPContainerRecordIface DMAPContainerRecordIface;
+typedef struct _DMAPContainerRecordInterface DMAPContainerRecordInterface;
 
-struct _DMAPContainerRecordIface
+struct _DMAPContainerRecordInterface
 {
 	GTypeInterface parent;
 

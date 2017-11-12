@@ -40,7 +40,7 @@ test_dpap_record_factory_class_init (TestDPAPRecordFactoryClass *klass)
 static void
 test_dpap_record_factory_interface_init (gpointer iface, gpointer data)
 {
-	DMAPRecordFactoryIface *factory = iface;
+	DMAPRecordFactoryInterface *factory = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (factory) == DMAP_TYPE_RECORD_FACTORY);
 

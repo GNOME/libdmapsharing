@@ -60,11 +60,11 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DPAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      DPAP_TYPE_RECORD, DPAPRecordIface))
+				      DPAP_TYPE_RECORD, DPAPRecordInterface))
 typedef struct _DPAPRecord DPAPRecord;
-typedef struct _DPAPRecordIface DPAPRecordIface;
+typedef struct _DPAPRecordInterface DPAPRecordInterface;
 
-struct _DPAPRecordIface
+struct _DPAPRecordInterface
 {
 	GTypeInterface parent;
 

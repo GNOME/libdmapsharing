@@ -29,40 +29,12 @@ typedef struct FilterData
 	GHashTable *ht;
 } FilterData;
 
-static gint dmap_db_init_count = 0;
-
 static void
-dmap_db_init (DMAPDbIface * iface)
+dmap_db_default_init (DMAPDbInterface * iface)
 {
-	dmap_db_init_count++;
 }
 
-static void
-dmap_db_finalize (DMAPDbIface * iface)
-{
-	dmap_db_init_count--;
-}
-
-/* FIXME: No G_DEFINE_INTERFACE available in GObject headers: */
-GType
-dmap_db_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DMAPDbIface),
-			(GBaseInitFunc) dmap_db_init,
-			(GBaseFinalizeFunc) dmap_db_finalize
-		};
-		object_type =
-			g_type_register_static (G_TYPE_INTERFACE,
-						"DMAPDb", &object_info, 0);
-		g_type_interface_add_prerequisite (object_type,
-						   G_TYPE_OBJECT);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DMAPDb, dmap_db, G_TYPE_OBJECT)
 
 DMAPRecord *
 dmap_db_lookup_by_id (const DMAPDb * db, guint id)

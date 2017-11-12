@@ -57,11 +57,11 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DMAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      DMAP_TYPE_RECORD, DMAPRecordIface))
+				      DMAP_TYPE_RECORD, DMAPRecordInterface))
 typedef struct _DMAPRecord DMAPRecord;
-typedef struct _DMAPRecordIface DMAPRecordIface;
+typedef struct _DMAPRecordInterface DMAPRecordInterface;
 
-struct _DMAPRecordIface
+struct _DMAPRecordInterface
 {
 	GTypeInterface parent;
 

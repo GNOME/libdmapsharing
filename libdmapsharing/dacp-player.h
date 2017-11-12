@@ -54,8 +54,8 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DACP_PLAYER_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-                                        DACP_TYPE_PLAYER, DACPPlayerIface))
-typedef struct _DACPPlayerIface DACPPlayerIface;
+                                        DACP_TYPE_PLAYER, DACPPlayerInterface))
+typedef struct _DACPPlayerInterface DACPPlayerInterface;
 typedef struct _DACPPlayer DACPPlayer;
 
 typedef enum
@@ -72,7 +72,7 @@ typedef enum
 	DACP_PLAY_PLAYING = 4
 } DACPPlayState;
 
-struct _DACPPlayerIface
+struct _DACPPlayerInterface
 {
 	GTypeInterface parent_class;
 

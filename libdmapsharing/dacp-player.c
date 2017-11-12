@@ -20,7 +20,7 @@
 #include <libdmapsharing/daap-record.h>
 
 static void
-dacp_player_init (DACPPlayerIface * iface)
+dacp_player_default_init (DACPPlayerInterface * iface)
 {
 	static gboolean initialized = FALSE;
 
@@ -68,30 +68,7 @@ dacp_player_init (DACPPlayerIface * iface)
 	}
 }
 
-static void
-dacp_player_finalize (DACPPlayerIface * iface)
-{
-}
-
-GType
-dacp_player_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DACPPlayerIface),
-			(GBaseInitFunc) dacp_player_init,
-			(GBaseFinalizeFunc) dacp_player_finalize
-		};
-		object_type = g_type_register_static (G_TYPE_INTERFACE,
-						      "DACPPlayer",
-						      &object_info, 0);
-		g_type_interface_add_prerequisite (object_type,
-						   G_TYPE_OBJECT);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DACPPlayer, dacp_player, G_TYPE_OBJECT)
 
 DAAPRecord *
 dacp_player_now_playing_record (DACPPlayer * player)

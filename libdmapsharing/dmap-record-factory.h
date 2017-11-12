@@ -62,11 +62,11 @@ G_BEGIN_DECLS
 #define DMAP_RECORD_FACTORY_GET_INTERFACE(o) \
 				 (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				  DMAP_TYPE_RECORD_FACTORY, \
-				  DMAPRecordFactoryIface))
+				  DMAPRecordFactoryInterface))
 typedef struct _DMAPRecordFactory DMAPRecordFactory;
-typedef struct _DMAPRecordFactoryIface DMAPRecordFactoryIface;
+typedef struct _DMAPRecordFactoryInterface DMAPRecordFactoryInterface;
 
-struct _DMAPRecordFactoryIface
+struct _DMAPRecordFactoryInterface
 {
 	GTypeInterface parent;
 

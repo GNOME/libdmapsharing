@@ -279,7 +279,7 @@ test_daap_record_class_init (TestDAAPRecordClass *klass)
 static void
 test_daap_record_daap_iface_init (gpointer iface, gpointer data)
 {
-	DAAPRecordIface *daap_record = iface;
+	DAAPRecordInterface *daap_record = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (daap_record) == DAAP_TYPE_RECORD);
 
@@ -289,7 +289,7 @@ test_daap_record_daap_iface_init (gpointer iface, gpointer data)
 static void
 test_daap_record_dmap_iface_init (gpointer iface, gpointer data)
 {
-	DMAPRecordIface *dmap_record = iface;
+	DMAPRecordInterface *dmap_record = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_record) == DMAP_TYPE_RECORD);
 }

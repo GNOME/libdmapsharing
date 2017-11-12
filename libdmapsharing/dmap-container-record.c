@@ -20,14 +20,10 @@
 
 #include <libdmapsharing/dmap-container-record.h>
 
-static gint dmap_container_record_init_count = 0;
-
 static void
-dmap_container_record_init (DMAPContainerRecordIface * iface)
+dmap_container_record_default_init (DMAPContainerRecordInterface * iface)
 {
 	static gboolean is_initialized = FALSE;
-
-	dmap_container_record_init_count++;
 
 	if (!is_initialized) {
 		g_object_interface_install_property (iface,
@@ -41,31 +37,7 @@ dmap_container_record_init (DMAPContainerRecordIface * iface)
 	}
 }
 
-static void
-dmap_container_record_finalize (DMAPContainerRecordIface * iface)
-{
-	dmap_container_record_init_count--;
-}
-
-/* FIXME: No G_DEFINE_INTERFACE available in GObject headers: */
-GType
-dmap_container_record_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DMAPContainerRecordIface),
-			(GBaseInitFunc) dmap_container_record_init,
-			(GBaseFinalizeFunc) dmap_container_record_finalize
-		};
-		object_type =
-			g_type_register_static (G_TYPE_INTERFACE,
-						"DMAPContainerRecord",
-						&object_info, 0);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DMAPContainerRecord, dmap_container_record, G_TYPE_OBJECT)
 
 guint
 dmap_container_record_get_id (DMAPContainerRecord * record)

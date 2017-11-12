@@ -20,39 +20,12 @@
 
 #include <libdmapsharing/dmap-record-factory.h>
 
-static gint dmap_record_factory_init_count = 0;
-
 static void
-dmap_record_factory_init (DMAPRecordFactoryIface * iface)
+dmap_record_factory_default_init (DMAPRecordFactoryInterface * iface)
 {
-	dmap_record_factory_init_count++;
 }
 
-static void
-dmap_record_factory_finalize (DMAPRecordFactoryIface * iface)
-{
-	dmap_record_factory_init_count--;
-}
-
-/* FIXME: No G_DEFINE_INTERFACE available in GObject headers: */
-GType
-dmap_record_factory_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DMAPRecordFactoryIface),
-			(GBaseInitFunc) dmap_record_factory_init,
-			(GBaseFinalizeFunc) dmap_record_factory_finalize
-		};
-		object_type =
-			g_type_register_static (G_TYPE_INTERFACE,
-						"DMAPRecordFactory",
-						&object_info, 0);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DMAPRecordFactory, dmap_record_factory, G_TYPE_OBJECT)
 
 DMAPRecord *
 dmap_record_factory_create (DMAPRecordFactory * factory, gpointer user_data)

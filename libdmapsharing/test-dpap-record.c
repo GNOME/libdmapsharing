@@ -204,7 +204,7 @@ test_dpap_record_class_init (TestDPAPRecordClass *klass)
 static void
 test_dpap_record_dpap_iface_init (gpointer iface, gpointer data)
 {
-	DPAPRecordIface *dpap_record = iface;
+	DPAPRecordInterface *dpap_record = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dpap_record) == DPAP_TYPE_RECORD);
 
@@ -214,7 +214,7 @@ test_dpap_record_dpap_iface_init (gpointer iface, gpointer data)
 static void
 test_dpap_record_dmap_iface_init (gpointer iface, gpointer data)
 {
-        DMAPRecordIface *dmap_record = iface;
+        DMAPRecordInterface *dmap_record = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_record) == DMAP_TYPE_RECORD);
 }

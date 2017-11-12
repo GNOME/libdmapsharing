@@ -20,41 +20,12 @@
 
 #include <libdmapsharing/dmap-container-db.h>
 
-static gint dmap_container_db_init_count = 0;
-
 static void
-dmap_container_db_init (DMAPContainerDbIface * iface)
+dmap_container_db_default_init (DMAPContainerDbInterface * iface)
 {
-	dmap_container_db_init_count++;
 }
 
-static void
-dmap_container_db_finalize (DMAPContainerDbIface * iface)
-{
-	dmap_container_db_init_count--;
-}
-
-/* FIXME: No G_DEFINE_INTERFACE available in GObject headers: */
-GType
-dmap_container_db_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DMAPContainerDbIface),
-			(GBaseInitFunc) dmap_container_db_init,
-			(GBaseFinalizeFunc) dmap_container_db_finalize
-		};
-		object_type =
-			g_type_register_static (G_TYPE_INTERFACE,
-						"DMAPContainerDb",
-						&object_info, 0);
-		g_type_interface_add_prerequisite (object_type,
-						   G_TYPE_OBJECT);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DMAPContainerDb, dmap_container_db, G_TYPE_OBJECT)
 
 void
 dmap_container_db_add (DMAPContainerDb * db, DMAPContainerRecord *record)

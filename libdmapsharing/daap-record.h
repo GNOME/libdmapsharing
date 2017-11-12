@@ -61,11 +61,11 @@ G_BEGIN_DECLS
  * Returns: pointer to object interface structure.
  */
 #define DAAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      DAAP_TYPE_RECORD, DAAPRecordIface))
+				      DAAP_TYPE_RECORD, DAAPRecordInterface))
 typedef struct _DAAPRecord DAAPRecord;
-typedef struct _DAAPRecordIface DAAPRecordIface;
+typedef struct _DAAPRecordInterface DAAPRecordInterface;
 
-struct _DAAPRecordIface
+struct _DAAPRecordInterface
 {
 	GTypeInterface parent;
 

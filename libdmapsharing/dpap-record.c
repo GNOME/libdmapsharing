@@ -21,14 +21,10 @@
 #include <libdmapsharing/dmap-record.h>
 #include <libdmapsharing/dpap-record.h>
 
-static gint dpap_record_init_count = 0;
-
 static void
-dpap_record_init (DPAPRecordIface * iface)
+dpap_record_default_init (DPAPRecordInterface * iface)
 {
 	static gboolean is_initialized = FALSE;
-
-	dpap_record_init_count++;
 
 	if (!is_initialized) {
 		g_object_interface_install_property (iface,
@@ -131,31 +127,7 @@ dpap_record_init (DPAPRecordIface * iface)
 	}
 }
 
-static void
-dpap_record_finalize (DPAPRecordIface * iface)
-{
-	dpap_record_init_count--;
-}
-
-/* FIXME: No G_DEFINE_INTERFACE available in GObject headers: */
-GType
-dpap_record_get_type (void)
-{
-	static GType object_type = 0;
-
-	if (!object_type) {
-		static const GTypeInfo object_info = {
-			sizeof (DPAPRecordIface),
-			(GBaseInitFunc) dpap_record_init,
-			(GBaseFinalizeFunc) dpap_record_finalize
-		};
-		object_type =
-			g_type_register_static (G_TYPE_INTERFACE,
-						"DPAPRecord",
-						&object_info, 0);
-	}
-	return object_type;
-}
+G_DEFINE_INTERFACE(DPAPRecord, dpap_record, G_TYPE_OBJECT)
 
 GInputStream *
 dpap_record_read (DPAPRecord * record, GError ** err)
