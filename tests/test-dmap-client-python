@@ -47,6 +47,7 @@ class TestDMAPClient(GObject.GObject):
         print('  has_video:',   record.has_video)
         print('  mediakind:',   record.mediakind)
         print('  songalbumid:', record.songalbumid)
+        print('  hash:',        record.hash)
 
     def authenticate_cb(self, connection, name, session, msg, auth, retrying):
         username = connection.get_property('username')

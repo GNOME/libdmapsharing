@@ -36,10 +36,11 @@ dpap_record_default_init (DPAPRecordInterface * iface)
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-						     g_param_spec_pointer
+						     g_param_spec_boxed
 						     ("hash",
 						      "Hash of media file contents",
 						      "Hash of media file contents",
+		                                      G_TYPE_ARRAY,
 						      G_PARAM_READWRITE));
 
 		/* iTunes does not require to this to match the datatype for the image
@@ -77,10 +78,11 @@ dpap_record_default_init (DPAPRecordInterface * iface)
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
-						     g_param_spec_pointer
+						     g_param_spec_boxed
 						     ("thumbnail",
 						      "Photo thumbnail",
 						      "Photo thumbnail",
+		                                      G_TYPE_ARRAY,
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,

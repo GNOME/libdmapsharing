@@ -337,7 +337,7 @@ namespace DAAP {
 		[NoAccessorMethod]
 		public bool has_video { get; set; }
 		[NoAccessorMethod]
-		public void* hash { get; set; }
+		public GLib.Array hash { owned get; set; }
 		[NoAccessorMethod]
 		public string location { owned get; set; }
 		[NoAccessorMethod]
@@ -986,7 +986,7 @@ namespace DACP {
 		[NoAccessorMethod]
 		public bool has_video { get; set; }
 		[NoAccessorMethod]
-		public void* hash { get; set; }
+		public GLib.Array hash { owned get; set; }
 		[NoAccessorMethod]
 		public string location { owned get; set; }
 		[NoAccessorMethod]

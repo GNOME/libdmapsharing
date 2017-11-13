@@ -90,10 +90,7 @@ test_dpap_record_set_property (GObject *object,
                         record->priv->format = g_value_dup_string (value);
                         break;
                 case PROP_THUMBNAIL:
-			if (record->priv->thumbnail) {
-                                g_byte_array_unref (record->priv->thumbnail);
-                        }
-                        record->priv->thumbnail = g_byte_array_ref (g_value_get_pointer (value));
+                        record->priv->thumbnail = g_value_get_boxed (value);
                         break;
                 case PROP_COMMENTS:
 			g_free (record->priv->comments);
@@ -143,7 +140,7 @@ test_dpap_record_get_property (GObject *object,
                         g_value_set_string (value, record->priv->format);
                         break;
                 case PROP_THUMBNAIL:
-			g_value_set_pointer (value, record->priv->thumbnail);
+			g_value_set_boxed (value, record->priv->thumbnail);
                         break;
                 case PROP_COMMENTS:
                         g_value_set_string (value, record->priv->comments);
