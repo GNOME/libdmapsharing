@@ -392,7 +392,7 @@ START_TEST(_handle_mlcl_bad_code_test)
 	GNode *parent;
 	DMAPRecord *record;
 	int item_id;
-	char *set_value      = "value", *value = NULL;
+	char *set_value      = "value";
 	char *expected_title = "title", *title = NULL;
 
 	item = g_new0(DMAPStructureItem, 1);
