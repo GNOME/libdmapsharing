@@ -50,7 +50,7 @@ class PyDAAPRecord(GObject.GObject, DAAP.Record, DMAP.Record):
     disc        = GObject.property(type=GObject.TYPE_INT,     default=0)
     bitrate     = GObject.property(type=GObject.TYPE_INT,     default=0)
     has_video   = GObject.property(type=GObject.TYPE_BOOLEAN, default=0)
-    mediakind   = GObject.property(type=GObject.TYPE_INT,     default=0)
+    mediakind   = GObject.property(type=DMAP.MediaKind,       default=DMAP.MediaKind.MUSIC)
     songalbumid = GObject.property(type=GObject.TYPE_INT64,   default=0)
     hash        = GObject.property(type=GLib.ByteArray,       default=None)
 
