@@ -194,6 +194,10 @@ check:
 if HAVE_PEDANSEE
 	echo    "[ignore]" > pedansee.conf
 	echo -n "	name = " >> pedansee.conf
+	for i in $$(grep G_DEFINE_INTERFACE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
+		echo -n $${i}_default_init\;; \
+		echo -n $${i}_get_type\;; \
+	done >> pedansee.conf
 	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
 		echo -n $${i}_init\;; \
 		echo -n $${i}_class_init\;; \
