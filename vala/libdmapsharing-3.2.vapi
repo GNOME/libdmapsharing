@@ -274,7 +274,7 @@ namespace DAAP {
 		public abstract unowned DAAP.DMAPContainerRecord lookup_by_id (DMAP.ContainerDb db, uint id);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DMAPContainerRecord {
+	public interface DMAPContainerRecord : GLib.Object {
 		[CCode (cname = "dmap_container_record_add_entry")]
 		public abstract void add_entry (DAAP.DMAPContainerRecord container_record, DAAP.DMAPRecord record, int id);
 		[CCode (cname = "dmap_container_record_get_entries")]
@@ -283,6 +283,8 @@ namespace DAAP {
 		public abstract uint64 get_entry_count (DAAP.DMAPContainerRecord record);
 		[CCode (cname = "dmap_container_record_get_id")]
 		public abstract uint get_id (DAAP.DMAPContainerRecord record);
+		[NoAccessorMethod]
+		public string name { owned get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPDb : GLib.Object {
@@ -311,15 +313,57 @@ namespace DAAP {
 		public abstract unowned GLib.ByteArray to_blob (DAAP.DMAPRecord record);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DMAPRecordFactory {
+	public interface DMAPRecordFactory : GLib.Object {
 		[CCode (cname = "dmap_record_factory_create")]
 		public abstract unowned DAAP.DMAPRecord create (DMAP.RecordFactory factory);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface Record {
+	public interface Record : GLib.Object {
 		public static int cmp_by_album (void* a, void* b, DMAP.Db db);
 		public abstract bool itunes_compat ();
 		public abstract unowned GLib.InputStream read () throws GLib.Error;
+		[NoAccessorMethod]
+		public int bitrate { get; set; }
+		[NoAccessorMethod]
+		public int disc { get; set; }
+		[NoAccessorMethod]
+		public int duration { get; set; }
+		[NoAccessorMethod]
+		public uint64 filesize { get; set; }
+		[NoAccessorMethod]
+		public int firstseen { get; set; }
+		[NoAccessorMethod]
+		public string format { owned get; set; }
+		[NoAccessorMethod]
+		public bool has_video { get; set; }
+		[NoAccessorMethod]
+		public void* hash { get; set; }
+		[NoAccessorMethod]
+		public string location { owned get; set; }
+		[NoAccessorMethod]
+		public DAAP.DMAPMediaKind mediakind { get; set; }
+		[NoAccessorMethod]
+		public int mtime { get; set; }
+		[NoAccessorMethod]
+		public int rating { get; set; }
+		[NoAccessorMethod]
+		public string songalbum { owned get; set; }
+		[NoAccessorMethod]
+		public int64 songalbumid { get; set; }
+		[NoAccessorMethod]
+		public string songartist { owned get; set; }
+		[NoAccessorMethod]
+		public string songgenre { owned get; set; }
+		[NoAccessorMethod]
+		public string sort_album { owned get; set; }
+		[NoAccessorMethod]
+		public string sort_artist { owned get; set; }
+		[NoAccessorMethod]
+		public string title { owned get; set; }
+		[NoAccessorMethod]
+		public int track { get; set; }
+		[NoAccessorMethod]
+		public int year { get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DACP_PLAY_")]
 	public enum DACPPlayState {
@@ -920,13 +964,55 @@ namespace DACP {
 	public class bitwise {
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DAAPRecord {
+	public interface DAAPRecord : GLib.Object {
 		[CCode (cname = "daap_record_cmp_by_album")]
 		public static int cmp_by_album (void* a, void* b, DMAP.Db db);
 		[CCode (cname = "daap_record_itunes_compat")]
 		public abstract bool itunes_compat (DAAP.Record record);
 		[CCode (cname = "daap_record_read")]
 		public abstract unowned GLib.InputStream read (DAAP.Record record) throws GLib.Error;
+		[NoAccessorMethod]
+		public int bitrate { get; set; }
+		[NoAccessorMethod]
+		public int disc { get; set; }
+		[NoAccessorMethod]
+		public int duration { get; set; }
+		[NoAccessorMethod]
+		public uint64 filesize { get; set; }
+		[NoAccessorMethod]
+		public int firstseen { get; set; }
+		[NoAccessorMethod]
+		public string format { owned get; set; }
+		[NoAccessorMethod]
+		public bool has_video { get; set; }
+		[NoAccessorMethod]
+		public void* hash { get; set; }
+		[NoAccessorMethod]
+		public string location { owned get; set; }
+		[NoAccessorMethod]
+		public DACP.DMAPMediaKind mediakind { get; set; }
+		[NoAccessorMethod]
+		public int mtime { get; set; }
+		[NoAccessorMethod]
+		public int rating { get; set; }
+		[NoAccessorMethod]
+		public string songalbum { owned get; set; }
+		[NoAccessorMethod]
+		public int64 songalbumid { get; set; }
+		[NoAccessorMethod]
+		public string songartist { owned get; set; }
+		[NoAccessorMethod]
+		public string songgenre { owned get; set; }
+		[NoAccessorMethod]
+		public string sort_album { owned get; set; }
+		[NoAccessorMethod]
+		public string sort_artist { owned get; set; }
+		[NoAccessorMethod]
+		public string title { owned get; set; }
+		[NoAccessorMethod]
+		public int track { get; set; }
+		[NoAccessorMethod]
+		public int year { get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPContainerDb : GLib.Object {
@@ -940,7 +1026,7 @@ namespace DACP {
 		public abstract unowned DACP.DMAPContainerRecord lookup_by_id (DMAP.ContainerDb db, uint id);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DMAPContainerRecord {
+	public interface DMAPContainerRecord : GLib.Object {
 		[CCode (cname = "dmap_container_record_add_entry")]
 		public abstract void add_entry (DACP.DMAPContainerRecord container_record, DACP.DMAPRecord record, int id);
 		[CCode (cname = "dmap_container_record_get_entries")]
@@ -949,6 +1035,8 @@ namespace DACP {
 		public abstract uint64 get_entry_count (DACP.DMAPContainerRecord record);
 		[CCode (cname = "dmap_container_record_get_id")]
 		public abstract uint get_id (DACP.DMAPContainerRecord record);
+		[NoAccessorMethod]
+		public string name { owned get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPDb : GLib.Object {
@@ -977,11 +1065,11 @@ namespace DACP {
 		public abstract unowned GLib.ByteArray to_blob (DACP.DMAPRecord record);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DMAPRecordFactory {
+	public interface DMAPRecordFactory : GLib.Object {
 		[CCode (cname = "dmap_record_factory_create")]
 		public abstract unowned DACP.DMAPRecord create (DACP.DMAPRecordFactory factory);
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", type_cname = "DACPPlayerInterface")]
 	public interface Player : GLib.Object {
 		public abstract void cue_clear ();
 		public abstract void cue_play (GLib.List records, uint index);
@@ -1548,7 +1636,7 @@ namespace DMAP {
 	[Compact]
 	public class bitwise {
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", type_cname = "DMAPContainerDbInterface")]
 	public interface ContainerDb : GLib.Object {
 		public abstract void add (DMAP.ContainerRecord record);
 		public abstract int64 count ();
@@ -1556,13 +1644,15 @@ namespace DMAP {
 		public abstract unowned DMAP.ContainerRecord lookup_by_id (uint id);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface ContainerRecord {
+	public interface ContainerRecord : GLib.Object {
 		public abstract void add_entry (DMAP.Record record, int id);
 		public abstract unowned DMAP.Db get_entries ();
 		public abstract uint64 get_entry_count ();
 		public abstract uint get_id ();
+		[NoAccessorMethod]
+		public string name { owned get; set; }
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", type_cname = "DMAPDbInterface")]
 	public interface Db : GLib.Object {
 		public abstract uint add (DMAP.Record record);
 		public abstract uint add_path (string path);
@@ -1573,13 +1663,13 @@ namespace DMAP {
 		public abstract unowned DMAP.Record lookup_by_id (uint id);
 		public abstract uint lookup_id_by_location (string location);
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", type_cname = "DMAPRecordInterface")]
 	public interface Record : GLib.Object {
 		public abstract bool set_from_blob (GLib.ByteArray blob);
 		public abstract unowned GLib.ByteArray to_blob ();
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface RecordFactory {
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", type_cname = "DMAPRecordFactoryInterface")]
+	public interface RecordFactory : GLib.Object {
 		public abstract DMAP.Record create (void* user_data);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_")]
@@ -2169,7 +2259,7 @@ namespace DPAP {
 		public abstract unowned DPAP.DMAPContainerRecord lookup_by_id (DMAP.ContainerDb db, uint id);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DMAPContainerRecord {
+	public interface DMAPContainerRecord : GLib.Object {
 		[CCode (cname = "dmap_container_record_add_entry")]
 		public abstract void add_entry (DPAP.DMAPContainerRecord container_record, DPAP.DMAPRecord record, int id);
 		[CCode (cname = "dmap_container_record_get_entries")]
@@ -2178,6 +2268,8 @@ namespace DPAP {
 		public abstract uint64 get_entry_count (DPAP.DMAPContainerRecord record);
 		[CCode (cname = "dmap_container_record_get_id")]
 		public abstract uint get_id (DPAP.DMAPContainerRecord record);
+		[NoAccessorMethod]
+		public string name { owned get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public interface DMAPDb : GLib.Object {
@@ -2206,13 +2298,37 @@ namespace DPAP {
 		public abstract unowned GLib.ByteArray to_blob (DPAP.DMAPRecord record);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface DMAPRecordFactory {
+	public interface DMAPRecordFactory : GLib.Object {
 		[CCode (cname = "dmap_record_factory_create")]
 		public abstract unowned DPAP.DMAPRecord create (DMAP.RecordFactory factory);
 	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public interface Record {
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", type_cname = "DPAPRecordInterface")]
+	public interface Record : GLib.Object {
 		public abstract unowned GLib.InputStream read () throws GLib.Error;
+		[NoAccessorMethod]
+		public string aspect_ratio { owned get; set; }
+		[NoAccessorMethod]
+		public string comments { owned get; set; }
+		[NoAccessorMethod]
+		public int creation_date { get; set; }
+		[NoAccessorMethod]
+		public string filename { owned get; set; }
+		[NoAccessorMethod]
+		public string format { owned get; set; }
+		[NoAccessorMethod]
+		public void* hash { get; set; }
+		[NoAccessorMethod]
+		public int large_filesize { get; set; }
+		[NoAccessorMethod]
+		public string location { owned get; set; }
+		[NoAccessorMethod]
+		public int pixel_height { get; set; }
+		[NoAccessorMethod]
+		public int pixel_width { get; set; }
+		[NoAccessorMethod]
+		public int rating { get; set; }
+		[NoAccessorMethod]
+		public void* thumbnail { get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DACP_PLAY_")]
 	public enum DACPPlayState {

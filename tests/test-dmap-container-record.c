@@ -105,7 +105,7 @@ test_dmap_container_record_class_init (TestDMAPContainerRecordClass *klass)
 static void
 test_dmap_container_record_interface_init (gpointer iface, gpointer data)
 {
-	DMAPContainerRecordIface *dmap_container_record = iface;
+	DMAPContainerRecordInterface *dmap_container_record = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_record) == DMAP_TYPE_CONTAINER_RECORD);
 

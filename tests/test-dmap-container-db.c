@@ -62,7 +62,7 @@ test_dmap_container_db_class_init (TestDMAPContainerDbClass *klass)
 static void
 test_dmap_container_db_interface_init (gpointer iface, gpointer data)
 {
-	DMAPContainerDbIface *dmap_container_db = iface;
+	DMAPContainerDbInterface *dmap_container_db = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_db) == DMAP_TYPE_CONTAINER_DB);
 
