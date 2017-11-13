@@ -1,0 +1,46 @@
+Version 3.2 of the libdmapsharing API is incompatible with previous
+versions. The primary reason for these changes is to better support
+GObject introspection and thus languages such as Python. The following
+are the key differences between the new and old APIs:
+
+(1) The interface names exported by libdmapsharing now end in "Interface"
+instead of "Iface".
+
+(2) The new API renames the following symbols as indicated:
+
+	DMAP_TYPE_DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL became
+	DMAP_TYPE_DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL.
+
+	DMAPMdnsBrowserTransportProtocol became DMAPMdnsServiceTransportProtocol.
+
+	DMAPMdnsBrowserServiceType became DMAPMdnsServiceType.
+
+	DMAPMdnsBrowserService became DMAPMdnsService.
+
+	DMAPConnectionCallback became DMAPConnectionFunc.
+
+	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL* became DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL*.
+
+	DMAP_MDNS_BROWSER_SERVICE_TYPE_* became DMAP_MDNS_SERVICE_TYPE_*.
+
+	dmap_connection_connect became dmap_connection_start.
+
+(3) The "hash" property in the DAAPRecord interface and the "hash"
+and "thumbnail" properties in the DPAPRecord interface are now boxed
+types.  The true type of each of these properties is a GArray. Thus
+implementations of these interfaces should now:
+
+	(a) use x = g_value_get_boxed(value) in their setter,
+
+	(b) use g_value_set_boxed(value, x) in their getter, and
+
+	(c) use GArray instead of GByteArray.
+
+Additionally, the implementation's finalize method should no longer
+explicitly free the object associated with the hash/thumbnail property.
+
+(4) The new API replaces the use of GHFunc with DMAPIdRecordFunc and
+DMAPContainerIdFunc.
+
+(5) The properties contained in a DMAPMdnsService must now be accessed
+using g_object_get.
