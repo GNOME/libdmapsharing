@@ -42,6 +42,9 @@ struct TestDAAPRecordPrivate {
 	gint32 track;
 	gint32 year;
 	gint8 has_video;
+	guint64 songalbumid;
+	DMAPMediaKind mediakind;
+	GByteArray *hash;
 };
 
 enum {
@@ -64,7 +67,10 @@ enum {
         PROP_DISC,
         PROP_BITRATE,
         PROP_HAS_VIDEO,
-        PROP_REAL_FORMAT
+        PROP_REAL_FORMAT,
+        PROP_SONGALBUMID,
+        PROP_MEDIAKIND,
+        PROP_HASH
 };
 
 static void
@@ -142,6 +148,18 @@ test_daap_record_set_property (GObject *object,
                 case PROP_HAS_VIDEO:
                         record->priv->has_video = g_value_get_boolean (value);
                         break;
+		case PROP_SONGALBUMID:
+			record->priv->songalbumid = g_value_get_uint64 (value);
+			break;
+		case PROP_MEDIAKIND:
+			record->priv->mediakind = g_value_get_enum (value);
+			break;
+		case PROP_HASH:
+			if (record->priv->hash) {
+				g_byte_array_unref (record->priv->hash);
+			}
+			record->priv->hash = g_byte_array_ref (g_value_get_pointer (value));
+			break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
                         break;
@@ -211,6 +229,15 @@ test_daap_record_get_property (GObject *object,
                 case PROP_HAS_VIDEO:
                         g_value_set_boolean (value, record->priv->has_video);
                         break;
+		case PROP_SONGALBUMID:
+                        g_value_set_uint64 (value, record->priv->songalbumid);
+			break;
+		case PROP_MEDIAKIND:
+                        g_value_set_enum (value, record->priv->mediakind);
+			break;
+		case PROP_HASH:
+			g_value_set_pointer (value, record->priv->hash);
+			break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
                         break;
@@ -267,6 +294,9 @@ test_daap_record_class_init (TestDAAPRecordClass *klass)
         g_object_class_override_property (gobject_class, PROP_DISC, "disc");
         g_object_class_override_property (gobject_class, PROP_BITRATE, "bitrate");
         g_object_class_override_property (gobject_class, PROP_HAS_VIDEO, "has-video");
+        g_object_class_override_property (gobject_class, PROP_SONGALBUMID, "songalbumid");
+        g_object_class_override_property (gobject_class, PROP_MEDIAKIND, "mediakind");
+        g_object_class_override_property (gobject_class, PROP_HASH, "hash");
 
         g_object_class_install_property (gobject_class, PROP_REAL_FORMAT,
                                 g_param_spec_string ("real-format",
@@ -358,6 +388,9 @@ TestDAAPRecord *test_daap_record_new (void)
 	record->priv->year = 2008;
 
 	record->priv->has_video = 0;
+	record->priv->songalbumid = 0;
+	record->priv->mediakind = DMAP_MEDIA_KIND_MUSIC;
+	record->priv->hash = NULL;
 
 	return record;
 }
