@@ -489,17 +489,25 @@ _dmap_share_set_property (GObject * object,
 		_dmap_share_set_password (share, g_value_get_string (value));
 		break;
 	case PROP_DB:
-		share->priv->db = (DMAPDb *) g_value_get_pointer (value);
+		if (share->priv->db) {
+			g_object_unref(share->priv->db);
+		}
+		share->priv->db = g_value_dup_object (value);
 		break;
 	case PROP_CONTAINER_DB:
-		share->priv->container_db =
-			(DMAPContainerDb *) g_value_get_pointer (value);
+		if (share->priv->container_db) {
+			g_object_unref(share->priv->container_db);
+		}
+		share->priv->container_db = g_value_dup_object (value);
 		break;
 	case PROP_TRANSCODE_MIMETYPE:
 		/* FIXME: get or dup? */
 		share->priv->transcode_mimetype = g_value_dup_string (value);
 		break;
 	case PROP_TXT_RECORDS:
+		if (share->priv->txt_records) {
+			g_strfreev (share->priv->txt_records);
+		}
 		share->priv->txt_records = g_value_dup_boxed (value);
 		break;
 	default:
@@ -535,10 +543,10 @@ _dmap_share_get_property (GObject * object,
 				  (DMAP_SHARE (object)));
 		break;
 	case PROP_DB:
-		g_value_set_pointer (value, share->priv->db);
+		g_value_set_object (value, share->priv->db);
 		break;
 	case PROP_CONTAINER_DB:
-		g_value_set_pointer (value, share->priv->container_db);
+		g_value_set_object (value, share->priv->container_db);
 		break;
 	case PROP_TRANSCODE_MIMETYPE:
 		g_value_set_string (value, share->priv->transcode_mimetype);
@@ -654,20 +662,20 @@ dmap_share_class_init (DMAPShareClass * klass)
 							    G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_DB,
-					 g_param_spec_pointer ("db",
-							       "DB",
-							       "DB object",
-							       G_PARAM_READWRITE
-							       |
+					 g_param_spec_object ("db",
+							      "DB",
+							      "DB object",
+	                                                       DMAP_TYPE_DB,
+							       G_PARAM_READWRITE |
 							       G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property (object_class,
 					 PROP_CONTAINER_DB,
-					 g_param_spec_pointer ("container-db",
-							       "Container DB",
-							       "Container DB object",
-							       G_PARAM_READWRITE
-							       |
+					 g_param_spec_object ("container-db",
+							      "Container DB",
+							      "Container DB object",
+	                                                       DMAP_TYPE_CONTAINER_DB,
+							       G_PARAM_READWRITE |
 							       G_PARAM_CONSTRUCT_ONLY));
 
 	g_object_class_install_property (object_class,

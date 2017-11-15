@@ -38,7 +38,7 @@ test_dmap_db_lookup_by_id (const DMAPDb *db, guint id)
 
 static void
 test_dmap_db_foreach	     (const DMAPDb *db,
-			      GHFunc func,
+			      DMAPIdRecordFunc func,
 			      gpointer data)
 {
 	g_hash_table_foreach (TEST_DMAP_DB (db)->priv->db, (GHFunc) func, data);

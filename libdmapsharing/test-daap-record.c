@@ -44,7 +44,7 @@ struct TestDAAPRecordPrivate {
 	gint8 has_video;
 	guint64 songalbumid;
 	DMAPMediaKind mediakind;
-	GByteArray *hash;
+	GArray *hash;
 };
 
 enum {
@@ -155,7 +155,10 @@ test_daap_record_set_property (GObject *object,
 			record->priv->mediakind = g_value_get_enum (value);
 			break;
 		case PROP_HASH:
-			record->priv->hash = g_value_get_boxed (value);
+			if (record->priv->hash) {
+				g_array_unref(record->priv->hash);
+			}
+			record->priv->hash = g_value_dup_boxed (value);
 			break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -336,6 +339,10 @@ test_daap_record_finalize (GObject *object)
 	g_free (record->priv->album);
 	g_free (record->priv->artist);
 	g_free (record->priv->genre);
+
+	if (record->priv->hash) {
+		g_array_unref(record->priv->hash);
+	}
 
 	G_OBJECT_CLASS (test_daap_record_parent_class)->finalize (object);
 }

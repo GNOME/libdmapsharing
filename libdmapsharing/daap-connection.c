@@ -22,6 +22,7 @@
 
 #include <libdmapsharing/daap-connection.h>
 #include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/test-dmap-db.h>
 
 #define DAAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAAP_TYPE_CONNECTION, DAAPConnectionPrivate))
 
@@ -220,30 +221,39 @@ START_TEST(daap_connection_new_test)
 {
 	char *str;
 	int   port;
-	DMAPDb *db;
-	DMAPRecordFactory *factory;
+	DMAPDb *db1, *db2;
+	DMAPRecordFactory *factory1, *factory2;
+
+	db1 = DMAP_DB(test_dmap_db_new());
+	factory1 = DMAP_RECORD_FACTORY(test_daap_record_factory_new());
 
 	DAAPConnection *connection = daap_connection_new("foo",
 	                                                 "foo.example.com",
 	                                                  3689,
-	                                                  NULL,
-	                                                  NULL);
+	                                                  db1,
+	                                                  factory1);
 
 	g_object_get(connection, "name", &str, NULL);
 	ck_assert_str_eq("foo", str);
+	g_free(str);
 
 	g_object_get(connection, "host", &str, NULL);
 	ck_assert_str_eq("foo.example.com", str);
+	g_free(str);
 
 	g_object_get(connection, "port", &port, NULL);
 	ck_assert_int_eq(3689, port);
 
-	g_object_get(connection, "db", &db, NULL);
-	ck_assert(NULL == db);
+	g_object_get(connection, "db", &db2, NULL);
+	ck_assert(db1 == db2);
+	g_object_unref(db2);
 
-	g_object_get(connection, "factory", &factory, NULL);
-	ck_assert(NULL == factory);
+	g_object_get(connection, "factory", &factory2, NULL);
+	ck_assert(factory1 == factory2);
+	g_object_unref(factory2);
 
+	g_object_unref(db1);
+	g_object_unref(factory1);
 	g_object_unref(connection);
 }
 END_TEST
@@ -342,24 +352,31 @@ START_TEST(_handle_mlcl_test)
 
 	g_object_get(record, "title", &title, NULL);
 	ck_assert_str_eq(expected_title, title);
+	g_free(title);
 
 	g_object_get(record, "songalbum", &album, NULL);
 	ck_assert_str_eq(expected_album, album);
+	g_free(album);
 
 	g_object_get(record, "songartist", &artist, NULL);
 	ck_assert_str_eq(expected_artist, artist);
+	g_free(artist);
 
 	g_object_get(record, "format", &format, NULL);
 	ck_assert_str_eq(expected_format, format);
+	g_free(format);
 
 	g_object_get(record, "songgenre", &genre, NULL);
 	ck_assert_str_eq(expected_genre, genre);
+	g_free(genre);
 
 	g_object_get(record, "sort-artist", &sort_artist, NULL);
 	ck_assert_str_eq(expected_sort_artist, sort_artist);
+	g_free(sort_artist);
 
 	g_object_get(record, "sort-album", &sort_album, NULL);
 	ck_assert_str_eq(expected_sort_album, sort_album);
+	g_free(sort_album);
 
 	g_object_get(record, "has-video", &has_video, NULL);
 	ck_assert_int_eq(expected_has_video, has_video);
@@ -407,6 +424,7 @@ START_TEST(_handle_mlcl_bad_code_test)
 
 	g_object_get(record, "title", &title, NULL);
 	ck_assert_str_eq(expected_title, title);
+	g_free(title);
 }
 END_TEST
 

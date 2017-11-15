@@ -22,8 +22,7 @@
 #define __TEST_DMAP_CONTAINER_RECORD
 
 #include <libdmapsharing/dmap.h>
-
-#include "test-dmap-db.h"
+#include <libdmapsharing/test-dmap-db.h>
 
 G_BEGIN_DECLS
 

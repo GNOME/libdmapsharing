@@ -104,13 +104,13 @@ dmap_mdns_service_get_property (GObject *object,
 
 	switch (prop_id) {
 	case PROP_SERVICE_NAME:
-		g_value_set_static_string (value, service->priv->service_name);
+		g_value_set_string (value, service->priv->service_name);
 		break;
 	case PROP_NAME:
-		g_value_set_static_string (value, service->priv->name);
+		g_value_set_string (value, service->priv->name);
 		break;
 	case PROP_HOST:
-		g_value_set_static_string (value, service->priv->host);
+		g_value_set_string (value, service->priv->host);
 		break;
 	case PROP_PORT:
 		g_value_set_uint (value, service->priv->port);
@@ -119,7 +119,7 @@ dmap_mdns_service_get_property (GObject *object,
 		g_value_set_boolean (value, service->priv->password_protected);
 		break;
 	case PROP_PAIR:
-		g_value_set_static_string (value, service->priv->pair);
+		g_value_set_string (value, service->priv->pair);
 		break;
 	case PROP_TRANSPORT_PROTOCOL:
 		g_value_set_uint (value, service->priv->transport_protocol);

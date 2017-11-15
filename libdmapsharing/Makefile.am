@@ -30,7 +30,8 @@ libdmapsharing_3_2_la_SOURCES += \
 	test-daap-record.c \
 	test-daap-record-factory.c \
 	test-dpap-record.c \
-	test-dpap-record-factory.c
+	test-dpap-record-factory.c \
+	test-dmap-db.c
 endif
 
 if USE_HOWL
@@ -120,7 +121,8 @@ noinst_HEADERS = \
 	test-daap-record-factory.h \
 	test-daap-record.h \
 	test-dpap-record-factory.h \
-	test-dpap-record.h
+	test-dpap-record.h \
+	test-dmap-db.h
 
 BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
 

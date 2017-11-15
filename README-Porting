@@ -36,11 +36,14 @@ implementations of these interfaces should now:
 
 	(c) use GArray instead of GByteArray.
 
-Additionally, the implementation's finalize method should no longer
-explicitly free the object associated with the hash/thumbnail property.
+(4) The "base-uri" property in the DMAPConnection class is now a boxed
+type. The real type is SoupURI.
 
-(4) The new API replaces the use of GHFunc with DMAPIdRecordFunc and
+(4) The "db" and "container-db" properties in DMAPShare are now handled
+as object types instead of pointer types.
+
+(5) The new API replaces the use of GHFunc with DMAPIdRecordFunc and
 DMAPContainerIdFunc.
 
-(5) The properties contained in a DMAPMdnsService must now be accessed
+(6) The properties contained in a DMAPMdnsService must now be accessed
 using g_object_get.

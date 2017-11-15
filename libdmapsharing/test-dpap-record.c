@@ -27,12 +27,11 @@ struct TestDPAPRecordPrivate {
 	gint rating;
 	gint creationdate;
 	char *location;
-	char *title;
 	char *aspectratio;
 	char *filename;
 	char *format;
 	char *comments;
-	GByteArray *thumbnail;
+	GArray *thumbnail;
 };
 
 enum {
@@ -82,7 +81,8 @@ test_dpap_record_set_property (GObject *object,
                         break;
                 case PROP_PIXEL_HEIGHT:
                         record->priv->pixelheight = g_value_get_int (value);
-                        break;                case PROP_PIXEL_WIDTH:
+                        break;
+		case PROP_PIXEL_WIDTH:
                         record->priv->pixelwidth = g_value_get_int (value);
                         break;
                 case PROP_FORMAT:
@@ -90,7 +90,10 @@ test_dpap_record_set_property (GObject *object,
                         record->priv->format = g_value_dup_string (value);
                         break;
                 case PROP_THUMBNAIL:
-                        record->priv->thumbnail = g_value_get_boxed (value);
+			if (record->priv->thumbnail) {
+				g_array_unref(record->priv->thumbnail);
+			}
+                        record->priv->thumbnail = g_value_dup_boxed (value);
                         break;
                 case PROP_COMMENTS:
 			g_free (record->priv->comments);
@@ -145,7 +148,8 @@ test_dpap_record_get_property (GObject *object,
                 case PROP_COMMENTS:
                         g_value_set_string (value, record->priv->comments);
                         break;
-                default:                        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+                default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
                         break;
 
         }
@@ -226,14 +230,13 @@ test_dpap_record_finalize (GObject *object)
 	TestDPAPRecord *record = TEST_DPAP_RECORD (object);
 
 	g_free (record->priv->location);
-	g_free (record->priv->title);
 	g_free (record->priv->aspectratio);
 	g_free (record->priv->filename);
 	g_free (record->priv->format);
 	g_free (record->priv->comments);
 
 	if (record->priv->thumbnail) {
-		g_byte_array_unref (record->priv->thumbnail);
+		g_array_unref (record->priv->thumbnail);
 	}
 
 	G_OBJECT_CLASS (test_dpap_record_parent_class)->finalize (object);
@@ -253,8 +256,6 @@ test_dpap_record_new (void)
 	/* Must be a URI. */
 	record->priv->location = g_strdup_printf ("file://%s/media/test.jpeg",
 						  g_get_current_dir ());
-
-	record->priv->title = g_strdup ("Title of Photograph");
 
 	/* Width / Height as a string. */
 	record->priv->aspectratio = g_strdup ("1.333");
@@ -282,8 +283,8 @@ test_dpap_record_new (void)
 	path = g_strdup_printf ("%s/media/test.jpeg", g_get_current_dir ());
 	g_file_get_contents (path, (gchar **) &thumbnail, &size, &error);
 	g_free (path);
-	record->priv->thumbnail = g_byte_array_sized_new (size);
-	g_byte_array_append (record->priv->thumbnail, thumbnail, size);
+	record->priv->thumbnail = g_array_sized_new (FALSE, FALSE, 1, size);
+	g_array_append_vals (record->priv->thumbnail, thumbnail, size);
 
 	return record;
 }

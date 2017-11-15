@@ -25,8 +25,7 @@
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/test-daap-record-factory.h>
 #include <libdmapsharing/test-dpap-record-factory.h>
-
-#include "test-dmap-db.h"
+#include <libdmapsharing/test-dmap-db.h>
 
 enum {
     DAAP,
@@ -82,6 +81,8 @@ authenticate_cb (DMAPConnection *connection,
 	g_object_set (connection, "password", password, NULL);
 	soup_auth_authenticate (auth, username, password);
 	soup_session_unpause_message (session, msg);
+
+	g_free(username);
 }
 
 static void
@@ -126,6 +127,10 @@ service_added_cb (DMAPMdnsBrowser *browser,
     }
     g_signal_connect (DMAP_CONNECTION (conn), "authenticate", G_CALLBACK(authenticate_cb), NULL);
     dmap_connection_start (DMAP_CONNECTION (conn), (DMAPConnectionFunc) connected_cb, db);
+
+    g_free(service_name);
+    g_free(name);
+    g_free(host);
 }
 
 int main(int argc, char **argv)

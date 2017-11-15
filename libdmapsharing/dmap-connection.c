@@ -175,8 +175,7 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 					 g_param_spec_object ("factory",
 							      "record factory",
 							      "record factory",
-	                                                      // FIXME: Should be more specific.
-	                                                      G_TYPE_OBJECT,
+	                                                       DMAP_TYPE_RECORD_FACTORY,
 							      G_PARAM_READWRITE
 							      |
 							      G_PARAM_CONSTRUCT_ONLY));
@@ -205,10 +204,11 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_BASE_URI,
-					 g_param_spec_pointer ("base-uri",
-							       "base URI",
-							       "base URI",
-							       G_PARAM_READWRITE));
+					 g_param_spec_boxed ("base-uri",
+	                                                     "base URI",
+	                                                     "base URI",
+	                                                      SOUP_TYPE_URI,
+	                                                      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
 					 PROP_DATABASE_ID,
@@ -1724,11 +1724,17 @@ dmap_connection_set_property (GObject * object,
 		priv->name = g_value_dup_string (value);
 		break;
 	case PROP_DB:
-		priv->db = DMAP_DB (g_value_get_object (value));
+		if (priv->db) {
+			g_object_unref(priv->db);
+		}
+		priv->db = DMAP_DB (g_value_dup_object (value));
 		break;
 	case PROP_FACTORY:
+		if (priv->record_factory) {
+			g_object_unref(priv->record_factory);
+		}
 		priv->record_factory =
-			DMAP_RECORD_FACTORY (g_value_get_object (value));
+			DMAP_RECORD_FACTORY (g_value_dup_object (value));
 		break;
 	case PROP_HOST:
 		g_free (priv->host);
@@ -1738,7 +1744,10 @@ dmap_connection_set_property (GObject * object,
 		priv->port = g_value_get_uint (value);
 		break;
 	case PROP_BASE_URI:
-		priv->base_uri = g_value_get_pointer (value);
+		if (priv->base_uri) {
+			soup_uri_free (priv->base_uri);
+		}
+		priv->base_uri = g_value_get_boxed (value);
 		break;
 	case PROP_DATABASE_ID:
 		priv->database_id = g_value_get_int (value);
@@ -1788,7 +1797,7 @@ dmap_connection_get_property (GObject * object,
 		g_value_set_uint (value, priv->port);
 		break;
 	case PROP_BASE_URI:
-		g_value_set_pointer (value, priv->base_uri);
+		g_value_set_boxed (value, priv->base_uri);
 		break;
 	case PROP_DATABASE_ID:
 		g_value_set_int (value, priv->database_id);
