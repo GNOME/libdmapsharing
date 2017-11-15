@@ -53,7 +53,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	const gchar *format = NULL;
 	const gchar *comments = NULL;
 	const gchar *thumbnail = NULL;
-	GByteArray *ptr = NULL;
+	GArray *ptr = NULL;
 	gint creation_date = 0;
 	gint filesize = 0;
 	gint large_filesize = 0;
@@ -118,10 +118,10 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 	}
 
 	if (filesize) {
-		ptr = g_byte_array_sized_new (filesize);
-		g_byte_array_append (ptr, (guint8 *) thumbnail, filesize);
+		ptr = g_array_sized_new (FALSE, FALSE, 1, filesize);
+		g_array_append_vals (ptr, (guint8 *) thumbnail, filesize);
 	} else {
-		ptr = g_byte_array_sized_new (0);
+		ptr = g_array_sized_new (FALSE, FALSE, 1, 0);
 	}
 
 	g_object_set (record,
@@ -136,7 +136,7 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 		      "comments", comments, "thumbnail", ptr, NULL);
 
 	if (ptr) {
-		g_byte_array_unref (ptr);
+		g_array_unref (ptr);
 	}
 
       _return:

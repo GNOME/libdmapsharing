@@ -412,7 +412,7 @@ add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 			g_debug ("Format requested but not available");
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
-		GByteArray *thumbnail = NULL;
+		GArray *thumbnail = NULL;
 
 		g_object_get (record, "thumbnail", &thumbnail, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PIFS,
@@ -456,7 +456,7 @@ add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
 		unsigned char *data = NULL;
-		GByteArray *thumbnail = NULL;
+		GArray *thumbnail = NULL;
 
 		if (_dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
 			g_object_get (record, "thumbnail", &thumbnail, NULL);
