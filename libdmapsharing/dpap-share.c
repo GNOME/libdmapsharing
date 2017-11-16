@@ -91,11 +91,6 @@ static GMappedFile *mapped_file = NULL;
 
 #define DPAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DPAP_TYPE_SHARE, DPAPSharePrivate))
 
-enum
-{
-	PROP_0,
-};
-
 G_DEFINE_TYPE (DPAPShare, dpap_share, DMAP_TYPE_SHARE);
 
 static void
@@ -455,7 +450,7 @@ add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
-		unsigned char *data = NULL;
+		char *data = NULL;
 		GArray *thumbnail = NULL;
 
 		if (_dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
@@ -484,7 +479,7 @@ add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 				data = NULL;
 				size = 0;
 			} else {
-				data = (unsigned char *)
+				data = (char *)
 					g_mapped_file_get_contents
 					(mapped_file);
 				size = g_mapped_file_get_length (mapped_file);

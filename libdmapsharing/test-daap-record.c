@@ -336,8 +336,11 @@ test_daap_record_finalize (GObject *object)
 	g_free (record->priv->location);
 	g_free (record->priv->title);
 	g_free (record->priv->format);
+	g_free (record->priv->real_format);
 	g_free (record->priv->album);
+	g_free (record->priv->sort_album);
 	g_free (record->priv->artist);
+	g_free (record->priv->sort_artist);
 	g_free (record->priv->genre);
 
 	if (record->priv->hash) {

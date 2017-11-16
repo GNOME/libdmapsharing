@@ -225,7 +225,15 @@ dmap_mdns_service_init (DMAPMdnsService * service)
 static void
 dmap_mdns_service_dispose (GObject * object)
 {
+	G_OBJECT_CLASS (dmap_mdns_service_parent_class)->dispose (object);
+}
+
+static void
+dmap_mdns_service_finalize (GObject * object)
+{
 	DMAPMdnsService *service = DMAP_MDNS_SERVICE (object);
+
+	g_signal_handlers_destroy (object);
 
 	if (service->priv->service_name) {
 		g_free (service->priv->service_name);
@@ -243,12 +251,5 @@ dmap_mdns_service_dispose (GObject * object)
 		g_free (service->priv->pair);
 	}
 
-	G_OBJECT_CLASS (dmap_mdns_service_parent_class)->dispose (object);
-}
-
-static void
-dmap_mdns_service_finalize (GObject * object)
-{
-	g_signal_handlers_destroy (object);
 	G_OBJECT_CLASS (dmap_mdns_service_parent_class)->finalize (object);
 }

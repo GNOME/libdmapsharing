@@ -501,13 +501,11 @@ _dmap_share_set_property (GObject * object,
 		share->priv->container_db = g_value_dup_object (value);
 		break;
 	case PROP_TRANSCODE_MIMETYPE:
-		/* FIXME: get or dup? */
+		g_free(share->priv->transcode_mimetype);
 		share->priv->transcode_mimetype = g_value_dup_string (value);
 		break;
 	case PROP_TXT_RECORDS:
-		if (share->priv->txt_records) {
-			g_strfreev (share->priv->txt_records);
-		}
+		g_strfreev (share->priv->txt_records);
 		share->priv->txt_records = g_value_dup_boxed (value);
 		break;
 	default:
@@ -561,6 +559,17 @@ _dmap_share_get_property (GObject * object,
 }
 
 static void
+_dmap_share_dispose (GObject * object)
+{
+	DMAPShare *share = DMAP_SHARE (object);
+
+	g_clear_object (&share->priv->db);
+	g_clear_object (&share->priv->container_db);
+	g_clear_object (&share->priv->publisher);
+	g_clear_object (&share->priv->server);
+}
+
+static void
 _dmap_share_finalize (GObject * object)
 {
 	DMAPShare *share = DMAP_SHARE (object);
@@ -577,15 +586,8 @@ _dmap_share_finalize (GObject * object)
 
 	g_free (share->priv->name);
 	g_free (share->priv->password);
-
-	g_object_unref (share->priv->db);
-	g_object_unref (share->priv->container_db);
-
+	g_free (share->priv->transcode_mimetype);
 	g_strfreev (share->priv->txt_records);
-
-	if (share->priv->publisher) {
-		g_object_unref (share->priv->publisher);
-	}
 
 	G_OBJECT_CLASS (dmap_share_parent_class)->finalize (object);
 }
@@ -597,6 +599,7 @@ dmap_share_class_init (DMAPShareClass * klass)
 
 	object_class->get_property = _dmap_share_get_property;
 	object_class->set_property = _dmap_share_set_property;
+	object_class->dispose = _dmap_share_dispose;
 	object_class->finalize = _dmap_share_finalize;
 
 	/* Pure virtual methods: */

@@ -67,11 +67,6 @@ enum
 	LAST_SIGNAL
 };
 
-enum
-{
-	PROP_0
-};
-
 static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DMAPMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT);

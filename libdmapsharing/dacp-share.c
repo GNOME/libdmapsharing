@@ -46,15 +46,6 @@
 #include <libdmapsharing/dacp-connection.h>
 #include <libdmapsharing/dacp-player.h>
 
-static void dacp_share_set_property (GObject * object,
-				     guint prop_id,
-				     const GValue * value,
-				     GParamSpec * pspec);
-static void dacp_share_get_property (GObject * object,
-				     guint prop_id,
-				     GValue * value, GParamSpec * pspec);
-static void dacp_share_dispose (GObject * object);
-const char *dacp_share_get_type_of_service (DMAPShare * share);
 void dacp_share_ctrl_int (DMAPShare * share,
 			  SoupServer * server,
 			  SoupMessage * message,
@@ -65,12 +56,6 @@ void dacp_share_login (DMAPShare * share,
 		       SoupMessage * message,
 		       const char *path,
 		       GHashTable * query, SoupClientContext * context);
-
-static gchar *dacp_share_pairing_code (DACPShare * share, gchar * pair_txt,
-				       gchar passcode[4]);
-static void dacp_share_send_playstatusupdate (DACPShare * share);
-static void dacp_share_fill_playstatusupdate (DACPShare * share,
-					      SoupMessage * message);
 
 #define DACP_TYPE_OF_SERVICE "_touch-able._tcp"
 #define DACP_PORT 3689
@@ -125,6 +110,133 @@ static guint signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DACPShare, dacp_share, DAAP_TYPE_SHARE);
 
+static gchar *
+get_dbid (void)
+{
+	static gchar *dbid;
+
+	if (!dbid) {
+		GString *name;
+
+		// Creates a service name 14 characters long concatenating the hostname
+		// hash hex value with itself.
+		// Idea taken from stereo.
+		name = g_string_new (NULL);
+		g_string_printf (name, "%.8x",
+				 g_str_hash (g_get_host_name ()));
+		g_string_ascii_up (name);
+		g_string_append_len (name, name->str, 4);
+
+		dbid = name->str;
+
+		g_string_free (name, FALSE);
+	}
+	return dbid;
+}
+
+static void
+dacp_share_update_txt_records (DACPShare * share)
+{
+	gchar *dbid_record;
+	gchar *library_name_record;
+
+	library_name_record =
+		g_strdup_printf ("CtlN=%s", share->priv->library_name);
+	dbid_record = g_strdup_printf ("DbId=%s", get_dbid ());
+
+	gchar *txt_records[] = { "Ver=131073",
+		"DvSv=2049",
+		dbid_record,
+		"DvTy=iTunes",
+		"OSsi=0x1F6",
+		"txtvers=1",
+		library_name_record,
+		NULL
+	};
+
+	g_object_set (share, "txt-records", txt_records, NULL);
+
+	g_free (dbid_record);
+	g_free (library_name_record);
+}
+
+static void
+dacp_share_set_property (GObject * object,
+			 guint prop_id,
+			 const GValue * value, GParamSpec * pspec)
+{
+	DACPShare *share = DACP_SHARE (object);
+
+	switch (prop_id) {
+	case PROP_LIBRARY_NAME:
+		g_free (share->priv->library_name);
+		share->priv->library_name = g_value_dup_string (value);
+		dacp_share_update_txt_records (share);
+		break;
+	case PROP_PLAYER:
+		if (share->priv->player) {
+			g_object_unref (share->priv->player);
+		}
+		share->priv->player = DACP_PLAYER (g_value_dup_object (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
+dacp_share_get_property (GObject * object,
+			 guint prop_id, GValue * value, GParamSpec * pspec)
+{
+	DACPShare *share = DACP_SHARE (object);
+
+	switch (prop_id) {
+	case PROP_LIBRARY_NAME:
+		g_value_set_string (value, share->priv->library_name);
+		break;
+	case PROP_PLAYER:
+		g_value_set_object (value, G_OBJECT (share->priv->player));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+static void
+dacp_share_dispose (GObject * object)
+{
+	DACPShare *share = DACP_SHARE (object);
+
+	g_clear_object(&share->priv->mdns_browser);
+	g_clear_object(&share->priv->player);
+
+	if (NULL != share->priv->update_queue) {
+		g_slist_free_full (share->priv->update_queue, g_object_unref);
+		share->priv->update_queue = NULL;
+	}
+
+	if (NULL != share->priv->remotes) {
+		g_hash_table_destroy (share->priv->remotes);
+		share->priv->remotes = NULL;
+	}
+}
+
+static void
+dacp_share_finalize (GObject * object)
+{
+	DACPShare *share = DACP_SHARE (object);
+
+	g_free (share->priv->library_name);
+}
+
+const char *
+dacp_share_get_type_of_service (DMAPShare * share)
+{
+	return DACP_TYPE_OF_SERVICE;
+}
+
 static void
 dacp_share_class_init (DACPShareClass * klass)
 {
@@ -134,6 +246,7 @@ dacp_share_class_init (DACPShareClass * klass)
 	object_class->get_property = dacp_share_get_property;
 	object_class->set_property = dacp_share_set_property;
 	object_class->dispose = dacp_share_dispose;
+	object_class->finalize = dacp_share_finalize;
 
 	dmap_class->get_type_of_service = dacp_share_get_type_of_service;
 	dmap_class->ctrl_int = dacp_share_ctrl_int;
@@ -270,118 +383,6 @@ dacp_share_init (DACPShare * share)
 						      g_free);
 }
 
-static gchar *
-get_dbid (void)
-{
-	static gchar *dbid;
-
-	if (!dbid) {
-		GString *name;
-
-		// Creates a service name 14 characters long concatenating the hostname
-		// hash hex value with itself.
-		// Idea taken from stereo.
-		name = g_string_new (NULL);
-		g_string_printf (name, "%.8x",
-				 g_str_hash (g_get_host_name ()));
-		g_string_ascii_up (name);
-		g_string_append_len (name, name->str, 4);
-
-		dbid = name->str;
-
-		g_string_free (name, FALSE);
-	}
-	return dbid;
-}
-
-static void
-dacp_share_update_txt_records (DACPShare * share)
-{
-	gchar *dbid_record;
-	gchar *library_name_record;
-
-	library_name_record =
-		g_strdup_printf ("CtlN=%s", share->priv->library_name);
-	dbid_record = g_strdup_printf ("DbId=%s", get_dbid ());
-
-	gchar *txt_records[] = { "Ver=131073",
-		"DvSv=2049",
-		dbid_record,
-		"DvTy=iTunes",
-		"OSsi=0x1F6",
-		"txtvers=1",
-		library_name_record,
-		NULL
-	};
-
-	g_object_set (share, "txt-records", txt_records, NULL);
-
-	g_free (dbid_record);
-	g_free (library_name_record);
-}
-
-static void
-dacp_share_set_property (GObject * object,
-			 guint prop_id,
-			 const GValue * value, GParamSpec * pspec)
-{
-	DACPShare *share = DACP_SHARE (object);
-
-	switch (prop_id) {
-	case PROP_LIBRARY_NAME:
-		g_free (share->priv->library_name);
-		share->priv->library_name = g_value_dup_string (value);
-		dacp_share_update_txt_records (share);
-		break;
-	case PROP_PLAYER:
-		if (share->priv->player)
-			g_object_unref (share->priv->player);
-		share->priv->player =
-			DACP_PLAYER (g_value_dup_object (value));
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-dacp_share_get_property (GObject * object,
-			 guint prop_id, GValue * value, GParamSpec * pspec)
-{
-	DACPShare *share = DACP_SHARE (object);
-
-	switch (prop_id) {
-	case PROP_LIBRARY_NAME:
-		g_value_set_string (value, share->priv->library_name);
-		break;
-	case PROP_PLAYER:
-		g_value_set_object (value, G_OBJECT (share->priv->player));
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-dacp_share_dispose (GObject * object)
-{
-	DACPShare *share = DACP_SHARE (object);
-
-	g_free (share->priv->library_name);
-
-	if (share->priv->mdns_browser)
-		g_object_unref (share->priv->mdns_browser);
-
-	if (share->priv->player)
-		g_object_unref (share->priv->player);
-
-	g_slist_free (share->priv->update_queue);
-
-	g_hash_table_destroy (share->priv->remotes);
-}
-
 void
 mdns_remote_added (DMAPMdnsBrowser * browser,
 		   DMAPMdnsService * service, DACPShare * share)
@@ -512,48 +513,6 @@ dacp_share_stop_lookup (DACPShare * share)
 	share->priv->mdns_browser = NULL;
 }
 
-const char *
-dacp_share_get_type_of_service (DMAPShare * share)
-{
-	return DACP_TYPE_OF_SERVICE;
-}
-
-void
-dacp_share_player_updated (DACPShare * share)
-{
-	share->priv->current_revision++;
-	dacp_share_send_playstatusupdate (share);
-}
-
-static void
-status_update_message_finished (SoupMessage * message, DACPShare * share)
-{
-	share->priv->update_queue =
-		g_slist_remove (share->priv->update_queue, message);
-	g_object_unref (message);
-}
-
-static void
-dacp_share_send_playstatusupdate (DACPShare * share)
-{
-	GSList *list;
-	SoupServer *server = NULL;
-
-	g_object_get (share, "server", &server, NULL);
-	if (server) {
-		for (list = share->priv->update_queue; list;
-		     list = list->next) {
-			dacp_share_fill_playstatusupdate (share,
-			                                  (SoupMessage*) list->data);
-			soup_server_unpause_message (server,
-			                             (SoupMessage*) list->data);
-		}
-		g_object_unref (server);
-	}
-	g_slist_free (share->priv->update_queue);
-	share->priv->update_queue = NULL;
-}
-
 static void
 dacp_share_fill_playstatusupdate (DACPShare * share, SoupMessage * message)
 {
@@ -621,6 +580,42 @@ dacp_share_fill_playstatusupdate (DACPShare * share, SoupMessage * message)
 	_dmap_share_message_set_from_dmap_structure (DMAP_SHARE (share),
 						     message, cmst);
 	dmap_structure_destroy (cmst);
+}
+
+static void
+dacp_share_send_playstatusupdate (DACPShare * share)
+{
+	GSList *list;
+	SoupServer *server = NULL;
+
+	g_object_get (share, "server", &server, NULL);
+	if (server) {
+		for (list = share->priv->update_queue; list;
+		     list = list->next) {
+			dacp_share_fill_playstatusupdate (share,
+			                                  (SoupMessage*) list->data);
+			soup_server_unpause_message (server,
+			                             (SoupMessage*) list->data);
+		}
+		g_object_unref (server);
+	}
+	g_slist_free (share->priv->update_queue);
+	share->priv->update_queue = NULL;
+}
+
+void
+dacp_share_player_updated (DACPShare * share)
+{
+	share->priv->current_revision++;
+	dacp_share_send_playstatusupdate (share);
+}
+
+static void
+status_update_message_finished (SoupMessage * message, DACPShare * share)
+{
+	share->priv->update_queue =
+		g_slist_remove (share->priv->update_queue, message);
+	g_object_unref (message);
 }
 
 static void
