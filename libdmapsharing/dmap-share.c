@@ -567,6 +567,8 @@ _dmap_share_dispose (GObject * object)
 	g_clear_object (&share->priv->container_db);
 	g_clear_object (&share->priv->publisher);
 	g_clear_object (&share->priv->server);
+
+	G_OBJECT_CLASS (dmap_share_parent_class)->dispose (object);
 }
 
 static void

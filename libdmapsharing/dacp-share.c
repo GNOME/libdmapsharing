@@ -221,6 +221,8 @@ dacp_share_dispose (GObject * object)
 		g_hash_table_destroy (share->priv->remotes);
 		share->priv->remotes = NULL;
 	}
+
+	G_OBJECT_CLASS (dacp_share_parent_class)->dispose (object);
 }
 
 static void
@@ -229,6 +231,8 @@ dacp_share_finalize (GObject * object)
 	DACPShare *share = DACP_SHARE (object);
 
 	g_free (share->priv->library_name);
+
+	G_OBJECT_CLASS (dacp_share_parent_class)->finalize (object);
 }
 
 const char *
