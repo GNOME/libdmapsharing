@@ -57,5 +57,10 @@ dmap_chunked_message_finished (SoupMessage * message, ChunkData * cd)
 {
 	g_debug ("Finished sending chunked file.");
 	g_input_stream_close (cd->stream, NULL, NULL);
+
+	if (cd->original_stream) {
+		g_input_stream_close (cd->original_stream, NULL, NULL);
+	}
+
 	g_free (cd);
 }

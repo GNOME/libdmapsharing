@@ -418,6 +418,10 @@ mdns_remote_added (DMAPMdnsBrowser * browser,
 	g_signal_emit (share,
 		       signals[REMOTE_FOUND],
 		       0, service_name, name);
+
+	g_free(name);
+	g_free(host);
+	g_free(pair);
 }
 
 void
@@ -435,9 +439,6 @@ dacp_share_new (const gchar * library_name,
 		DMAPDb * db, DMAPContainerDb * container_db)
 {
 	DACPShare *share;
-
-	g_object_ref (db);
-	g_object_ref (container_db);
 
 	share = DACP_SHARE (g_object_new (DACP_TYPE_SHARE,
 					  "name", get_dbid (),
@@ -962,6 +963,7 @@ dacp_share_ctrl_int (DMAPShare * share,
 			_dmap_share_message_set_from_dmap_structure (share,
 								     message,
 								     cacr);
+			g_object_unref(db);
 			dmap_structure_destroy (cacr);
 		} else {
 			g_warning ("Unhandled cue command: %s", command);
@@ -1110,5 +1112,6 @@ dacp_share_pair (DACPShare * share, gchar * service_name, gchar passcode[4])
 	dmap_connection_get (remote_info->connection, path, FALSE,
 			     connection_handler_cb, share);
 
+	g_free (name);
 	g_free (path);
 }

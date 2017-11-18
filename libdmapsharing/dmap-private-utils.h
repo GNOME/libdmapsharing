@@ -59,6 +59,7 @@ G_BEGIN_DECLS
 {
 	SoupServer *server;
 	GInputStream *stream;
+	GInputStream *original_stream;
 } ChunkData;
 
 void   dmap_write_next_chunk (SoupMessage * message, ChunkData * cd);

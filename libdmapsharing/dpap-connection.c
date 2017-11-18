@@ -124,6 +124,14 @@ handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 		ptr = g_array_sized_new (FALSE, FALSE, 1, 0);
 	}
 
+	/*
+	 * We do not free the dynamically-allocated properties
+	 * here. dmap-connection.c's actual_http_response_handler calls
+	 * dmap_structure_destroy to free the structure containing the
+	 * elements processed here.
+	 *
+	 * TODO: This could probably be made more clear.
+	 */
 	g_object_set (record,
 		      "filename", filename,
 		      "aspect-ratio", aspect_ratio,

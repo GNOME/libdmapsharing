@@ -41,7 +41,7 @@ namespace DAAP {
 		[CCode (cname = "dmap_connection_start")]
 		public static void start (DAAP.DMAPConnection connection, DAAP.DMAPConnectionFunc callback);
 		[NoAccessorMethod]
-		public void* base_uri { get; set; }
+		public Soup.URI base_uri { owned get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
@@ -49,7 +49,7 @@ namespace DAAP {
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public GLib.Object factory { owned get; construct; }
+		public DMAP.RecordFactory factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -229,9 +229,9 @@ namespace DAAP {
 		[NoAccessorMethod]
 		public uint auth_method { get; set; }
 		[NoAccessorMethod]
-		public void* container_db { get; construct; }
+		public DMAP.ContainerDb container_db { owned get; construct; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public string name { owned get; set; }
 		[NoAccessorMethod]
@@ -729,7 +729,7 @@ namespace DACP {
 		[CCode (cname = "dmap_connection_start")]
 		public static void start (DACP.DMAPConnection connection, DACP.DMAPConnectionFunc callback);
 		[NoAccessorMethod]
-		public void* base_uri { get; set; }
+		public Soup.URI base_uri { owned get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
@@ -737,7 +737,7 @@ namespace DACP {
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public GLib.Object factory { owned get; construct; }
+		public DACP.DMAPRecordFactory factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -917,9 +917,9 @@ namespace DACP {
 		[NoAccessorMethod]
 		public uint auth_method { get; set; }
 		[NoAccessorMethod]
-		public void* container_db { get; construct; }
+		public DMAP.ContainerDb container_db { owned get; construct; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public string name { owned get; set; }
 		[NoAccessorMethod]
@@ -1430,7 +1430,7 @@ namespace DMAP {
 		public void setup ();
 		public void start (DMAP.ConnectionFunc callback);
 		[NoAccessorMethod]
-		public void* base_uri { get; set; }
+		public Soup.URI base_uri { owned get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
@@ -1438,7 +1438,7 @@ namespace DMAP {
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public GLib.Object factory { owned get; construct; }
+		public DMAP.RecordFactory factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -1608,9 +1608,9 @@ namespace DMAP {
 		[NoAccessorMethod]
 		public uint auth_method { get; set; }
 		[NoAccessorMethod]
-		public void* container_db { get; construct; }
+		public DMAP.ContainerDb container_db { owned get; construct; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public string name { owned get; set; }
 		[NoAccessorMethod]
@@ -2026,7 +2026,7 @@ namespace DPAP {
 		[CCode (cname = "dmap_connection_start")]
 		public static void start (DPAP.DMAPConnection connection, DPAP.DMAPConnectionFunc callback);
 		[NoAccessorMethod]
-		public void* base_uri { get; set; }
+		public Soup.URI base_uri { owned get; set; }
 		[NoAccessorMethod]
 		public int database_id { get; set; }
 		[NoAccessorMethod]
@@ -2034,7 +2034,7 @@ namespace DPAP {
 		[NoAccessorMethod]
 		public double dmap_version { get; set; }
 		[NoAccessorMethod]
-		public GLib.Object factory { owned get; construct; }
+		public DMAP.RecordFactory factory { owned get; construct; }
 		[NoAccessorMethod]
 		public string host { owned get; construct; }
 		[NoAccessorMethod]
@@ -2214,9 +2214,9 @@ namespace DPAP {
 		[NoAccessorMethod]
 		public uint auth_method { get; set; }
 		[NoAccessorMethod]
-		public void* container_db { get; construct; }
+		public DMAP.ContainerDb container_db { owned get; construct; }
 		[NoAccessorMethod]
-		public void* db { get; construct; }
+		public DMAP.Db db { owned get; construct; }
 		[NoAccessorMethod]
 		public string name { owned get; set; }
 		[NoAccessorMethod]
@@ -2316,7 +2316,7 @@ namespace DPAP {
 		[NoAccessorMethod]
 		public string format { owned get; set; }
 		[NoAccessorMethod]
-		public void* hash { get; set; }
+		public GLib.Array hash { owned get; set; }
 		[NoAccessorMethod]
 		public int large_filesize { get; set; }
 		[NoAccessorMethod]
@@ -2328,7 +2328,7 @@ namespace DPAP {
 		[NoAccessorMethod]
 		public int rating { get; set; }
 		[NoAccessorMethod]
-		public void* thumbnail { get; set; }
+		public GLib.Array thumbnail { owned get; set; }
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DACP_PLAY_")]
 	public enum DACPPlayState {

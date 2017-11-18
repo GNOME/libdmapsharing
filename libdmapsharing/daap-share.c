@@ -339,6 +339,8 @@ static gboolean should_transcode (const gchar *format, const gboolean has_video,
 done:
 	g_debug ("    Should%s transcode %s to %s", fnval ? "" : " not", format, format2 ? format2 : "[no target format]");
 
+	g_free(format2);
+
 	return fnval;
 }
 
@@ -353,13 +355,14 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	gboolean has_video;
 	GError *error = NULL;
 	ChunkData *cd = NULL;
+	gboolean teardown = TRUE;
 
 	cd = g_new0 (ChunkData, 1);
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 	if (NULL == location) {
 		g_warning ("Error getting location from record\n");
-		goto _error;
+		goto done;
 	}
 
 	/* FIXME: This crashes on powerpc-440fp-linux-gnu:
@@ -371,37 +374,40 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	stream = G_INPUT_STREAM (daap_record_read (record, &error));
 	if (error != NULL) {
 		g_warning ("Couldn't open %s: %s.", location, error->message);
-		goto _error;
+		goto done;
 	}
 
 	g_object_get (record, "format", &format, NULL);
 	if (NULL == format) {
 		g_warning ("Error getting format from record\n");
-		goto _error;
+		goto done;
 	}
 
 	// Not presently transcoding videos (see also same comments elsewhere).
 	if (should_transcode (format, has_video, transcode_mimetype)) {
 #ifdef HAVE_GSTREAMERAPP
+		cd->original_stream = stream;
 		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
 #else
 		g_warning ("Transcode format %s not supported", transcode_mimetype);
+		cd->original_stream = NULL;
 		cd->stream = stream;
 #endif /* HAVE_GSTREAMERAPP */
 	} else {
 		g_debug ("Not transcoding %s", location);
+		cd->original_stream = NULL;
 		cd->stream = stream;
 	}
 
 	if (cd->stream == NULL) {
 		g_warning ("Could not set up input stream");
-		goto _error;
+		goto done;
 	}
 
 	if (offset != 0) {
 		if (g_seekable_seek (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL, &error) == FALSE) {
 			g_warning ("Error seeking: %s.", error->message);
-			goto _error;
+			goto done;
 		}
 		filesize -= offset;
 	}
@@ -448,32 +454,29 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 			  G_CALLBACK (dmap_chunked_message_finished), cd);
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
 
-	return;
-_error:
-	soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+	teardown = FALSE;
 
-	if (NULL != cd) {
-		if (NULL != cd->stream) {
+done:
+	if (teardown) {
+		soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+
+		if (NULL != cd && NULL != cd->stream) {
 			g_input_stream_close (cd->stream, NULL, NULL);
+		}
+
+		if (NULL != stream) {
+			g_input_stream_close (stream, NULL, NULL);
 		}
 
 		g_free (cd);
 	}
 
-	if (NULL != format) {
-		g_free (format);
-	}
 
-	if (NULL != location) {
-		g_free (location);
-	}
+	g_free (location);
+	g_free (format);
 
 	if (NULL != error) {
 		g_error_free (error);
-	}
-
-	if (NULL != stream) {
-		g_input_stream_close (stream, NULL, NULL);
 	}
 
 	return;
@@ -585,8 +588,7 @@ add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 			      &transcode_mimetype, NULL);
 		// Not presently transcoding videos (see also same comments elsewhere).
 		if (! has_video && transcode_mimetype) {
-			format = g_strdup (dmap_utils_mime_to_format
-					   (transcode_mimetype));
+			format = dmap_utils_mime_to_format (transcode_mimetype);
 			g_free (transcode_mimetype);
 		} else {
 			g_object_get (record, "format", &format, NULL);
@@ -821,7 +823,7 @@ databases_items_xxx (DMAPShare * share,
 		     GHashTable * query, SoupClientContext * context)
 {
 	DMAPDb *db;
-	const gchar *transcode_mimetype;
+	gchar *transcode_mimetype = NULL;
 	const gchar *rest_of_path;
 	const gchar *id_str;
 	guint id;
@@ -875,6 +877,8 @@ databases_items_xxx (DMAPShare * share,
 			   transcode_mimetype);
 
 	g_object_unref (record);
+	g_object_unref (db);
+	g_free(transcode_mimetype);
 }
 
 static struct DMAPMetaDataMap *

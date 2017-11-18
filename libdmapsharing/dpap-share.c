@@ -410,8 +410,12 @@ add_entry_to_mlcl (guint id, DMAPRecord * record, gpointer _mb)
 		GArray *thumbnail = NULL;
 
 		g_object_get (record, "thumbnail", &thumbnail, NULL);
-		dmap_structure_add (mlit, DMAP_CC_PIFS,
-				    thumbnail ? thumbnail->len : 0);
+		if (thumbnail) {
+			dmap_structure_add (mlit, DMAP_CC_PIFS, thumbnail->len);
+			g_array_unref(thumbnail);
+		} else {
+			dmap_structure_add (mlit, DMAP_CC_PIFS, 0);
+		}
 	}
 	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
 		gint large_filesize = 0;
@@ -505,7 +509,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 		   DPAPRecord * record, guint64 filesize)
 {
 	GInputStream *stream;
-	const char *location;
+	char *location = NULL;
 	GError *error = NULL;
 	ChunkData *cd = g_new0 (ChunkData, 1);
 
@@ -521,7 +525,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 		soup_message_set_status (message,
 					 SOUP_STATUS_INTERNAL_SERVER_ERROR);
 		g_free (cd);
-		return;
+		goto done;
 	}
 
 	cd->stream = stream;
@@ -529,7 +533,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	if (cd->stream == NULL) {
 		g_warning ("Could not set up input stream");
 		g_free (cd);
-		return;
+		goto done;
 	}
 
 	soup_message_headers_set_encoding (message->response_headers,
@@ -550,6 +554,9 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	g_signal_connect (message, "finished",
 			  G_CALLBACK (dmap_chunked_message_finished), cd);
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
+
+done:
+	g_free(location);
 }
 
 static void

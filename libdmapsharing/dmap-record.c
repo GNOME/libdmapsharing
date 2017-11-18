@@ -27,14 +27,14 @@ dmap_record_default_init (DMAPRecordInterface * iface)
 
 G_DEFINE_INTERFACE(DMAPRecord, dmap_record, G_TYPE_OBJECT)
 
-GByteArray *
+GArray *
 dmap_record_to_blob (DMAPRecord * record)
 {
 	return DMAP_RECORD_GET_INTERFACE (record)->to_blob (record);
 }
 
 gboolean
-dmap_record_set_from_blob (DMAPRecord * record, GByteArray * blob)
+dmap_record_set_from_blob (DMAPRecord * record, GArray * blob)
 {
 	return DMAP_RECORD_GET_INTERFACE (record)->set_from_blob (record,
 								  blob);

@@ -545,6 +545,7 @@ dmap_connection_build_message (DMAPConnection * connection,
 	soup_message_headers_append (message->request_headers,
 				     "Connection", "close");
 
+	soup_uri_free (base_uri);
 	soup_uri_free (uri);
 	g_free (uri_str);
 
@@ -1603,6 +1604,8 @@ dmap_connection_authenticate_message (DMAPConnection * connection, SoupSession *
 
 	soup_auth_authenticate (auth, username, password);
 	soup_session_unpause_message (session, message);
+
+	g_free(username);
 }
 
 void

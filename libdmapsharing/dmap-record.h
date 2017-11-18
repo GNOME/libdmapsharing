@@ -65,8 +65,8 @@ struct _DMAPRecordInterface
 {
 	GTypeInterface parent;
 
-	GByteArray *(*to_blob) (DMAPRecord * record);
-	gboolean   (*set_from_blob) (DMAPRecord * record, GByteArray * blob);
+	GArray *(*to_blob) (DMAPRecord * record);
+	gboolean   (*set_from_blob) (DMAPRecord * record, GArray * blob);
 };
 
 typedef unsigned long long bitwise;
@@ -87,7 +87,7 @@ GType dmap_record_get_type (void);
  *
  * Returns: A byte array representation of the record.
  */
-GByteArray *dmap_record_to_blob (DMAPRecord * record);
+GArray *dmap_record_to_blob (DMAPRecord * record);
 
 /**
  * dmap_record_from_blob:
@@ -97,7 +97,7 @@ GByteArray *dmap_record_to_blob (DMAPRecord * record);
  * Returns: True on success, else false.
  */
 gboolean dmap_record_set_from_blob (DMAPRecord * record,
-                                    GByteArray * blob);
+                                    GArray * blob);
 
 #endif /* __DMAP_RECORD_H */
 

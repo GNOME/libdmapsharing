@@ -128,6 +128,14 @@ _handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
 		goto _return;
 	}
 
+	/*
+	 * We do not free the dynamically-allocated properties
+	 * here. dmap-connection.c's actual_http_response_handler calls
+	 * dmap_structure_destroy to free the structure containing the
+	 * elements processed here.
+	 *
+	 * TODO: This could probably be made more clear.
+	 */
 	g_object_set (record,
 		      "year", year,
 		      "has-video", has_video,
@@ -258,54 +266,8 @@ START_TEST(daap_connection_new_test)
 }
 END_TEST
 
-static void
-_append_str_test(GNode *parent, int code, char *value)
-{
-	DMAPStructureItem *item;
-	GNode *child;
-
-	item = g_new0(DMAPStructureItem, 1);
-	item->content_code = code;
-	item->size = strlen(value);
-	g_value_init(&(item->content), G_TYPE_STRING);
-	g_value_take_string (&(item->content), value);
-	child = g_node_new(item);
-	g_node_append(parent, child);
-}
-
-static void
-_append_boolean_test(GNode *parent, int code, const gboolean value)
-{
-	DMAPStructureItem *item;
-	GNode *child;
-
-	item = g_new0(DMAPStructureItem, 1);
-	item->content_code = code;
-	item->size = 1;
-	g_value_init(&(item->content), G_TYPE_CHAR);
-	g_value_set_schar(&(item->content), value);
-	child = g_node_new(item);
-	g_node_append(parent, child);
-}
-
-static void
-_append_int_test(GNode *parent, int code, const int value)
-{
-	DMAPStructureItem *item;
-	GNode *child;
-
-	item = g_new0(DMAPStructureItem, 1);
-	item->content_code = code;
-	item->size = 4;
-	g_value_init(&(item->content), G_TYPE_INT);
-	g_value_set_int(&(item->content), value);
-	child = g_node_new(item);
-	g_node_append(parent, child);
-}
-
 START_TEST(_handle_mlcl_test)
 {
-	DMAPStructureItem *item;
 	TestDAAPRecordFactory *factory;
 	GNode *parent;
 	DMAPRecord *record;
@@ -325,25 +287,23 @@ START_TEST(_handle_mlcl_test)
 	gint  expected_bitrate      =  60, bitrate                = 0;
 	gint  expected_item_id      =  70, item_id                = 0;
 
-	item = g_new0(DMAPStructureItem, 1);
-	item->content_code = 0;
-	parent = g_node_new(item);
+	parent = dmap_structure_add(NULL, DMAP_CC_MLCL);
 
-	_append_int_test(parent, DMAP_CC_MIID, expected_item_id);
-	_append_str_test(parent, DMAP_CC_MINM, expected_title);
-	_append_str_test(parent, DMAP_CC_ASAL, expected_album);
-	_append_str_test(parent, DMAP_CC_ASAR, expected_artist);
-	_append_str_test(parent, DMAP_CC_ASFM, expected_format);
-	_append_str_test(parent, DMAP_CC_ASGN, expected_genre);
-	_append_str_test(parent, DMAP_CC_ASSA, expected_sort_artist);
-	_append_str_test(parent, DMAP_CC_ASSU, expected_sort_album);
-	_append_boolean_test(parent, DMAP_CC_AEHV, expected_has_video);
-	_append_int_test(parent, DMAP_CC_ASTM, expected_length);
-	_append_int_test(parent, DMAP_CC_ASTN, expected_track);
-	_append_int_test(parent, DMAP_CC_ASDN, expected_disc);
-	_append_int_test(parent, DMAP_CC_ASYR, expected_year);
-	_append_int_test(parent, DMAP_CC_ASSZ, expected_size);
-	_append_int_test(parent, DMAP_CC_ASBR, expected_bitrate);
+	dmap_structure_add(parent, DMAP_CC_MIID, expected_item_id);
+	dmap_structure_add(parent, DMAP_CC_MINM, expected_title);
+	dmap_structure_add(parent, DMAP_CC_ASAL, expected_album);
+	dmap_structure_add(parent, DMAP_CC_ASAR, expected_artist);
+	dmap_structure_add(parent, DMAP_CC_ASFM, expected_format);
+	dmap_structure_add(parent, DMAP_CC_ASGN, expected_genre);
+	dmap_structure_add(parent, DMAP_CC_ASSA, expected_sort_artist);
+	dmap_structure_add(parent, DMAP_CC_ASSU, expected_sort_album);
+	dmap_structure_add(parent, DMAP_CC_AEHV, expected_has_video);
+	dmap_structure_add(parent, DMAP_CC_ASTM, expected_length);
+	dmap_structure_add(parent, DMAP_CC_ASTN, expected_track);
+	dmap_structure_add(parent, DMAP_CC_ASDN, expected_disc);
+	dmap_structure_add(parent, DMAP_CC_ASYR, expected_year);
+	dmap_structure_add(parent, DMAP_CC_ASSZ, expected_size);
+	dmap_structure_add(parent, DMAP_CC_ASBR, expected_bitrate);
 
 	factory = test_daap_record_factory_new();
 	record  = _handle_mlcl(NULL, DMAP_RECORD_FACTORY(factory), parent, &item_id);
@@ -398,6 +358,10 @@ START_TEST(_handle_mlcl_test)
 
 	g_object_get(record, "bitrate", &bitrate, NULL);
 	ck_assert_int_eq(expected_bitrate, bitrate);
+
+	g_object_unref(record);
+
+	dmap_structure_destroy(parent);
 }
 END_TEST
 
@@ -406,18 +370,25 @@ START_TEST(_handle_mlcl_bad_code_test)
 {
 	DMAPStructureItem *item;
 	TestDAAPRecordFactory *factory;
-	GNode *parent;
+	GNode *parent, *child;
 	DMAPRecord *record;
 	int item_id;
 	char *set_value      = "value";
 	char *expected_title = "title", *title = NULL;
 
-	item = g_new0(DMAPStructureItem, 1);
-	item->content_code = 0;
-	parent = g_node_new(item);
+	parent = dmap_structure_add(NULL, DMAP_CC_MLCL);
 
-	_append_str_test(parent, ~0, set_value);
-	_append_str_test(parent, DMAP_CC_MINM, expected_title);
+	/* A node with a bad content code. */
+	item = g_new0(DMAPStructureItem, 1);
+	item->content_code = ~0;
+	item->size = strlen(set_value);
+	g_value_init(&(item->content), G_TYPE_STRING);
+	g_value_set_string (&(item->content), set_value);
+	child = g_node_new(item);
+	g_node_append(parent, child);
+
+	/* A well-formed node. */
+	dmap_structure_add(parent, DMAP_CC_MINM, expected_title);
 
 	factory = test_daap_record_factory_new();
 	record  = _handle_mlcl(NULL, DMAP_RECORD_FACTORY(factory), parent, &item_id);
@@ -425,6 +396,8 @@ START_TEST(_handle_mlcl_bad_code_test)
 	g_object_get(record, "title", &title, NULL);
 	ck_assert_str_eq(expected_title, title);
 	g_free(title);
+
+	dmap_structure_destroy(parent);
 }
 END_TEST
 
