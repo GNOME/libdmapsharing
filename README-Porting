@@ -1,4 +1,4 @@
-Version 3.2 of the libdmapsharing API is incompatible with previous
+Version 4.0 of the libdmapsharing API is incompatible with previous
 versions. The primary reason for these changes is to better support
 GObject introspection and thus languages such as Python. The following
 are the key differences between the new and old APIs:

@@ -1,5 +1,5 @@
 Name: libdmapsharing
-Version: 3.1.0
+Version: 3.9.0
 Release: 1%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
@@ -16,7 +16,7 @@ libdmapsharing implements the DMAP protocols. This includes support for
 DAAP and DPAP.
 
 %files 
-%{_libdir}/libdmapsharing-3.2.so.*
+%{_libdir}/libdmapsharing-4.0.so.*
 %doc AUTHORS COPYING ChangeLog README
 
 %package devel
@@ -30,14 +30,14 @@ DAAP and DPAP.  This package provides the libraries, include files, and
 other resources needed for developing applications using libdmapsharing.
 
 %files devel
-%{_libdir}/pkgconfig/libdmapsharing-3.2.pc
-%{_includedir}/libdmapsharing-3.2/
-%{_libdir}/libdmapsharing-3.2.so
-%{_libdir}/girepository-1.0/DMAP-3.2.typelib
-%{_libdir}/girepository-1.0/DAAP-3.2.typelib
-%{_datadir}/gtk-doc/html/libdmapsharing-3.2
-%{_datadir}/gir-1.0/DMAP-3.2.gir
-%{_datadir}/gir-1.0/DAAP-3.2.gir
+%{_libdir}/pkgconfig/libdmapsharing-4.0.pc
+%{_includedir}/libdmapsharing-4.0/
+%{_libdir}/libdmapsharing-4.0.so
+%{_libdir}/girepository-1.0/DMAP-4.0.typelib
+%{_libdir}/girepository-1.0/DAAP-4.0.typelib
+%{_datadir}/gtk-doc/html/libdmapsharing-4.0
+%{_datadir}/gir-1.0/DMAP-4.0.gir
+%{_datadir}/gir-1.0/DAAP-4.0.gir
 
 %package vala
 Summary: Vala language bindings for libdmapsharing
@@ -50,7 +50,7 @@ DAAP and DPAP.  This package provides the Vala language bindings for
 libdmapsharing.
 
 %files vala
-%{_datadir}/vala/vapi/libdmapsharing-3.2.vapi
+%{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %prep
 %setup -q
@@ -61,13 +61,16 @@ make %{?_smp_mflags}
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-3.2.la
+rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-4.0.la
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
 %changelog
+* Sun Nov 19 2017 W. Michael Petullo <mike[@]flyn.org> - 3.9.0-1
+- new upstream version with new API
+
 * Mon Aug 01 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.36-1
 - new upstream version to fix Bugzilla #1158652
 

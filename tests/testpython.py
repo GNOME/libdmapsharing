@@ -1,7 +1,7 @@
 import gi
 
-gi.require_version('DMAP', '3.2')
-gi.require_version('DAAP', '3.2')
+gi.require_version('DMAP', '4.0')
+gi.require_version('DAAP', '4.0')
 
 from gi.repository import GObject
 from gi.repository import GLib

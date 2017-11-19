@@ -9,7 +9,7 @@ AUTOMAKE_OPTIONS = 1.6
 # of using the various options.
 
 # The name of the module, e.g. 'glib'.
-DOC_MODULE=libdmapsharing-3.2
+DOC_MODULE=libdmapsharing-4.0
 
 # Uncomment for versioned docs and specify the version of the module, e.g. '2'.
 #DOC_MODULE_VERSION=2
@@ -95,7 +95,7 @@ GTKDOC_CFLAGS= \
 	$(MDNS_CFLAGS)
 
 GTKDOC_LIBS= \
-	$(top_builddir)/libdmapsharing/libdmapsharing-3.2.la \
+	$(top_builddir)/libdmapsharing/libdmapsharing-4.0.la \
 	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \

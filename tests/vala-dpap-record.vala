@@ -26,7 +26,7 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 	private string _aspect_ratio;
 	private string _format;
 	private string _comments;
-	GLib.ByteArray _thumbnail;
+	GLib.Array _thumbnail;
 	private int _large_filesize;
 	private int _pixel_height;
 	private int _pixel_width;
@@ -53,11 +53,11 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		set { _format = value; }
 	}
 
-	public GLib.ByteArray thumbnail {
+	public GLib.Array thumbnail {
 		get { return _thumbnail; }
-		set { /* C implementations just use g_byte_array_ref (value); */
-			_thumbnail = new GLib.ByteArray ();
-			_thumbnail.append (value.data);
+		set {
+			_thumbnail = new GLib.Array<uint8> (false, false, 1);
+			_thumbnail.append_vals (value.data, value.data.length);
 		}
 	}
 
@@ -95,11 +95,11 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		GLib.error ("read not implemented");
 	}
 
-	public unowned bool set_from_blob (GLib.ByteArray blob) {
+	public unowned bool set_from_blob (GLib.Array blob) {
 		GLib.error ("set_from_blob not implemented");
 	}
 
-	public unowned GLib.ByteArray to_blob () {
+	public unowned GLib.Array to_blob () {
 		GLib.error ("to_blob not implemented");
 	}
 
@@ -118,8 +118,8 @@ private class ValaDPAPRecord : GLib.Object, DMAP.Record, DPAP.Record {
 		string path = GLib.Environment.get_current_dir () + "/media/test.jpeg";
 		uint8[] data;
 		GLib.FileUtils.get_data (path, out data);
-		_thumbnail = new GLib.ByteArray ();
-		_thumbnail.append (data);
+		_thumbnail = new GLib.Array<uint8> (false, false, 1);
+		_thumbnail.append_vals (data, data.length);
 	}
 }
 

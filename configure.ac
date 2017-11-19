@@ -1,4 +1,4 @@
-AC_INIT(libdmapsharing, 3.1.0)
+AC_INIT(libdmapsharing, 3.9.0)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
@@ -10,7 +10,7 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 dnl FIXME:
 dnl would like to automate this off the above definitions, but API might be 2.2 with version 2.1.
 dnl see also Makefile.am, libdmapsharing/Makefile.am and libdmapsharing.pc.in
-API_VERSION=3.2
+API_VERSION=4.0
 #AC_DEFINE(API_VERSION, $API_VERSION, [library API version])
 AC_SUBST(API_VERSION)
 
@@ -323,7 +323,7 @@ PKG_CHECK_MODULES(GSTREAMERAPP,
 if test x"$HAVE_GSTREAMERAPP" = "xyes"; then
   AC_DEFINE(HAVE_GSTREAMERAPP, 1, [Define if GStreamer App support is enabled])
   GSTLIB=gstreamer-1.0
-  AC_SUBST(GSTLIB) # For libdmapsharing-3.2.pc.in.
+  AC_SUBST(GSTLIB) # For libdmapsharing-4.0.pc.in.
 else
   AC_WARN(GStreamer app element not present, transcoding will not be supported.)
 fi

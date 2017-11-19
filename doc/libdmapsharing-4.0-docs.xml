@@ -6,9 +6,9 @@
 ]>
 <book id="index">
   <bookinfo>
-    <title>libdmapsharing-3.2 Reference Manual</title>
+    <title>libdmapsharing-4.0 Reference Manual</title>
     <releaseinfo>
-      for libdmapsharing 3.1.0.
+      for libdmapsharing 3.9.0.
       The latest version of this documentation can be found online at
       <ulink role="online-location" url="https://www.flyn.org/projects/libdmapsharing/doc/">https://www.flyn.org/projects/libdmapsharing/doc/</ulink>.
     </releaseinfo>
