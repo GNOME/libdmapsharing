@@ -230,15 +230,17 @@ daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb * db)
 		      &sort_album_a, "track", &track_a, NULL);
 	g_object_get (record_b, "songalbum", &album_b, "sort-album",
 		      &sort_album_b, "track", &track_b, NULL);
-	if (sort_album_a && sort_album_b)
+	if (sort_album_a && sort_album_b) {
 		ret = g_strcmp0 (sort_album_a, sort_album_b);
-	else
+	} else {
 		ret = g_strcmp0 (album_a, album_b);
+	}
 	if (ret == 0) {
-		if (track_a < track_b)
+		if (track_a < track_b) {
 			ret = -1;
-		else
+		} else {
 			ret = (track_a == track_b) ? 0 : 1;
+		}
 	}
 	g_object_unref (record_a);
 	g_object_unref (record_b);
