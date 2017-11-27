@@ -18,6 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include "config.h"
+
 #include <libdmapsharing/daap-record.h>
 #include <libdmapsharing/dmap-enums.h>
 
@@ -250,3 +252,96 @@ daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb * db)
 	g_free (sort_album_b);
 	return ret;
 }
+
+#ifdef HAVE_CHECK
+
+#include <check.h>
+#include <libdmapsharing/test-daap-record.h>
+#include <libdmapsharing/test-dmap-db.h>
+
+START_TEST(daap_record_cmp_by_album_test)
+{
+	gint id;
+	gchar *album;
+	TestDAAPRecord *record;
+	GList *records = NULL;
+	DMAPDb *db = DMAP_DB(test_dmap_db_new());
+
+	/* Create records, add to database, add identifiers to list. */
+	record = test_daap_record_new();
+	g_object_set(record, "songalbum", "a", NULL);
+	g_object_set(record, "sort-album", "a", NULL);
+	id = dmap_db_add(db, DMAP_RECORD(record));
+	g_object_unref(record);
+	records = g_list_append (records, GINT_TO_POINTER(id));
+
+	record = test_daap_record_new();
+	g_object_set(record, "songalbum",  "c", NULL);
+	g_object_set(record, "sort-album", "c", NULL);
+	id = dmap_db_add(db, DMAP_RECORD(record));
+	g_object_unref(record);
+	records = g_list_append (records, GINT_TO_POINTER(id));
+
+	record = test_daap_record_new();
+	g_object_set(record, "songalbum",  "b", NULL);
+	g_object_set(record, "sort-album", "b", NULL);
+	id = dmap_db_add(db, DMAP_RECORD(record));
+	g_object_unref(record);
+	records = g_list_append (records, GINT_TO_POINTER(id));
+
+	/* Check list of record identifiers is not yet sorted (a, c, b). */
+	id = GPOINTER_TO_INT(g_list_nth_data(records, 0));
+	record = TEST_DAAP_RECORD(dmap_db_lookup_by_id(db, id));
+	g_object_get(record, "songalbum", &album, NULL);
+	ck_assert_str_eq("a", album);
+	g_object_unref(record);
+	g_free(album);
+
+	id = GPOINTER_TO_INT(g_list_nth_data(records, 1));
+	record = TEST_DAAP_RECORD(dmap_db_lookup_by_id(db, id));
+	g_object_get(record, "songalbum", &album, NULL);
+	ck_assert_str_eq("c", album);
+	g_object_unref(record);
+	g_free(album);
+
+	id = GPOINTER_TO_INT(g_list_nth_data(records, 2));
+	record = TEST_DAAP_RECORD(dmap_db_lookup_by_id(db, id));
+	g_object_get(record, "songalbum", &album, NULL);
+	ck_assert_str_eq("b", album);
+	g_object_unref(record);
+	g_free(album);
+
+	records = g_list_sort_with_data(records,
+	                               (GCompareDataFunc) daap_record_cmp_by_album,
+	                                db);
+
+	/* Check list of record identifiers is now sorted (a, b, c). */
+	id = GPOINTER_TO_INT(g_list_nth_data(records, 0));
+	record = TEST_DAAP_RECORD(dmap_db_lookup_by_id(db, id));
+	g_object_get(record, "songalbum", &album, NULL);
+	ck_assert_str_eq("a", album);
+	g_object_unref(record);
+	g_free(album);
+
+	id = GPOINTER_TO_INT(g_list_nth_data(records, 1));
+	record = TEST_DAAP_RECORD(dmap_db_lookup_by_id(db, id));
+	g_object_get(record, "songalbum", &album, NULL);
+	ck_assert_str_eq("b", album);
+	g_object_unref(record);
+	g_free(album);
+
+	id = GPOINTER_TO_INT(g_list_nth_data(records, 2));
+	record = TEST_DAAP_RECORD(dmap_db_lookup_by_id(db, id));
+	g_object_get(record, "songalbum", &album, NULL);
+	ck_assert_str_eq("c", album);
+	g_object_unref(record);
+	g_free(album);
+
+	g_list_free(records);
+	g_object_unref(db);
+}
+END_TEST
+
+#include "daap-record-suite.c"
+
+#endif
