@@ -228,7 +228,8 @@ typedef enum
 	DMAP_TYPE_DATE = 0x000A,
 	DMAP_TYPE_VERSION = 0x000B,
 	DMAP_TYPE_CONTAINER = 0x000C,
-	DMAP_TYPE_POINTER = 0x002A
+	DMAP_TYPE_POINTER = 0x002A,
+	DMAP_TYPE_INVALID = 0xFFFF
 } DMAPType;
 
 typedef struct _DMAPContentCodeDefinition DMAPContentCodeDefinition;

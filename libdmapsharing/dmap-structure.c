@@ -357,7 +357,15 @@ dmap_content_code_name (DMAPContentCode code)
 DMAPType
 dmap_content_code_dmap_type (DMAPContentCode code)
 {
-	return cc_defs[code - 1].type;
+	DMAPType type = DMAP_TYPE_INVALID;
+
+	if (code < sizeof cc_defs / sizeof(DMAPContentCodeDefinition)) {
+		type = cc_defs[code - 1].type;
+	} else {
+		g_warning("Invalid content code: %d\n", code);
+	}
+
+	return type;
 }
 
 const gchar *
@@ -386,6 +394,7 @@ dmap_content_code_gtype (DMAPContentCode code)
 	case DMAP_TYPE_POINTER:
 		return G_TYPE_POINTER;
 	case DMAP_TYPE_CONTAINER:
+	case DMAP_TYPE_INVALID:
 	default:
 		return G_TYPE_NONE;
 	}
@@ -482,6 +491,7 @@ dmap_structure_node_serialize (GNode * node, GByteArray * array)
 			break;
 		}
 	case DMAP_TYPE_CONTAINER:
+	case DMAP_TYPE_INVALID:
 	default:
 		break;
 	}
@@ -868,8 +878,9 @@ dmap_structure_find_node (GNode * structure, DMAPContentCode code)
 static void
 dmap_item_free (DMAPStructureItem * item)
 {
-	if (dmap_content_code_dmap_type (item->content_code) !=
-	    DMAP_TYPE_CONTAINER) {
+	DMAPType type = dmap_content_code_dmap_type (item->content_code);
+
+	if (DMAP_TYPE_INVALID != type && DMAP_TYPE_CONTAINER != type) {
 		g_value_unset (&(item->content));
 	}
 
