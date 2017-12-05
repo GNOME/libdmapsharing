@@ -256,8 +256,105 @@ daap_record_cmp_by_album (gpointer a, gpointer b, DMAPDb * db)
 #ifdef HAVE_CHECK
 
 #include <check.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <libdmapsharing/test-daap-record.h>
 #include <libdmapsharing/test-dmap-db.h>
+
+START_TEST(daap_record_read_test)
+{
+	DAAPRecord *record;
+	GInputStream *stream;
+	GError *error = NULL;
+	gssize count;
+	char buf[PATH_MAX];
+	char template[PATH_MAX];
+	char uri[PATH_MAX];
+	int tmp;
+
+	strcpy(template, "/tmp/libdmapsharing-test-XXXXXX");
+
+	tmp = mkstemp(template);
+	if (-1 == tmp) {
+		ck_abort();
+	}
+
+	/* Use randomization of template name for test data. */
+	count = write(tmp, template, strlen(template));
+	if (-1 == count) {
+		ck_abort();
+	}
+
+	sprintf(uri, "file://%s", template);
+
+	record = DAAP_RECORD(test_daap_record_new());
+	g_object_set(record, "location", uri, NULL);
+
+	stream = daap_record_read(record, &error);
+
+	ck_assert(NULL == error);
+
+	count = g_input_stream_read(stream,
+	                            buf,
+	                            BUFSIZ,
+	                            NULL,
+	                           &error);
+	ck_assert(NULL == error);
+	ck_assert_str_eq(buf, template);
+
+	g_input_stream_close(stream, NULL, NULL);
+	g_object_unref(record);
+	close(tmp);
+	unlink(template);
+}
+END_TEST
+
+START_TEST(daap_record_read_bad_path_test)
+{
+	DAAPRecord *record;
+	GError *error = NULL;
+	const char *uri = "/xxx";
+
+	record = DAAP_RECORD(test_daap_record_new());
+	g_object_set(record, "location", uri, NULL);
+
+	daap_record_read(record, &error);
+
+	ck_assert(NULL != error);
+
+	g_object_unref(record);
+}
+END_TEST
+
+START_TEST(daap_record_itunes_compat_test)
+{
+	DAAPRecord *record;
+	gboolean ok;
+
+	record = DAAP_RECORD(test_daap_record_new());
+	g_object_set(record, "format", "mp3", NULL);
+
+	ok = daap_record_itunes_compat(record);
+	ck_assert(TRUE == ok);
+
+	g_object_unref(record);
+}
+END_TEST
+
+START_TEST(daap_record_itunes_compat_no_test)
+{
+	DAAPRecord *record;
+	gboolean ok;
+
+	record = DAAP_RECORD(test_daap_record_new());
+	g_object_set(record, "format", "ogg", NULL);
+
+	ok = daap_record_itunes_compat(record);
+	ck_assert(FALSE == ok);
+
+	g_object_unref(record);
+}
+END_TEST
 
 START_TEST(daap_record_cmp_by_album_test)
 {

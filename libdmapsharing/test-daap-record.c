@@ -244,6 +244,17 @@ test_daap_record_get_property (GObject *object,
         }
 }
 
+gboolean test_daap_record_itunes_compat (DAAPRecord *record)
+{
+	const gchar *format = TEST_DAAP_RECORD (record)->priv->format;
+
+	if (! strcmp (format, "mp3")) {
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+}
+
 GInputStream *test_daap_record_read (DAAPRecord *record, GError **error)
 {
 	GFile *file;
@@ -313,6 +324,7 @@ test_daap_record_daap_iface_init (gpointer iface, gpointer data)
 
 	g_assert (G_TYPE_FROM_INTERFACE (daap_record) == DAAP_TYPE_RECORD);
 
+	daap_record->itunes_compat = test_daap_record_itunes_compat;
 	daap_record->read = test_daap_record_read;
 }
 
