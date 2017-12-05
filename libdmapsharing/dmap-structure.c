@@ -698,6 +698,13 @@ dmap_structure_parse_container_buffer (GNode * parent,
 								       codesize);
 				break;
 			}
+		case DMAP_TYPE_INVALID:
+		default:
+			/*
+			 * Bad type should have been caught as bad content code
+			 * by dmap_content_code_read_from_buffer()
+			 */
+			g_assert_not_reached();
 		}
 
 		l += codesize;
