@@ -590,7 +590,8 @@ namespace DAAP {
 		DATE,
 		VERSION,
 		CONTAINER,
-		POINTER
+		POINTER,
+		INVALID
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool DMAPConnectionFunc (DAAP.DMAPConnection connection, bool result, string reason);
@@ -1304,7 +1305,8 @@ namespace DACP {
 		DATE,
 		VERSION,
 		CONTAINER,
-		POINTER
+		POINTER,
+		INVALID
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DACP_PLAY_")]
 	public enum PlayState {
@@ -1899,7 +1901,8 @@ namespace DMAP {
 		DATE,
 		VERSION,
 		CONTAINER,
-		POINTER
+		POINTER,
+		INVALID
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool ConnectionFunc (DMAP.Connection connection, bool result, string reason);
@@ -2558,7 +2561,8 @@ namespace DPAP {
 		DATE,
 		VERSION,
 		CONTAINER,
-		POINTER
+		POINTER,
+		INVALID
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public delegate bool DMAPConnectionFunc (DPAP.DMAPConnection connection, bool result, string reason);
