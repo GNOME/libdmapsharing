@@ -28,8 +28,6 @@ test_dmap_client_LDADD = \
 	$(MDNS_LIBS)
 
 test_dmap_server_SOURCES = \
-	test-dmap-container-record.c \
-	test-dmap-container-db.c \
 	test-dmap-server.c
 
 test_dmap_server_LDADD = \
@@ -139,10 +137,6 @@ INCLUDES = \
 	$(IMAGEMAGICK_CFLAGS) \
 	$(GTK_CFLAGS) \
 	$(GEE_CFLAGS)
-
-noinst_HEADERS = \
-	test-dmap-container-record.h \
-	test-dmap-container-db.h
 
 EXTRA_DIST = \
 	$(dacplisten_VALASOURCES) \

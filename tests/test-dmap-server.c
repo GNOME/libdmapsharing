@@ -29,9 +29,8 @@
 #include <libdmapsharing/test-daap-record-factory.h>
 #include <libdmapsharing/test-dpap-record-factory.h>
 #include <libdmapsharing/test-dmap-db.h>
-
-#include "test-dmap-container-record.h"
-#include "test-dmap-container-db.h"
+#include <libdmapsharing/test-dmap-container-record.h>
+#include <libdmapsharing/test-dmap-container-db.h>
 
 /* For use when deciding whether to test DAAP or DPAP. */
 enum {

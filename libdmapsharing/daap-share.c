@@ -886,3 +886,40 @@ get_meta_data_map (DMAPShare * share)
 {
 	return meta_data_map;
 }
+
+#ifdef HAVE_CHECK
+
+#include <check.h>
+#include <libdmapsharing/test-dmap-db.h>
+#include <libdmapsharing/test-dmap-container-db.h>
+#include <libdmapsharing/test-dmap-container-record.h>
+
+START_TEST(daap_share_get_desired_port_test)
+{
+	DMAPDb *db;
+	DMAPContainerRecord *container_record;
+	DMAPContainerDb *container_db;
+	DMAPShare *share;
+
+	db = DMAP_DB(test_dmap_db_new());
+	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
+	container_db = DMAP_CONTAINER_DB(test_dmap_container_db_new(container_record));
+
+	share  = DMAP_SHARE(daap_share_new("daap_share_get_desired_port_test",
+	                                    NULL,
+	                                    db,
+	                                    container_db,
+	                                    NULL));
+
+	ck_assert_int_eq(DAAP_PORT, daap_share_get_desired_port(share));
+
+	g_object_unref(db);
+	g_object_unref(container_record);
+	g_object_unref(container_db);
+	g_object_unref(share);
+}
+END_TEST
+
+#include "daap-share-suite.c"
+
+#endif
