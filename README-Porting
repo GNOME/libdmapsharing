@@ -25,7 +25,17 @@ instead of "Iface".
 
 	dmap_connection_connect became dmap_connection_start.
 
-(3) The "hash" property in the DAAPRecord interface and the "hash"
+(3) The new API replaces the use of GHFunc with DMAPIdRecordFunc and
+DMAPContainerIdFunc.
+
+(4) Setting an object property using g_object_set causes the object to
+duplicate the passed value.  Thus the caller maintains control of the
+original value.
+
+(5) Getting an object property using g_object_set returns a duplicate
+of the value. Thus the caller should free or unref the obtained value.
+
+(6) The "hash" property in the DAAPRecord interface and the "hash"
 and "thumbnail" properties in the DPAPRecord interface are now boxed
 types.  The true type of each of these properties is a GArray. Thus
 implementations of these interfaces should now:
@@ -36,14 +46,11 @@ implementations of these interfaces should now:
 
 	(c) use GArray instead of GByteArray.
 
-(4) The "base-uri" property in the DMAPConnection class is now a boxed
+(7) The "base-uri" property in the DMAPConnection class is now a boxed
 type. The real type is SoupURI.
 
-(4) The "db" and "container-db" properties in DMAPShare are now handled
+(8) The "db" and "container-db" properties in DMAPShare are now handled
 as object types instead of pointer types.
 
-(5) The new API replaces the use of GHFunc with DMAPIdRecordFunc and
-DMAPContainerIdFunc.
-
-(6) The properties contained in a DMAPMdnsService must now be accessed
+(9) The properties contained in a DMAPMdnsService must now be accessed
 using g_object_get.
