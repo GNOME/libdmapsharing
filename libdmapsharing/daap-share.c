@@ -190,12 +190,7 @@ daap_share_server_info (DMAPShare * share,
 	dmap_structure_add (msrv, DMAP_CC_MINM, nameprop);
 	dmap_structure_add (msrv, DMAP_CC_MSAU,
 			    _dmap_share_get_auth_method (share));
-	/* authentication method
-	 * 0 is nothing
-	 * 1 is name & password
-	 * 2 is password only
-	 */
-	dmap_structure_add (msrv, DMAP_CC_MSLR, 0);
+	dmap_structure_add (msrv, DMAP_CC_MSLR, DMAP_SHARE_AUTH_METHOD_NONE);
 	dmap_structure_add (msrv, DMAP_CC_MSTM, (gint32) DAAP_TIMEOUT);
 	dmap_structure_add (msrv, DMAP_CC_MSAL, (gchar) 0);
 	dmap_structure_add (msrv, DMAP_CC_MSUP, (gchar) 1);
@@ -891,32 +886,336 @@ get_meta_data_map (DMAPShare * share)
 
 #include <check.h>
 #include <libdmapsharing/test-dmap-db.h>
+#include <libdmapsharing/test-daap-record.h>
 #include <libdmapsharing/test-dmap-container-db.h>
 #include <libdmapsharing/test-dmap-container-record.h>
 
-START_TEST(daap_share_get_desired_port_test)
+static DMAPShare *
+_build_share(char *name)
 {
 	DMAPDb *db;
 	DMAPContainerRecord *container_record;
 	DMAPContainerDb *container_db;
+	DMAPRecord *record;
 	DMAPShare *share;
 
 	db = DMAP_DB(test_dmap_db_new());
 	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
 	container_db = DMAP_CONTAINER_DB(test_dmap_container_db_new(container_record));
 
-	share  = DMAP_SHARE(daap_share_new("daap_share_get_desired_port_test",
-	                                    NULL,
-	                                    db,
-	                                    container_db,
-	                                    NULL));
+	record = DMAP_RECORD(test_daap_record_new());
+	g_object_set(record, "songgenre", "genre1", NULL);
+	g_object_set(record, "songartist", "artist1", NULL);
+	g_object_set(record, "songalbum", "album1", NULL);
+	dmap_db_add(db, record);
 
-	ck_assert_int_eq(DAAP_PORT, daap_share_get_desired_port(share));
+	record = DMAP_RECORD(test_daap_record_new());
+	g_object_set(record, "songgenre", "genre2", NULL);
+	g_object_set(record, "songartist", "artist2", NULL);
+	g_object_set(record, "songalbum", "album2", NULL);
+	dmap_db_add(db, record);
+
+	share  = DMAP_SHARE(daap_share_new(name,
+	                                   NULL,
+	                                   db,
+	                                   container_db,
+	                                   NULL));
 
 	g_object_unref(db);
 	g_object_unref(container_record);
 	g_object_unref(container_db);
+
+	return share;
+}
+
+START_TEST(daap_share_get_desired_port_test)
+{
+	DMAPShare *share = _build_share("daap_share_get_desired_port_test");
+	ck_assert_int_eq(DAAP_PORT, daap_share_get_desired_port(share));
 	g_object_unref(share);
+}
+END_TEST
+
+START_TEST(daap_share_get_type_of_service_test)
+{
+	DMAPShare *share = _build_share("daap_share_get_type_of_service_test");
+	ck_assert_str_eq(DAAP_TYPE_OF_SERVICE, daap_share_get_type_of_service(share));
+	g_object_unref(share);
+}
+END_TEST
+
+START_TEST(daap_share_server_info_test)
+{
+	char *nameprop = "daap_share_server_info_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
+	const guint8 *data;
+	gsize length;
+	GNode *root;
+	DMAPStructureItem *item;
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
+
+	/* Causes auth. method to be set to DMAP_SHARE_AUTH_METHOD_PASSWORD. */
+	g_object_set(share, "password", "password", NULL);
+
+	daap_share_server_info(share, server, message, "/", NULL, NULL);
+
+	g_object_get(message, "response-body", &body, NULL);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &data, &length);
+
+	root = dmap_structure_parse(data, length);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSTT);
+	ck_assert_int_eq(DMAP_STATUS_OK, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MPRO);
+	ck_assert_int_eq(DAAP_VERSION, item->content.data->v_double);
+
+	item = dmap_structure_find_item(root, DMAP_CC_APRO);
+	ck_assert_int_eq(DAAP_VERSION, item->content.data->v_double);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MINM);
+	ck_assert_str_eq(nameprop, item->content.data->v_pointer);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSAU);
+	ck_assert_int_eq(DMAP_SHARE_AUTH_METHOD_PASSWORD, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSLR);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSTM);
+	ck_assert_int_eq(DAAP_TIMEOUT, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSAL);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSUP);
+	ck_assert_int_eq(1, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSPI);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSEX);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSBR);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSQY);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSIX);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSRS);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSDC);
+	ck_assert_int_eq(1, item->content.data->v_int);
+
+	g_object_unref(share);
+}
+END_TEST
+
+START_TEST(daap_share_message_add_standard_headers_test)
+{
+	const char *header;
+	DMAPShare *share;
+	SoupMessage *message;
+	SoupMessageHeaders *headers;
+
+	share = _build_share("daap_share_message_add_standard_headers_test");
+	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
+
+	soup_message_headers_append(message->response_headers,
+	                           "DMAP-Server",
+	                           "libdmapsharing" VERSION);
+
+	g_object_get(message, "response-headers", &headers, NULL);
+
+	header = soup_message_headers_get_one(headers, "DMAP-Server");
+
+	ck_assert_str_eq("libdmapsharing" VERSION, header);
+}
+END_TEST
+
+START_TEST(databases_browse_xxx_test)
+{
+	char *nameprop = "databases_browse_xxx_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	GHashTable *query;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
+	const guint8 *data;
+	gsize length;
+	GNode *root;
+	DMAPStructureItem *item;
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	query = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_insert(query, "filter", "");
+
+	databases_browse_xxx(share, server, message, "/db/1/browse/genres", query, NULL);
+
+	g_object_get(message, "response-body", &body, NULL);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &data, &length);
+
+	root = dmap_structure_parse(data, length);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MSTT);
+	ck_assert_int_eq(DMAP_STATUS_OK, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MUTY);
+	ck_assert_int_eq(0, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MTCO);
+	ck_assert_int_eq(2, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_MRCO);
+	ck_assert_int_eq(2, item->content.data->v_int);
+
+	item = dmap_structure_find_item(root, DMAP_CC_ABGN);
+	ck_assert(NULL != item);
+
+	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
+	ck_assert(NULL != root);
+
+	ck_assert_str_eq("genre2",
+                        ((DMAPStructureItem *) root->children->data)->content.data->v_pointer);
+	ck_assert_str_eq("genre1",
+                        ((DMAPStructureItem *) root->next->children->data)->content.data->v_pointer);
+
+	g_object_unref(share);
+	g_hash_table_destroy(query);
+}
+END_TEST
+
+START_TEST(databases_browse_xxx_artists_test)
+{
+	char *nameprop = "databases_browse_xxx_artists_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	GHashTable *query;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
+	const guint8 *data;
+	gsize length;
+	GNode *root;
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	query = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_insert(query, "filter", "");
+
+	databases_browse_xxx(share, server, message, "/db/1/browse/artists", query, NULL);
+
+	g_object_get(message, "response-body", &body, NULL);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &data, &length);
+
+	root = dmap_structure_parse(data, length);
+
+	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
+	ck_assert(NULL != root);
+
+	ck_assert_str_eq("artist2",
+                        ((DMAPStructureItem *) root->children->data)->content.data->v_pointer);
+	ck_assert_str_eq("artist1",
+                        ((DMAPStructureItem *) root->next->children->data)->content.data->v_pointer);
+
+	g_object_unref(share);
+	g_hash_table_destroy(query);
+}
+END_TEST
+
+START_TEST(databases_browse_xxx_albums_test)
+{
+	char *nameprop = "databases_browse_xxx_albums_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	GHashTable *query;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
+	const guint8 *data;
+	gsize length;
+	GNode *root;
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	query = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_insert(query, "filter", "");
+
+	databases_browse_xxx(share, server, message, "/db/1/browse/albums", query, NULL);
+
+	g_object_get(message, "response-body", &body, NULL);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &data, &length);
+
+	root = dmap_structure_parse(data, length);
+
+	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
+	ck_assert(NULL != root);
+
+	ck_assert_str_eq("album2",
+                        ((DMAPStructureItem *) root->children->data)->content.data->v_pointer);
+	ck_assert_str_eq("album1",
+                        ((DMAPStructureItem *) root->next->children->data)->content.data->v_pointer);
+
+	g_object_unref(share);
+	g_hash_table_destroy(query);
+}
+END_TEST
+
+START_TEST(databases_browse_xxx_bad_category_test)
+{
+	char *nameprop = "databases_browse_xxx_bad_category_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	GHashTable *query;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
+	const guint8 *data;
+	gsize length;
+	GNode *root;
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	query = g_hash_table_new(g_str_hash, g_str_equal);
+
+	g_hash_table_insert(query, "filter", "");
+
+	databases_browse_xxx(share, server, message, "/db/1/browse/bad_category", query, NULL);
+
+	g_object_get(message, "response-body", &body, NULL);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &data, &length);
+
+	root = dmap_structure_parse(data, length);
+	ck_assert(NULL == root);
+
+	g_object_unref(share);
+	g_hash_table_destroy(query);
 }
 END_TEST
 

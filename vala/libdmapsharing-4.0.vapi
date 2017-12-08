@@ -579,6 +579,12 @@ namespace DAAP {
 		PODCAST,
 		TV_SHOW
 	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_SHARE_AUTH_METHOD_")]
+	public enum DMAPShareAuthMethod {
+		NONE,
+		NAME_AND_PASSWORD,
+		PASSWORD
+	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_TYPE_")]
 	public enum DMAPType {
 		BYTE,
@@ -1294,6 +1300,12 @@ namespace DACP {
 		PODCAST,
 		TV_SHOW
 	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_SHARE_AUTH_METHOD_")]
+	public enum DMAPShareAuthMethod {
+		NONE,
+		NAME_AND_PASSWORD,
+		PASSWORD
+	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_TYPE_")]
 	public enum DMAPType {
 		BYTE,
@@ -1889,6 +1901,12 @@ namespace DMAP {
 		MOVIE,
 		PODCAST,
 		TV_SHOW
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_SHARE_AUTH_METHOD_")]
+	public enum ShareAuthMethod {
+		NONE,
+		NAME_AND_PASSWORD,
+		PASSWORD
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_TYPE_")]
 	public enum Type {
@@ -2549,6 +2567,12 @@ namespace DPAP {
 		MOVIE,
 		PODCAST,
 		TV_SHOW
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_SHARE_AUTH_METHOD_")]
+	public enum DMAPShareAuthMethod {
+		NONE,
+		NAME_AND_PASSWORD,
+		PASSWORD
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cprefix = "DMAP_TYPE_")]
 	public enum DMAPType {

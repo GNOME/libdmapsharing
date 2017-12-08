@@ -560,10 +560,32 @@ dmap_structure_parse_container_buffer (GNode * parent,
 		GNode *node = NULL;
 		GType gtype;
 
-		/* we need at least 8 bytes, 4 of content_code and 4 of size */
+		if (parent
+		 && parent->parent
+		 && ((DMAPStructureItem *)parent->parent->data)
+		 && (DMAP_CC_ABGN == ((DMAPStructureItem *) parent->parent->data)->content_code
+		 ||  DMAP_CC_ABAR == ((DMAPStructureItem *) parent->parent->data)->content_code
+		 ||  DMAP_CC_ABAL == ((DMAPStructureItem *) parent->parent->data)->content_code)) {
+			/* Assume DMAP_RAW, as grandparent is ABGN or similar. */
+			item = g_new0 (DMAPStructureItem, 1);
+			item->content_code = DMAP_RAW;
+			node = g_node_new (item);
+			g_node_append (parent, node);
+			gchar *s = dmap_buffer_read_string (buf, buf_length);
+			item->size = strlen (s);
+			g_value_init (&(item->content), G_TYPE_STRING);
+			g_value_take_string (&(item->content), s);
+
+			goto done;
+		}
+
+		/*
+		 * Except in cases above, we need at least 8 bytes (4 of
+		 * content_code and 4 of size) is odd.
+		 */
 		if (buf_length - l < 8) {
 			g_debug ("Malformed response received\n");
-			return;
+			goto done;
 		}
 
 		cc = dmap_content_code_read_from_buffer ((const gchar *)
@@ -710,6 +732,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 		l += codesize;
 	}
 
+done:
 	return;
 }
 

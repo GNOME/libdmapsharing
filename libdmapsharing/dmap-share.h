@@ -98,6 +98,13 @@ typedef struct
 
 typedef struct DMAPMetaDataMap DMAPMetaDataMap;
 
+typedef enum
+{
+	DMAP_SHARE_AUTH_METHOD_NONE = 0,
+	DMAP_SHARE_AUTH_METHOD_NAME_AND_PASSWORD = 1,
+	DMAP_SHARE_AUTH_METHOD_PASSWORD = 2
+} DMAPShareAuthMethod;
+
 typedef struct
 {
 	GObjectClass parent;
