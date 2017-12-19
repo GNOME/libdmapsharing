@@ -26,6 +26,9 @@
 #include <libdmapsharing/dmap-config.h>
 
 G_BEGIN_DECLS
+
+#define DMAP_SHARE_CHUNK_SIZE 16384
+
 #if DMAP_HAVE_UNALIGNED_ACCESS
 #define _DMAP_GET(__data, __size, __end) \
     (GUINT##__size##_FROM_##__end (* ((guint##__size *) (__data))))

@@ -612,6 +612,8 @@ namespace DAAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HAVE_UNALIGNED_ACCESS;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int DMAP_SHARE_CHUNK_SIZE;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_STATUS_OK;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_chunked_message_finished")]
 	public static void dmap_chunked_message_finished (Soup.Message message, DAAP.ChunkData cd);
@@ -1345,6 +1347,8 @@ namespace DACP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HAVE_UNALIGNED_ACCESS;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int DMAP_SHARE_CHUNK_SIZE;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_STATUS_OK;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_chunked_message_finished")]
 	public static void dmap_chunked_message_finished (Soup.Message message, DACP.ChunkData cd);
@@ -1934,6 +1938,8 @@ namespace DMAP {
 	public const int HASH_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int HAVE_UNALIGNED_ACCESS;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int SHARE_CHUNK_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int STATUS_OK;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -2600,6 +2606,8 @@ namespace DPAP {
 	public const int DMAP_HASH_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_HAVE_UNALIGNED_ACCESS;
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public const int DMAP_SHARE_CHUNK_SIZE;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public const int DMAP_STATUS_OK;
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_chunked_message_finished")]

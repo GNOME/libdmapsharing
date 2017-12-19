@@ -22,8 +22,6 @@
 
 #include "dmap-private-utils.h"
 
-#define DMAP_SHARE_CHUNK_SIZE 16384
-
 void
 dmap_write_next_chunk (SoupMessage * message, ChunkData * cd)
 {
