@@ -1,5 +1,5 @@
 /*
- *  Database interface for a DMAPRecord factory
+ *  Database interface for a DmapRecord factory
  *
  *  Copyright (C) 2008 W. Michael Petullo <mike@flyn.org>
  *
@@ -29,19 +29,19 @@ G_BEGIN_DECLS
 /**
  * DMAP_TYPE_RECORD_FACTORY:
  *
- * The type for #DMAPRecordFactory.
+ * The type for #DmapRecordFactory.
  */
 #define DMAP_TYPE_RECORD_FACTORY (dmap_record_factory_get_type ())
 /**
  * DMAP_RECORD_FACTORY:
  * @o: Object which is subject to casting.
  *
- * Casts a #DMAPRecordFactory or derived pointer into a (DMAPRecordFactory *)
+ * Casts a #DmapRecordFactory or derived pointer into a (DmapRecordFactory *)
  * pointer. Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_RECORD_FACTORY(o)	 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				  DMAP_TYPE_RECORD_FACTORY, DMAPRecordFactory))
+				  DMAP_TYPE_RECORD_FACTORY, DmapRecordFactory))
 /**
  * IS_DMAP_RECORD_FACTORY:
  * @o: Instance to check for being a %DMAP_TYPE_RECORD_FACTORY.
@@ -53,24 +53,24 @@ G_BEGIN_DECLS
 				  DMAP_TYPE_RECORD_FACTORY))
 /**
  * DMAP_RECORD_FACTORY_GET_INTERFACE:
- * @o: a #DMAPRecordFactory instance.
+ * @o: a #DmapRecordFactory instance.
  *
- * Get the interface structure associated to a #DMAPRecordFactory instance.
+ * Get the interface structure associated to a #DmapRecordFactory instance.
  *
  * Returns: pointer to object interface structure.
  */
 #define DMAP_RECORD_FACTORY_GET_INTERFACE(o) \
 				 (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				  DMAP_TYPE_RECORD_FACTORY, \
-				  DMAPRecordFactoryInterface))
-typedef struct _DMAPRecordFactory DMAPRecordFactory;
-typedef struct _DMAPRecordFactoryInterface DMAPRecordFactoryInterface;
+				  DmapRecordFactoryInterface))
+typedef struct _DmapRecordFactory DmapRecordFactory;
+typedef struct _DmapRecordFactoryInterface DmapRecordFactoryInterface;
 
-struct _DMAPRecordFactoryInterface
+struct _DmapRecordFactoryInterface
 {
 	GTypeInterface parent;
 
-	DMAPRecord *(*create) (DMAPRecordFactory * factory,
+	DmapRecord *(*create) (DmapRecordFactory * factory,
 			       gpointer user_data);
 };
 
@@ -78,12 +78,12 @@ GType dmap_record_factory_get_type (void);
 
 /**
  * dmap_record_factory_create:
- * @factory: A DMAPRecordFactory.
+ * @factory: A DmapRecordFactory.
  * @user_data: Some piece of data that may be used to initialize return value.
  *
- * Returns: (transfer full): a new DMAPRecord.
+ * Returns: (transfer full): a new DmapRecord.
  */
-DMAPRecord *dmap_record_factory_create (DMAPRecordFactory * factory,
+DmapRecord *dmap_record_factory_create (DmapRecordFactory * factory,
 					gpointer user_data);
 
 #endif /* __DMAP_RECORD_FACTORY_H */

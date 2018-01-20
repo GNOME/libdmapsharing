@@ -78,7 +78,7 @@ dacplisten_LDADD = \
 dpapview_VALASOURCES = \
 	dpapview.vala \
 	vala-dmap-db.vala \
-	vala-dpap-record.vala
+	vala-image-record.vala
 
 dpapview_VALABUILTSOURCES = $(dpapview_VALASOURCES:.vala=.c)
 
@@ -92,7 +92,7 @@ dpapview_LDADD = \
 dmapcopy_VALASOURCES = \
 	dmapcopy.vala \
 	vala-dmap-db.vala \
-	vala-dpap-record.vala
+	vala-image-record.vala
 
 dmapcopy_VALABUILTSOURCES = $(dmapcopy_VALASOURCES:.vala=.c)
 
@@ -105,7 +105,7 @@ dmapcopy_LDADD = \
 dmapserve_VALASOURCES = \
 	dmapserve.vala \
 	vala-dmap-db.vala \
-	vala-dpap-record.vala \
+	vala-image-record.vala \
 	vala-dmap-container-db.vala
 
 dmapserve_VALABUILTSOURCES = $(dmapserve_VALASOURCES:.vala=.c)

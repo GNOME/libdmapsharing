@@ -398,8 +398,5 @@ tests/Makefile
 m4/Makefile
 media/Makefile
 vala/Makefile
-vala/libdmapsharing-${API_VERSION}-daap/libdmapsharing-${API_VERSION}-uninstalled.files
-vala/libdmapsharing-${API_VERSION}-dacp/libdmapsharing-${API_VERSION}-uninstalled.files
-vala/libdmapsharing-${API_VERSION}-dmap/libdmapsharing-${API_VERSION}-uninstalled.files
-vala/libdmapsharing-${API_VERSION}-dpap/libdmapsharing-${API_VERSION}-uninstalled.files
+vala/libdmapsharing-${API_VERSION}-uninstalled.files
 ])

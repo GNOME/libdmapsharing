@@ -28,33 +28,33 @@ G_BEGIN_DECLS
 
 #define TYPE_TEST_DMAP_CONTAINER_RECORD         (test_dmap_container_record_get_type ())
 #define TEST_DMAP_CONTAINER_RECORD(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				       TYPE_TEST_DMAP_CONTAINER_RECORD, TestDMAPContainerRecord))
+				       TYPE_TEST_DMAP_CONTAINER_RECORD, TestDmapContainerRecord))
 #define TEST_DMAP_CONTAINER_RECORD_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 			               TYPE_TEST_DMAP_CONTAINER_RECORD, \
-				       TestDMAPContainerRecordClass))
+				       TestDmapContainerRecordClass))
 #define IS_TEST_DMAP_CONTAINER_RECORD(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				       TYPE_TEST_DMAP_CONTAINER_RECORD))
 #define IS_TEST_DMAP_CONTAINER_RECORD_CLASS (k) (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				       TYPE_TEST_DMAP_CONTAINER_RECORD_CLASS))
 #define TEST_DMAP_CONTAINER_RECORD_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				       TYPE_TEST_DMAP_CONTAINER_RECORD, \
-				       TestDMAPContainerRecordClass))
+				       TestDmapContainerRecordClass))
 
-typedef struct TestDMAPContainerRecordPrivate TestDMAPContainerRecordPrivate;
+typedef struct TestDmapContainerRecordPrivate TestDmapContainerRecordPrivate;
 
 typedef struct {
 	GObject parent;
-} TestDMAPContainerRecord;
+} TestDmapContainerRecord;
 
 typedef struct {
 	GObjectClass parent;
-} TestDMAPContainerRecordClass;
+} TestDmapContainerRecordClass;
 
 GType test_dmap_container_record_get_type (void);
 
-TestDMAPContainerRecord *test_dmap_container_record_new           (void);
+TestDmapContainerRecord *test_dmap_container_record_new           (void);
 
-guint            test_dmap_container_record_get_id        (DMAPContainerRecord *record);
+guint            test_dmap_container_record_get_id        (DmapContainerRecord *record);
 
 #endif /* __TEST_DMAP_CONTAINER_RECORD */
 

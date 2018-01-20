@@ -27,31 +27,31 @@ G_BEGIN_DECLS
 
 #define TYPE_TEST_DMAP_DB           (test_dmap_db_get_type ())
 #define TEST_DMAP_DB(o)             (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				     TYPE_TEST_DMAP_DB, TestDMAPDb))
+				     TYPE_TEST_DMAP_DB, TestDmapDb))
 #define TEST_DMAP_DB_CLASS(k)       (G_TYPE_CHECK_CLASS_CAST((k), \
-				     TYPE_TEST_DMAP_DB, TestDMAPDbClass))
+				     TYPE_TEST_DMAP_DB, TestDmapDbClass))
 #define IS_TEST_DMAP_DB(o)          (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				     TYPE_TEST_DMAP_DB))
 #define IS_TEST_DMAP_DB_CLASS (k)   (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				     TYPE_TEST_DMAP_DB_CLASS))
 #define TEST_DMAP_DB_GET_CLASS(o)   (G_TYPE_INSTANCE_GET_CLASS ((o), \
-				     TYPE_TEST_DMAP_DB, TestDMAPDbClass))
+				     TYPE_TEST_DMAP_DB, TestDmapDbClass))
 #define TEST_DMAP_DB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
 				     TYPE_TEST_DMAP_DB, \
-				     TestDMAPDbPrivate))
+				     TestDmapDbPrivate))
 
-typedef struct TestDMAPDbPrivate TestDMAPDbPrivate;
+typedef struct TestDmapDbPrivate TestDmapDbPrivate;
 
 typedef struct {
 	GObject parent;
-	TestDMAPDbPrivate *priv;
-} TestDMAPDb;
+	TestDmapDbPrivate *priv;
+} TestDmapDb;
 
 typedef struct {
 	GObjectClass parent;
-} TestDMAPDbClass;
+} TestDmapDbClass;
 
-TestDMAPDb *test_dmap_db_new (void);
+TestDmapDb *test_dmap_db_new (void);
 GType test_dmap_db_get_type (void);
 
 #endif /* __TEST_DMAP_DB */

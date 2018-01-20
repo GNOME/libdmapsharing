@@ -1,5 +1,5 @@
 /*
- * DMAPGstWAVInputStream class: Open a URI using dmap_gst_wav_input_stream_new ().
+ * DmapGstWavInputStream class: Open a URI using dmap_gst_wav_input_stream_new ().
  * Data is decoded using GStreamer and is then reencoded as a MP3
  * stream by the class's read operations.
  *
@@ -31,32 +31,32 @@ G_BEGIN_DECLS
 #define DMAP_TYPE_GST_WAV_INPUT_STREAM         (dmap_gst_wav_input_stream_get_type ())
 #define DMAP_GST_WAV_INPUT_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				               DMAP_TYPE_GST_WAV_INPUT_STREAM, \
-					       DMAPGstWAVInputStream))
+					       DmapGstWavInputStream))
 #define DMAP_GST_WAV_INPUT_STREAM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				               DMAP_TYPE_GST_WAV_INPUT_STREAM, \
-					       DMAPGstWAVInputStreamClass))
+					       DmapGstWavInputStreamClass))
 #define IS_DMAP_GST_WAV_INPUT_STREAM(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				               DMAP_TYPE_GST_WAV_INPUT_STREAM))
 #define IS_DMAP_GST_WAV_INPUT_STREAM_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				               DMAP_TYPE_GST_WAV_INPUT_STREAM_CLASS))
 #define DMAP_GST_WAV_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_WAV_INPUT_STREAM, \
-					       DMAPGstWAVInputStreamClass))
+					       DmapGstWavInputStreamClass))
 #define DMAP_GST_WAV_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
 					   DMAP_TYPE_GST_WAV_INPUT_STREAM, \
-					   DMAPGstWAVInputStreamPrivate))
-typedef struct DMAPGstWAVInputStreamPrivate DMAPGstWAVInputStreamPrivate;
+					   DmapGstWavInputStreamPrivate))
+typedef struct DmapGstWavInputStreamPrivate DmapGstWavInputStreamPrivate;
 
 typedef struct
 {
-	DMAPGstInputStream parent;
-	DMAPGstWAVInputStreamPrivate *priv;
-} DMAPGstWAVInputStream;
+	DmapGstInputStream parent;
+	DmapGstWavInputStreamPrivate *priv;
+} DmapGstWavInputStream;
 
 typedef struct
 {
-	DMAPGstInputStreamClass parent;
-} DMAPGstWAVInputStreamClass;
+	DmapGstInputStreamClass parent;
+} DmapGstWavInputStreamClass;
 
 GType dmap_gst_wav_input_stream_get_type (void);
 

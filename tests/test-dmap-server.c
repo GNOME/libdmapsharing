@@ -24,10 +24,10 @@
 #include <glib.h>
 
 #include <libdmapsharing/dmap.h>
-#include <libdmapsharing/test-daap-record.h>
-#include <libdmapsharing/test-dpap-record.h>
-#include <libdmapsharing/test-daap-record-factory.h>
-#include <libdmapsharing/test-dpap-record-factory.h>
+#include <libdmapsharing/test-dmap-av-record.h>
+#include <libdmapsharing/test-dmap-image-record.h>
+#include <libdmapsharing/test-dmap-av-record-factory.h>
+#include <libdmapsharing/test-dmap-image-record-factory.h>
 #include <libdmapsharing/test-dmap-db.h>
 #include <libdmapsharing/test-dmap-container-record.h>
 #include <libdmapsharing/test-dmap-container-db.h>
@@ -55,21 +55,21 @@ static void
 create_share (guint conn_type)
 {
 	char *name = dmap_sharing_default_share_name ();
-	DMAPContainerRecord *dmap_container_record = \
+	DmapContainerRecord *dmap_container_record = \
 		DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
-	DMAPContainerDb *dmap_container_db = \
+	DmapContainerDb *dmap_container_db = \
 		DMAP_CONTAINER_DB (test_dmap_container_db_new
 					(dmap_container_record));
-	DMAPRecordFactory *factory;
-	DMAPRecord *record;
-	DMAPShare *share = NULL;
-	DMAPDb *db;
+	DmapRecordFactory *factory;
+	DmapRecord *record;
+	DmapShare *share = NULL;
+	DmapDb *db;
 
 	if (conn_type == DAAP) { 
-		factory = DMAP_RECORD_FACTORY (test_daap_record_factory_new ());
+		factory = DMAP_RECORD_FACTORY (test_dmap_av_record_factory_new ());
 
 	} else {
-		factory = DMAP_RECORD_FACTORY (test_dpap_record_factory_new ());
+		factory = DMAP_RECORD_FACTORY (test_dmap_image_record_factory_new ());
 	}
 
 	record = DMAP_RECORD (dmap_record_factory_create (factory, NULL));
@@ -80,17 +80,17 @@ create_share (guint conn_type)
 	g_warning ("initialize DAAP sharing");
 
 	if (conn_type == DAAP) {
-		share = DMAP_SHARE (daap_share_new (name,
-						    NULL,
-						    db,
-						    dmap_container_db,
-						    NULL));
+		share = DMAP_SHARE (dmap_av_share_new (name,
+                                                       NULL,
+                                                       db,
+                                                       dmap_container_db,
+NULL));
 	} else {
-		share = DMAP_SHARE (dpap_share_new (name,
-						    NULL,
-						    db,
-						    dmap_container_db,
-						    NULL));
+		share = DMAP_SHARE (dmap_image_share_new (name,
+                                                          NULL,
+                                                          db,
+                                                          dmap_container_db,
+                                                          NULL));
 	}
 
 	g_assert (NULL != share);

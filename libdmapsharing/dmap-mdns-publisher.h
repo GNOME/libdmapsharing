@@ -29,34 +29,34 @@
 
 G_BEGIN_DECLS
 #define DMAP_TYPE_MDNS_PUBLISHER         (dmap_mdns_publisher_get_type ())
-#define DMAP_MDNS_PUBLISHER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_MDNS_PUBLISHER, DMAPMdnsPublisher))
-#define DMAP_MDNS_PUBLISHER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_PUBLISHER, DMAPMdnsPublisherClass))
+#define DMAP_MDNS_PUBLISHER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_MDNS_PUBLISHER, DmapMdnsPublisher))
+#define DMAP_MDNS_PUBLISHER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_PUBLISHER, DmapMdnsPublisherClass))
 #define IS_DMAP_MDNS_PUBLISHER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_MDNS_PUBLISHER))
 #define IS_DMAP_MDNS_PUBLISHER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_MDNS_PUBLISHER))
-#define DMAP_MDNS_PUBLISHER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_PUBLISHER, DMAPMdnsPublisherClass))
-typedef struct DMAPMdnsPublisherPrivate DMAPMdnsPublisherPrivate;
+#define DMAP_MDNS_PUBLISHER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_PUBLISHER, DmapMdnsPublisherClass))
+typedef struct DmapMdnsPublisherPrivate DmapMdnsPublisherPrivate;
 
 typedef struct
 {
 	GObject object;
 
-	DMAPMdnsPublisherPrivate *priv;
-} DMAPMdnsPublisher;
+	DmapMdnsPublisherPrivate *priv;
+} DmapMdnsPublisher;
 
 typedef struct
 {
 	GObjectClass parent_class;
 
-	void (*published) (DMAPMdnsPublisher * publisher, const char *name);
-	void (*name_collision) (DMAPMdnsPublisher * publisher,
+	void (*published) (DmapMdnsPublisher * publisher, const char *name);
+	void (*name_collision) (DmapMdnsPublisher * publisher,
 				const char *name);
-} DMAPMdnsPublisherClass;
+} DmapMdnsPublisherClass;
 
 typedef enum
 {
 	DMAP_MDNS_PUBLISHER_ERROR_NOT_RUNNING,
 	DMAP_MDNS_PUBLISHER_ERROR_FAILED,
-} DMAPMdnsPublisherError;
+} DmapMdnsPublisherError;
 
 #define DMAP_MDNS_PUBLISHER_ERROR dmap_mdns_publisher_error_quark ()
 
@@ -64,18 +64,18 @@ GQuark dmap_mdns_publisher_error_quark (void);
 
 GType dmap_mdns_publisher_get_type (void);
 
-DMAPMdnsPublisher *dmap_mdns_publisher_new (void);
-gboolean dmap_mdns_publisher_publish (DMAPMdnsPublisher * publisher,
+DmapMdnsPublisher *dmap_mdns_publisher_new (void);
+gboolean dmap_mdns_publisher_publish (DmapMdnsPublisher * publisher,
 				      const char *name,
 				      guint port,
 				      const char *type_of_service,
 				      gboolean password_required,
 				      gchar ** txt_records, GError ** error);
-gboolean dmap_mdns_publisher_rename_at_port (DMAPMdnsPublisher * publisher,
+gboolean dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher * publisher,
 					     guint port,
 					     const char *name,
 					     GError ** error);
-gboolean dmap_mdns_publisher_withdraw (DMAPMdnsPublisher * publisher,
+gboolean dmap_mdns_publisher_withdraw (DmapMdnsPublisher * publisher,
 				       guint port, GError ** error);
 
 G_END_DECLS

@@ -30,7 +30,7 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 
-struct _DMAPMdnsServicePrivate
+struct _DmapMdnsServicePrivate
 {
 	gchar *service_name;
         gchar *name;
@@ -38,7 +38,7 @@ struct _DMAPMdnsServicePrivate
         guint port;
         gboolean password_protected;
         gchar *pair;                                         // FIXME: subclass
-        DMAPMdnsServiceTransportProtocol transport_protocol; // FIXME: subclass
+        DmapMdnsServiceTransportProtocol transport_protocol; // FIXME: subclass
 };
 
 enum {
@@ -58,7 +58,7 @@ dmap_mdns_service_set_property (GObject *object,
                                 const GValue *value,
                                 GParamSpec *pspec)
 {
-	DMAPMdnsService *service = DMAP_MDNS_SERVICE (object);
+	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
 	switch (prop_id) {
 	case PROP_SERVICE_NAME:
@@ -100,7 +100,7 @@ dmap_mdns_service_get_property (GObject *object,
                                 GValue *value,
                                 GParamSpec *pspec)
 {
-	DMAPMdnsService *service = DMAP_MDNS_SERVICE (object);
+	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
 	switch (prop_id) {
 	case PROP_SERVICE_NAME:
@@ -132,21 +132,21 @@ dmap_mdns_service_get_property (GObject *object,
 	}
 }
 
-static void dmap_mdns_service_class_init (DMAPMdnsServiceClass * klass);
-static void dmap_mdns_service_init (DMAPMdnsService * service);
+static void dmap_mdns_service_class_init (DmapMdnsServiceClass * klass);
+static void dmap_mdns_service_init (DmapMdnsService * service);
 static void dmap_mdns_service_dispose (GObject * object);
 static void dmap_mdns_service_finalize (GObject * object);
 
-#define DMAP_MDNS_SERVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_SERVICE, DMAPMdnsServicePrivate))
+#define DMAP_MDNS_SERVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_SERVICE, DmapMdnsServicePrivate))
 
-G_DEFINE_TYPE (DMAPMdnsService, dmap_mdns_service, G_TYPE_OBJECT);
+G_DEFINE_TYPE (DmapMdnsService, dmap_mdns_service, G_TYPE_OBJECT);
 
 static void
-dmap_mdns_service_class_init (DMAPMdnsServiceClass * klass)
+dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-	g_type_class_add_private (klass, sizeof (DMAPMdnsServicePrivate));
+	g_type_class_add_private (klass, sizeof (DmapMdnsServicePrivate));
 
 	object_class->dispose = dmap_mdns_service_dispose;
 	object_class->finalize = dmap_mdns_service_finalize;
@@ -217,7 +217,7 @@ dmap_mdns_service_class_init (DMAPMdnsServiceClass * klass)
 }
 
 static void
-dmap_mdns_service_init (DMAPMdnsService * service)
+dmap_mdns_service_init (DmapMdnsService * service)
 {
 	service->priv = DMAP_MDNS_SERVICE_GET_PRIVATE (service);
 }
@@ -231,7 +231,7 @@ dmap_mdns_service_dispose (GObject * object)
 static void
 dmap_mdns_service_finalize (GObject * object)
 {
-	DMAPMdnsService *service = DMAP_MDNS_SERVICE (object);
+	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
 	g_signal_handlers_destroy (object);
 

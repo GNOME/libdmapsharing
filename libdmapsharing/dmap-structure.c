@@ -33,7 +33,7 @@
     ( (gint32)(gchar)(ch2) << 16 ) | \
     ( (gint32)(gchar)(ch3) << 24 ) ))
 
-static const DMAPContentCodeDefinition cc_defs[] = {
+static const DmapContentCodeDefinition cc_defs[] = {
 	{DMAP_RAW, 0, "", "", DMAP_TYPE_STRING},
 	{DMAP_CC_MDCL, MAKE_CONTENT_CODE ('m', 'd', 'c', 'l'),
 	 "dmap.dictionary", "mdcl", DMAP_TYPE_CONTAINER},
@@ -349,17 +349,17 @@ static const DMAPContentCodeDefinition cc_defs[] = {
 };
 
 const gchar *
-dmap_content_code_name (DMAPContentCode code)
+dmap_content_code_name (DmapContentCode code)
 {
 	return cc_defs[code - 1].name;
 }
 
-DMAPType
-dmap_content_code_dmap_type (DMAPContentCode code)
+DmapType
+dmap_content_code_dmap_type (DmapContentCode code)
 {
-	DMAPType type = DMAP_TYPE_INVALID;
+	DmapType type = DMAP_TYPE_INVALID;
 
-	if (code < sizeof cc_defs / sizeof(DMAPContentCodeDefinition)) {
+	if (code < sizeof cc_defs / sizeof(DmapContentCodeDefinition)) {
 		type = cc_defs[code - 1].type;
 	} else {
 		g_warning("Invalid content code: %d\n", code);
@@ -369,13 +369,13 @@ dmap_content_code_dmap_type (DMAPContentCode code)
 }
 
 const gchar *
-dmap_content_code_string (DMAPContentCode code)
+dmap_content_code_string (DmapContentCode code)
 {
 	return cc_defs[code - 1].string;
 }
 
 static GType
-dmap_content_code_gtype (DMAPContentCode code)
+dmap_content_code_gtype (DmapContentCode code)
 {
 	switch (dmap_content_code_dmap_type (code)) {
 	case DMAP_TYPE_BYTE:
@@ -403,8 +403,8 @@ dmap_content_code_gtype (DMAPContentCode code)
 static gboolean
 dmap_structure_node_serialize (GNode * node, GByteArray * array)
 {
-	DMAPStructureItem *item = node->data;
-	DMAPType dmap_type;
+	DmapStructureItem *item = node->data;
+	DmapType dmap_type;
 	guint32 size = GINT32_TO_BE (item->size);
 
 	if (item->content_code != DMAP_RAW) {
@@ -520,7 +520,7 @@ dmap_structure_serialize (GNode * structure, guint * length)
 	return data;
 }
 
-DMAPContentCode
+DmapContentCode
 dmap_content_code_read_from_buffer (const gchar * buf)
 {
 	gint32 c = MAKE_CONTENT_CODE (buf[0], buf[1], buf[2], buf[3]);
@@ -554,20 +554,20 @@ dmap_structure_parse_container_buffer (GNode * parent,
 	gint l = 0;
 
 	while (l < buf_length) {
-		DMAPContentCode cc;
+		DmapContentCode cc;
 		gint codesize = 0;
-		DMAPStructureItem *item = NULL;
+		DmapStructureItem *item = NULL;
 		GNode *node = NULL;
 		GType gtype;
 
 		if (parent
 		 && parent->parent
-		 && ((DMAPStructureItem *)parent->parent->data)
-		 && (DMAP_CC_ABGN == ((DMAPStructureItem *) parent->parent->data)->content_code
-		 ||  DMAP_CC_ABAR == ((DMAPStructureItem *) parent->parent->data)->content_code
-		 ||  DMAP_CC_ABAL == ((DMAPStructureItem *) parent->parent->data)->content_code)) {
+		 && ((DmapStructureItem *)parent->parent->data)
+		 && (DMAP_CC_ABGN == ((DmapStructureItem *) parent->parent->data)->content_code
+		 ||  DMAP_CC_ABAR == ((DmapStructureItem *) parent->parent->data)->content_code
+		 ||  DMAP_CC_ABAL == ((DmapStructureItem *) parent->parent->data)->content_code)) {
 			/* Assume DMAP_RAW, as grandparent is ABGN or similar. */
-			item = g_new0 (DMAPStructureItem, 1);
+			item = g_new0 (DmapStructureItem, 1);
 			item->content_code = DMAP_RAW;
 			node = g_node_new (item);
 			g_node_append (parent, node);
@@ -608,7 +608,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 		}
 		l += 4;
 
-		item = g_new0 (DMAPStructureItem, 1);
+		item = g_new0 (DmapStructureItem, 1);
 		item->content_code = cc;
 		node = g_node_new (item);
 		g_node_append (parent, node);
@@ -758,7 +758,7 @@ dmap_structure_parse (const gchar * buf, gint buf_length)
 
 struct NodeFinder
 {
-	DMAPContentCode code;
+	DmapContentCode code;
 	GNode *node;
 };
 
@@ -766,7 +766,7 @@ static gboolean
 gnode_find_node (GNode * node, gpointer data)
 {
 	struct NodeFinder *finder = (struct NodeFinder *) data;
-	DMAPStructureItem *item = node->data;
+	DmapStructureItem *item = node->data;
 
 	if (item->content_code == finder->code) {
 		finder->node = node;
@@ -776,8 +776,8 @@ gnode_find_node (GNode * node, gpointer data)
 	return FALSE;
 }
 
-DMAPStructureItem *
-dmap_structure_find_item (GNode * structure, DMAPContentCode code)
+DmapStructureItem *
+dmap_structure_find_item (GNode * structure, DmapContentCode code)
 {
 	GNode *node = NULL;
 
@@ -791,11 +791,11 @@ dmap_structure_find_item (GNode * structure, DMAPContentCode code)
 }
 
 GNode *
-dmap_structure_add (GNode * parent, DMAPContentCode cc, ...)
+dmap_structure_add (GNode * parent, DmapContentCode cc, ...)
 {
-	DMAPType dmap_type;
+	DmapType dmap_type;
 	GType gtype;
-	DMAPStructureItem *item;
+	DmapStructureItem *item;
 	va_list list;
 	GNode *node;
 	gchar *error = NULL;
@@ -805,7 +805,7 @@ dmap_structure_add (GNode * parent, DMAPContentCode cc, ...)
 	dmap_type = dmap_content_code_dmap_type (cc);
 	gtype = dmap_content_code_gtype (cc);
 
-	item = g_new0 (DMAPStructureItem, 1);
+	item = g_new0 (DmapStructureItem, 1);
 	item->content_code = cc;
 
 	if (gtype != G_TYPE_NONE) {
@@ -871,7 +871,7 @@ dmap_structure_add (GNode * parent, DMAPContentCode cc, ...)
 		g_node_append (parent, node);
 
 		while (parent) {
-			DMAPStructureItem *parent_item = parent->data;
+			DmapStructureItem *parent_item = parent->data;
 
 			if (cc == DMAP_RAW)
 				parent_item->size += item->size;
@@ -886,7 +886,7 @@ dmap_structure_add (GNode * parent, DMAPContentCode cc, ...)
 }
 
 GNode *
-dmap_structure_find_node (GNode * structure, DMAPContentCode code)
+dmap_structure_find_node (GNode * structure, DmapContentCode code)
 {
 	struct NodeFinder *finder;
 	GNode *node = NULL;
@@ -906,9 +906,9 @@ dmap_structure_find_node (GNode * structure, DMAPContentCode code)
 }
 
 static void
-dmap_item_free (DMAPStructureItem * item)
+dmap_item_free (DmapStructureItem * item)
 {
-	DMAPType type = dmap_content_code_dmap_type (item->content_code);
+	DmapType type = dmap_content_code_dmap_type (item->content_code);
 
 	if (DMAP_TYPE_INVALID != type && DMAP_TYPE_CONTAINER != type) {
 		g_value_unset (&(item->content));
@@ -920,7 +920,7 @@ dmap_item_free (DMAPStructureItem * item)
 static gboolean
 gnode_free_dmap_item (GNode * node, gpointer data)
 {
-	dmap_item_free ((DMAPStructureItem *) node->data);
+	dmap_item_free ((DmapStructureItem *) node->data);
 
 	return FALSE;
 }
@@ -938,7 +938,7 @@ dmap_structure_destroy (GNode * structure)
 	}
 }
 
-const DMAPContentCodeDefinition *
+const DmapContentCodeDefinition *
 dmap_content_codes (guint * number)
 {
 	*number = G_N_ELEMENTS (cc_defs);
@@ -963,7 +963,7 @@ dmap_content_code_string_as_int32 (const gchar * str)
 static gboolean
 print_dmap_item (GNode * node, gpointer data)
 {
-	DMAPStructureItem *item;
+	DmapStructureItem *item;
 	const gchar *name;
 	gchar *value;
 	gint i;
@@ -1001,7 +1001,7 @@ dmap_structure_print (GNode * structure)
 guint
 dmap_structure_get_size (GNode * structure)
 {
-	DMAPStructureItem *item = (DMAPStructureItem *) structure->data;
+	DmapStructureItem *item = (DmapStructureItem *) structure->data;
 
 	g_assert (strlen(cc_defs[item->content_code].string) == 4);
 	g_assert (sizeof(item->size) == 4);
@@ -1012,5 +1012,5 @@ dmap_structure_get_size (GNode * structure)
 void
 dmap_structure_increase_by_predicted_size (GNode * structure, guint size)
 {
-	((DMAPStructureItem *) structure->data)->size += size;
+	((DmapStructureItem *) structure->data)->size += size;
 }

@@ -31,25 +31,25 @@ G_BEGIN_DECLS
 /**
  * DMAP_TYPE_MDNS_BROWSER:
  *
- * The type for #DMAPMdnsBrowser.
+ * The type for #DmapMdnsBrowser.
  */
 #define DMAP_TYPE_MDNS_BROWSER         (dmap_mdns_browser_get_type ())
 /**
  * DMAP_MDNS_BROWSER:
  * @o: Object which is subject to casting.
  *
- * Casts a #DMAPMdnsBrowser or derived pointer into a (DMAPMdnsBrowser *) pointer.
+ * Casts a #DmapMdnsBrowser or derived pointer into a (DmapMdnsBrowser *) pointer.
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
-#define DMAP_MDNS_BROWSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowser))
+#define DMAP_MDNS_BROWSER(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowser))
 /**
  * DMAP_MDNS_BROWSER_CLASS:
- * @k: a valid #DMAPMdnsBrowserClass
+ * @k: a valid #DmapMdnsBrowserClass
  *
- * Casts a derived #DMAPMdnsBrowserClass structure into a #DMAPMdnsBrowserClass structure.
+ * Casts a derived #DmapMdnsBrowserClass structure into a #DmapMdnsBrowserClass structure.
  */
-#define DMAP_MDNS_BROWSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserClass))
+#define DMAP_MDNS_BROWSER_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserClass))
 /**
  * IS_DMAP_MDNS_BROWSER:
  * @o: Instance to check for being a %DMAP_TYPE_MDNS_BROWSER.
@@ -59,46 +59,46 @@ G_BEGIN_DECLS
 #define IS_DMAP_MDNS_BROWSER(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_MDNS_BROWSER))
 /**
  * IS_DMAP_MDNS_BROWSER_CLASS:
- * @k: a #DMAPMdnsBrowserClass
+ * @k: a #DmapMdnsBrowserClass
  *
- * Checks whether @k "is a" valid #DMAPMdnsBrowserClass structure of type
+ * Checks whether @k "is a" valid #DmapMdnsBrowserClass structure of type
  * %DMAP_MDNS_BROWSER or derived.
  */
 #define IS_DMAP_MDNS_BROWSER_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_MDNS_BROWSER))
 /**
  * DMAP_MDNS_BROWSER_GET_CLASS:
- * @o: a #DMAPMdnsBrowser instance.
+ * @o: a #DmapMdnsBrowser instance.
  *
- * Get the class structure associated to a #DMAPMdnsBrowser instance.
+ * Get the class structure associated to a #DmapMdnsBrowser instance.
  *
  * Returns: pointer to object class structure.
  */
-#define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserClass))
-typedef struct _DMAPMdnsBrowser DMAPMdnsBrowser;
-typedef struct _DMAPMdnsBrowserClass DMAPMdnsBrowserClass;
-typedef struct _DMAPMdnsBrowserPrivate DMAPMdnsBrowserPrivate;
+#define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserClass))
+typedef struct _DmapMdnsBrowser DmapMdnsBrowser;
+typedef struct _DmapMdnsBrowserClass DmapMdnsBrowserClass;
+typedef struct _DmapMdnsBrowserPrivate DmapMdnsBrowserPrivate;
 
 typedef enum
 {
 	DMAP_MDNS_BROWSER_ERROR_NOT_RUNNING = 0,
 	DMAP_MDNS_BROWSER_ERROR_FAILED,
-} DMAPMdnsBrowserError;
+} DmapMdnsBrowserError;
 
-struct _DMAPMdnsBrowserClass
+struct _DmapMdnsBrowserClass
 {
 	GObjectClass parent_class;
 
-	void (*service_added) (DMAPMdnsBrowser * browser,
-			       DMAPMdnsService * service);
-	void (*service_removed) (DMAPMdnsBrowser * browser,
-				 DMAPMdnsService * service);
+	void (*service_added) (DmapMdnsBrowser * browser,
+			       DmapMdnsService * service);
+	void (*service_removed) (DmapMdnsBrowser * browser,
+				 DmapMdnsService * service);
 };
 
-struct _DMAPMdnsBrowser
+struct _DmapMdnsBrowser
 {
 	GObject object;
 
-	DMAPMdnsBrowserPrivate *priv;
+	DmapMdnsBrowserPrivate *priv;
 };
 
 #define DMAP_MDNS_BROWSER_ERROR dmap_mdns_browser_error_quark ()
@@ -113,41 +113,41 @@ GType dmap_mdns_browser_get_type (void);
  *
  * Creates a new mDNS browser.
  *
- * Returns: a pointer to a DMAPMdnsBrowser.
+ * Returns: a pointer to a DmapMdnsBrowser.
  */
-DMAPMdnsBrowser *dmap_mdns_browser_new (DMAPMdnsServiceType type);
+DmapMdnsBrowser *dmap_mdns_browser_new (DmapMdnsServiceType type);
 
 /**
  * dmap_mdns_browser_start:
- * @browser: A DMAPMdnsBrowser.
+ * @browser: A DmapMdnsBrowser.
  * @error: A GError.
  *
- * Starts a DMAPMdnsBrowser.
+ * Starts a DmapMdnsBrowser.
  *
  * Returns: TRUE on success, else FALSE.
  */
-gboolean dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error);
+gboolean dmap_mdns_browser_start (DmapMdnsBrowser * browser, GError ** error);
 
 /**
  * dmap_mdns_browser_stop:
- * @browser: A DMAPMdnsBrowser.
+ * @browser: A DmapMdnsBrowser.
  * @error: A GError.
  *
- * Stops a DMAPMdnsBrowser.
+ * Stops a DmapMdnsBrowser.
  *
  * Returns: TRUE on success, else FALSE.
  */
-gboolean dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error);
+gboolean dmap_mdns_browser_stop (DmapMdnsBrowser * browser, GError ** error);
 
-G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DMAPMdnsBrowser *
+G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DmapMdnsBrowser *
 						       browser);
-DMAPMdnsServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser
+DmapMdnsServiceType dmap_mdns_browser_get_service_type (DmapMdnsBrowser
 							       * browser);
 
 /**
- * DMAPMdnsBrowser::service-added:
- * @browser: the #DMAPMdnsBrowser which received the signal.
- * @service: #DMAPMdnsService
+ * DmapMdnsBrowser::service-added:
+ * @browser: the #DmapMdnsBrowser which received the signal.
+ * @service: #DmapMdnsService
  *
  * Emitted each time a service becomes available to @browser
  */

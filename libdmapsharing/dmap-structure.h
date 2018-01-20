@@ -194,23 +194,23 @@ G_BEGIN_DECLS typedef enum
 	DMAP_CC_CAHP,
 	DMAP_CC_CAIV,
 	DMAP_CC_CAVC
-} DMAPContentCode;
+} DmapContentCode;
 
-typedef struct _DMAPStructureItem DMAPStructureItem;
+typedef struct _DmapStructureItem DmapStructureItem;
 
-struct _DMAPStructureItem
+struct _DmapStructureItem
 {
-	DMAPContentCode content_code;
+	DmapContentCode content_code;
 	GValue content;
 	guint32 size;
 };
 
-GNode *dmap_structure_add (GNode * parent, DMAPContentCode cc, ...);
+GNode *dmap_structure_add (GNode * parent, DmapContentCode cc, ...);
 gchar *dmap_structure_serialize (GNode * structure, guint * length);
 GNode *dmap_structure_parse (const gchar * buf, gint buf_length);
-DMAPStructureItem *dmap_structure_find_item (GNode * structure,
-					     DMAPContentCode code);
-GNode *dmap_structure_find_node (GNode * structure, DMAPContentCode code);
+DmapStructureItem *dmap_structure_find_item (GNode * structure,
+					     DmapContentCode code);
+GNode *dmap_structure_find_node (GNode * structure, DmapContentCode code);
 void dmap_structure_print (GNode * structure);
 void dmap_structure_destroy (GNode * structure);
 guint dmap_structure_get_size (GNode * structure);
@@ -230,26 +230,26 @@ typedef enum
 	DMAP_TYPE_CONTAINER = 0x000C,
 	DMAP_TYPE_POINTER = 0x002A,
 	DMAP_TYPE_INVALID = 0xFFFF
-} DMAPType;
+} DmapType;
 
-typedef struct _DMAPContentCodeDefinition DMAPContentCodeDefinition;
+typedef struct _DmapContentCodeDefinition DmapContentCodeDefinition;
 
-struct _DMAPContentCodeDefinition
+struct _DmapContentCodeDefinition
 {
-	DMAPContentCode code;
+	DmapContentCode code;
 	gint32 int_code;
 	const gchar *name;
 	const gchar *string;
-	DMAPType type;
+	DmapType type;
 };
 
-const DMAPContentCodeDefinition * dmap_content_codes (guint * number);
+const DmapContentCodeDefinition * dmap_content_codes (guint * number);
 gint32 dmap_content_code_string_as_int32 (const gchar * str);
-const gchar *dmap_content_code_name (DMAPContentCode code);
-DMAPType dmap_content_code_dmap_type (DMAPContentCode code);
-const gchar *dmap_content_code_string (DMAPContentCode code);
+const gchar *dmap_content_code_name (DmapContentCode code);
+DmapType dmap_content_code_dmap_type (DmapContentCode code);
+const gchar *dmap_content_code_string (DmapContentCode code);
 
-DMAPContentCode dmap_content_code_read_from_buffer (const gchar * buf);
+DmapContentCode dmap_content_code_read_from_buffer (const gchar * buf);
 
 G_END_DECLS
 #endif

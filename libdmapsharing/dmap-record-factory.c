@@ -1,5 +1,5 @@
 /*
- *  Database interface for a DMAPRecord Factory
+ *  Database interface for a DmapRecord Factory
  *
  *  Copyright (C) 2008 W. Michael Petullo <mike@flyn.org>
  *
@@ -21,14 +21,14 @@
 #include <libdmapsharing/dmap-record-factory.h>
 
 static void
-dmap_record_factory_default_init (DMAPRecordFactoryInterface * iface)
+dmap_record_factory_default_init (DmapRecordFactoryInterface * iface)
 {
 }
 
-G_DEFINE_INTERFACE(DMAPRecordFactory, dmap_record_factory, G_TYPE_OBJECT)
+G_DEFINE_INTERFACE(DmapRecordFactory, dmap_record_factory, G_TYPE_OBJECT)
 
-DMAPRecord *
-dmap_record_factory_create (DMAPRecordFactory * factory, gpointer user_data)
+DmapRecord *
+dmap_record_factory_create (DmapRecordFactory * factory, gpointer user_data)
 {
 	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory,
 								    user_data);

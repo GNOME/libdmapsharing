@@ -28,19 +28,19 @@ G_BEGIN_DECLS
 /**
  * DMAP_TYPE_CONTAINER_RECORD:
  *
- * The type for #DMAPContainerRecord.
+ * The type for #DmapContainerRecord.
  */
 #define DMAP_TYPE_CONTAINER_RECORD	     (dmap_container_record_get_type ())
 /**
  * DMAP_CONTAINER_RECORD:
  * @o: Object which is subject to casting.
  *
- * Casts a #DMAPContainerRecord or derived pointer into a (DMAPContainerRecord*) 
+ * Casts a #DmapContainerRecord or derived pointer into a (DmapContainerRecord*) 
  * pointer. Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_CONTAINER_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecord))
+				      DMAP_TYPE_CONTAINER_RECORD, DmapContainerRecord))
 /**
  * IS_DMAP_CONTAINER_RECORD:
  * @o: Instance to check for being a %DMAP_TYPE_CONTAINER_RECORD.
@@ -52,68 +52,68 @@ G_BEGIN_DECLS
 				      DMAP_TYPE_CONTAINER_RECORD))
 /**
  * DMAP_CONTAINER_RECORD_GET_INTERFACE:
- * @o: a #DMAPContainerRecord instance.
+ * @o: a #DmapContainerRecord instance.
  *
- * Get the class structure associated to a #DMAPContainerRecord instance.
+ * Get the class structure associated to a #DmapContainerRecord instance.
  *
  * Returns: pointer to object interface structure.
  */
 #define DMAP_CONTAINER_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				      DMAP_TYPE_CONTAINER_RECORD, DMAPContainerRecordInterface))
-typedef struct _DMAPContainerRecord DMAPContainerRecord;
-typedef struct _DMAPContainerRecordInterface DMAPContainerRecordInterface;
+				      DMAP_TYPE_CONTAINER_RECORD, DmapContainerRecordInterface))
+typedef struct _DmapContainerRecord DmapContainerRecord;
+typedef struct _DmapContainerRecordInterface DmapContainerRecordInterface;
 
-struct _DMAPContainerRecordInterface
+struct _DmapContainerRecordInterface
 {
 	GTypeInterface parent;
 
-	  guint (*get_id) (DMAPContainerRecord * record);
+	  guint (*get_id) (DmapContainerRecord * record);
 
-	void (*add_entry) (DMAPContainerRecord * container_record,
-			   DMAPRecord * record, gint id);
+	void (*add_entry) (DmapContainerRecord * container_record,
+			   DmapRecord * record, gint id);
 
-	  guint64 (*get_entry_count) (DMAPContainerRecord * record);
+	  guint64 (*get_entry_count) (DmapContainerRecord * record);
 
-	DMAPDb *(*get_entries) (DMAPContainerRecord * record);
+	DmapDb *(*get_entries) (DmapContainerRecord * record);
 };
 
 GType dmap_container_record_get_type (void);
 
 /**
  * dmap_container_record_get_id:
- * @record: A DMAPContainerRecord.
+ * @record: A DmapContainerRecord.
  *
  * Returns: the ID for the given record.
  */
-guint dmap_container_record_get_id (DMAPContainerRecord * record);
+guint dmap_container_record_get_id (DmapContainerRecord * record);
 
 /**
  * dmap_container_record_add_entry:
- * @container_record: A DMAPContainerRecord.
- * @record: A DMAPRecord.
+ * @container_record: A DmapContainerRecord.
+ * @record: A DmapRecord.
  * @id: The record's ID.
  *
  * Add a record to the database. It is assumed that the record is placed
  * directly into the database (not copied) and not freed.
  */
-void dmap_container_record_add_entry (DMAPContainerRecord * container_record,
-				      DMAPRecord * record, gint id);
+void dmap_container_record_add_entry (DmapContainerRecord * container_record,
+				      DmapRecord * record, gint id);
 
 /**
  * dmap_container_record_get_entry_count:
- * @record: A DMAPContainerRecord.
+ * @record: A DmapContainerRecord.
  *
  * Returns: the number of records in the container record.
  */
-guint64 dmap_container_record_get_entry_count (DMAPContainerRecord * record);
+guint64 dmap_container_record_get_entry_count (DmapContainerRecord * record);
 
 /**
  * dmap_container_record_get_entries:
- * @record: A DMAPContainerRecord.
+ * @record: A DmapContainerRecord.
  *
- * Returns: (transfer full): A pointer to a DMAPDb containing the entries contained in record.
+ * Returns: (transfer full): A pointer to a DmapDb containing the entries contained in record.
  */
-DMAPDb *dmap_container_record_get_entries (DMAPContainerRecord * record);
+DmapDb *dmap_container_record_get_entries (DmapContainerRecord * record);
 
 #endif /* __DMAP_CONTAINER_RECORD_H */
 

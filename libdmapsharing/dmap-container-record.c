@@ -21,7 +21,7 @@
 #include <libdmapsharing/dmap-container-record.h>
 
 static void
-dmap_container_record_default_init (DMAPContainerRecordInterface * iface)
+dmap_container_record_default_init (DmapContainerRecordInterface * iface)
 {
 	static gboolean is_initialized = FALSE;
 
@@ -37,10 +37,10 @@ dmap_container_record_default_init (DMAPContainerRecordInterface * iface)
 	}
 }
 
-G_DEFINE_INTERFACE(DMAPContainerRecord, dmap_container_record, G_TYPE_OBJECT)
+G_DEFINE_INTERFACE(DmapContainerRecord, dmap_container_record, G_TYPE_OBJECT)
 
 guint
-dmap_container_record_get_id (DMAPContainerRecord * record)
+dmap_container_record_get_id (DmapContainerRecord * record)
 {
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->get_id (record);
 }
@@ -50,22 +50,22 @@ dmap_container_record_get_id (DMAPContainerRecord * record)
  * a pointer to the "whole" media database (in which the ID is valid)?
  */
 void
-dmap_container_record_add_entry (DMAPContainerRecord * container_record,
-				 DMAPRecord * record, gint id)
+dmap_container_record_add_entry (DmapContainerRecord * container_record,
+				 DmapRecord * record, gint id)
 {
 	DMAP_CONTAINER_RECORD_GET_INTERFACE (container_record)->
 		add_entry (container_record, record, id);
 }
 
 guint64
-dmap_container_record_get_entry_count (DMAPContainerRecord * record)
+dmap_container_record_get_entry_count (DmapContainerRecord * record)
 {
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->
 		get_entry_count (record);
 }
 
-DMAPDb *
-dmap_container_record_get_entries (DMAPContainerRecord * record)
+DmapDb *
+dmap_container_record_get_entries (DmapContainerRecord * record)
 {
 	return DMAP_CONTAINER_RECORD_GET_INTERFACE (record)->
 		get_entries (record);

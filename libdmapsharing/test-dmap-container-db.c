@@ -20,22 +20,22 @@
 
 #include "test-dmap-container-db.h"
 
-/* This test implementation of the DMAPContainerDb interface allows for one
+/* This test implementation of the DmapContainerDb interface allows for one
  * record.  Normally, one would befine some data structure to contain
  * multiple records.
  */
-static DMAPContainerRecord *record = NULL;
+static DmapContainerRecord *record = NULL;
 
-static DMAPContainerRecord *
-test_dmap_container_db_lookup_by_id (DMAPContainerDb *db, guint id)
+static DmapContainerRecord *
+test_dmap_container_db_lookup_by_id (DmapContainerDb *db, guint id)
 {
 	/* In reality, lookup the proper record and return it. */
 	return g_object_ref (record);
 }
 
 static void
-test_dmap_container_db_foreach (DMAPContainerDb *db,
-				DMAPIdContainerRecordFunc func,
+test_dmap_container_db_foreach (DmapContainerDb *db,
+				DmapIdContainerRecordFunc func,
 				gpointer data)
 {
 	/* In reality, pull each record from the db and execute func on it. */
@@ -43,26 +43,26 @@ test_dmap_container_db_foreach (DMAPContainerDb *db,
 }
 
 static gint64
-test_dmap_container_db_count (DMAPContainerDb *db)
+test_dmap_container_db_count (DmapContainerDb *db)
 {
 	/* In reality, return the record count. */
 	return 1;
 }
 
 static void
-test_dmap_container_db_init (TestDMAPContainerDb *db)
+test_dmap_container_db_init (TestDmapContainerDb *db)
 {
 }
 
 static void
-test_dmap_container_db_class_init (TestDMAPContainerDbClass *klass)
+test_dmap_container_db_class_init (TestDmapContainerDbClass *klass)
 {
 }
 
 static void
 test_dmap_container_db_interface_init (gpointer iface, gpointer data)
 {
-	DMAPContainerDbInterface *dmap_container_db = iface;
+	DmapContainerDbInterface *dmap_container_db = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_db) == DMAP_TYPE_CONTAINER_DB);
 
@@ -71,14 +71,14 @@ test_dmap_container_db_interface_init (gpointer iface, gpointer data)
 	dmap_container_db->count = test_dmap_container_db_count;
 }
 
-G_DEFINE_TYPE_WITH_CODE (TestDMAPContainerDb, test_dmap_container_db, G_TYPE_OBJECT, 
+G_DEFINE_TYPE_WITH_CODE (TestDmapContainerDb, test_dmap_container_db, G_TYPE_OBJECT, 
 			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_CONTAINER_DB,
 						test_dmap_container_db_interface_init))
 
-TestDMAPContainerDb *
-test_dmap_container_db_new (DMAPContainerRecord *r)
+TestDmapContainerDb *
+test_dmap_container_db_new (DmapContainerRecord *r)
 {
-	TestDMAPContainerDb *db;
+	TestDmapContainerDb *db;
 
 	db = TEST_DMAP_CONTAINER_DB (g_object_new (TYPE_TEST_DMAP_CONTAINER_DB, NULL));
 

@@ -24,57 +24,57 @@
 
 typedef struct FilterData
 {
-	DMAPDb *db;
+	DmapDb *db;
 	GSList *filter_def;
 	GHashTable *ht;
 } FilterData;
 
 static void
-dmap_db_default_init (DMAPDbInterface * iface)
+dmap_db_default_init (DmapDbInterface * iface)
 {
 }
 
-G_DEFINE_INTERFACE(DMAPDb, dmap_db, G_TYPE_OBJECT)
+G_DEFINE_INTERFACE(DmapDb, dmap_db, G_TYPE_OBJECT)
 
-DMAPRecord *
-dmap_db_lookup_by_id (const DMAPDb * db, guint id)
+DmapRecord *
+dmap_db_lookup_by_id (const DmapDb * db, guint id)
 {
 	return DMAP_DB_GET_INTERFACE (db)->lookup_by_id (db, id);
 }
 
 guint
-dmap_db_lookup_id_by_location (const DMAPDb * db, const gchar * location)
+dmap_db_lookup_id_by_location (const DmapDb * db, const gchar * location)
 {
 	return DMAP_DB_GET_INTERFACE (db)->lookup_id_by_location (db,
 								  location);
 }
 
 void
-dmap_db_foreach (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data)
+dmap_db_foreach (const DmapDb * db, DmapIdRecordFunc func, gpointer data)
 {
 	DMAP_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }
 
 guint
-dmap_db_add (DMAPDb * db, DMAPRecord * record)
+dmap_db_add (DmapDb * db, DmapRecord * record)
 {
 	return DMAP_DB_GET_INTERFACE (db)->add (db, record);
 }
 
 guint
-dmap_db_add_with_id (DMAPDb * db, DMAPRecord * record, guint id)
+dmap_db_add_with_id (DmapDb * db, DmapRecord * record, guint id)
 {
 	return DMAP_DB_GET_INTERFACE (db)->add_with_id (db, record, id);
 }
 
 guint
-dmap_db_add_path (DMAPDb * db, const gchar * path)
+dmap_db_add_path (DmapDb * db, const gchar * path)
 {
 	return DMAP_DB_GET_INTERFACE (db)->add_path (db, path);
 }
 
 gulong
-dmap_db_count (const DMAPDb * db)
+dmap_db_count (const DmapDb * db)
 {
 	return DMAP_DB_GET_INTERFACE (db)->count (db);
 }
@@ -127,7 +127,7 @@ _dmap_db_strsplit_using_quotes (const gchar * str)
 }
 
 static gboolean
-compare_record_property (DMAPRecord * record, const gchar * property_name,
+compare_record_property (DmapRecord * record, const gchar * property_name,
 			 const gchar * property_value)
 {
 	GParamSpec *pspec;
@@ -217,7 +217,7 @@ compare_record_property (DMAPRecord * record, const gchar * property_name,
 }
 
 static void
-apply_filter (guint id, DMAPRecord * record, gpointer data)
+apply_filter (guint id, DmapRecord * record, gpointer data)
 {
 	FilterData *fd;
 	gboolean accept = FALSE;
@@ -240,7 +240,7 @@ apply_filter (guint id, DMAPRecord * record, gpointer data)
 	for (list = fd->filter_def; list != NULL; list = list->next) {
 		for (filter = list->data; filter != NULL;
 		     filter = filter->next) {
-			DMAPDbFilterDefinition *def = filter->data;
+			DmapDbFilterDefinition *def = filter->data;
 			const gchar *property_name;
 
 			query_key = def->key;
@@ -287,7 +287,7 @@ apply_filter (guint id, DMAPRecord * record, gpointer data)
 }
 
 GHashTable *
-dmap_db_apply_filter (DMAPDb * db, GSList * filter_def)
+dmap_db_apply_filter (DmapDb * db, GSList * filter_def)
 {
 	GHashTable *ht;
 	FilterData data;
@@ -298,7 +298,7 @@ dmap_db_apply_filter (DMAPDb * db, GSList * filter_def)
 	data.filter_def = filter_def;
 	data.ht = ht;
 
-	dmap_db_foreach (db, (DMAPIdRecordFunc) apply_filter, &data);
+	dmap_db_foreach (db, (DmapIdRecordFunc) apply_filter, &data);
 
 	return data.ht;
 }

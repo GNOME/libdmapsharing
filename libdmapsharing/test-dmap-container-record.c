@@ -25,7 +25,7 @@ enum {
 	PROP_NAME
 };
 
-static DMAPDb *entries = NULL;
+static DmapDb *entries = NULL;
 
 static void
 test_dmap_container_record_set_property (GObject *object,
@@ -61,38 +61,38 @@ test_dmap_container_record_get_property (GObject *object,
 
 
 guint
-test_dmap_container_record_get_id (DMAPContainerRecord *record)
+test_dmap_container_record_get_id (DmapContainerRecord *record)
 {
 	return 2;
 }
 
 void
-test_dmap_container_record_add_entry (DMAPContainerRecord *container_record,
-				      DMAPRecord *record,
+test_dmap_container_record_add_entry (DmapContainerRecord *container_record,
+				      DmapRecord *record,
 				      gint id)
 {
 }
 
 guint64 
-test_dmap_container_record_get_entry_count (DMAPContainerRecord *record)
+test_dmap_container_record_get_entry_count (DmapContainerRecord *record)
 {
         return 1;
 }
 
-DMAPDb *
-test_dmap_container_record_get_entries (DMAPContainerRecord *record)
+DmapDb *
+test_dmap_container_record_get_entries (DmapContainerRecord *record)
 {
 	return g_object_ref (entries);
 }
 
 static void
-test_dmap_container_record_init (TestDMAPContainerRecord *record)
+test_dmap_container_record_init (TestDmapContainerRecord *record)
 {
 	entries = DMAP_DB (test_dmap_db_new ());
 }
 
 static void
-test_dmap_container_record_class_init (TestDMAPContainerRecordClass *klass)
+test_dmap_container_record_class_init (TestDmapContainerRecordClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -105,7 +105,7 @@ test_dmap_container_record_class_init (TestDMAPContainerRecordClass *klass)
 static void
 test_dmap_container_record_interface_init (gpointer iface, gpointer data)
 {
-	DMAPContainerRecordInterface *dmap_container_record = iface;
+	DmapContainerRecordInterface *dmap_container_record = iface;
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_record) == DMAP_TYPE_CONTAINER_RECORD);
 
@@ -115,13 +115,13 @@ test_dmap_container_record_interface_init (gpointer iface, gpointer data)
 	dmap_container_record->get_entries = test_dmap_container_record_get_entries;
 }
 
-G_DEFINE_TYPE_WITH_CODE (TestDMAPContainerRecord, test_dmap_container_record, G_TYPE_OBJECT, 
+G_DEFINE_TYPE_WITH_CODE (TestDmapContainerRecord, test_dmap_container_record, G_TYPE_OBJECT, 
 			G_IMPLEMENT_INTERFACE (DMAP_TYPE_CONTAINER_RECORD,
 					       test_dmap_container_record_interface_init))
 
-TestDMAPContainerRecord *test_dmap_container_record_new (void)
+TestDmapContainerRecord *test_dmap_container_record_new (void)
 {
-	TestDMAPContainerRecord *record;
+	TestDmapContainerRecord *record;
 
 	record = TEST_DMAP_CONTAINER_RECORD (g_object_new (TYPE_TEST_DMAP_CONTAINER_RECORD, NULL));
 

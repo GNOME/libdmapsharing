@@ -27,21 +27,21 @@
 
 G_BEGIN_DECLS
 
-typedef struct DMAPHashContext
+typedef struct DmapHashContext
 {
         guint32 buf[4];
         guint32 bits[2];
         unsigned char in[64];
         gint version;
-} DMAPHashContext;
+} DmapHashContext;
 
-void dmap_hash_progressive_init      (DMAPHashContext *context);
+void dmap_hash_progressive_init      (DmapHashContext *context);
 
-void dmap_hash_progressive_update    (DMAPHashContext *context,
+void dmap_hash_progressive_update    (DmapHashContext *context,
                                       unsigned char const *buffer,
                                       unsigned int length);
 
-void dmap_hash_progressive_final     (DMAPHashContext *context,
+void dmap_hash_progressive_final     (DmapHashContext *context,
                                       unsigned char digest[16]);
 
 void dmap_hash_progressive_to_string (const unsigned char *digest, gchar * string);

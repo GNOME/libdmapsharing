@@ -23,8 +23,8 @@
 #include <string.h>
 
 #include <libdmapsharing/dmap.h>
-#include <libdmapsharing/test-daap-record-factory.h>
-#include <libdmapsharing/test-dpap-record-factory.h>
+#include <libdmapsharing/test-dmap-av-record-factory.h>
+#include <libdmapsharing/test-dmap-image-record-factory.h>
 #include <libdmapsharing/test-dmap-db.h>
 
 enum {
@@ -36,7 +36,7 @@ static GMainLoop *loop;
 static guint conn_type = DAAP;
 
 static void
-print_record (guint id, DMAPRecord *record, gpointer user_data)
+print_record (guint id, DmapRecord *record, gpointer user_data)
 {
 	gboolean has_video;
 	gchar   *artist, *title;
@@ -54,18 +54,18 @@ print_record (guint id, DMAPRecord *record, gpointer user_data)
 }
 
 static void
-connected_cb (DMAPConnection *connection,
-			 gboolean        result,
-			 const char     *reason,
-			 DMAPDb         *db)
+connected_cb (DmapConnection *connection,
+              gboolean        result,
+              const char     *reason,
+              DmapDb         *db)
 {
 	g_print ("Connection cb., DB has %lu entries\n", dmap_db_count (db));
 
-	dmap_db_foreach (db, (DMAPIdRecordFunc) print_record, NULL);
+	dmap_db_foreach (db, (DmapIdRecordFunc) print_record, NULL);
 }
 
 static void
-authenticate_cb (DMAPConnection *connection,
+authenticate_cb (DmapConnection *connection,
 		 const char *name,
 		 SoupSession *session,
 		 SoupMessage *msg,
@@ -86,13 +86,13 @@ authenticate_cb (DMAPConnection *connection,
 }
 
 static void
-service_added_cb (DMAPMdnsBrowser *browser,
-                  DMAPMdnsService *service,
+service_added_cb (DmapMdnsBrowser *browser,
+                  DmapMdnsService *service,
                   gpointer user_data)
 {
-    DMAPRecordFactory *factory;
-    DMAPConnection *conn;
-    DMAPDb *db;
+    DmapRecordFactory *factory;
+    DmapConnection *conn;
+    DmapDb *db;
     guint port;
     gchar *service_name, *name, *host;
 
@@ -113,20 +113,20 @@ service_added_cb (DMAPMdnsBrowser *browser,
     }
 
     if (conn_type == DAAP) {
-        factory = DMAP_RECORD_FACTORY (test_daap_record_factory_new ());
+        factory = DMAP_RECORD_FACTORY (test_dmap_av_record_factory_new ());
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (daap_connection_new (name, host, port, db, factory));
+        conn = DMAP_CONNECTION (dmap_av_connection_new (name, host, port, db, factory));
     } else {
-        factory = DMAP_RECORD_FACTORY (test_dpap_record_factory_new ());
+        factory = DMAP_RECORD_FACTORY (test_dmap_image_record_factory_new ());
         if (factory == NULL) {
    	    g_error ("Error creating record factory");
         }
-        conn = DMAP_CONNECTION (dpap_connection_new (name, host, port, db, factory));
+        conn = DMAP_CONNECTION (dmap_image_connection_new (name, host, port, db, factory));
     }
     g_signal_connect (DMAP_CONNECTION (conn), "authenticate", G_CALLBACK(authenticate_cb), NULL);
-    dmap_connection_start (DMAP_CONNECTION (conn), (DMAPConnectionFunc) connected_cb, db);
+    dmap_connection_start (DMAP_CONNECTION (conn), (DmapConnectionFunc) connected_cb, db);
 
     g_free(service_name);
     g_free(name);
@@ -135,7 +135,7 @@ service_added_cb (DMAPMdnsBrowser *browser,
 
 int main(int argc, char **argv)
 {
-    DMAPMdnsBrowser *browser;
+    DmapMdnsBrowser *browser;
     GError *error = NULL;
 
     if (argc == 2)

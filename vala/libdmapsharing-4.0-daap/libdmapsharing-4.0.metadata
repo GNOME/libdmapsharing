@@ -1,5 +1,0 @@
-DAAP cheader_filename="libdmapsharing/dmap.h"
-DACPPlayState common_prefix="DACP_PLAY_" rename_to="DACPPlayState"
-DACPRepeatState common_prefix="DACP_REPEAT_" rename_to="DACPRepeatState"
-AvahiClient name="Client" namespace="Avahi"
-AvahiEntryGroup name="EntryGroup" namespace="Avahi"

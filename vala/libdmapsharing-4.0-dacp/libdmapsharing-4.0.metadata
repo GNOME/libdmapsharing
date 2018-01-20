@@ -1,4 +1,0 @@
-DACP cheader_filename="libdmapsharing/dmap.h"
-DACPPlayer type_cname="DACPPlayerInterface"
-AvahiClient name="Client" namespace="Avahi"
-AvahiEntryGroup name="EntryGroup" namespace="Avahi"

@@ -29,19 +29,19 @@ G_BEGIN_DECLS
 /**
  * DMAP_TYPE_DB:
  *
- * The type for #DMAPDb.
+ * The type for #DmapDb.
  */
 #define DMAP_TYPE_DB		 (dmap_db_get_type ())
 /**
  * DMAP_DB:
  * @o: Object which is subject to casting.
  *
- * Casts a #DMAPDb or derived pointer into a (DMAPDb *) pointer.
+ * Casts a #DmapDb or derived pointer into a (DmapDb *) pointer.
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
 #define DMAP_DB(o)		 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
-				  DMAP_TYPE_DB, DMAPDb))
+				  DMAP_TYPE_DB, DmapDb))
 /**
  * IS_DMAP_DB:
  * @o: Instance to check for being a %DMAP_TYPE_DB.
@@ -52,47 +52,47 @@ G_BEGIN_DECLS
 				  DMAP_TYPE_DB))
 /**
  * DMAP_DB_GET_INTERFACE:
- * @o: a #DMAPDb instance.
+ * @o: a #DmapDb instance.
  *
- * Get the insterface structure associated to a #DMAPDb instance.
+ * Get the insterface structure associated to a #DmapDb instance.
  *
  * Returns: pointer to object interface structure.
  */
 #define DMAP_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
-				  DMAP_TYPE_DB, DMAPDbInterface))
-typedef struct _DMAPDb DMAPDb;
-typedef struct _DMAPDbInterface DMAPDbInterface;
+				  DMAP_TYPE_DB, DmapDbInterface))
+typedef struct _DmapDb DmapDb;
+typedef struct _DmapDbInterface DmapDbInterface;
 
 /**
- * DMAPIdRecordFunc:
+ * DmapIdRecordFunc:
  * @id: a DMAP record ID
- * @record: a #DMAPRecord
+ * @record: a #DmapRecord
  * @user_data: (closure): user data
  *
  * The type of function passed to dmap_db_foreach().
  */
-typedef void (*DMAPIdRecordFunc) (guint id, DMAPRecord *record, gpointer user_data);
+typedef void (*DmapIdRecordFunc) (guint id, DmapRecord *record, gpointer user_data);
 
-struct _DMAPDbInterface
+struct _DmapDbInterface
 {
 	GTypeInterface parent;
 
-	  guint (*add) (DMAPDb * db, DMAPRecord * record);
-	  guint (*add_with_id) (DMAPDb * db, DMAPRecord * record, guint id);
-	  guint (*add_path) (DMAPDb * db, const gchar * path);
-	DMAPRecord *(*lookup_by_id) (const DMAPDb * db, guint id);
-	  guint (*lookup_id_by_location) (const DMAPDb * db,
+	  guint (*add) (DmapDb * db, DmapRecord * record);
+	  guint (*add_with_id) (DmapDb * db, DmapRecord * record, guint id);
+	  guint (*add_path) (DmapDb * db, const gchar * path);
+	DmapRecord *(*lookup_by_id) (const DmapDb * db, guint id);
+	  guint (*lookup_id_by_location) (const DmapDb * db,
 					  const gchar * location);
-	void (*foreach) (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data);
-	  gint64 (*count) (const DMAPDb * db);
+	void (*foreach) (const DmapDb * db, DmapIdRecordFunc func, gpointer data);
+	  gint64 (*count) (const DmapDb * db);
 };
 
-typedef struct DMAPDbFilterDefinition
+typedef struct DmapDbFilterDefinition
 {
 	gchar *key;
 	gchar *value;
 	gboolean negate;
-} DMAPDbFilterDefinition;
+} DmapDbFilterDefinition;
 
 GType dmap_db_get_type (void);
 
@@ -109,7 +109,7 @@ GType dmap_db_get_type (void);
  * be placed elsewhere). In all cases, the record should be unrefed by the 
  * calling code.
  */
-guint dmap_db_add (DMAPDb * db, DMAPRecord * record);
+guint dmap_db_add (DmapDb * db, DmapRecord * record);
 
 /**
  * dmap_db_add_with_id:
@@ -123,7 +123,7 @@ guint dmap_db_add (DMAPDb * db, DMAPRecord * record);
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
-guint dmap_db_add_with_id (DMAPDb * db, DMAPRecord * record, guint id);
+guint dmap_db_add_with_id (DmapDb * db, DmapRecord * record, guint id);
 
 /**
  * dmap_db_add_path:
@@ -136,7 +136,7 @@ guint dmap_db_add_with_id (DMAPDb * db, DMAPRecord * record, guint id);
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
-guint dmap_db_add_path (DMAPDb * db, const gchar * path);
+guint dmap_db_add_path (DmapDb * db, const gchar * path);
 
 /**
  * dmap_db_lookup_by_id:
@@ -157,7 +157,7 @@ guint dmap_db_add_path (DMAPDb * db, const gchar * path);
  * In this case, the reference count should not be incremented before
  * returning a record pointer.
  */
-DMAPRecord *dmap_db_lookup_by_id (const DMAPDb * db, guint id);
+DmapRecord *dmap_db_lookup_by_id (const DmapDb * db, guint id);
 
 /**
  * dmap_db_lookup_id_by_location:
@@ -167,7 +167,7 @@ DMAPRecord *dmap_db_lookup_by_id (const DMAPDb * db, guint id);
  * Returns: the database id for the record corresponding to @path or 0 if
  * such a record does not exist.
  */
-guint dmap_db_lookup_id_by_location (const DMAPDb * db,
+guint dmap_db_lookup_id_by_location (const DmapDb * db,
 				     const gchar * location);
 
 /**
@@ -178,7 +178,7 @@ guint dmap_db_lookup_id_by_location (const DMAPDb * db,
  *
  * Apply a function to each record in a media database.
  */
-void dmap_db_foreach (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data);
+void dmap_db_foreach (const DmapDb * db, DmapIdRecordFunc func, gpointer data);
 
 /**
  * dmap_db_count:
@@ -186,11 +186,11 @@ void dmap_db_foreach (const DMAPDb * db, DMAPIdRecordFunc func, gpointer data);
  *
  * Returns: the number of records in the database.
  */
-gulong dmap_db_count (const DMAPDb * db);
+gulong dmap_db_count (const DmapDb * db);
 
 gchar **_dmap_db_strsplit_using_quotes (const gchar * str);
 
-GHashTable *dmap_db_apply_filter (DMAPDb * db, GSList * filter_def);
+GHashTable *dmap_db_apply_filter (DmapDb * db, GSList * filter_def);
 
 #endif /* __DMAP_DB_H */
 

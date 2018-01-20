@@ -21,20 +21,20 @@
 #include <libdmapsharing/dmap-record.h>
 
 static void
-dmap_record_default_init (DMAPRecordInterface * iface)
+dmap_record_default_init (DmapRecordInterface * iface)
 {
 }
 
-G_DEFINE_INTERFACE(DMAPRecord, dmap_record, G_TYPE_OBJECT)
+G_DEFINE_INTERFACE(DmapRecord, dmap_record, G_TYPE_OBJECT)
 
 GArray *
-dmap_record_to_blob (DMAPRecord * record)
+dmap_record_to_blob (DmapRecord * record)
 {
 	return DMAP_RECORD_GET_INTERFACE (record)->to_blob (record);
 }
 
 gboolean
-dmap_record_set_from_blob (DMAPRecord * record, GArray * blob)
+dmap_record_set_from_blob (DmapRecord * record, GArray * blob)
 {
 	return DMAP_RECORD_GET_INTERFACE (record)->set_from_blob (record,
 								  blob);

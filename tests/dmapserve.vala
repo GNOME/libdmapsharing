@@ -21,17 +21,17 @@
  */
 
 private class DPAPServe {
-	ValaDPAPRecord record;
-	ValaDMAPDb db;
-	ValaDMAPContainerDb container_db;
-	DPAP.Share share;
+	ValaImageRecord record;
+	ValaDmapDb db;
+	ValaDmapContainerDb container_db;
+	Dmap.ImageShare share;
 
 	public DPAPServe () throws GLib.Error {
-		record = new ValaDPAPRecord ();
-		db = new ValaDMAPDb ();
+		record = new ValaImageRecord ();
+		db = new ValaDmapDb ();
 		db.add (record);
-		container_db = new ValaDMAPContainerDb ();
-		share = new DPAP.Share ("dmapserve", null, db, container_db, null);
+		container_db = new ValaDmapContainerDb ();
+		share = new Dmap.ImageShare ("dmapserve", null, db, container_db, null);
 	}
 }
 

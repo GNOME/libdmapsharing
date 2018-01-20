@@ -1,5 +1,5 @@
 /*
- * DMAPGstInputStream class: Open a URI using dmap_gst_input_stream_new ().
+ * DmapGstInputStream class: Open a URI using dmap_gst_input_stream_new ().
  * Data is decoded using GStreamer and is then made available by the class's
  * read operations.
  *
@@ -51,7 +51,7 @@ static const struct dmap_gst_format dmap_gst_formats[] = {
 	{NULL, NULL}
 };
 
-struct DMAPGstInputStreamPrivate
+struct DmapGstInputStreamPrivate
 {
 	GQueue *buffer;
 	gsize read_request;	/* Size of data asked for */
@@ -65,7 +65,7 @@ struct DMAPGstInputStreamPrivate
 
 #define DMAP_GST_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
 					   DMAP_TYPE_GST_INPUT_STREAM, \
-					   DMAPGstInputStreamPrivate))
+					   DmapGstInputStreamPrivate))
 
 static goffset
 dmap_gst_input_stream_tell (GSeekable * seekable)
@@ -87,7 +87,7 @@ dmap_gst_input_stream_seek (GSeekable * seekable,
 			    GSeekType type,
 			    GCancellable * cacellable, GError ** error)
 {
-	// FIXME: implement: DMAPGstInputStream *stream;
+	// FIXME: implement: DmapGstInputStream *stream;
 	// FIXME: implement: goffset absolute;
 
 	// FIXME: implement: stream = DMAP_GST_INPUT_STREAM (seekable);
@@ -154,7 +154,7 @@ dmap_gst_input_stream_truncate (GSeekable * seekable,
 				GCancellable * cancellable, GError ** error)
 {
 	g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-		     "Cannot truncate DMAPGstInputStream");
+		     "Cannot truncate DmapGstInputStream");
 	return FALSE;
 }
 
@@ -170,7 +170,7 @@ dmap_gst_input_stream_seekable_iface_init (GSeekableIface * iface)
 
 void
 dmap_gst_input_stream_new_buffer_cb (GstElement * element,
-				     DMAPGstInputStream * stream)
+				     DmapGstInputStream * stream)
 {
 	gsize i;
 	guint8 *ptr;
@@ -304,7 +304,7 @@ dmap_gst_input_stream_read (GInputStream * stream,
 			    GCancellable * cancellable, GError ** error)
 {
 	int i;
-	DMAPGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
+	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
 	gint64 end_time;
 
 	end_time = g_get_monotonic_time () + QUEUE_POP_WAIT_SECONDS * G_TIME_SPAN_SECOND;
@@ -355,7 +355,7 @@ dmap_gst_input_stream_skip (GInputStream * stream,
 }
 
 static void
-dmap_gst_input_stream_kill_pipeline (DMAPGstInputStream * stream)
+dmap_gst_input_stream_kill_pipeline (DmapGstInputStream * stream)
 {
 	DMAP_GST_INPUT_STREAM_GET_CLASS (stream)->kill_pipeline (stream);
 }
@@ -364,7 +364,7 @@ static gboolean
 dmap_gst_input_stream_close (GInputStream * stream,
 			     GCancellable * cancellable, GError ** error)
 {
-	DMAPGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
+	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
 
 	dmap_gst_input_stream_kill_pipeline (gst_stream);
 
@@ -433,11 +433,11 @@ dmap_gst_input_stream_close_finish (GInputStream * stream,
 }
 
 static void
-dmap_gst_input_stream_class_init (DMAPGstInputStreamClass * klass)
+dmap_gst_input_stream_class_init (DmapGstInputStreamClass * klass)
 {
 	GInputStreamClass *istream_class;
 
-	g_type_class_add_private (klass, sizeof (DMAPGstInputStreamPrivate));
+	g_type_class_add_private (klass, sizeof (DmapGstInputStreamPrivate));
 
 	istream_class = G_INPUT_STREAM_CLASS (klass);
 	istream_class->read_fn = dmap_gst_input_stream_read;
@@ -452,7 +452,7 @@ dmap_gst_input_stream_class_init (DMAPGstInputStreamClass * klass)
 }
 
 static void
-dmap_gst_input_stream_init (DMAPGstInputStream * stream)
+dmap_gst_input_stream_init (DmapGstInputStream * stream)
 {
 	stream->priv = DMAP_GST_INPUT_STREAM_GET_PRIVATE (stream);
 
@@ -469,7 +469,7 @@ dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 	g_cond_init (&stream->priv->buffer_write_ready);
 }
 
-G_DEFINE_TYPE_WITH_CODE (DMAPGstInputStream, dmap_gst_input_stream,
+G_DEFINE_TYPE_WITH_CODE (DmapGstInputStream, dmap_gst_input_stream,
 			 G_TYPE_INPUT_STREAM,
 			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
 						dmap_gst_input_stream_seekable_iface_init));

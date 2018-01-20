@@ -21,32 +21,32 @@
 #include <libdmapsharing/dmap-container-db.h>
 
 static void
-dmap_container_db_default_init (DMAPContainerDbInterface * iface)
+dmap_container_db_default_init (DmapContainerDbInterface * iface)
 {
 }
 
-G_DEFINE_INTERFACE(DMAPContainerDb, dmap_container_db, G_TYPE_OBJECT)
+G_DEFINE_INTERFACE(DmapContainerDb, dmap_container_db, G_TYPE_OBJECT)
 
 void
-dmap_container_db_add (DMAPContainerDb * db, DMAPContainerRecord *record)
+dmap_container_db_add (DmapContainerDb * db, DmapContainerRecord *record)
 {
 	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->add (db, record);
 }
 
-DMAPContainerRecord *
-dmap_container_db_lookup_by_id (DMAPContainerDb * db, guint id)
+DmapContainerRecord *
+dmap_container_db_lookup_by_id (DmapContainerDb * db, guint id)
 {
 	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->lookup_by_id (db, id);
 }
 
 void
-dmap_container_db_foreach (DMAPContainerDb * db, DMAPIdContainerRecordFunc func, gpointer data)
+dmap_container_db_foreach (DmapContainerDb * db, DmapIdContainerRecordFunc func, gpointer data)
 {
 	DMAP_CONTAINER_DB_GET_INTERFACE (db)->foreach (db, func, data);
 }
 
 gulong
-dmap_container_db_count (DMAPContainerDb * db)
+dmap_container_db_count (DmapContainerDb * db)
 {
 	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->count (db);
 }

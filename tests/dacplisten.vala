@@ -20,9 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-private class ValaDACPPlayer : GLib.Object, DACP.Player {
+private class ValaDacpPlayer : GLib.Object, Dmap.ControlPlayer {
 
-	unowned DAAP.Record now_playing_record () {
+	unowned Dmap.AvRecord now_playing_record () {
 		stdout.printf ("Now playing record request received\n");
 		return null;
 	}
@@ -57,17 +57,17 @@ private class ValaDACPPlayer : GLib.Object, DACP.Player {
 	}
 }
 
-private class DACPListener : GLib.Object {
-	private DMAP.Db db;
-	private DMAP.ContainerDb container_db;
-	private DACP.Player player;
-	private DACP.Share share;
+private class DacpListener : GLib.Object {
+	private Dmap.Db db;
+	private Dmap.ContainerDb container_db;
+	private Dmap.ControlPlayer player;
+	private Dmap.ControlShare share;
 
-	public DACPListener () {
-		db = new ValaDMAPDb ();
-		container_db = new ValaDMAPContainerDb ();
-		player = new ValaDACPPlayer ();
-		share = new DACP.Share ("dacplisten", player, db, container_db);
+	public DacpListener () {
+		db = new ValaDmapDb ();
+		container_db = new ValaDmapContainerDb ();
+		player = new ValaDacpPlayer ();
+		share = new Dmap.ControlShare ("dacplisten", player, db, container_db);
 
 		share.remote_found.connect ((service_name, display_name) => {
 			stdout.printf ("Found remote: %s, %s\n", service_name, display_name);
@@ -84,7 +84,7 @@ private class DACPListener : GLib.Object {
 int main (string[] args) {     
 	var loop = new GLib.MainLoop ();
 
-	var dacplistener = new DACPListener ();
+	var dacplistener = new DacpListener ();
 
 	loop.run ();
 

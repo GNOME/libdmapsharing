@@ -44,9 +44,9 @@
 #include <libgnomevfs/gnome-vfs-address.h>
 #include <libgnomevfs/gnome-vfs-resolve.h>
 
-struct DMAPMdnsBrowserPrivate
+struct DmapMdnsBrowserPrivate
 {
-	DMAPMdnsBrowserServiceType service_type;
+	DmapMdnsBrowserServiceType service_type;
 	sw_discovery *discovery;
 	sw_discovery_oid *oid;
 
@@ -72,16 +72,16 @@ enum
 #undef VERSION
 #include <howl.h>
 
-static void dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass);
-static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser);
+static void dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass);
+static void dmap_mdns_browser_init (DmapMdnsBrowser * browser);
 static void dmap_mdns_browser_dispose (GObject * object);
 static void dmap_mdns_browser_finalize (GObject * object);
 
-#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserPrivate))
+#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserPrivate))
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
+G_DEFINE_TYPE (DmapMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -97,7 +97,7 @@ dmap_mdns_browser_error_quark (void)
 
 static gboolean
 howl_in_cb (GIOChannel * io_channel,
-	    GIOCondition condition, DMAPMdnsBrowser * browser)
+	    GIOCondition condition, DmapMdnsBrowser * browser)
 {
 	sw_salt salt;
 
@@ -111,7 +111,7 @@ howl_in_cb (GIOChannel * io_channel,
 }
 
 static void
-howl_client_init (DMAPMdnsBrowser * browser)
+howl_client_init (DmapMdnsBrowser * browser)
 {
 	sw_result result;
 	int fd;
@@ -136,7 +136,7 @@ howl_client_init (DMAPMdnsBrowser * browser)
 }
 
 static gboolean
-host_is_local (DMAPMdnsBrowser * browser, const char *host)
+host_is_local (DmapMdnsBrowser * browser, const char *host)
 {
 	GnomeVFSAddress *remote;
 	gboolean equal;
@@ -167,7 +167,7 @@ host_is_local (DMAPMdnsBrowser * browser, const char *host)
 }
 
 static void
-set_local_address (DMAPMdnsBrowser * browser)
+set_local_address (DmapMdnsBrowser * browser)
 {
 	char host_name[256];
 	GnomeVFSResolveHandle *rh;
@@ -207,14 +207,14 @@ resolve_cb (sw_discovery discovery,
 	    sw_ipv4_address address,
 	    sw_port port,
 	    sw_octets text_record,
-	    sw_ulong text_record_length, DMAPMdnsBrowser * browser)
+	    sw_ulong text_record_length, DmapMdnsBrowser * browser)
 {
 	char *host;
 	char *name;
 	char *pair;
 	sw_text_record_iterator it;
 	gboolean pp = FALSE;
-	DMAPMdnsBrowserService *service;
+	DmapMdnsBrowserService *service;
 
 	host = g_malloc (16);
 	name = NULL;
@@ -265,7 +265,7 @@ resolve_cb (sw_discovery discovery,
 		name = g_strdup (service_name);
 	}
 
-	service = g_new0 (DMAPMdnsBrowserService, 1);
+	service = g_new0 (DmapMdnsBrowserService, 1);
 	service->service_name = g_strdup (service_name);
 	service->name = name;
 	service->host = g_strdup (host);
@@ -286,7 +286,7 @@ resolve_cb (sw_discovery discovery,
 }
 
 static gboolean
-dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser, const char *name)
+dmap_mdns_browser_resolve (DmapMdnsBrowser * browser, const char *name)
 {
 	sw_result result;
 	sw_discovery_oid oid;
@@ -303,13 +303,13 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser, const char *name)
 }
 
 static void
-browser_add_service (DMAPMdnsBrowser * browser, const char *service_name)
+browser_add_service (DmapMdnsBrowser * browser, const char *service_name)
 {
 	dmap_mdns_browser_resolve (browser, service_name);
 }
 
 static void
-browser_remove_service (DMAPMdnsBrowser * browser, const char *service_name)
+browser_remove_service (DmapMdnsBrowser * browser, const char *service_name)
 {
 	g_signal_emit (browser,
 		       dmap_mdns_browser_signals[SERVICE_REMOVED],
@@ -323,7 +323,7 @@ browse_cb (sw_discovery discovery,
 	   sw_uint32 interface_index,
 	   sw_const_string name,
 	   sw_const_string type,
-	   sw_const_string domain, DMAPMdnsBrowser * browser)
+	   sw_const_string domain, DmapMdnsBrowser * browser)
 {
 	if (status == SW_DISCOVERY_BROWSE_ADD_SERVICE) {
 		browser_add_service (browser, name);
@@ -334,10 +334,10 @@ browse_cb (sw_discovery discovery,
 	return SW_OKAY;
 }
 
-DMAPMdnsBrowser *
-dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
+DmapMdnsBrowser *
+dmap_mdns_browser_new (DmapMdnsBrowserServiceType type)
 {
-	DMAPMdnsBrowser *browser_object;
+	DmapMdnsBrowser *browser_object;
 
 	g_return_val_if_fail (type >= DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID
 			      && type <= DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST,
@@ -352,7 +352,7 @@ dmap_mdns_browser_new (DMAPMdnsBrowserServiceType type)
 }
 
 gboolean
-dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
+dmap_mdns_browser_start (DmapMdnsBrowser * browser, GError ** error)
 {
 	sw_result result;
 
@@ -394,7 +394,7 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 }
 
 gboolean
-dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
+dmap_mdns_browser_stop (DmapMdnsBrowser * browser, GError ** error)
 {
 	if (browser->priv->discovery == NULL) {
 		g_set_error (error,
@@ -420,8 +420,8 @@ dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 	return TRUE;
 }
 
-DMAPMdnsBrowserServiceType
-dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
+DmapMdnsBrowserServiceType
+dmap_mdns_browser_get_service_type (DmapMdnsBrowser * browser)
 {
 	g_return_val_if_fail (browser != NULL,
 			      DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID);
@@ -429,7 +429,7 @@ dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
 }
 
 static void
-dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
+dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -440,7 +440,7 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 		g_signal_new ("service-added",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (DMAPMdnsBrowserClass,
+			      G_STRUCT_OFFSET (DmapMdnsBrowserClass,
 					       service_added), NULL, NULL,
 			      g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE,
 			      1, G_TYPE_POINTER);
@@ -448,19 +448,19 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 		g_signal_new ("service-removed",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (DMAPMdnsBrowserClass,
+			      G_STRUCT_OFFSET (DmapMdnsBrowserClass,
 					       service_removed), NULL, NULL,
 			      g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
 
-	g_type_class_add_private (klass, sizeof (DMAPMdnsBrowserPrivate));
+	g_type_class_add_private (klass, sizeof (DmapMdnsBrowserPrivate));
 }
 
 static void
-dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
+dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 {
 	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
-	memset (browser->priv, 0, sizeof (DMAPMdnsBrowserPrivate));
+	memset (browser->priv, 0, sizeof (DmapMdnsBrowserPrivate));
 
 	set_local_address (browser);
 
@@ -468,7 +468,7 @@ dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 }
 
 static void
-resolver_free (sw_discovery_oid * oid, DMAPMdnsBrowser * browser)
+resolver_free (sw_discovery_oid * oid, DmapMdnsBrowser * browser)
 {
 	sw_discovery_cancel (*browser->priv->discovery, *oid);
 	g_free (oid);
@@ -477,16 +477,16 @@ resolver_free (sw_discovery_oid * oid, DMAPMdnsBrowser * browser)
 static void
 dmap_mdns_browser_dispose (GObject * object)
 {
-	DMAPMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
+	DmapMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
 	GSList *walk;
-	DMAPMdnsBrowserService *service;
+	DmapMdnsBrowserService *service;
 
 	if (browser->priv->oid) {
 		dmap_mdns_browser_stop (browser, NULL);
 	}
 
 	for (walk = browser->priv->services; walk; walk = walk->next) {
-		service = (DMAPMdnsBrowserService *) walk->data;
+		service = (DmapMdnsBrowserService *) walk->data;
 		g_object_unref (service);
 	}
 	g_slist_free (browser->priv->services);

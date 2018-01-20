@@ -34,31 +34,31 @@ G_BEGIN_DECLS typedef struct
 	char *name;
 	int id;
 	GList *uris;
-} DMAPPlaylist;
+} DmapPlaylist;
 
 /**
  * DMAP_TYPE_CONNECTION:
  *
- * The type for #DMAPConnection.
+ * The type for #DmapConnection.
  */
 #define DMAP_TYPE_CONNECTION		(dmap_connection_get_type ())
 /**
  * DMAP_CONNECTION:
  * @o: Object which is subject to casting.
  *
- * Casts a #DMAPConnection or derived pointer into a (DMAPConnection *) pointer.
+ * Casts a #DmapConnection or derived pointer into a (DmapConnection *) pointer.
  * Depending on the current debugging level, this function may invoke
  * certain runtime checks to identify invalid casts.
  */
-#define DMAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_CONNECTION, DMAPConnection))
+#define DMAP_CONNECTION(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_CONNECTION, DmapConnection))
 /**
  * DMAP_CONNECTION_CLASS:
- * @k: a valid #DMAPConnectionClass
+ * @k: a valid #DmapConnectionClass
  *
- * Casts a derived #DMAPConnectionClass structure into a #DMAPConnectionClass
+ * Casts a derived #DmapConnectionClass structure into a #DmapConnectionClass
  * structure.
  */
-#define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_CONNECTION, DMAPConnectionClass))
+#define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_CONNECTION, DmapConnectionClass))
 /**
  * IS_DMAP_CONNECTION:
  * @o: Instance to check for being a %DMAP_TYPE_CONNECTION.
@@ -68,23 +68,23 @@ G_BEGIN_DECLS typedef struct
 #define IS_DMAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONNECTION))
 /**
  * IS_DMAP_CONNECTION_CLASS:
- * @k: a #DMAPConnectionClass
+ * @k: a #DmapConnectionClass
  *
- * Checks whether @k "is a" valid #DMAPConnectionClass structure of type
+ * Checks whether @k "is a" valid #DmapConnectionClass structure of type
  * %DMAP_CONNECTION or derived.
  */
 #define IS_DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_CONNECTION))
 /**
  * DMAP_CONNECTION_GET_CLASS:
- * @o: a #DMAPConnection instance.
+ * @o: a #DmapConnection instance.
  *
- * Get the class structure associated to a #DMAPConnection instance.
+ * Get the class structure associated to a #DmapConnection instance.
  *
  * Returns: pointer to object class structure.
  */
-#define DMAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_CONNECTION, DMAPConnectionClass))
+#define DMAP_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_CONNECTION, DmapConnectionClass))
 
-typedef struct DMAPConnectionPrivate DMAPConnectionPrivate;
+typedef struct DmapConnectionPrivate DmapConnectionPrivate;
 
 typedef enum
 {
@@ -97,57 +97,57 @@ typedef enum
 	DMAP_GET_PLAYLIST_ENTRIES,
 	DMAP_LOGOUT,
 	DMAP_DONE
-} DMAPConnectionState;
+} DmapConnectionState;
 
 typedef struct
 {
 	GObject parent;
-	DMAPConnectionPrivate *priv;
-} DMAPConnection;
+	DmapConnectionPrivate *priv;
+} DmapConnection;
 
 typedef struct
 {
 	GObjectClass parent;
 
 	/* Pure virtual methods: */
-	  DMAPContentCode (*get_protocol_version_cc) (DMAPConnection *
+	  DmapContentCode (*get_protocol_version_cc) (DmapConnection *
 						      connection);
-	gchar *(*get_query_metadata) (DMAPConnection * connection);
-	DMAPRecord *(*handle_mlcl) (DMAPConnection * connection,
-				    DMAPRecordFactory * factory, GNode * mlcl,
+	gchar *(*get_query_metadata) (DmapConnection * connection);
+	DmapRecord *(*handle_mlcl) (DmapConnection * connection,
+				    DmapRecordFactory * factory, GNode * mlcl,
 				    gint * item_id);
 
 	SoupMessage *(*build_message)
 	 
-		(DMAPConnection * connection,
+		(DmapConnection * connection,
 	   const gchar * path,
 	   gboolean need_hash,
 	   gdouble version, gint req_id, gboolean send_close);
-	void (*connected) (DMAPConnection * connection);
-	void (*disconnected) (DMAPConnection * connection);
+	void (*connected) (DmapConnection * connection);
+	void (*disconnected) (DmapConnection * connection);
 
-	char *(*authenticate) (DMAPConnection * connection, const char *name);
-	void (*connecting) (DMAPConnection * connection,
-			    DMAPConnectionState state, float progress);
+	char *(*authenticate) (DmapConnection * connection, const char *name);
+	void (*connecting) (DmapConnection * connection,
+			    DmapConnectionState state, float progress);
 
-	void (*operation_done) (DMAPConnection * connection);
+	void (*operation_done) (DmapConnection * connection);
 
-} DMAPConnectionClass;
+} DmapConnectionClass;
 
 /* hmm, maybe should give more error information? */
-typedef gboolean (*DMAPConnectionFunc) (DMAPConnection * connection,
+typedef gboolean (*DmapConnectionFunc) (DmapConnection * connection,
 					    gboolean result,
 					    const char *reason,
 					    gpointer user_data);
 
-typedef void (*DMAPResponseHandler) (DMAPConnection * connection,
+typedef void (*DmapResponseHandler) (DmapConnection * connection,
 				     guint status,
 				     GNode * structure, gpointer user_data);
 
 GType dmap_connection_get_type (void);
 
-gboolean dmap_connection_is_connected (DMAPConnection * connection);
-void dmap_connection_setup (DMAPConnection * connection);
+gboolean dmap_connection_is_connected (DmapConnection * connection);
+void dmap_connection_setup (DmapConnection * connection);
 
 /**
  * dmap_connection_start:
@@ -157,19 +157,19 @@ void dmap_connection_setup (DMAPConnection * connection);
  *
  * Connect to the remote DMAP share.
  */
-void dmap_connection_start (DMAPConnection * connection,
-			    DMAPConnectionFunc callback,
+void dmap_connection_start (DmapConnection * connection,
+			    DmapConnectionFunc callback,
 			    gpointer user_data);
-void dmap_connection_disconnect (DMAPConnection * connection,
-				 DMAPConnectionFunc callback,
+void dmap_connection_disconnect (DmapConnection * connection,
+				 DmapConnectionFunc callback,
 				 gpointer user_data);
 
-SoupMessageHeaders *dmap_connection_get_headers (DMAPConnection * connection,
+SoupMessageHeaders *dmap_connection_get_headers (DmapConnection * connection,
 						 const char *uri);
 
-GSList *dmap_connection_get_playlists (DMAPConnection * connection);
+GSList *dmap_connection_get_playlists (DmapConnection * connection);
 
-SoupMessage *dmap_connection_build_message (DMAPConnection * connection,
+SoupMessage *dmap_connection_build_message (DmapConnection * connection,
 					    const gchar * path,
 					    gboolean need_hash,
 					    gdouble version,
@@ -177,7 +177,7 @@ SoupMessage *dmap_connection_build_message (DMAPConnection * connection,
 
 /**
  * dmap_connection_authenticate_message:
- * @connection: A #DMAPConnection
+ * @connection: A #DmapConnection
  * @session: A #SoupSession
  * @message: A #SoupMessage
  * @auth: A #SoupAuth
@@ -185,21 +185,21 @@ SoupMessage *dmap_connection_build_message (DMAPConnection * connection,
  *     
  * Attach an authentication credential to a request. This
  * method should be called by a function that is connected to the
- * #DMAPConnection::authenticate signal. The signal will provide the
+ * #DmapConnection::authenticate signal. The signal will provide the
  * connection, session, message and auth to that function. That function
  * should obtain a password and provide it to this method.
  */
-void dmap_connection_authenticate_message (DMAPConnection *connection,
+void dmap_connection_authenticate_message (DmapConnection *connection,
                                            SoupSession *session,
                                            SoupMessage *message,
 					   SoupAuth *auth,
 					   const char *password);
 
 
-gboolean dmap_connection_get (DMAPConnection * self,
+gboolean dmap_connection_get (DmapConnection * self,
 			      const gchar * path,
 			      gboolean need_hash,
-			      DMAPResponseHandler handler,
+			      DmapResponseHandler handler,
 			      gpointer user_data);
 
 G_END_DECLS

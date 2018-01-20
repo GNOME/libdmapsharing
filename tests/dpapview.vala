@@ -20,22 +20,22 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-private class DPAPViewer {
-	private DMAP.MdnsBrowser browser;
-	private DMAP.Connection connection;
+private class DpapViewer {
+	private Dmap.MdnsBrowser browser;
+	private Dmap.Connection connection;
 	private Gtk.ListStore liststore;
-	private ValaDMAPDb db;
-	private ValaDPAPRecordFactory factory;
+	private ValaDmapDb db;
+	private ValaImageRecordFactory factory;
 
-	private bool connected_cb (DMAP.Connection connection, bool result, string? reason) {
+	private bool connected_cb (Dmap.Connection connection, bool result, string? reason) {
 		GLib.debug ("%" + int64.FORMAT + " entries\n", db.count ());
 
 		db.foreach ((k, v) => {
 			Gdk.Pixbuf pixbuf = null;
-			if (((ValaDPAPRecord) v).thumbnail != null) {
+			if (((ValaImageRecord) v).thumbnail != null) {
 				string path;
 				int fd = GLib.FileUtils.open_tmp ("dpapview.XXXXXX", out path);
-				GLib.FileUtils.set_data (path, (uint8[]) ((ValaDPAPRecord) v).thumbnail.data);
+				GLib.FileUtils.set_data (path, (uint8[]) ((ValaImageRecord) v).thumbnail.data);
 				GLib.FileUtils.close (fd);
 				pixbuf = new Gdk.Pixbuf.from_file (path);
 				GLib.FileUtils.unlink (path);
@@ -43,29 +43,29 @@ private class DPAPViewer {
 
 			Gtk.TreeIter iter;
 			liststore.append (out iter);
-			liststore.set (iter, 0, pixbuf, 1, ((ValaDPAPRecord) v).filename);
+			liststore.set (iter, 0, pixbuf, 1, ((ValaImageRecord) v).filename);
 		});
 
 		return true;
 	}
 
-	public DPAPViewer (Gtk.Builder builder) throws GLib.Error {
+	public DpapViewer (Gtk.Builder builder) throws GLib.Error {
 		builder.connect_signals (this);
 
 		Gtk.Widget widget = builder.get_object ("window") as Gtk.Widget;
 		Gtk.IconView iconview = builder.get_object ("iconview") as Gtk.IconView;
 		liststore = builder.get_object ("liststore") as Gtk.ListStore;
-		db = new ValaDMAPDb ();
-		factory = new ValaDPAPRecordFactory ();
+		db = new ValaDmapDb ();
+		factory = new ValaImageRecordFactory ();
 
 		iconview.set_pixbuf_column (0);
 		iconview.set_text_column (1);
 
 		widget.show_all ();
 
-		browser = new DMAP.MdnsBrowser (DMAP.MdnsServiceType.DPAP);
+		browser = new Dmap.MdnsBrowser (Dmap.MdnsServiceType.DPAP);
 		browser.service_added.connect ((browser, service) =>  {
-			connection = (DMAP.Connection) new DPAP.Connection (service.service_name, service.host, service.port, db, factory);
+			connection = (Dmap.Connection) new Dmap.ImageConnection (service.service_name, service.host, service.port, db, factory);
 			connection.start (connected_cb);
 		});
 		browser.start ();
@@ -79,7 +79,7 @@ int main (string[] args) {
 		var builder = new Gtk.Builder ();
 		builder.add_from_file ("tests/dpapview.ui");
 
-		var dpapviewer = new DPAPViewer (builder);
+		var dpapviewer = new DpapViewer (builder);
 
 		Gtk.main ();
 

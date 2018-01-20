@@ -42,9 +42,9 @@
 #include <avahi-glib/glib-malloc.h>
 #include <avahi-glib/glib-watch.h>
 
-struct _DMAPMdnsBrowserPrivate
+struct _DmapMdnsBrowserPrivate
 {
-	DMAPMdnsServiceType service_type;
+	DmapMdnsServiceType service_type;
 	AvahiClient *client;
 	AvahiGLibPoll *poll;
 	AvahiServiceBrowser *service_browser;
@@ -63,11 +63,11 @@ enum
 #define AVAHI_ADDRESS_STR_MAX (40)	/* IPv6 Max = 4*8 + 7 + 1 for NUL */
 #endif
 
-static void dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass);
-static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser);
+static void dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass);
+static void dmap_mdns_browser_init (DmapMdnsBrowser * browser);
 static void dmap_mdns_browser_dispose (GObject * object);
 static void dmap_mdns_browser_finalize (GObject * object);
-static void avahi_client_init (DMAPMdnsBrowser * browser);
+static void avahi_client_init (DmapMdnsBrowser * browser);
 static void resolve_cb (AvahiServiceResolver * service_resolver,
 			AvahiIfIndex interface,
 			AvahiProtocol protocol,
@@ -81,14 +81,14 @@ static void resolve_cb (AvahiServiceResolver * service_resolver,
 #ifdef HAVE_AVAHI_0_6
 			AvahiLookupResultFlags flags,
 #endif
-			DMAPMdnsBrowser * browser);
-static gboolean dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
+			DmapMdnsBrowser * browser);
+static gboolean dmap_mdns_browser_resolve (DmapMdnsBrowser * browser,
 					   const gchar * name,
 					   const gchar * domain);
-static void browser_add_service (DMAPMdnsBrowser * browser,
+static void browser_add_service (DmapMdnsBrowser * browser,
 				 const gchar * service_name,
 				 const gchar * domain);
-static void browser_remove_service (DMAPMdnsBrowser * browser,
+static void browser_remove_service (DmapMdnsBrowser * browser,
 				    const gchar * service_name);
 static void browse_cb (AvahiServiceBrowser * service_browser,
 		       AvahiIfIndex interface,
@@ -99,13 +99,13 @@ static void browse_cb (AvahiServiceBrowser * service_browser,
 #ifdef HAVE_AVAHI_0_6
 		       AvahiLookupResultFlags flags,
 #endif
-		       DMAPMdnsBrowser * browser);
+		       DmapMdnsBrowser * browser);
 
-#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserPrivate))
+#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserPrivate))
 
 static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
+G_DEFINE_TYPE (DmapMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -120,7 +120,7 @@ dmap_mdns_browser_error_quark (void)
 }
 
 static void
-dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
+dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
@@ -129,13 +129,13 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 	object_class->dispose = dmap_mdns_browser_dispose;
 	object_class->finalize = dmap_mdns_browser_finalize;
 
-	g_type_class_add_private (klass, sizeof (DMAPMdnsBrowserPrivate));
+	g_type_class_add_private (klass, sizeof (DmapMdnsBrowserPrivate));
 
 	dmap_mdns_browser_signals[SERVICE_ADDED] =
 		g_signal_new ("service-added",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (DMAPMdnsBrowserClass,
+			      G_STRUCT_OFFSET (DmapMdnsBrowserClass,
 					       service_added), NULL, NULL,
 			      g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE,
 			      1, DMAP_TYPE_MDNS_SERVICE);
@@ -143,14 +143,14 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 		g_signal_new ("service-removed",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (DMAPMdnsBrowserClass,
+			      G_STRUCT_OFFSET (DmapMdnsBrowserClass,
 					       service_removed), NULL, NULL,
 			      g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
 }
 
 static void
-dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
+dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 {
 	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
 	avahi_client_init (browser);
@@ -159,12 +159,12 @@ dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 static void
 dmap_mdns_browser_dispose (GObject * object)
 {
-	DMAPMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
+	DmapMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
 	GSList *walk;
-	DMAPMdnsService *service;
+	DmapMdnsService *service;
 
 	for (walk = browser->priv->services; walk; walk = walk->next) {
-		service = (DMAPMdnsService *) walk->data;
+		service = (DmapMdnsService *) walk->data;
 		g_object_unref (service);
 	}
 	g_slist_free (browser->priv->services);
@@ -197,10 +197,10 @@ dmap_mdns_browser_finalize (GObject * object)
 	G_OBJECT_CLASS (dmap_mdns_browser_parent_class)->finalize (object);
 }
 
-DMAPMdnsBrowser *
-dmap_mdns_browser_new (DMAPMdnsServiceType type)
+DmapMdnsBrowser *
+dmap_mdns_browser_new (DmapMdnsServiceType type)
 {
-	DMAPMdnsBrowser *browser_object;
+	DmapMdnsBrowser *browser_object;
 
 	g_return_val_if_fail (type >= DMAP_MDNS_SERVICE_TYPE_INVALID
 			      && type <= DMAP_MDNS_SERVICE_TYPE_LAST,
@@ -215,7 +215,7 @@ dmap_mdns_browser_new (DMAPMdnsServiceType type)
 }
 
 gboolean
-dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
+dmap_mdns_browser_start (DmapMdnsBrowser * browser, GError ** error)
 {
 	if (browser->priv->client == NULL) {
 		g_set_error (error,
@@ -255,7 +255,7 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 }
 
 gboolean
-dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
+dmap_mdns_browser_stop (DmapMdnsBrowser * browser, GError ** error)
 {
 	if (browser->priv->client == NULL) {
 		g_set_error (error,
@@ -278,14 +278,14 @@ dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
 }
 
 G_CONST_RETURN GSList *
-dmap_mdns_browser_get_services (DMAPMdnsBrowser * browser)
+dmap_mdns_browser_get_services (DmapMdnsBrowser * browser)
 {
 	g_return_val_if_fail (browser != NULL, NULL);
 	return browser->priv->services;
 }
 
-DMAPMdnsServiceType
-dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
+DmapMdnsServiceType
+dmap_mdns_browser_get_service_type (DmapMdnsBrowser * browser)
 {
 	g_return_val_if_fail (browser != NULL,
 			      DMAP_MDNS_SERVICE_TYPE_INVALID);
@@ -294,7 +294,7 @@ dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
 
 static void
 client_cb (AvahiClient * client,
-	   AvahiClientState state, DMAPMdnsBrowser * browser)
+	   AvahiClientState state, DmapMdnsBrowser * browser)
 {
 	/* Called whenever the client or server state changes */
 
@@ -311,7 +311,7 @@ client_cb (AvahiClient * client,
 }
 
 static void
-avahi_client_init (DMAPMdnsBrowser * browser)
+avahi_client_init (DmapMdnsBrowser * browser)
 {
 	gint error = 0;
 
@@ -355,14 +355,14 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 #ifdef HAVE_AVAHI_0_6
 	    AvahiLookupResultFlags flags,
 #endif
-	    DMAPMdnsBrowser * browser)
+	    DmapMdnsBrowser * browser)
 {
 	gchar *name = NULL;
 	gchar *pair = NULL;	/* FIXME: extract DACP-specific items into sub-class. Ensure in Howl and dns-sd code too. */
-	DMAPMdnsServiceTransportProtocol transport_protocol = DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP; // FIXME: subclass
+	DmapMdnsServiceTransportProtocol transport_protocol = DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP; // FIXME: subclass
 	gchar host[AVAHI_ADDRESS_STR_MAX];
 	gboolean pp = FALSE;
-	DMAPMdnsService *service;
+	DmapMdnsService *service;
 
 	switch (event) {
 	case AVAHI_RESOLVER_FAILURE:
@@ -456,7 +456,7 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 }
 
 static gboolean
-dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
+dmap_mdns_browser_resolve (DmapMdnsBrowser * browser,
 			   const gchar * name, const gchar * domain)
 {
 	AvahiServiceResolver *service_resolver;
@@ -486,14 +486,14 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 }
 
 static void
-browser_add_service (DMAPMdnsBrowser * browser,
+browser_add_service (DmapMdnsBrowser * browser,
 		     const gchar * service_name, const gchar * domain)
 {
 	dmap_mdns_browser_resolve (browser, service_name, domain);
 }
 
 static void
-browser_remove_service (DMAPMdnsBrowser * browser, const gchar * service_name)
+browser_remove_service (DmapMdnsBrowser * browser, const gchar * service_name)
 {
 	g_signal_emit (browser,
 		       dmap_mdns_browser_signals[SERVICE_REMOVED],
@@ -509,7 +509,7 @@ browse_cb (AvahiServiceBrowser * service_browser,
 #ifdef HAVE_AVAHI_0_6
 	   AvahiLookupResultFlags flags,
 #endif
-	   DMAPMdnsBrowser * browser)
+	   DmapMdnsBrowser * browser)
 {
 	gboolean local;
 

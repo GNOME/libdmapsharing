@@ -78,9 +78,9 @@ byteReverse (unsigned char *buf, unsigned longs)
 #endif /* #if 0 */
 
 static void
-DMAP_MD5Init (DMAPHashContext * ctx, gint version)
+DMAP_MD5Init (DmapHashContext * ctx, gint version)
 {
-	memset (ctx, 0, sizeof (DMAPHashContext));
+	memset (ctx, 0, sizeof (DmapHashContext));
 	ctx->buf[0] = 0x67452301;
 	ctx->buf[1] = 0xefcdab89;
 	ctx->buf[2] = 0x98badcfe;
@@ -93,7 +93,7 @@ DMAP_MD5Init (DMAPHashContext * ctx, gint version)
 }
 
 static void
-DMAP_MD5Update (DMAPHashContext * ctx, unsigned char const *buf, unsigned int len)
+DMAP_MD5Update (DmapHashContext * ctx, unsigned char const *buf, unsigned int len)
 {
 	guint32 t;
 
@@ -138,7 +138,7 @@ DMAP_MD5Update (DMAPHashContext * ctx, unsigned char const *buf, unsigned int le
 }
 
 static void
-DMAP_MD5Final (DMAPHashContext * ctx, unsigned char digest[16])
+DMAP_MD5Final (DmapHashContext * ctx, unsigned char digest[16])
 {
 	unsigned count;
 	unsigned char *p;
@@ -318,7 +318,7 @@ dmap_hash_progressive_to_string (const unsigned char *digest, gchar * string)
 static void
 GenerateStatic_42 ()
 {
-	DMAPHashContext ctx;
+	DmapHashContext ctx;
 	unsigned char *p = staticHash_42;
 	int i;
 	unsigned char buf[16];
@@ -378,7 +378,7 @@ GenerateStatic_42 ()
 static void
 GenerateStatic_45 ()
 {
-	DMAPHashContext ctx;
+	DmapHashContext ctx;
 	unsigned char *p = staticHash_45;
 	int i;
 	unsigned char buf[16];
@@ -442,7 +442,7 @@ dmap_hash_generate (short version_major,
 		    guchar hash_select, guchar * out, gint request_id)
 {
 	unsigned char buf[16];
-	DMAPHashContext ctx;
+	DmapHashContext ctx;
 	gint i;
 
 	unsigned char *hashTable = (version_major == 3) ?
@@ -482,7 +482,7 @@ dmap_hash_generate (short version_major,
 	return;
 }
 
-void dmap_hash_progressive_init (DMAPHashContext *context)
+void dmap_hash_progressive_init (DmapHashContext *context)
 {
 	/* FIXME: Share this stuff with dmap_hash_generate() */
 	if (!staticHashDone) {
@@ -494,14 +494,14 @@ void dmap_hash_progressive_init (DMAPHashContext *context)
 	DMAP_MD5Init (context, 1);
 }
 
-void dmap_hash_progressive_update (DMAPHashContext *context,
+void dmap_hash_progressive_update (DmapHashContext *context,
                                    unsigned char const *buffer,
                                    unsigned int length)
 {
 	DMAP_MD5Update (context, buffer, length);
 }
 
-void dmap_hash_progressive_final (DMAPHashContext *context,
+void dmap_hash_progressive_final (DmapHashContext *context,
                                   unsigned char digest[16])
 {
 	/* FIXME: This is only equivalent to dmap_hash_generate()
@@ -543,7 +543,7 @@ START_TEST(test_dmap_hash_progressive)
 	guchar hash1[33] = { 0 };
 	guchar hash2[33] = { 0 };
 	guchar *value = (guchar *) "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	DMAPHashContext context;
+	DmapHashContext context;
 
 	dmap_hash_progressive_init   (&context);
 	dmap_hash_progressive_update (&context, value,      5);

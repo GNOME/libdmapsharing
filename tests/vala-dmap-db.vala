@@ -1,4 +1,4 @@
-/*   FILE: vala-dmap-db.vala -- A DMAPDb implementation in Vala
+/*   FILE: vala-dmap-db.vala -- A DmapDb implementation in Vala
  * AUTHOR: W. Michael Petullo <mike@flyn.org>
  *   DATE: 21 December 2010 
  *
@@ -20,14 +20,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-private class ValaDMAPDb : GLib.Object, DMAP.Db {
+private class ValaDmapDb : GLib.Object, Dmap.Db {
 	// A dumb database that stores everything in an array
 
 	/* FIXME: What is with this unowned? */
-	private Gee.ArrayList<unowned DMAP.Record> db = new Gee.ArrayList<DMAP.Record> ();
+	private Gee.ArrayList<unowned Dmap.Record> db = new Gee.ArrayList<Dmap.Record> ();
 
-	public uint add (DMAP.Record record) {
-		db.add (((DMAP.Record) record));
+	public uint add (Dmap.Record record) {
+		db.add (((Dmap.Record) record));
 		return db.size;
 	}
 
@@ -35,7 +35,7 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 		GLib.error ("add_path not implemented");
 	}
 
-	public uint add_with_id (DMAP.Record record, uint id) {
+	public uint add_with_id (Dmap.Record record, uint id) {
 		GLib.error ("add_with_id not implemented");
 	}
 
@@ -52,7 +52,7 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 		}
 	}
 
-	public unowned DMAP.Record lookup_by_id (uint id) {
+	public unowned Dmap.Record lookup_by_id (uint id) {
 		// NOTE: iPhoto does not like a record ID of 0,
 		// so we pretend to start with 1
 		return db.get ((int) id - 1);
