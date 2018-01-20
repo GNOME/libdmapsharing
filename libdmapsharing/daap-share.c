@@ -889,6 +889,9 @@ get_meta_data_map (DMAPShare * share)
 #include <libdmapsharing/test-daap-record.h>
 #include <libdmapsharing/test-dmap-container-db.h>
 #include <libdmapsharing/test-dmap-container-record.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 static DMAPShare *
 _build_share(char *name)
@@ -898,21 +901,34 @@ _build_share(char *name)
 	DMAPContainerDb *container_db;
 	DMAPRecord *record;
 	DMAPShare *share;
+	struct stat statbuf;
 
 	db = DMAP_DB(test_dmap_db_new());
 	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
 	container_db = DMAP_CONTAINER_DB(test_dmap_container_db_new(container_record));
 
+	if (-1 == stat("/etc/services", &statbuf)) {
+		ck_abort();
+	}
+
 	record = DMAP_RECORD(test_daap_record_new());
 	g_object_set(record, "songgenre", "genre1", NULL);
 	g_object_set(record, "songartist", "artist1", NULL);
 	g_object_set(record, "songalbum", "album1", NULL);
+	g_object_set(record, "location", "file:///etc/services", NULL);
+	g_object_set(record, "filesize", statbuf.st_size, NULL);
 	dmap_db_add(db, record);
+
+	if (-1 == stat("/etc/group", &statbuf)) {
+		ck_abort();
+	}
 
 	record = DMAP_RECORD(test_daap_record_new());
 	g_object_set(record, "songgenre", "genre2", NULL);
 	g_object_set(record, "songartist", "artist2", NULL);
 	g_object_set(record, "songalbum", "album2", NULL);
+	g_object_set(record, "location", "file:///etc/group", NULL);
+	g_object_set(record, "filesize", statbuf.st_size, NULL);
 	dmap_db_add(db, record);
 
 	share  = DMAP_SHARE(daap_share_new(name,
@@ -1216,6 +1232,102 @@ START_TEST(databases_browse_xxx_bad_category_test)
 
 	g_object_unref(share);
 	g_hash_table_destroy(query);
+}
+END_TEST
+
+START_TEST(databases_items_xxx_test)
+{
+	char *nameprop = "databases_items_xxx_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	SoupMessageBody *body = NULL;
+	SoupBuffer *buffer;
+	gsize length;
+	GNode *root;
+	DMAPStructureItem *item;
+	char path[PATH_MAX + 1];
+	DMAPDb *db = NULL;
+	DMAPRecord *record = NULL;
+	guint64 size1 = 0, size2 = 0;
+	const guint8 *contents1;
+	char *location, *contents2, *etag_out;
+	GFile *file;
+	GCancellable cancellable;
+	GError *error = NULL;
+	gboolean ok;
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+
+	g_snprintf(path, sizeof path, "/db/1/items/%d", G_MAXINT);
+
+	databases_items_xxx(share, server, message, path, NULL, NULL);
+
+	g_object_get(share, "db", &db, NULL);
+	ck_assert(NULL != db);
+
+	record = dmap_db_lookup_by_id(db, G_MAXINT);
+	ck_assert(NULL != record);
+
+	g_object_get(record, "filesize", &size1, "location", &location, NULL);
+	ck_assert(0 != size1);
+	ck_assert(NULL != location);
+
+	g_signal_emit_by_name(message, "wrote_headers", NULL);
+
+	for (int i = 0; i < size1 / DMAP_SHARE_CHUNK_SIZE + 1; i++) {
+		g_signal_emit_by_name(message, "wrote_chunk", NULL);
+	}
+
+	g_signal_emit_by_name(message, "finished", NULL);
+
+	g_object_get(message, "response-body", &body, NULL);
+	ck_assert(NULL != body);
+
+	soup_message_body_set_accumulate (message->response_body, TRUE);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &contents1, &size1);
+
+	file = g_file_new_for_uri(location);
+	ck_assert(NULL != file);
+
+	ok = g_file_load_contents(file, &cancellable, &contents2, &size2, &etag_out, &error);
+	ck_assert(ok);
+
+	ck_assert(size1 == size2);
+	ck_assert(0 == memcmp(contents1, contents2, size1));
+
+	g_object_unref(record);
+	g_object_unref(db);
+	g_object_unref(share);
+}
+END_TEST
+
+START_TEST(databases_items_xxx_test_bad_id)
+{
+	char *nameprop = "databases_items_xxx_test";
+	DMAPShare *share;
+	SoupServer *server;
+	SoupMessage *message;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
+	const guint8 *data;
+	gsize length;
+	GNode *root;
+	DMAPStructureItem *item;
+	char path[PATH_MAX + 1];
+
+	share   = _build_share(nameprop);
+	server  = soup_server_new(NULL, NULL);
+	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+
+	/* IDs go from G_MAXINT down, so 0 does not exist. */
+	g_snprintf(path, sizeof path, "/db/1/items/%d", 0);
+	databases_items_xxx(share, server, message, path, NULL, NULL);
+
+	g_object_unref(share);
 }
 END_TEST
 
