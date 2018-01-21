@@ -1059,6 +1059,8 @@ START_TEST(dmap_av_share_message_add_standard_headers_test)
 	header = soup_message_headers_get_one(headers, "DMAP-Server");
 
 	ck_assert_str_eq("libdmapsharing" VERSION, header);
+
+	g_object_unref(share);
 }
 END_TEST
 
@@ -1243,9 +1245,6 @@ START_TEST(databases_items_xxx_test)
 	SoupMessage *message;
 	SoupMessageBody *body = NULL;
 	SoupBuffer *buffer;
-	gsize length;
-	GNode *root;
-	DmapStructureItem *item;
 	char path[PATH_MAX + 1];
 	DmapDb *db = NULL;
 	DmapRecord *record = NULL;
@@ -1311,12 +1310,6 @@ START_TEST(databases_items_xxx_test_bad_id)
 	DmapShare *share;
 	SoupServer *server;
 	SoupMessage *message;
-	SoupMessageBody *body;
-	SoupBuffer *buffer;
-	const guint8 *data;
-	gsize length;
-	GNode *root;
-	DmapStructureItem *item;
 	char path[PATH_MAX + 1];
 
 	share   = _build_share(nameprop);

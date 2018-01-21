@@ -538,10 +538,10 @@ dmap_content_code_read_from_buffer (const gchar * buf)
 }
 
 static gchar *
-dmap_buffer_read_string (const gchar * buf, gssize size)
+dmap_buffer_read_string (const guint8 * buf, gsize size)
 {
-	if (g_utf8_validate (buf, size, NULL) == TRUE) {
-		return g_strndup (buf, size);
+	if (g_utf8_validate ((char *) buf, size, NULL) == TRUE) {
+		return g_strndup ((char *) buf, size);
 	} else {
 		return g_strdup ("");
 	}
@@ -549,7 +549,7 @@ dmap_buffer_read_string (const gchar * buf, gssize size)
 
 static void
 dmap_structure_parse_container_buffer (GNode * parent,
-				       const guchar * buf, gint buf_length)
+				       const guint8 * buf, gsize buf_length)
 {
 	gint l = 0;
 
@@ -603,7 +603,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 		 * then get out before we start processing it
 		 */
 		if (codesize > buf_length - l - 4 || codesize < 0) {
-			g_debug ("Invalid codesize %d received in buf_length %d\n", codesize, buf_length);
+			g_debug ("Invalid codesize %d received in buf_length %zd\n", codesize, buf_length);
 			return;
 		}
 		l += 4;
@@ -670,9 +670,7 @@ dmap_structure_parse_container_buffer (GNode * parent,
 			}
 		case DMAP_TYPE_STRING:{
 				gchar *s =
-					dmap_buffer_read_string ((const gchar
-								  *)
-								 &(buf[l]),
+					dmap_buffer_read_string (&(buf[l]),
 								 codesize);
 
 				item->size = strlen (s);
@@ -737,7 +735,7 @@ done:
 }
 
 GNode *
-dmap_structure_parse (const gchar * buf, gint buf_length)
+dmap_structure_parse (const guint8 * buf, gsize buf_length)
 {
 	GNode *root = NULL;
 	GNode *child = NULL;

@@ -613,18 +613,22 @@ actual_http_response_handler (DAAPResponseData * data)
 {
 	DmapConnectionPrivate *priv;
 	GNode *structure;
-	char *new_response = NULL;
-	const char *response;
+	guint8 *new_response = NULL;
+	const guint8 *response;
 	const char *encoding_header;
 	char *message_path;
-	int response_length;
+	gsize response_length;
 	gboolean compatible_server = TRUE;
+	SoupMessageBody *body;
+	SoupBuffer *buffer;
 
 	priv = data->connection->priv;
 	structure = NULL;
 	encoding_header = NULL;
-	response = data->message->response_body->data;
-	response_length = data->message->response_body->length;
+
+	g_object_get(data->message, "response-body", &body, NULL);
+	buffer = soup_message_body_flatten(body);
+	soup_buffer_get_data(buffer, &response, &response_length);
 
 	message_path =
 		soup_uri_to_string (soup_message_get_uri (data->message),

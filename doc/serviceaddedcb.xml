@@ -43,7 +43,7 @@ service_added_cb (DMAPMdnsBrowser *browser,
 		g_error ("Error creating DB");
 	}
 
-	factory = DMAP_RECORD_FACTORY (my_daap_record_factory_new ());
+	factory = DMAP_RECORD_FACTORY (my_av_record_factory_new ());
 	if (factory == NULL) {
 		g_error ("Error creating record factory");
 	}
