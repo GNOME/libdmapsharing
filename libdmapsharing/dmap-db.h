@@ -190,6 +190,13 @@ gulong dmap_db_count (const DmapDb * db);
 
 gchar **_dmap_db_strsplit_using_quotes (const gchar * str);
 
+/**
+ * dmap_db_apply_filter:
+ * @db: A media database.
+ * @filter_def: (element-type DmapDbFilterDefinition): A series of filter definitions.
+ *
+ * Returns: (element-type guint DmapRecord) (transfer full): the records which satisfy a record in @filter_def.
+ */
 GHashTable *dmap_db_apply_filter (DmapDb * db, GSList * filter_def);
 
 #endif /* __DMAP_DB_H */

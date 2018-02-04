@@ -24,7 +24,7 @@
 
 G_BEGIN_DECLS
 /**
- * DACP_TYPE_PLAYER:
+ * DMAP_TYPE_CONTROL_PLAYER:
  *
  * The type for #DmapControlPlayer.
  */
@@ -40,9 +40,9 @@ G_BEGIN_DECLS
 #define DMAP_CONTROL_PLAYER(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_CONTROL_PLAYER, DmapControlPlayer))
 /**
  * IS_DMAP_CONTROL_PLAYER:
- * @o: Instance to check for being a %DACP_TYPE_PLAYER.
+ * @o: Instance to check for being a %DMAP_TYPE_CONTROL_PLAYER.
  *
- * Checks whether a valid #GTypeInstance pointer is of type %DACP_TYPE_PLAYER.
+ * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_CONTROL_PLAYER.
  */
 #define IS_DMAP_CONTROL_PLAYER(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONTROL_PLAYER))
 /**
@@ -60,17 +60,17 @@ typedef struct _DmapControlPlayer DmapControlPlayer;
 
 typedef enum
 {
-	DACP_REPEAT_NONE = 0,
-	DACP_REPEAT_SINGLE = 1,
-	DACP_REPEAT_ALL = 2
-} DACPRepeatState;
+	CONTROL_REPEAT_NONE = 0,
+	CONTROL_REPEAT_SINGLE = 1,
+	CONTROL_REPEAT_ALL = 2
+} DmapControlRepeatState;
 
 typedef enum
 {
-	DACP_PLAY_STOPPED = 2,
-	DACP_PLAY_PAUSED = 3,
-	DACP_PLAY_PLAYING = 4
-} DACPPlayState;
+	CONTROL_PLAY_STOPPED = 2,
+	CONTROL_PLAY_PAUSED = 3,
+	CONTROL_PLAY_PLAYING = 4
+} DmapControlPlayState;
 
 struct _DmapControlPlayerInterface
 {
@@ -93,6 +93,8 @@ GType dmap_control_player_get_type (void);
 /**
  * dmap_control_player_now_playing_record:
  * @player: a player
+ *
+ * Returns: (transfer none): the currently playing record.
  */
 DmapAvRecord *dmap_control_player_now_playing_record (DmapControlPlayer * player);
 
@@ -138,7 +140,7 @@ void dmap_control_player_cue_clear (DmapControlPlayer * player);
 /**
  * dmap_control_player_cue_play:
  * @player: a player
- * @records : a list of records
+ * @records: (element-type DmapRecord): a list of records
  * @index: an index
  */
 void dmap_control_player_cue_play (DmapControlPlayer * player, GList * records, guint index);

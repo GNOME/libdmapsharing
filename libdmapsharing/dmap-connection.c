@@ -510,7 +510,7 @@ connection_operation_done (DmapConnection * connection)
 	// FIXME: GDK_THREADS_LEAVE ();
 }
 
-SoupMessage *
+static SoupMessage *
 dmap_connection_build_message (DmapConnection * connection,
 			       const char *path,
 			       gboolean need_hash,

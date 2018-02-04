@@ -42,6 +42,7 @@
 #include <libdmapsharing/dmap-structure.h>
 
 #include <libdmapsharing/dmap-share.h>
+#include <libdmapsharing/dmap-connection-private.h>
 #include <libdmapsharing/dmap-control-share.h>
 #include <libdmapsharing/dmap-control-connection.h>
 #include <libdmapsharing/dmap-control-player.h>
@@ -523,8 +524,8 @@ dmap_control_share_fill_playstatusupdate (DmapControlShare * share, SoupMessage 
 {
 	GNode *cmst;
 	DmapAvRecord *record;
-	DACPPlayState play_state;
-	DACPRepeatState repeat_state;
+	DmapControlPlayState play_state;
+	DmapControlRepeatState repeat_state;
 	gboolean shuffle_state;
 	guint playing_time;
 

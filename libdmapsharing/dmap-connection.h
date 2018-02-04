@@ -29,7 +29,9 @@
 #include <libdmapsharing/dmap-db.h>
 #include <libdmapsharing/dmap-record-factory.h>
 
-G_BEGIN_DECLS typedef struct
+G_BEGIN_DECLS
+
+typedef struct
 {
 	char *name;
 	int id;
@@ -160,6 +162,15 @@ void dmap_connection_setup (DmapConnection * connection);
 void dmap_connection_start (DmapConnection * connection,
 			    DmapConnectionFunc callback,
 			    gpointer user_data);
+
+/**
+ * dmap_connection_disconnect:
+ * @connection: The connection.
+ * @callback: (scope async): The function to call once the connection is complete.
+ * @user_data: The data to pass to the callback.
+ *
+ * Disconnect from the remote DMAP share.
+ */
 void dmap_connection_disconnect (DmapConnection * connection,
 				 DmapConnectionFunc callback,
 				 gpointer user_data);
@@ -167,13 +178,15 @@ void dmap_connection_disconnect (DmapConnection * connection,
 SoupMessageHeaders *dmap_connection_get_headers (DmapConnection * connection,
 						 const char *uri);
 
+/**
+ * dmap_connection_get_playlists:
+ * @connection: A #DmapConnection
+ *
+ * Get the playlists associated with a #DmapConnection instance.
+ *
+ * Returns: (element-type DmapPlaylist) (transfer none): pointer to a list of playlists.
+ */
 GSList *dmap_connection_get_playlists (DmapConnection * connection);
-
-SoupMessage *dmap_connection_build_message (DmapConnection * connection,
-					    const gchar * path,
-					    gboolean need_hash,
-					    gdouble version,
-					    gint req_id, gboolean send_close);
 
 /**
  * dmap_connection_authenticate_message:
@@ -182,7 +195,7 @@ SoupMessage *dmap_connection_build_message (DmapConnection * connection,
  * @message: A #SoupMessage
  * @auth: A #SoupAuth
  * @password: A password
- *     
+ *
  * Attach an authentication credential to a request. This
  * method should be called by a function that is connected to the
  * #DmapConnection::authenticate signal. The signal will provide the
@@ -194,13 +207,6 @@ void dmap_connection_authenticate_message (DmapConnection *connection,
                                            SoupMessage *message,
 					   SoupAuth *auth,
 					   const char *password);
-
-
-gboolean dmap_connection_get (DmapConnection * self,
-			      const gchar * path,
-			      gboolean need_hash,
-			      DmapResponseHandler handler,
-			      gpointer user_data);
 
 G_END_DECLS
 #endif /* __DMAP_CONNECTION_H */

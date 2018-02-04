@@ -92,7 +92,7 @@ typedef DmapRecord *(*ShareBitwiseLookupByIdFunc) (void *db, guint id);
 struct share_bitwise_t
 {
 	DmapShare *share;
-	struct MLCL_Bits mb;
+	struct DmapMlclBits mb;
 	GSList *id_list;
 	guint32 size;
 
@@ -899,9 +899,9 @@ _dmap_share_message_set_from_dmap_structure (DmapShare * share,
 }
 
 gboolean
-_dmap_share_client_requested (bitwise bits, gint field)
+_dmap_share_client_requested (DmapBits bits, gint field)
 {
-	return 0 != (bits & (((bitwise) 1) << field));
+	return 0 != (bits & (((DmapBits) 1) << field));
 }
 
 gboolean
@@ -1100,11 +1100,11 @@ _dmap_share_update (DmapShare * share,
 	}
 }
 
-bitwise
+DmapBits
 _dmap_share_parse_meta_str (const char *attrs, struct DmapMetaDataMap *mdm)
 {
 	guint i;
-	bitwise bits = 0;
+	DmapBits bits = 0;
 
 	/* iTunes 8 uses meta=all for /databases/1/items query: */
 	if (strcmp (attrs, "all") == 0) {
@@ -1120,7 +1120,7 @@ _dmap_share_parse_meta_str (const char *attrs, struct DmapMetaDataMap *mdm)
 
 			for (j = 0; mdm[j].tag; j++) {
 				if (strcmp (mdm[j].tag, attrsv[i]) == 0) {
-					bits |= (((bitwise) 1) << mdm[j].md);
+					bits |= (((DmapBits) 1) << mdm[j].md);
 					found = TRUE;
 				}
 			}
@@ -1135,7 +1135,7 @@ _dmap_share_parse_meta_str (const char *attrs, struct DmapMetaDataMap *mdm)
 	return bits;
 }
 
-bitwise
+DmapBits
 _dmap_share_parse_meta (GHashTable * query, struct DmapMetaDataMap * mdm)
 {
 	const gchar *attrs;
@@ -1160,7 +1160,7 @@ _dmap_share_add_playlist_to_mlcl (gpointer id, DmapContainerRecord * record,
 	GNode *mlit;
 	guint num_songs;
 	gchar *name;
-	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
+	struct DmapMlclBits *mb = (struct DmapMlclBits *) _mb;
 
 	num_songs = dmap_container_record_get_entry_count (record);
 	g_object_get (record, "name", &name, NULL);
@@ -1491,7 +1491,7 @@ accumulate_mlcl_size_and_ids (guint id,
 	share_bitwise->id_list = g_slist_append (share_bitwise->id_list, GUINT_TO_POINTER (id));
 
 	/* Make copy and set mlcl to NULL so real MLCL does not get changed */
-	struct MLCL_Bits mb_copy = share_bitwise->mb;
+	struct DmapMlclBits mb_copy = share_bitwise->mb;
 
 	mb_copy.mlcl = dmap_structure_add (NULL, DMAP_CC_MLCL);;
 
@@ -1530,7 +1530,7 @@ write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		gchar *data = NULL;
 		guint length;
 		DmapRecord *record;
-		struct MLCL_Bits mb = { NULL, 0, NULL };
+		struct DmapMlclBits mb = { NULL, 0, NULL };
 
 		record = share_bitwise->lookup_by_id (share_bitwise->db,
 						      GPOINTER_TO_UINT
@@ -1751,7 +1751,7 @@ _dmap_share_databases (DmapShare * share,
 		GHashTable *records = NULL;
 		struct DmapMetaDataMap *map;
 		gint32 num_songs;
-		struct MLCL_Bits mb = { NULL, 0, NULL };
+		struct DmapMlclBits mb = { NULL, 0, NULL };
 		struct share_bitwise_t *share_bitwise;
 
 		record_query = g_hash_table_lookup (query, "query");
@@ -1873,7 +1873,7 @@ _dmap_share_databases (DmapShare * share,
 		GNode *aply;
 		GNode *mlit;
 		struct DmapMetaDataMap *map;
-		struct MLCL_Bits mb = { NULL, 0, NULL };
+		struct DmapMlclBits mb = { NULL, 0, NULL };
 
 		map = DMAP_SHARE_GET_CLASS (share)->get_meta_data_map (share);
 		mb.bits = _dmap_share_parse_meta (query, map);
@@ -1936,7 +1936,7 @@ _dmap_share_databases (DmapShare * share,
 		 */
 		GNode *apso;
 		struct DmapMetaDataMap *map;
-		struct MLCL_Bits mb = { NULL, 0, NULL };
+		struct DmapMlclBits mb = { NULL, 0, NULL };
 		guint pl_id;
 		gchar *record_query;
 		GSList *filter_def;

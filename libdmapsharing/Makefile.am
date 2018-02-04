@@ -105,7 +105,6 @@ libdmapsharinginclude_HEADERS = \
 	dmap-record.h \
 	dmap-record-factory.h \
 	dmap-share.h \
-	dmap-structure.h \
 	dmap-utils.h \
 	dmap-image-connection.h \
 	dmap-image-record.h \
@@ -113,12 +112,14 @@ libdmapsharinginclude_HEADERS = \
 
 noinst_HEADERS = \
 	dmap-config.h \
+	dmap-connection-private.h \
 	dmap-gst-mp3-input-stream.h \
 	dmap-gst-qt-input-stream.h \
 	dmap-gst-wav-input-stream.h \
 	dmap-marshal.h \
 	dmap-mdns-avahi.h \
 	dmap-private-utils.h \
+	dmap-structure.h \
 	gst-util.h \
 	test-dmap-av-record-factory.h \
 	test-dmap-av-record.h \

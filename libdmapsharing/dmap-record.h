@@ -69,8 +69,6 @@ struct _DmapRecordInterface
 	gboolean   (*set_from_blob) (DmapRecord * record, GArray * blob);
 };
 
-typedef unsigned long long bitwise;
-
 typedef enum
 {
 	DMAP_MEDIA_KIND_MUSIC = 1,
@@ -85,14 +83,14 @@ GType dmap_record_get_type (void);
  * dmap_record_to_blob:
  * @record: A DmapRecord.
  *
- * Returns: A byte array representation of the record.
+ * Returns: (element-type guint8) (transfer container): A byte array representation of the record.
  */
 GArray *dmap_record_to_blob (DmapRecord * record);
 
 /**
- * dmap_record_from_blob:
+ * dmap_record_set_from_blob:
  * @record: The record to set.
- * @blob:   A byte array representation of a record.
+ * @blob: (element-type guint8): A byte array representation of a record.
  *
  * Returns: True on success, else false.
  */

@@ -346,7 +346,7 @@ static void
 add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 {
 	GNode *mlit;
-	struct MLCL_Bits *mb = (struct MLCL_Bits *) _mb;
+	struct DmapMlclBits *mb = (struct DmapMlclBits *) _mb;
 
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 

@@ -176,14 +176,16 @@ struct DmapMetaDataMap
 	guint md;
 };
 
+typedef guint64 DmapBits;
+
 /* FIXME: this is passed as user_data to various functions; 
  * need to rename. Also, get rid of initializations elsewhere: { NULL, 0, NULL };
  * instead define a function to do this.
  */
-struct MLCL_Bits
+struct DmapMlclBits
 {
 	GNode *mlcl;
-	bitwise bits;
+	DmapBits bits;
 	DmapShare *share;
 };
 
@@ -208,7 +210,7 @@ guint32 _dmap_share_session_id_create (DmapShare * share,
 void _dmap_share_session_id_remove (DmapShare * share,
 				    SoupClientContext * ctx, guint32 id);
 
-gboolean _dmap_share_client_requested (bitwise bits, gint field);
+gboolean _dmap_share_client_requested (DmapBits bits, gint field);
 
 gboolean _dmap_share_uri_is_local (const char *text_uri);
 
@@ -223,10 +225,10 @@ void _dmap_share_message_set_from_dmap_structure (DmapShare * share,
 						  SoupMessage * message,
 						  GNode * structure);
 
-bitwise _dmap_share_parse_meta (GHashTable * query,
+DmapBits _dmap_share_parse_meta (GHashTable * query,
 				struct DmapMetaDataMap *mdm);
 
-bitwise _dmap_share_parse_meta_str (const char *attrs,
+DmapBits _dmap_share_parse_meta_str (const char *attrs,
 				    struct DmapMetaDataMap *mdm);
 
 void _dmap_share_add_playlist_to_mlcl (gpointer id,
@@ -235,6 +237,12 @@ void _dmap_share_add_playlist_to_mlcl (gpointer id,
 
 GSList *_dmap_share_build_filter (gchar * filterstr);
 
+/**
+ * dmap_share_free_filter:
+ * @filter: (element-type GSList): The filter list to free.
+ *
+ * Free the given filter list.
+ */
 void dmap_share_free_filter (GSList * filter);
 
 /* Virtual methods (libsoup callbacks with default implementation): */

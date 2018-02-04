@@ -35,22 +35,6 @@
 #define QUEUE_PUSH_WAIT_SECONDS 10
 #define QUEUE_POP_WAIT_SECONDS 1
 
-struct dmap_gst_format
-{
-	gchar *id;		/* E.g., used as command line arguments. */
-	gchar *extension;	/* E.g., iTunes uses URI extension to
-				 * determine stream format.
-				 */
-};
-
-/* NOTE: Roku clients require lower case extension. */
-static const struct dmap_gst_format dmap_gst_formats[] = {
-	{"raw", "raw"},
-	{"wav16", "wav"},
-	{"mp3", "mp3"},
-	{NULL, NULL}
-};
-
 struct DmapGstInputStreamPrivate
 {
 	GQueue *buffer;
@@ -283,12 +267,6 @@ dmap_gst_input_stream_new (const gchar * transcode_mimetype,
 	}
 
 	return stream;
-}
-
-gchar *
-dmapd_input_stream_strdup_format_extension (const gint format_code)
-{
-	return g_strdup (dmap_gst_formats[format_code].extension);
 }
 
 static gssize

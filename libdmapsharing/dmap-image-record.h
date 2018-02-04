@@ -78,7 +78,7 @@ GType dmap_image_record_get_type (void);
  * @record: a DmapImageRecord.
  * @err: a GError.
  *
- * Returns: A GInputStream that provides read-only access to the data stream
+ * Returns: (transfer full): a GInputStream that provides read-only access to the data stream
  * associated with record.
  */
 GInputStream *dmap_image_record_read (DmapImageRecord * record, GError ** err);

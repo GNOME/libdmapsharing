@@ -53,7 +53,7 @@ typedef struct
 {
 	GInputStreamClass parent;
 
-	void (*kill_pipeline) (DmapGstInputStream *);
+	void (*kill_pipeline) (DmapGstInputStream *stream);
 } DmapGstInputStreamClass;
 
 GType dmap_gst_input_stream_get_type (void);
@@ -74,8 +74,6 @@ GInputStream *dmap_gst_input_stream_new (const gchar * transcode_mimetype,
 void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
 						  DmapGstInputStream *stream);
 						  */
-
-gchar *dmapd_input_stream_strdup_format_extension (const gint format_code);
 
 G_END_DECLS
 #endif /* __DMAP_GST_INPUT_STREAM */

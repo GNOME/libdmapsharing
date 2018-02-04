@@ -88,7 +88,7 @@ gboolean dmap_av_record_itunes_compat (DmapAvRecord * record);
  * @record: a DmapAvRecord.
  * @err: a GError.
  *
- * Returns: A GInputStream that provides read-only access to the data stream
+ * Returns: (transfer full): A GInputStream that provides read-only access to the data stream
  * associated with record.
  */
 GInputStream *dmap_av_record_read (DmapAvRecord * record, GError ** err);
