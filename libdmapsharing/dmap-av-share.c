@@ -52,20 +52,20 @@ void dmap_av_share_server_info (DmapShare * share,
 			     GHashTable * query, SoupClientContext * context);
 void dmap_av_share_message_add_standard_headers (DmapShare * share,
 					      SoupMessage * message);
-static void databases_browse_xxx (DmapShare * share,
-				  SoupServer * server,
-				  SoupMessage * msg,
-				  const char *path,
-				  GHashTable * query,
-				  SoupClientContext * context);
-static void databases_items_xxx (DmapShare * share,
-				 SoupServer * server,
-				 SoupMessage * msg,
-				 const char *path,
-				 GHashTable * query,
-				 SoupClientContext * context);
-static struct DmapMetaDataMap *get_meta_data_map (DmapShare * share);
-static void add_entry_to_mlcl (guint id, DmapRecord * record, gpointer mb);
+static void _databases_browse_xxx (DmapShare * share,
+                                   SoupServer * server,
+                                   SoupMessage * msg,
+                                   const char *path,
+                                   GHashTable * query,
+                                   SoupClientContext * context);
+static void _databases_items_xxx (DmapShare * share,
+                                  SoupServer * server,
+                                  SoupMessage * msg,
+                                  const char *path,
+                                  GHashTable * query,
+                                  SoupClientContext * context);
+static struct DmapMetaDataMap *_get_meta_data_map (DmapShare * share);
+static void _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer mb);
 
 #define DAAP_TYPE_OF_SERVICE "_daap._tcp"
 #define DAAP_PORT 3689
@@ -82,10 +82,10 @@ dmap_av_share_class_init (DmapAvShareClass * klass)
 	parent_class->get_type_of_service = dmap_av_share_get_type_of_service;
 	parent_class->message_add_standard_headers =
 		dmap_av_share_message_add_standard_headers;
-	parent_class->get_meta_data_map = get_meta_data_map;
-	parent_class->add_entry_to_mlcl = add_entry_to_mlcl;
-	parent_class->databases_browse_xxx = databases_browse_xxx;
-	parent_class->databases_items_xxx = databases_items_xxx;
+	parent_class->get_meta_data_map = _get_meta_data_map;
+	parent_class->add_entry_to_mlcl = _add_entry_to_mlcl;
+	parent_class->databases_browse_xxx = _databases_browse_xxx;
+	parent_class->databases_items_xxx = _databases_items_xxx;
 	parent_class->server_info = dmap_av_share_server_info;
 }
 
@@ -113,9 +113,19 @@ dmap_av_share_new (const char *name,
 					  "transcode-mimetype",
 					  transcode_mimetype, NULL));
 
-	_dmap_share_server_start (DMAP_SHARE (share));
-	_dmap_share_publish_start (DMAP_SHARE (share));
+	if (!_dmap_share_server_start (DMAP_SHARE (share))) {
+		g_object_unref(share);
+		share = NULL;
+		goto done;
+	}
 
+	if (!_dmap_share_publish_start (DMAP_SHARE (share))) {
+		g_object_unref(share);
+		share = NULL;
+		goto done;
+	}
+
+done:
 	return share;
 }
 
@@ -256,7 +266,7 @@ typedef enum
 	PARENT_CONTAINER_ID
 } DAAPMetaData;
 
-static struct DmapMetaDataMap meta_data_map[] = {
+static struct DmapMetaDataMap _meta_data_map[] = {
 	{"dmap.itemid", ITEM_ID},
 	{"dmap.itemname", ITEM_NAME},
 	{"dmap.itemkind", ITEM_KIND},
@@ -307,7 +317,10 @@ static struct DmapMetaDataMap meta_data_map[] = {
 #define DAAP_ITEM_KIND_AUDIO 2
 #define DAAP_SONG_DATA_KIND_NONE 0
 
-static gboolean should_transcode (const gchar *format, const gboolean has_video, const gchar *transcode_mimetype)
+static gboolean
+_should_transcode (const gchar *format,
+                   const gboolean has_video,
+                   const gchar *transcode_mimetype)
 {
 	gboolean fnval = FALSE;
 	char *format2 = NULL;
@@ -340,7 +353,7 @@ done:
 }
 
 static void
-send_chunked_file (SoupServer * server, SoupMessage * message,
+_send_chunked_file (SoupServer * server, SoupMessage * message,
 		   DmapAvRecord * record, guint64 filesize, guint64 offset,
 		   const gchar * transcode_mimetype)
 {
@@ -379,7 +392,7 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	}
 
 	// Not presently transcoding videos (see also same comments elsewhere).
-	if (should_transcode (format, has_video, transcode_mimetype)) {
+	if (_should_transcode (format, has_video, transcode_mimetype)) {
 #ifdef HAVE_GSTREAMERAPP
 		cd->original_stream = stream;
 		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
@@ -410,8 +423,8 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 	/* Free memory after each chunk sent out over network. */
 	soup_message_body_set_accumulate (message->response_body, FALSE);
 
-	if (! should_transcode (format, has_video, transcode_mimetype)) {
-	        /* NOTE: iTunes seems to require this or it stops reading 
+	if (! _should_transcode (format, has_video, transcode_mimetype)) {
+	        /* NOTE: iTunes seems to require this or it stops reading
 	         * video data after about 2.5MB. Perhaps this is so iTunes
 	         * knows how much data to buffer.
 	         */
@@ -441,26 +454,45 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 				     "Content-Type",
 				     "application/x-dmap-tagged");
 
-	g_signal_connect (message, "wrote_headers",
-			  G_CALLBACK (dmap_write_next_chunk), cd);
-	g_signal_connect (message, "wrote_chunk",
-			  G_CALLBACK (dmap_write_next_chunk), cd);
-	g_signal_connect (message, "finished",
-			  G_CALLBACK (dmap_chunked_message_finished), cd);
+	if (0 == g_signal_connect (message, "wrote_headers",
+			           G_CALLBACK (dmap_write_next_chunk), cd)) {
+		g_warning ("Error connecting to wrote_headers signal.");
+		goto done;
+	}
+
+	if (0 == g_signal_connect (message, "wrote_chunk",
+			  G_CALLBACK (dmap_write_next_chunk), cd)) {
+		g_warning ("Error connecting to wrote_chunk signal.");
+		goto done;
+	}
+
+	if (0 == g_signal_connect (message, "finished",
+			  G_CALLBACK (dmap_chunked_message_finished), cd)) {
+		g_warning ("Error connecting to finished signal.");
+		goto done;
+	}
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
 
 	teardown = FALSE;
 
 done:
 	if (teardown) {
+		gboolean ok;
+
 		soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
 
 		if (NULL != cd && NULL != cd->stream) {
-			g_input_stream_close (cd->stream, NULL, NULL);
+			ok = g_input_stream_close (cd->stream, NULL, &error);
+			if (!ok) {
+				g_warning ("Error closing transcode stream: %s.", error->message);
+			}
 		}
 
 		if (NULL != stream) {
-			g_input_stream_close (stream, NULL, NULL);
+			ok = g_input_stream_close (stream, NULL, &error);
+			if (!ok) {
+				g_warning ("Error closing stream: %s.", error->message);
+			}
 		}
 
 		g_free (cd);
@@ -478,7 +510,7 @@ done:
 }
 
 static void
-add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
+_add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	gboolean has_video = 0;
@@ -487,11 +519,15 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 	g_object_get (record, "has-video", &has_video, NULL);
 
-	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
+	if (_dmap_share_client_requested (mb->bits, ITEM_KIND)) {
 		dmap_structure_add (mlit, DMAP_CC_MIKD,
 				    (gchar) DAAP_ITEM_KIND_AUDIO);
-	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, ITEM_ID)) {
 		dmap_structure_add (mlit, DMAP_CC_MIID, id);
+	}
+
 	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *title = NULL;
 
@@ -499,16 +535,24 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		if (title) {
 			dmap_structure_add (mlit, DMAP_CC_MINM, title);
 			g_free (title);
-		} else
+		} else {
 			g_debug ("Title requested but not available");
+		}
 	}
-	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
+
+	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
 		dmap_structure_add (mlit, DMAP_CC_MPER, id);
-	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID)) {
 		dmap_structure_add (mlit, DMAP_CC_MCTI, id);
-	if (_dmap_share_client_requested (mb->bits, SONG_DATA_KIND))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_DATA_KIND)) {
 		dmap_structure_add (mlit, DMAP_CC_ASDK,
 				    (gchar) DAAP_SONG_DATA_KIND_NONE);
+	}
+
 	/* FIXME: Any use for this?
 	 * if (_dmap_share_client_requested (mb->bits, SONG_DATA_URL))
 	 * dmap_structure_add (mlit, DMAP_CC_ASUL, "daap://192.168.0.100:%u/databases/1/items/%d.%s?session-id=%s", data->port, *id, dmap_av_record_get_format (DMAP_AV_RECORD (record)), data->session_id);
@@ -520,11 +564,15 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		if (album) {
 			dmap_structure_add (mlit, DMAP_CC_ASAL, album);
 			g_free (album);
-		} else
+		} else {
 			g_debug ("Album requested but not available");
+		}
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_GROUPING)) {
 		dmap_structure_add (mlit, DMAP_CC_AGRP, "");
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_ARTIST)) {
 		gchar *artist = NULL;
 
@@ -532,49 +580,70 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		if (artist) {
 			dmap_structure_add (mlit, DMAP_CC_ASAR, artist);
 			g_free (artist);
-		} else
+		} else {
 			g_debug ("Artist requested but not available");
+		}
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_BITRATE)) {
 		gint32 bitrate = 0;
 
 		g_object_get (record, "bitrate", &bitrate, NULL);
-		if (bitrate != 0)
+		if (bitrate != 0) {
 			dmap_structure_add (mlit, DMAP_CC_ASBR,
 					    (gint32) bitrate);
+		}
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_BPM))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_BPM)) {
 		dmap_structure_add (mlit, DMAP_CC_ASBT, (gint32) 0);
-	if (_dmap_share_client_requested (mb->bits, SONG_COMMENT))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_COMMENT)) {
 		dmap_structure_add (mlit, DMAP_CC_ASCM, "");
-	if (_dmap_share_client_requested (mb->bits, SONG_COMPILATION))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_COMPILATION)) {
 		dmap_structure_add (mlit, DMAP_CC_ASCO, (gchar) FALSE);
-	if (_dmap_share_client_requested (mb->bits, SONG_COMPOSER))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_COMPOSER)) {
 		dmap_structure_add (mlit, DMAP_CC_ASCP, "");
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_DATE_ADDED)) {
 		gint32 firstseen = 0;
 
 		g_object_get (record, "firstseen", &firstseen, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDA, firstseen);
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_DATE_MODIFIED)) {
 		gint32 mtime = 0;
 
 		g_object_get (record, "mtime", &mtime, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDM, mtime);
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_DISC_COUNT))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_DISC_COUNT)) {
 		dmap_structure_add (mlit, DMAP_CC_ASDC, (gint32) 0);
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_DISC_NUMBER)) {
 		gint32 disc = 0;
 
 		g_object_get (record, "disc", &disc, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASDN, disc);
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_DISABLED))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_DISABLED)) {
 		dmap_structure_add (mlit, DMAP_CC_ASDB, (gchar) FALSE);
-	if (_dmap_share_client_requested (mb->bits, SONG_EQ_PRESET))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_EQ_PRESET)) {
 		dmap_structure_add (mlit, DMAP_CC_ASEQ, "");
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_FORMAT)) {
 		gchar *format = NULL;
 		gchar *transcode_mimetype = NULL;
@@ -591,9 +660,11 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		if (format) {
 			dmap_structure_add (mlit, DMAP_CC_ASFM, format);
 			g_free (format);
-		} else
+		} else {
 			g_debug ("Format requested but not available");
+		}
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_GENRE)) {
 		gchar *genre = NULL;
 
@@ -601,54 +672,74 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		if (genre) {
 			dmap_structure_add (mlit, DMAP_CC_ASGN, genre);
 			g_free (genre);
-		} else
+		} else {
 			g_debug ("Genre requested but not available");
+		}
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_DESCRIPTION)) {
 		dmap_structure_add (mlit, DMAP_CC_ASDT, "");	/* FIXME: e.g., wav audio file */
-	if (_dmap_share_client_requested (mb->bits, SONG_RELATIVE_VOLUME))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_RELATIVE_VOLUME)) {
 		dmap_structure_add (mlit, DMAP_CC_ASRV, 0);
-	if (_dmap_share_client_requested (mb->bits, SONG_SAMPLE_RATE))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_SAMPLE_RATE)) {
 		dmap_structure_add (mlit, DMAP_CC_ASSR, 0);
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_SIZE)) {
 		guint64 filesize = 0;
 
 		g_object_get (record, "filesize", &filesize, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASSZ, (gint32) filesize);
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_START_TIME))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_START_TIME)) {
 		dmap_structure_add (mlit, DMAP_CC_ASST, 0);
-	if (_dmap_share_client_requested (mb->bits, SONG_STOP_TIME))
+	}
+
+	if (_dmap_share_client_requested (mb->bits, SONG_STOP_TIME)) {
 		dmap_structure_add (mlit, DMAP_CC_ASSP, 0);
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_TIME)) {
 		gint32 duration;
 
 		g_object_get (record, "duration", &duration, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASTM, (1000 * duration));
 	}
-	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_COUNT))
+
+	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_COUNT)) {
 		dmap_structure_add (mlit, DMAP_CC_ASTC, 0);
+	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_TRACK_NUMBER)) {
 		gint32 track = 0;
 
 		g_object_get (record, "track", &track, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASTN, track);
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_USER_RATING)) {
 		gint32 rating = 0;
 
 		g_object_get (record, "rating", &rating, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASUR, rating);
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_YEAR)) {
 		gint32 year = 0;
 
 		g_object_get (record, "year", &year, NULL);
 		dmap_structure_add (mlit, DMAP_CC_ASYR, year);
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_HAS_VIDEO)) {
 		dmap_structure_add (mlit, DMAP_CC_AEHV, has_video);
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ARTIST)) {
 		gchar *sort_artist = NULL;
 
@@ -660,6 +751,7 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 			g_debug ("Sort artist requested but not available");
 		}
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_SORT_ALBUM)) {
 		gchar *sort_album = NULL;
 
@@ -671,6 +763,7 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 			g_debug ("Sort album requested but not available");
 		}
 	}
+
 	if (_dmap_share_client_requested (mb->bits, SONG_MEDIAKIND)) {
 		gint mediakind = 0;
 
@@ -680,43 +773,67 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 }
 
 static void
-genre_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
+_genre_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
 {
 	const gchar *genre;
 
 	g_object_get (record, "songgenre", &genre, NULL);
-	if (!genre)
+	if (!genre) {
 		return;
-	if (!g_hash_table_lookup (ht, genre))
-		g_hash_table_insert (ht, (gchar *) genre, NULL);
+	}
+
+	if (!g_hash_table_lookup (ht, genre)) {
+		gboolean ok;
+
+		ok = g_hash_table_insert (ht, (gchar *) genre, NULL);
+		if (!ok) {
+			g_warning("error inserting %s\n", genre);
+		}
+	}
 }
 
 static void
-artist_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
+_artist_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
 {
 	const gchar *artist;
 
 	g_object_get (record, "songartist", &artist, NULL);
-	if (!artist)
+	if (!artist) {
 		return;
-	if (!g_hash_table_lookup (ht, artist))
-		g_hash_table_insert (ht, (gchar *) artist, NULL);
+	}
+
+	if (!g_hash_table_lookup (ht, artist)) {
+		gboolean ok;
+
+		ok = g_hash_table_insert (ht, (gchar *) artist, NULL);
+		if (!ok) {
+			g_warning("error inserting %s\n", artist);
+		}
+	}
 }
 
 static void
-album_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
+_album_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
 {
 	const gchar *album;
 
 	g_object_get (record, "songalbum", &album, NULL);
-	if (!album)
+	if (!album) {
 		return;
-	if (!g_hash_table_lookup (ht, album))
-		g_hash_table_insert (ht, (gchar *) album, NULL);
+	}
+
+	if (!g_hash_table_lookup (ht, album)) {
+		gboolean ok;
+
+		ok = g_hash_table_insert (ht, (gchar *) album, NULL);
+		if (!ok) {
+			g_warning("error inserting %s\n", album);
+		}
+	}
 }
 
 static void
-add_to_category_listing (gpointer key, gpointer user_data)
+_add_to_category_listing (gpointer key, gpointer user_data)
 {
 	GNode *mlit;
 	GNode *node = (GNode *) user_data;
@@ -726,11 +843,11 @@ add_to_category_listing (gpointer key, gpointer user_data)
 }
 
 static void
-databases_browse_xxx (DmapShare * share,
-		      SoupServer * server,
-		      SoupMessage * msg,
-		      const char *path,
-		      GHashTable * query, SoupClientContext * context)
+_databases_browse_xxx (DmapShare * share,
+                       SoupServer * server,
+                       SoupMessage * msg,
+                       const char *path,
+                       GHashTable * query, SoupClientContext * context)
 {
 	/* ABRO database browse
 	 *      MSTT status
@@ -763,15 +880,15 @@ databases_browse_xxx (DmapShare * share,
 	filtered = dmap_db_apply_filter (db, filter_def);
 
 	if (g_ascii_strcasecmp (browse_category, "genres") == 0) {
-		g_hash_table_foreach (filtered, (GHFunc) genre_tabulator,
+		g_hash_table_foreach (filtered, (GHFunc) _genre_tabulator,
 				      category_items);
 		category_cc = DMAP_CC_ABGN;
 	} else if (g_ascii_strcasecmp (browse_category, "artists") == 0) {
-		g_hash_table_foreach (filtered, (GHFunc) artist_tabulator,
+		g_hash_table_foreach (filtered, (GHFunc) _artist_tabulator,
 				      category_items);
 		category_cc = DMAP_CC_ABAR;
 	} else if (g_ascii_strcasecmp (browse_category, "albums") == 0) {
-		g_hash_table_foreach (filtered, (GHFunc) album_tabulator,
+		g_hash_table_foreach (filtered, (GHFunc) _album_tabulator,
 				      category_items);
 		category_cc = DMAP_CC_ABAL;
 	} else {
@@ -797,7 +914,7 @@ databases_browse_xxx (DmapShare * share,
 				      (GCompareFunc) g_ascii_strcasecmp);
 	}
 
-	g_list_foreach (values, add_to_category_listing, node);
+	g_list_foreach (values, _add_to_category_listing, node);
 
 	g_list_free (values);
 
@@ -811,11 +928,11 @@ databases_browse_xxx (DmapShare * share,
 }
 
 static void
-databases_items_xxx (DmapShare * share,
-		     SoupServer * server,
-		     SoupMessage * msg,
-		     const char *path,
-		     GHashTable * query, SoupClientContext * context)
+_databases_items_xxx (DmapShare * share,
+                      SoupServer * server,
+                      SoupMessage * msg,
+                      const char *path,
+                      GHashTable * query, SoupClientContext * context)
 {
 	DmapDb *db;
 	gchar *transcode_mimetype = NULL;
@@ -868,7 +985,7 @@ databases_items_xxx (DmapShare * share,
 		soup_message_set_status (msg, SOUP_STATUS_OK);
 	}
 	g_object_get (share, "transcode-mimetype", &transcode_mimetype, NULL);
-	send_chunked_file (server, msg, record, filesize, offset,
+	_send_chunked_file (server, msg, record, filesize, offset,
 			   transcode_mimetype);
 
 	g_object_unref (record);
@@ -877,9 +994,9 @@ databases_items_xxx (DmapShare * share,
 }
 
 static struct DmapMetaDataMap *
-get_meta_data_map (DmapShare * share)
+_get_meta_data_map (DmapShare * share)
 {
-	return meta_data_map;
+	return _meta_data_map;
 }
 
 #ifdef HAVE_CHECK
@@ -894,7 +1011,7 @@ get_meta_data_map (DmapShare * share)
 #include <unistd.h>
 
 static DmapShare *
-_build_share(char *name)
+_build_share_test(char *name)
 {
 	DmapDb *db;
 	DmapContainerRecord *container_record;
@@ -917,6 +1034,7 @@ _build_share(char *name)
 	g_object_set(record, "songalbum", "album1", NULL);
 	g_object_set(record, "location", "file:///etc/services", NULL);
 	g_object_set(record, "filesize", statbuf.st_size, NULL);
+
 	dmap_db_add(db, record);
 
 	if (-1 == stat("/etc/group", &statbuf)) {
@@ -944,9 +1062,160 @@ _build_share(char *name)
 	return share;
 }
 
+START_TEST(_get_meta_data_map_test)
+{
+	ck_assert_ptr_eq(_meta_data_map, _get_meta_data_map(NULL));
+}
+END_TEST
+
+START_TEST(dmap_av_share_new_test)
+{
+	DmapDb *db;
+	DmapContainerRecord *container_record;
+	DmapContainerDb *container_db;
+	DmapRecord *record;
+	DmapShare *share;
+	char *str;
+
+	db = DMAP_DB(test_dmap_db_new());
+	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
+	container_db = DMAP_CONTAINER_DB(test_dmap_container_db_new(container_record));
+
+
+	record = DMAP_RECORD(test_dmap_av_record_new());
+	g_object_set(record, "songgenre", "genre1", NULL);
+	g_object_set(record, "songartist", "artist1", NULL);
+	g_object_set(record, "songalbum", "album1", NULL);
+
+	dmap_db_add(db, record);
+
+	share  = DMAP_SHARE(dmap_av_share_new("name",
+	                                      "password",
+	                                       db,
+	                                       container_db,
+	                                       "audio/mp3"));
+
+	g_object_get(share, "name", &str, NULL);
+	ck_assert_str_eq("name", str);
+	g_free(str);
+
+	g_object_get(share, "password", &str, NULL);
+	ck_assert_str_eq("password", str);
+	g_free(str);
+
+	g_object_get(share, "transcode-mimetype", &str, NULL);
+	ck_assert_str_eq("audio/mp3", str);
+	g_free(str);
+
+	g_object_unref(db);
+	g_object_unref(container_record);
+	g_object_unref(container_db);
+	g_object_unref(share);
+}
+END_TEST
+
+static void
+_tabulator_test(char *property,
+                void (*tabulator) (gpointer id, DmapRecord * record, GHashTable * ht))
+{
+	guint id1, id2;
+	DmapRecord *record1, *record2;
+	DmapDb *db;
+	GHashTable *ht;
+	gboolean ok;
+
+	db = DMAP_DB(test_dmap_db_new());
+
+	record1 = DMAP_RECORD(test_dmap_av_record_new());
+	g_object_set(record1, property, "str1", NULL);
+
+	id1 = dmap_db_add(db, record1);
+
+	record2 = DMAP_RECORD(test_dmap_av_record_new());
+	g_object_set(record2, property, "str2", NULL);
+
+	id2 = dmap_db_add(db, record2);
+
+	ht = g_hash_table_new (g_str_hash, g_str_equal);
+
+	tabulator (GINT_TO_POINTER(id1), record1, ht);
+	tabulator (GINT_TO_POINTER(id2), record2, ht);
+
+	ok = g_hash_table_contains(ht, "str1");
+	ck_assert_int_eq(TRUE, ok);
+
+	ok = g_hash_table_contains(ht, "str2");
+	ck_assert_int_eq(TRUE, ok);
+
+	g_object_unref(record1);
+	g_object_unref(record2);
+	g_object_unref(db);
+	g_hash_table_destroy(ht);
+}
+
+START_TEST(_genre_tabulator_test)
+{
+	_tabulator_test("songgenre", _genre_tabulator);
+}
+END_TEST
+
+START_TEST(_artist_tabulator_test)
+{
+	_tabulator_test("songartist", _artist_tabulator);
+}
+END_TEST
+
+START_TEST(_album_tabulator_test)
+{
+	_tabulator_test("songalbum", _album_tabulator);
+}
+END_TEST
+
+START_TEST(_should_transcode_test)
+{
+	ck_assert_int_eq(FALSE, _should_transcode("mp3", TRUE, "audio/wav"));
+}
+END_TEST
+
+START_TEST(_should_transcode_test_no_trancode_mimetype)
+{
+	ck_assert_int_eq(FALSE, _should_transcode("foo", FALSE, NULL));
+}
+END_TEST
+
+START_TEST(_should_transcode_test_no_trancode_mimetype_unknown_mimetype)
+{
+	ck_assert_int_eq(FALSE, _should_transcode("mp3", FALSE, "foo"));
+}
+END_TEST
+
+START_TEST(_should_transcode_test_no_trancode_mimetype_already_good)
+{
+	ck_assert_int_eq(FALSE, _should_transcode("mp3", FALSE, "audio/mp3"));
+}
+END_TEST
+
+START_TEST(_should_transcode_test_yes_trancode_mimetype_to_wav)
+{
+	ck_assert_int_eq(TRUE, _should_transcode("mp3", FALSE, "audio/wav"));
+}
+END_TEST
+
+START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp3)
+{
+	ck_assert_int_eq(TRUE, _should_transcode("wav", FALSE, "audio/mp3"));
+}
+END_TEST
+
+START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp4)
+{
+	ck_assert_int_eq(TRUE, _should_transcode("wav", FALSE, "video/quicktime"));
+}
+END_TEST
+
 START_TEST(dmap_av_share_get_desired_port_test)
 {
-	DmapShare *share = _build_share("dmap_av_share_get_desired_port_test");
+	DmapShare *share = _build_share_test("dmap_av_share_get_desired_port_test");
 	ck_assert_int_eq(DAAP_PORT, dmap_av_share_get_desired_port(share));
 	g_object_unref(share);
 }
@@ -954,7 +1223,7 @@ END_TEST
 
 START_TEST(dmap_av_share_get_type_of_service_test)
 {
-	DmapShare *share = _build_share("dmap_av_share_get_type_of_service_test");
+	DmapShare *share = _build_share_test("dmap_av_share_get_type_of_service_test");
 	ck_assert_str_eq(DAAP_TYPE_OF_SERVICE, dmap_av_share_get_type_of_service(share));
 	g_object_unref(share);
 }
@@ -973,7 +1242,7 @@ START_TEST(dmap_av_share_server_info_test)
 	GNode *root;
 	DmapStructureItem *item;
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
 
@@ -1047,7 +1316,7 @@ START_TEST(dmap_av_share_message_add_standard_headers_test)
 	SoupMessage *message;
 	SoupMessageHeaders *headers;
 
-	share = _build_share("dmap_av_share_message_add_standard_headers_test");
+	share = _build_share_test("dmap_av_share_message_add_standard_headers_test");
 	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
 
 	soup_message_headers_append(message->response_headers,
@@ -1064,7 +1333,7 @@ START_TEST(dmap_av_share_message_add_standard_headers_test)
 }
 END_TEST
 
-START_TEST(databases_browse_xxx_test)
+START_TEST(_databases_browse_xxx_test)
 {
 	char *nameprop = "databases_browse_xxx_test";
 	DmapShare *share;
@@ -1078,14 +1347,14 @@ START_TEST(databases_browse_xxx_test)
 	GNode *root;
 	DmapStructureItem *item;
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	databases_browse_xxx(share, server, message, "/db/1/browse/genres", query, NULL);
+	_databases_browse_xxx(share, server, message, "/db/1/browse/genres", query, NULL);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1121,7 +1390,7 @@ START_TEST(databases_browse_xxx_test)
 }
 END_TEST
 
-START_TEST(databases_browse_xxx_artists_test)
+START_TEST(_databases_browse_xxx_artists_test)
 {
 	char *nameprop = "databases_browse_xxx_artists_test";
 	DmapShare *share;
@@ -1134,14 +1403,14 @@ START_TEST(databases_browse_xxx_artists_test)
 	gsize length;
 	GNode *root;
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	databases_browse_xxx(share, server, message, "/db/1/browse/artists", query, NULL);
+	_databases_browse_xxx(share, server, message, "/db/1/browse/artists", query, NULL);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1162,7 +1431,7 @@ START_TEST(databases_browse_xxx_artists_test)
 }
 END_TEST
 
-START_TEST(databases_browse_xxx_albums_test)
+START_TEST(_databases_browse_xxx_albums_test)
 {
 	char *nameprop = "databases_browse_xxx_albums_test";
 	DmapShare *share;
@@ -1175,14 +1444,14 @@ START_TEST(databases_browse_xxx_albums_test)
 	gsize length;
 	GNode *root;
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	databases_browse_xxx(share, server, message, "/db/1/browse/albums", query, NULL);
+	_databases_browse_xxx(share, server, message, "/db/1/browse/albums", query, NULL);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1203,7 +1472,7 @@ START_TEST(databases_browse_xxx_albums_test)
 }
 END_TEST
 
-START_TEST(databases_browse_xxx_bad_category_test)
+START_TEST(_databases_browse_xxx_bad_category_test)
 {
 	char *nameprop = "databases_browse_xxx_bad_category_test";
 	DmapShare *share;
@@ -1216,14 +1485,14 @@ START_TEST(databases_browse_xxx_bad_category_test)
 	gsize length;
 	GNode *root;
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	databases_browse_xxx(share, server, message, "/db/1/browse/bad_category", query, NULL);
+	_databases_browse_xxx(share, server, message, "/db/1/browse/bad_category", query, NULL);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1237,7 +1506,7 @@ START_TEST(databases_browse_xxx_bad_category_test)
 }
 END_TEST
 
-START_TEST(databases_items_xxx_test)
+START_TEST(_databases_items_xxx_test)
 {
 	char *nameprop = "databases_items_xxx_test";
 	DmapShare *share;
@@ -1252,17 +1521,16 @@ START_TEST(databases_items_xxx_test)
 	const guint8 *contents1;
 	char *location, *contents2, *etag_out;
 	GFile *file;
-	GCancellable cancellable;
 	GError *error = NULL;
 	gboolean ok;
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 
 	g_snprintf(path, sizeof path, "/db/1/items/%d", G_MAXINT);
 
-	databases_items_xxx(share, server, message, path, NULL, NULL);
+	_databases_items_xxx(share, server, message, path, NULL, NULL);
 
 	g_object_get(share, "db", &db, NULL);
 	ck_assert(NULL != db);
@@ -1292,7 +1560,7 @@ START_TEST(databases_items_xxx_test)
 	file = g_file_new_for_uri(location);
 	ck_assert(NULL != file);
 
-	ok = g_file_load_contents(file, &cancellable, &contents2, &size2, &etag_out, &error);
+	ok = g_file_load_contents(file, NULL, &contents2, &size2, &etag_out, &error);
 	ck_assert(ok);
 
 	ck_assert(size1 == size2);
@@ -1304,7 +1572,7 @@ START_TEST(databases_items_xxx_test)
 }
 END_TEST
 
-START_TEST(databases_items_xxx_test_bad_id)
+START_TEST(_databases_items_xxx_test_bad_id)
 {
 	char *nameprop = "databases_items_xxx_test";
 	DmapShare *share;
@@ -1312,13 +1580,13 @@ START_TEST(databases_items_xxx_test_bad_id)
 	SoupMessage *message;
 	char path[PATH_MAX + 1];
 
-	share   = _build_share(nameprop);
+	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 
 	/* IDs go from G_MAXINT down, so 0 does not exist. */
 	g_snprintf(path, sizeof path, "/db/1/items/%d", 0);
-	databases_items_xxx(share, server, message, path, NULL, NULL);
+	_databases_items_xxx(share, server, message, path, NULL, NULL);
 
 	g_object_unref(share);
 }

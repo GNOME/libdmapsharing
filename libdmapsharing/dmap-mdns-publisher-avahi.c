@@ -326,9 +326,9 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher * publisher,
 		return FALSE;
 	}
 
-	free_service (ptr, NULL);
 	publisher->priv->service =
 		g_slist_remove (publisher->priv->service, ptr);
+	free_service (ptr, NULL);
 
 	if (publisher->priv->service == NULL) {
 		avahi_entry_group_reset (publisher->priv->entry_group);

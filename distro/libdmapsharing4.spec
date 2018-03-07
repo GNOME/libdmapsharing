@@ -1,8 +1,8 @@
-Name: libdmapsharing
+Name: libdmapsharing4
 Version: 3.9.0
 Release: 1%{?dist}
 License: LGPLv2+
-Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
+Source: http://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
 Group: Development/Libraries
@@ -33,11 +33,9 @@ other resources needed for developing applications using libdmapsharing.
 %{_libdir}/pkgconfig/libdmapsharing-4.0.pc
 %{_includedir}/libdmapsharing-4.0/
 %{_libdir}/libdmapsharing-4.0.so
-%{_libdir}/girepository-1.0/DMAP-4.0.typelib
-%{_libdir}/girepository-1.0/DAAP-4.0.typelib
+%{_libdir}/girepository-1.0/Dmap-4.0.typelib
 %{_datadir}/gtk-doc/html/libdmapsharing-4.0
-%{_datadir}/gir-1.0/DMAP-4.0.gir
-%{_datadir}/gir-1.0/DAAP-4.0.gir
+%{_datadir}/gir-1.0/Dmap-4.0.gir
 
 %package vala
 Summary: Vala language bindings for libdmapsharing
@@ -53,7 +51,7 @@ libdmapsharing.
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %prep
-%setup -q
+%setup -q -n libdmapsharing-%{version}
 
 %build
 %configure --disable-static --disable-tests --disable-check

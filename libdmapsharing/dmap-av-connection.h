@@ -14,8 +14,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_AV_CONNECTION_H
-#define __DMAP_AV_CONNECTION_H
+#ifndef _DMAP_AV_CONNECTION_H
+#define _DMAP_AV_CONNECTION_H
 
 #include <glib-object.h>
 
@@ -104,4 +104,4 @@ DmapAvConnection *dmap_av_connection_new (const char *name,
 				     DmapRecordFactory * factory);
 
 G_END_DECLS
-#endif /* __DMAP_AV_CONNECTION_H */
+#endif /* _DMAP_AV_CONNECTION_H */

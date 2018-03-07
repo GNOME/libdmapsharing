@@ -18,13 +18,13 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __GST_UTIL
-#define __GST_UTIL
+#ifndef _GST_UTIL
+#define _GST_UTIL
 
 #include <gst/gst.h>
 
 gboolean pads_compatible (GstPad * pad1, GstPad * pad2);
 
-#endif /* __GST_UTIL */
+#endif /* _GST_UTIL */
 
 G_END_DECLS

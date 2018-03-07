@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_IMAGE_RECORD_H
-#define __DMAP_IMAGE_RECORD_H
+#ifndef _DMAP_IMAGE_RECORD_H
+#define _DMAP_IMAGE_RECORD_H
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -83,6 +83,6 @@ GType dmap_image_record_get_type (void);
  */
 GInputStream *dmap_image_record_read (DmapImageRecord * record, GError ** err);
 
-#endif /* __DMAP_IMAGE_RECORD_H */
+#endif /* _DMAP_IMAGE_RECORD_H */
 
 G_END_DECLS

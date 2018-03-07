@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __DMAP_SHARE_H
-#define __DMAP_SHARE_H
+#ifndef _DMAP_SHARE_H
+#define _DMAP_SHARE_H
 
 #include <glib-object.h>
 
@@ -292,6 +292,6 @@ void _dmap_share_name_collision (DmapShare * share,
 				 DmapMdnsPublisher * publisher,
 				 const char *name);
 
-#endif /* __DMAP_SHARE_H */
+#endif /* _DMAP_SHARE_H */
 
 G_END_DECLS

@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_GST_INPUT_STREAM
-#define __DMAP_GST_INPUT_STREAM
+#ifndef _DMAP_GST_INPUT_STREAM
+#define _DMAP_GST_INPUT_STREAM
 
 #include <glib-object.h>
 #include <gio/gio.h>
@@ -76,4 +76,4 @@ void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
 						  */
 
 G_END_DECLS
-#endif /* __DMAP_GST_INPUT_STREAM */
+#endif /* _DMAP_GST_INPUT_STREAM */

@@ -1,5 +1,5 @@
-#ifndef __DMAP_H
-#define __DMAP_H
+#ifndef _DMAP_H
+#define _DMAP_H
 
 #include <libdmapsharing/dmap-av-connection.h>
 #include <libdmapsharing/dmap-av-record.h>
@@ -25,4 +25,4 @@
 #include <libdmapsharing/dmap-control-player.h>
 #include <libdmapsharing/dmap-control-connection.h>
 
-#endif /* __DMAP_H */
+#endif /* _DMAP_H */

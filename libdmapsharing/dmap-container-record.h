@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_CONTAINER_RECORD_H
-#define __DMAP_CONTAINER_RECORD_H
+#ifndef _DMAP_CONTAINER_RECORD_H
+#define _DMAP_CONTAINER_RECORD_H
 
 #include <glib-object.h>
 #include <libdmapsharing/dmap-db.h>
@@ -115,6 +115,6 @@ guint64 dmap_container_record_get_entry_count (DmapContainerRecord * record);
  */
 DmapDb *dmap_container_record_get_entries (DmapContainerRecord * record);
 
-#endif /* __DMAP_CONTAINER_RECORD_H */
+#endif /* _DMAP_CONTAINER_RECORD_H */
 
 G_END_DECLS

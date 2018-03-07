@@ -31,7 +31,7 @@ struct DmapControlConnectionPrivate {
 */
 
 static DmapContentCode
-get_protocol_version_cc (DmapConnection * connection)
+_get_protocol_version_cc (DmapConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -39,7 +39,7 @@ get_protocol_version_cc (DmapConnection * connection)
 }
 
 static gchar *
-get_query_metadata (DmapConnection * connection)
+_get_query_metadata (DmapConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -47,7 +47,7 @@ get_query_metadata (DmapConnection * connection)
 }
 
 static DmapRecord *
-handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
+_handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 	     GNode * n, int *item_id)
 {
 	/* FIXME: */
@@ -62,9 +62,9 @@ dmap_control_connection_class_init (DmapControlConnectionClass * klass)
 	DmapConnectionClass *parent_class =
 		DMAP_CONNECTION_CLASS (object_class);
 
-	parent_class->get_protocol_version_cc = get_protocol_version_cc;
-	parent_class->get_query_metadata = get_query_metadata;
-	parent_class->handle_mlcl = handle_mlcl;
+	parent_class->get_protocol_version_cc = _get_protocol_version_cc;
+	parent_class->get_query_metadata = _get_query_metadata;
+	parent_class->handle_mlcl = _handle_mlcl;
 
 	/* FIXME:
 	 * g_type_class_add_private (klass, sizeof (DmapControlConnectionPrivate));

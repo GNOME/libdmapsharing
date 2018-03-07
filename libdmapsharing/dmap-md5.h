@@ -35,22 +35,22 @@ typedef struct DmapHashContext
         gint version;
 } DmapHashContext;
 
-void dmap_hash_progressive_init      (DmapHashContext *context);
+void dmap_md5_progressive_init      (DmapHashContext *context);
 
-void dmap_hash_progressive_update    (DmapHashContext *context,
-                                      unsigned char const *buffer,
-                                      unsigned int length);
+void dmap_md5_progressive_update    (DmapHashContext *context,
+                                     unsigned char const *buffer,
+                                     unsigned int length);
 
-void dmap_hash_progressive_final     (DmapHashContext *context,
-                                      unsigned char digest[16]);
+void dmap_md5_progressive_final     (DmapHashContext *context,
+                                     unsigned char digest[16]);
 
-void dmap_hash_progressive_to_string (const unsigned char *digest, gchar * string);
+void dmap_md5_progressive_to_string (const unsigned char *digest, gchar * string);
 
-void dmap_hash_generate              (short version_major,
-                                      const guchar *url,
-                                      guchar hash_select,
-                                      guchar *out,
-                                      gint request_id);
+void dmap_md5_generate              (short version_major,
+                                     const guchar *url,
+                                     guchar hash_select,
+                                     guchar *out,
+                                     gint request_id);
 
 G_END_DECLS
 #endif

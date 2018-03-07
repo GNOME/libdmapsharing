@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef __DMAP_MDNS_SERVICE_H__
-#define __DMAP_MDNS_SERVICE_H__
+#ifndef _DMAP_MDNS_SERVICE_H
+#define _DMAP_MDNS_SERVICE_H
 
 #include <glib.h>
 #include <glib-object.h>

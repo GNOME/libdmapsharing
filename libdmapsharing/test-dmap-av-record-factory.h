@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __TEST_DMAP_AV_RECORD_FACTORY
-#define __TEST_DMAP_AV_RECORD_FACTORY
+#ifndef _TEST_DMAP_AV_RECORD_FACTORY
+#define _TEST_DMAP_AV_RECORD_FACTORY
 
 #include <libdmapsharing/dmap.h>
 
@@ -53,6 +53,6 @@ TestDmapAvRecordFactory *test_dmap_av_record_factory_new      (void);
 
 DmapRecord            *test_dmap_av_record_factory_create   (DmapRecordFactory *factory, gpointer user_data);
 
-#endif /* __TEST_DMAP_AV_RECORD_FACTORY */
+#endif /* _TEST_DMAP_AV_RECORD_FACTORY */
 
 G_END_DECLS

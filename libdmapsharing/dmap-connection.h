@@ -18,14 +18,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_CONNECTION_H
-#define __DMAP_CONNECTION_H
+#ifndef _DMAP_CONNECTION_H
+#define _DMAP_CONNECTION_H
 
 #include <glib.h>
 #include <glib-object.h>
 #include <libsoup/soup.h>
 
-#include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap-cc.h>
 #include <libdmapsharing/dmap-db.h>
 #include <libdmapsharing/dmap-record-factory.h>
 
@@ -209,4 +209,4 @@ void dmap_connection_authenticate_message (DmapConnection *connection,
 					   const char *password);
 
 G_END_DECLS
-#endif /* __DMAP_CONNECTION_H */
+#endif /* _DMAP_CONNECTION_H */

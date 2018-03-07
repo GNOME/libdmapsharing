@@ -43,27 +43,27 @@
  * with every copy.
  *
  * To compute the message digest of a chunk of bytes, declare an MD5Context
- * structure, pass it to DMAP_MD5Init, call DMAP_MD5Update as needed
- * on buffers full of bytes, and then call DMAP_MD5Final, which will fill
+ * structure, pass it to _init, call _update as needed
+ * on buffers full of bytes, and then call _final, which will fill
  * a supplied 16-byte array with the digest.
  */
-static void MD5Transform (guint32 buf[4], guint32 const in[16], gint version);
+static void _transform (guint32 buf[4], guint32 const in[16], gint version);
 
 /* for some reason we still have to reverse bytes on bigendian machines
  * I don't really know why... but otherwise it fails..
  * Any MD5 gurus out there know why???
  */
 #if 0				//ndef WORDS_BIGENDIAN /* was: HIGHFIRST */
-#define byteReverse(buf, len)	/* Nothing */
+#define _byte_reverse(buf, len)	/* Nothing */
 #else
-static void byteReverse (unsigned char *buf, unsigned longs);
+static void _byte_reverse (unsigned char *buf, unsigned longs);
 
 #ifndef ASM_MD5
 /*
 * Note: this code is harmless on little-endian machines.
 */
 static void
-byteReverse (unsigned char *buf, unsigned longs)
+_byte_reverse (unsigned char *buf, unsigned longs)
 {
 	guint32 t;
 
@@ -78,7 +78,7 @@ byteReverse (unsigned char *buf, unsigned longs)
 #endif /* #if 0 */
 
 static void
-DMAP_MD5Init (DmapHashContext * ctx, gint version)
+_init (DmapHashContext * ctx, gint version)
 {
 	memset (ctx, 0, sizeof (DmapHashContext));
 	ctx->buf[0] = 0x67452301;
@@ -93,15 +93,16 @@ DMAP_MD5Init (DmapHashContext * ctx, gint version)
 }
 
 static void
-DMAP_MD5Update (DmapHashContext * ctx, unsigned char const *buf, unsigned int len)
+_update (DmapHashContext * ctx, unsigned char const *buf, unsigned int len)
 {
 	guint32 t;
 
 	/* Update bitcount */
 
 	t = ctx->bits[0];
-	if ((ctx->bits[0] = t + ((guint32) len << 3)) < t)
+	if ((ctx->bits[0] = t + ((guint32) len << 3)) < t) {
 		ctx->bits[1]++;	/* Carry from low to high */
+	}
 	ctx->bits[1] += len >> 29;
 
 	t = (t >> 3) & 0x3f;	/* Bytes already in shsInfo->data */
@@ -117,8 +118,8 @@ DMAP_MD5Update (DmapHashContext * ctx, unsigned char const *buf, unsigned int le
 			return;
 		}
 		memcpy (p, buf, t);
-		byteReverse (ctx->in, 16);
-		MD5Transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
+		_byte_reverse (ctx->in, 16);
+		_transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
 		buf += t;
 		len -= t;
 	}
@@ -126,8 +127,8 @@ DMAP_MD5Update (DmapHashContext * ctx, unsigned char const *buf, unsigned int le
 
 	while (len >= 64) {
 		memcpy (ctx->in, buf, 64);
-		byteReverse (ctx->in, 16);
-		MD5Transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
+		_byte_reverse (ctx->in, 16);
+		_transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
 		buf += 64;
 		len -= 64;
 	}
@@ -138,7 +139,7 @@ DMAP_MD5Update (DmapHashContext * ctx, unsigned char const *buf, unsigned int le
 }
 
 static void
-DMAP_MD5Final (DmapHashContext * ctx, unsigned char digest[16])
+_final (DmapHashContext * ctx, unsigned char digest[16])
 {
 	unsigned count;
 	unsigned char *p;
@@ -159,8 +160,8 @@ DMAP_MD5Final (DmapHashContext * ctx, unsigned char digest[16])
 	if (count < 8) {
 		/* Two lots of padding:  Pad the first block to 64 bytes */
 		memset (p, 0, count);
-		byteReverse (ctx->in, 16);
-		MD5Transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
+		_byte_reverse (ctx->in, 16);
+		_transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
 
 		/* Now fill the next block with 56 bytes */
 		memset (ctx->in, 0, 56);
@@ -168,15 +169,15 @@ DMAP_MD5Final (DmapHashContext * ctx, unsigned char digest[16])
 		/* Pad block to 56 bytes */
 		memset (p, 0, count - 8);
 	}
-	byteReverse (ctx->in, 14);
+	_byte_reverse (ctx->in, 14);
 
 	/* Append length in bits and transform */
 	tmp = (guint32 *) ctx->in;
 	tmp[14] = ctx->bits[0];
 	tmp[15] = ctx->bits[1];
 
-	MD5Transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
-	byteReverse ((unsigned char *) ctx->buf, 4);
+	_transform (ctx->buf, (guint32 *) ctx->in, ctx->version);
+	_byte_reverse ((unsigned char *) ctx->buf, 4);
 	memcpy (digest, ctx->buf, 16);
 	memset (ctx, 0, sizeof (*ctx));	/* In case it's sensitive */
 
@@ -199,11 +200,11 @@ DMAP_MD5Final (DmapHashContext * ctx, unsigned char digest[16])
 
 /*
 * The core of the MD5 algorithm, this alters an existing MD5 hash to reflect
-* the addition of 16 longwords of new data.  DMAP_MD5Update blocks the
+* the addition of 16 longwords of new data.  _update blocks the
 * data and converts bytes into longwords for this routine.
 */
 static void
-MD5Transform (guint32 buf[4], guint32 const in[16], gint version)
+_transform (guint32 buf[4], guint32 const in[16], gint version)
 {
 	guint32 a, b, c, d;
 
@@ -294,250 +295,269 @@ MD5Transform (guint32 buf[4], guint32 const in[16], gint version)
 
 #endif
 
-static gint staticHashDone = 0;
-static unsigned char staticHash_42[256 * 65] = { 0 };
-static unsigned char staticHash_45[256 * 65] = { 0 };
+static gint _done = 0;
+static unsigned char _42[256 * 65] = { 0 };
+static unsigned char _45[256 * 65] = { 0 };
 
-static const gchar hexchars[] = "0123456789ABCDEF";
-static gchar ac[] = "Dpqzsjhiu!3114!Bqqmf!Dpnqvufs-!Jod/";	/* +1 */
-static gboolean ac_unfudged = FALSE;
+static const gchar _hexchars[] = "0123456789ABCDEF";
+static gchar _ac[] = "Dpqzsjhiu!3114!Bqqmf!Dpnqvufs-!Jod/";	/* +1 */
+static gboolean _ac_unfudged = FALSE;
 
 void
-dmap_hash_progressive_to_string (const unsigned char *digest, gchar * string)
+dmap_md5_progressive_to_string (const unsigned char *digest, gchar * string)
 {
 	gint i;
 
 	for (i = 0; i < 16; i++) {
 		unsigned char tmp = digest[i];
 
-		string[i * 2 + 1] = hexchars[tmp & 0x0f];
-		string[i * 2] = hexchars[(tmp >> 4) & 0x0f];
+		string[i * 2 + 1] = _hexchars[tmp & 0x0f];
+		string[i * 2] = _hexchars[(tmp >> 4) & 0x0f];
 	}
 }
 
 static void
-GenerateStatic_42 ()
+_generate_static_42 ()
 {
 	DmapHashContext ctx;
-	unsigned char *p = staticHash_42;
+	unsigned char *p = _42;
 	int i;
 	unsigned char buf[16];
 
 	for (i = 0; i < 256; i++) {
-		DMAP_MD5Init (&ctx, 0);
+		_init (&ctx, 0);
 
-#define MD5_STRUPDATE(str) DMAP_MD5Update(&ctx, (unsigned char const *)str, strlen(str))
+#define MD5_STRUPDATE(str) _update(&ctx, (unsigned char const *)str, strlen(str))
 
-		if ((i & 0x80) != 0)
+		if ((i & 0x80) != 0) {
 			MD5_STRUPDATE ("Accept-Language");
-		else
+		} else {
 			MD5_STRUPDATE ("user-agent");
+		}
 
-		if ((i & 0x40) != 0)
+		if ((i & 0x40) != 0) {
 			MD5_STRUPDATE ("max-age");
-		else
+		} else {
 			MD5_STRUPDATE ("Authorization");
+		}
 
-		if ((i & 0x20) != 0)
+		if ((i & 0x20) != 0) {
 			MD5_STRUPDATE ("Client-DAAP-Version");
-		else
+		} else {
 			MD5_STRUPDATE ("Accept-Encoding");
+		}
 
-		if ((i & 0x10) != 0)
+		if ((i & 0x10) != 0) {
 			MD5_STRUPDATE ("daap.protocolversion");
-		else
+		} else {
 			MD5_STRUPDATE ("daap.songartist");
+		}
 
-		if ((i & 0x08) != 0)
+		if ((i & 0x08) != 0) {
 			MD5_STRUPDATE ("daap.songcomposer");
-		else
+		} else {
 			MD5_STRUPDATE ("daap.songdatemodified");
+		}
 
-		if ((i & 0x04) != 0)
+		if ((i & 0x04) != 0) {
 			MD5_STRUPDATE ("daap.songdiscnumber");
-		else
+		} else {
 			MD5_STRUPDATE ("daap.songdisabled");
+		}
 
-		if ((i & 0x02) != 0)
+		if ((i & 0x02) != 0) {
 			MD5_STRUPDATE ("playlist-item-spec");
-		else
+		} else {
 			MD5_STRUPDATE ("revision-number");
+		}
 
-		if ((i & 0x01) != 0)
+		if ((i & 0x01) != 0) {
 			MD5_STRUPDATE ("session-id");
-		else
+		} else {
 			MD5_STRUPDATE ("content-codes");
+		}
 #undef MD5_STRUPDATE
 
-		DMAP_MD5Final (&ctx, buf);
-		dmap_hash_progressive_to_string (buf, (char *) p);
+		_final (&ctx, buf);
+		dmap_md5_progressive_to_string (buf, (char *) p);
 		p += 65;
 	}
 }
 
 static void
-GenerateStatic_45 ()
+_generate_static_45 ()
 {
 	DmapHashContext ctx;
-	unsigned char *p = staticHash_45;
+	unsigned char *p = _45;
 	int i;
 	unsigned char buf[16];
 
 	for (i = 0; i < 256; i++) {
-		DMAP_MD5Init (&ctx, 1);
+		_init (&ctx, 1);
 
-#define MD5_STRUPDATE(str) DMAP_MD5Update(&ctx, (unsigned char const *)str, strlen(str))
+#define MD5_STRUPDATE(str) _update(&ctx, (unsigned char const *)str, strlen(str))
 
-		if ((i & 0x40) != 0)
+		if ((i & 0x40) != 0) {
 			MD5_STRUPDATE ("eqwsdxcqwesdc");
-		else
+		} else {
 			MD5_STRUPDATE ("op[;lm,piojkmn");
+		}
 
-		if ((i & 0x20) != 0)
+		if ((i & 0x20) != 0) {
 			MD5_STRUPDATE ("876trfvb 34rtgbvc");
-		else
+		} else {
 			MD5_STRUPDATE ("=-0ol.,m3ewrdfv");
+		}
 
-		if ((i & 0x10) != 0)
+		if ((i & 0x10) != 0) {
 			MD5_STRUPDATE ("87654323e4rgbv ");
-		else
+		} else {
 			MD5_STRUPDATE ("1535753690868867974342659792");
+		}
 
-		if ((i & 0x08) != 0)
+		if ((i & 0x08) != 0) {
 			MD5_STRUPDATE ("Song Name");
-		else
+		} else {
 			MD5_STRUPDATE ("DAAP-CLIENT-ID:");
+		}
 
-		if ((i & 0x04) != 0)
+		if ((i & 0x04) != 0) {
 			MD5_STRUPDATE ("111222333444555");
-		else
+		} else {
 			MD5_STRUPDATE ("4089961010");
+		}
 
-		if ((i & 0x02) != 0)
+		if ((i & 0x02) != 0) {
 			MD5_STRUPDATE ("playlist-item-spec");
-		else
+		} else {
 			MD5_STRUPDATE ("revision-number");
+		}
 
-		if ((i & 0x01) != 0)
+		if ((i & 0x01) != 0) {
 			MD5_STRUPDATE ("session-id");
-		else
+		} else {
 			MD5_STRUPDATE ("content-codes");
+		}
 
-		if ((i & 0x80) != 0)
+		if ((i & 0x80) != 0) {
 			MD5_STRUPDATE ("IUYHGFDCXWEDFGHN");
-		else
+		} else {
 			MD5_STRUPDATE ("iuytgfdxwerfghjm");
+		}
 
 #undef MD5_STRUPDATE
 
-		DMAP_MD5Final (&ctx, buf);
-		dmap_hash_progressive_to_string (buf, (char *) p);
+		_final (&ctx, buf);
+		dmap_md5_progressive_to_string (buf, (char *) p);
 		p += 65;
 	}
 }
 
 void
-dmap_hash_generate (short version_major,
-		    const guchar * url,
-		    guchar hash_select, guchar * out, gint request_id)
+dmap_md5_generate (short version_major,
+                   const guchar * url,
+                   guchar hash_select, guchar * out, gint request_id)
 {
 	unsigned char buf[16];
 	DmapHashContext ctx;
 	gint i;
 
 	unsigned char *hashTable = (version_major == 3) ?
-		staticHash_45 : staticHash_42;
+		_45 : _42;
 
-	if (!staticHashDone) {
-		GenerateStatic_42 ();
-		GenerateStatic_45 ();
-		staticHashDone = 1;
+	if (!_done) {
+		_generate_static_42 ();
+		_generate_static_45 ();
+		_done = 1;
 	}
 
-	DMAP_MD5Init (&ctx, (version_major == 3) ? 1 : 0);
+	_init (&ctx, (version_major == 3) ? 1 : 0);
 
-	DMAP_MD5Update (&ctx, url, strlen ((const gchar *) url));
-	if (ac_unfudged == FALSE) {
-		for (i = 0; i < strlen (ac); i++) {
-			ac[i] = ac[i] - 1;
+	_update (&ctx, url, strlen ((const gchar *) url));
+	if (_ac_unfudged == FALSE) {
+		for (i = 0; i < strlen (_ac); i++) {
+			_ac[i] = _ac[i] - 1;
 		}
-		ac_unfudged = TRUE;
+		_ac_unfudged = TRUE;
 	}
 
-	DMAP_MD5Update (&ctx, (const guchar *) ac, strlen (ac));
+	_update (&ctx, (const guchar *) _ac, strlen (_ac));
 
-	DMAP_MD5Update (&ctx, &hashTable[hash_select * 65], 32);
+	_update (&ctx, &hashTable[hash_select * 65], 32);
 
 	if (request_id && version_major == 3) {
 		gchar scribble[20];
 
 		sprintf (scribble, "%u", request_id);
-		DMAP_MD5Update (&ctx, (const guchar *) scribble,
+		_update (&ctx, (const guchar *) scribble,
 				strlen (scribble));
 	}
 
-	DMAP_MD5Final (&ctx, buf);
-	dmap_hash_progressive_to_string (buf, (gchar *) out);
+	_final (&ctx, buf);
+	dmap_md5_progressive_to_string (buf, (gchar *) out);
 
 	return;
 }
 
-void dmap_hash_progressive_init (DmapHashContext *context)
+void
+dmap_md5_progressive_init (DmapHashContext *context)
 {
-	/* FIXME: Share this stuff with dmap_hash_generate() */
-	if (!staticHashDone) {
-		GenerateStatic_42 ();
-		GenerateStatic_45 ();
-		staticHashDone = 1;
+	/* FIXME: Share this stuff with dmap_md5_generate() */
+	if (!_done) {
+		_generate_static_42 ();
+		_generate_static_45 ();
+		_done = 1;
 	}
 
-	DMAP_MD5Init (context, 1);
+	_init (context, 1);
 }
 
-void dmap_hash_progressive_update (DmapHashContext *context,
+void
+dmap_md5_progressive_update (DmapHashContext *context,
                                    unsigned char const *buffer,
                                    unsigned int length)
 {
-	DMAP_MD5Update (context, buffer, length);
+	_update (context, buffer, length);
 }
 
-void dmap_hash_progressive_final (DmapHashContext *context,
+void
+dmap_md5_progressive_final (DmapHashContext *context,
                                   unsigned char digest[16])
 {
-	/* FIXME: This is only equivalent to dmap_hash_generate()
+	/* FIXME: This is only equivalent to dmap_md5_generate()
          *        when it is called with (3, x, 2, y, 0).
          */
 	int i;
 
-	/* FIXME: Share this stuff with dmap_hash_generate() */
-	if (ac_unfudged == FALSE) {
-		for (i = 0; i < strlen (ac); i++) {
-			ac[i] = ac[i] - 1;
+	/* FIXME: Share this stuff with dmap_md5_generate() */
+	if (_ac_unfudged == FALSE) {
+		for (i = 0; i < strlen (_ac); i++) {
+			_ac[i] = _ac[i] - 1;
 		}
-		ac_unfudged = TRUE;
+		_ac_unfudged = TRUE;
 	}
 
-	DMAP_MD5Update (context, (const guchar *) ac, strlen (ac));
+	_update (context, (const guchar *) _ac, strlen (_ac));
 
-	DMAP_MD5Update (context, &staticHash_45[2 * 65], 32);
+	_update (context, &_45[2 * 65], 32);
 
-	DMAP_MD5Final (context, digest);
+	_final (context, digest);
 }
 
 #ifdef HAVE_CHECK
 
 #include <check.h>
 
-START_TEST(test_dmap_hash_generate_v3_h2)
+START_TEST(test_dmap_md5_generate_v3_h2)
 {
 	guchar hash[33] = { 0 };
 	guchar *url = (guchar *) "test://foo";
-	dmap_hash_generate (3, url, 2, hash, 0);
+	dmap_md5_generate (3, url, 2, hash, 0);
 	fail_unless (! memcmp (hash, "798A9D80B6F08E339603BE83E0FEAD03", strlen ("798A9D80B6F08E339603BE83E0FEAD03")));
 }
 END_TEST
 
-START_TEST(test_dmap_hash_progressive)
+START_TEST(test_dmap_md5_progressive)
 {
 	guchar buf[16] = { 0 };
 	guchar hash1[33] = { 0 };
@@ -545,17 +565,17 @@ START_TEST(test_dmap_hash_progressive)
 	guchar *value = (guchar *) "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 	DmapHashContext context;
 
-	dmap_hash_progressive_init   (&context);
-	dmap_hash_progressive_update (&context, value,      5);
-	dmap_hash_progressive_update (&context, value + 5,  5);
-	dmap_hash_progressive_update (&context, value + 10, 5);
-	dmap_hash_progressive_update (&context, value + 15, 5);
-	dmap_hash_progressive_update (&context, value + 20, 5);
-	dmap_hash_progressive_update (&context, value + 25, 1);
-	dmap_hash_progressive_final  (&context, buf);
-	dmap_hash_progressive_to_string (buf, (gchar *) hash1);
+	dmap_md5_progressive_init   (&context);
+	dmap_md5_progressive_update (&context, value,      5);
+	dmap_md5_progressive_update (&context, value + 5,  5);
+	dmap_md5_progressive_update (&context, value + 10, 5);
+	dmap_md5_progressive_update (&context, value + 15, 5);
+	dmap_md5_progressive_update (&context, value + 20, 5);
+	dmap_md5_progressive_update (&context, value + 25, 1);
+	dmap_md5_progressive_final  (&context, buf);
+	dmap_md5_progressive_to_string (buf, (gchar *) hash1);
 
-	dmap_hash_generate (3, value, 2, hash2, 0);
+	dmap_md5_generate (3, value, 2, hash2, 0);
 
 	fail_unless (! memcmp (hash1, hash2, 32));
 }

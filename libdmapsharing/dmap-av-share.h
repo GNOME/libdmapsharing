@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef __DMAP_AV_SHARE_H
-#define __DMAP_AV_SHARE_H
+#ifndef _DMAP_AV_SHARE_H
+#define _DMAP_AV_SHARE_H
 
 #include <glib-object.h>
 
@@ -113,6 +113,6 @@ DmapAvShare *dmap_av_share_new (const char *name, const char *password,
 			   DmapDb * db, DmapContainerDb * container_db,
 			   gchar * transcode_mimetype);
 
-#endif /* __DMAP_AV_SHARE_H */
+#endif /* _DMAP_AV_SHARE_H */
 
 G_END_DECLS

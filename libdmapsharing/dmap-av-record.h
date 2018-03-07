@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_AV_RECORD_H
-#define __DMAP_AV_RECORD_H
+#ifndef _DMAP_AV_RECORD_H
+#define _DMAP_AV_RECORD_H
 
 #include <glib.h>
 #include <gio/gio.h>
@@ -104,6 +104,6 @@ GInputStream *dmap_av_record_read (DmapAvRecord * record, GError ** err);
  */
 gint dmap_av_record_cmp_by_album (gpointer a, gpointer b, DmapDb * db);
 
-#endif /* __DMAP_AV_RECORD_H */
+#endif /* _DMAP_AV_RECORD_H */
 
 G_END_DECLS

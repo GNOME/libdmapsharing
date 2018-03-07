@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __DMAP_CONTROL_SHARE_H
-#define __DMAP_CONTROL_SHARE_H
+#ifndef _DMAP_CONTROL_SHARE_H
+#define _DMAP_CONTROL_SHARE_H
 
 #include <glib-object.h>
 
@@ -163,6 +163,6 @@ void dmap_control_share_stop_lookup (DmapControlShare * share);
  */
 void dmap_control_share_player_updated (DmapControlShare * share);
 
-#endif /* __DMAP_CONTROL_SHARE_H */
+#endif /* _DMAP_CONTROL_SHARE_H */
 
 G_END_DECLS

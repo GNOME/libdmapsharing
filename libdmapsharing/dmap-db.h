@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __DMAP_DB_H
-#define __DMAP_DB_H
+#ifndef _DMAP_DB_H
+#define _DMAP_DB_H
 
 #include <glib-object.h>
 
@@ -188,8 +188,6 @@ void dmap_db_foreach (const DmapDb * db, DmapIdRecordFunc func, gpointer data);
  */
 gulong dmap_db_count (const DmapDb * db);
 
-gchar **_dmap_db_strsplit_using_quotes (const gchar * str);
-
 /**
  * dmap_db_apply_filter:
  * @db: A media database.
@@ -199,6 +197,6 @@ gchar **_dmap_db_strsplit_using_quotes (const gchar * str);
  */
 GHashTable *dmap_db_apply_filter (DmapDb * db, GSList * filter_def);
 
-#endif /* __DMAP_DB_H */
+#endif /* _DMAP_DB_H */
 
 G_END_DECLS

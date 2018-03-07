@@ -39,6 +39,14 @@ instead of "Iface".
 
 	dmap_connection_connect became dmap_connection_start.
 
+	The dmap_hash functions became dmap_md5 functions.
+
+	DACP_PLAY_STOPPED and so on became, for example, CONTROL_PLAY_STOPPED.
+
+	DACPRepeatState became DmapControlRepeatState.
+
+	DACPPlayState became DmapControlPlayState.
+
 (4)  The new API replaces the use of GHFunc with DMAPIdRecordFunc and
 DMAPContainerIdFunc.
 

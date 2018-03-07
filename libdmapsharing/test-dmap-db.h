@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef __TEST_DMAP_DB
-#define __TEST_DMAP_DB
+#ifndef _TEST_DMAP_DB
+#define _TEST_DMAP_DB
 
 #include <libdmapsharing/dmap.h>
 
@@ -54,6 +54,6 @@ typedef struct {
 TestDmapDb *test_dmap_db_new (void);
 GType test_dmap_db_get_type (void);
 
-#endif /* __TEST_DMAP_DB */
+#endif /* _TEST_DMAP_DB */
 
 G_END_DECLS

@@ -107,12 +107,12 @@ enum
 	LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static guint _signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DmapControlShare, dmap_control_share, DMAP_TYPE_SHARE);
 
 static gchar *
-get_dbid (void)
+_get_dbid (void)
 {
 	static gchar *dbid;
 
@@ -128,22 +128,20 @@ get_dbid (void)
 		g_string_ascii_up (name);
 		g_string_append_len (name, name->str, 4);
 
-		dbid = name->str;
-
-		g_string_free (name, FALSE);
+		dbid = g_string_free (name, FALSE);
 	}
 	return dbid;
 }
 
 static void
-dmap_control_share_update_txt_records (DmapControlShare * share)
+_update_txt_records (DmapControlShare * share)
 {
 	gchar *dbid_record;
 	gchar *library_name_record;
 
 	library_name_record =
 		g_strdup_printf ("CtlN=%s", share->priv->library_name);
-	dbid_record = g_strdup_printf ("DbId=%s", get_dbid ());
+	dbid_record = g_strdup_printf ("DbId=%s", _get_dbid ());
 
 	gchar *txt_records[] = { "Ver=131073",
 		"DvSv=2049",
@@ -162,9 +160,9 @@ dmap_control_share_update_txt_records (DmapControlShare * share)
 }
 
 static void
-dmap_control_share_set_property (GObject * object,
-			 guint prop_id,
-			 const GValue * value, GParamSpec * pspec)
+_set_property (GObject * object,
+               guint prop_id,
+               const GValue * value, GParamSpec * pspec)
 {
 	DmapControlShare *share = DMAP_CONTROL_SHARE (object);
 
@@ -172,7 +170,7 @@ dmap_control_share_set_property (GObject * object,
 	case PROP_LIBRARY_NAME:
 		g_free (share->priv->library_name);
 		share->priv->library_name = g_value_dup_string (value);
-		dmap_control_share_update_txt_records (share);
+		_update_txt_records (share);
 		break;
 	case PROP_PLAYER:
 		if (share->priv->player) {
@@ -187,8 +185,8 @@ dmap_control_share_set_property (GObject * object,
 }
 
 static void
-dmap_control_share_get_property (GObject * object,
-			 guint prop_id, GValue * value, GParamSpec * pspec)
+_get_property (GObject * object,
+               guint prop_id, GValue * value, GParamSpec * pspec)
 {
 	DmapControlShare *share = DMAP_CONTROL_SHARE (object);
 
@@ -206,7 +204,7 @@ dmap_control_share_get_property (GObject * object,
 }
 
 static void
-dmap_control_share_dispose (GObject * object)
+_dispose (GObject * object)
 {
 	DmapControlShare *share = DMAP_CONTROL_SHARE (object);
 
@@ -227,7 +225,7 @@ dmap_control_share_dispose (GObject * object)
 }
 
 static void
-dmap_control_share_finalize (GObject * object)
+_finalize (GObject * object)
 {
 	DmapControlShare *share = DMAP_CONTROL_SHARE (object);
 
@@ -248,10 +246,10 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DmapShareClass *dmap_class = DMAP_SHARE_CLASS (object_class);
 
-	object_class->get_property = dmap_control_share_get_property;
-	object_class->set_property = dmap_control_share_set_property;
-	object_class->dispose = dmap_control_share_dispose;
-	object_class->finalize = dmap_control_share_finalize;
+	object_class->get_property = _get_property;
+	object_class->set_property = _set_property;
+	object_class->dispose = _dispose;
+	object_class->finalize = _finalize;
 
 	dmap_class->get_type_of_service = dmap_control_share_get_type_of_service;
 	dmap_class->ctrl_int = dmap_control_share_ctrl_int;
@@ -283,7 +281,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	 *
 	 * Signal emited when a remote is found in the local network.
 	 */
-	signals[REMOTE_FOUND] =
+	_signals[REMOTE_FOUND] =
 		g_signal_new ("remote-found",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -300,7 +298,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	 *
 	 * Signal emited when a remote is lost in the local network.
 	 */
-	signals[REMOTE_LOST] =
+	_signals[REMOTE_LOST] =
 		g_signal_new ("remote-lost",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -318,7 +316,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	 *
 	 * Signal emited when a remote is paired.
 	 */
-	signals[REMOTE_PAIRED] =
+	_signals[REMOTE_PAIRED] =
 		g_signal_new ("remote-paired",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -337,7 +335,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	 * validated. An implementation must implement this signal to lookup
 	 * for guids saved by ::add-guid
 	 */
-	signals[LOOKUP_GUID] =
+	_signals[LOOKUP_GUID] =
 		g_signal_new ("lookup-guid",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -360,7 +358,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	 * a button to forget previously connected remotes, so that the user may
 	 * disconnect all previously connected remotes.
 	 */
-	signals[ADD_GUID] =
+	_signals[ADD_GUID] =
 		g_signal_new ("add-guid",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -388,10 +386,11 @@ dmap_control_share_init (DmapControlShare * share)
 						      g_free);
 }
 
-void
-mdns_remote_added (DmapMdnsBrowser * browser,
-		   DmapMdnsService * service, DmapControlShare * share)
+static void
+_mdns_remote_added (DmapMdnsBrowser * browser,
+                    DmapMdnsService * service, DmapControlShare * share)
 {
+	gboolean new;
 	guint port;
 	DACPRemoteInfo *remote_info;
 	gchar *service_name, *name, *host, *pair;
@@ -413,25 +412,26 @@ mdns_remote_added (DmapMdnsBrowser * browser,
 		 name,
 		 remote_info->host, remote_info->port, remote_info->pair_txt);
 
-	g_hash_table_insert (share->priv->remotes,
-			     service_name, remote_info);
+	new = g_hash_table_insert (share->priv->remotes,
+	                           service_name, remote_info);
+	g_assert(new);
 
-	g_signal_emit (share,
-		       signals[REMOTE_FOUND],
-		       0, service_name, name);
+	g_signal_emit (share, _signals[REMOTE_FOUND], 0, service_name, name);
 
 	g_free(name);
 	g_free(host);
 	g_free(pair);
 }
 
-void
-mdns_remote_removed (DmapMdnsBrowser * browser,
-		     const char *service_name, DmapControlShare * share)
+static void
+_mdns_remote_removed (DmapMdnsBrowser * browser,
+                      const char *service_name, DmapControlShare * share)
 {
-	g_signal_emit (share, signals[REMOTE_LOST], 0, service_name);
+	gboolean found;
+	g_signal_emit (share, _signals[REMOTE_LOST], 0, service_name);
 
-	g_hash_table_remove (share->priv->remotes, service_name);
+	found = g_hash_table_remove (share->priv->remotes, service_name);
+	g_assert(found);
 }
 
 DmapControlShare *
@@ -442,7 +442,7 @@ dmap_control_share_new (const gchar * library_name,
 	DmapControlShare *share;
 
 	share = DMAP_CONTROL_SHARE (g_object_new (DMAP_TYPE_CONTROL_SHARE,
-					  "name", get_dbid (),
+					  "name", _get_dbid (),
 					  "library-name", library_name,
 					  "password", NULL,
 					  "db", db,
@@ -460,6 +460,7 @@ dmap_control_share_new (const gchar * library_name,
 void
 dmap_control_share_start_lookup (DmapControlShare * share)
 {
+	gboolean ok;
 	GError *error;
 
 	if (share->priv->mdns_browser) {
@@ -472,14 +473,14 @@ dmap_control_share_start_lookup (DmapControlShare * share)
 
 	g_signal_connect_object (share->priv->mdns_browser,
 				 "service-added",
-				 G_CALLBACK (mdns_remote_added), share, 0);
+				 G_CALLBACK (_mdns_remote_added), share, 0);
 	g_signal_connect_object (share->priv->mdns_browser,
 				 "service-removed",
-				 G_CALLBACK (mdns_remote_removed), share, 0);
+				 G_CALLBACK (_mdns_remote_removed), share, 0);
 
 	error = NULL;
-	dmap_mdns_browser_start (share->priv->mdns_browser, &error);
-	if (error != NULL) {
+	ok = dmap_mdns_browser_start (share->priv->mdns_browser, &error);
+	if (!ok) {
 		g_warning ("Unable to start Remote lookup: %s",
 			   error->message);
 		g_error_free (error);
@@ -487,17 +488,18 @@ dmap_control_share_start_lookup (DmapControlShare * share)
 }
 
 static gboolean
-remove_remotes_cb (gpointer service_name, gpointer remote_info,
-		   gpointer share)
+_remove_remotes_cb (gpointer service_name, gpointer remote_info,
+                    gpointer share)
 {
 	g_signal_emit ((DmapControlShare *) share,
-		       signals[REMOTE_LOST], 0, (gchar *) service_name);
+		       _signals[REMOTE_LOST], 0, (gchar *) service_name);
 	return TRUE;
 }
 
 void
 dmap_control_share_stop_lookup (DmapControlShare * share)
 {
+	gboolean ok;
 	GError *error;
 
 	if (!share->priv->mdns_browser) {
@@ -505,12 +507,13 @@ dmap_control_share_stop_lookup (DmapControlShare * share)
 		return;
 	}
 
-	g_hash_table_foreach_remove (share->priv->remotes, remove_remotes_cb,
-				     share);
+	g_hash_table_foreach_remove (share->priv->remotes,	
+                                     _remove_remotes_cb,
+	                             share);
 
 	error = NULL;
-	dmap_mdns_browser_stop (share->priv->mdns_browser, &error);
-	if (error != NULL) {
+	ok = dmap_mdns_browser_stop (share->priv->mdns_browser, &error);
+	if (!ok) {
 		g_warning ("Unable to stop Remote lookup: %s",
 			   error->message);
 		g_error_free (error);
@@ -520,7 +523,7 @@ dmap_control_share_stop_lookup (DmapControlShare * share)
 }
 
 static void
-dmap_control_share_fill_playstatusupdate (DmapControlShare * share, SoupMessage * message)
+_fill_playstatusupdate (DmapControlShare * share, SoupMessage * message)
 {
 	GNode *cmst;
 	DmapAvRecord *record;
@@ -561,12 +564,15 @@ dmap_control_share_fill_playstatusupdate (DmapControlShare * share, SoupMessage 
 		dmap_structure_add (cmst, DMAP_CC_CAAS, 2);
 		dmap_structure_add (cmst, DMAP_CC_CAAR, 6);
 		dmap_structure_add (cmst, DMAP_CC_CANP, (gint64) 0); // FIXME: may be wrong.
-		if (title)
+		if (title) {
 			dmap_structure_add (cmst, DMAP_CC_CANN, title);
-		if (artist)
+		}
+		if (artist) {
 			dmap_structure_add (cmst, DMAP_CC_CANA, artist);
-		if (album)
+		}
+		if (album) {
 			dmap_structure_add (cmst, DMAP_CC_CANL, album);
+		}
 		dmap_structure_add (cmst, DMAP_CC_CANG, "");
 		dmap_structure_add (cmst, DMAP_CC_ASAI, 0);
 		//dmap_structure_add (cmst, DMAP_CC_AEMK, 1);
@@ -589,7 +595,7 @@ dmap_control_share_fill_playstatusupdate (DmapControlShare * share, SoupMessage 
 }
 
 static void
-dmap_control_share_send_playstatusupdate (DmapControlShare * share)
+_send_playstatusupdate (DmapControlShare * share)
 {
 	GSList *list;
 	SoupServer *server = NULL;
@@ -598,8 +604,8 @@ dmap_control_share_send_playstatusupdate (DmapControlShare * share)
 	if (server) {
 		for (list = share->priv->update_queue; list;
 		     list = list->next) {
-			dmap_control_share_fill_playstatusupdate (share,
-			                                  (SoupMessage*) list->data);
+			_fill_playstatusupdate (share,
+			                       (SoupMessage*) list->data);
 			soup_server_unpause_message (server,
 			                             (SoupMessage*) list->data);
 		}
@@ -613,11 +619,11 @@ void
 dmap_control_share_player_updated (DmapControlShare * share)
 {
 	share->priv->current_revision++;
-	dmap_control_share_send_playstatusupdate (share);
+	_send_playstatusupdate (share);
 }
 
 static void
-status_update_message_finished (SoupMessage * message, DmapControlShare * share)
+_status_update_message_finished (SoupMessage * message, DmapControlShare * share)
 {
 	share->priv->update_queue =
 		g_slist_remove (share->priv->update_queue, message);
@@ -625,7 +631,7 @@ status_update_message_finished (SoupMessage * message, DmapControlShare * share)
 }
 
 static void
-debug_param (gpointer key, gpointer val, gpointer user_data)
+_debug_param (gpointer key, gpointer val, gpointer user_data)
 {
 	g_debug ("%s %s", (char *) key, (char *) val);
 }
@@ -641,7 +647,7 @@ dmap_control_share_login (DmapShare * share,
 
 	g_debug ("Path is %s.", path);
 	if (query) {
-		g_hash_table_foreach (query, debug_param, NULL);
+		g_hash_table_foreach (query, _debug_param, NULL);
 	}
 
 	pairing_guid = g_hash_table_lookup (query, "pairing-guid");
@@ -649,7 +655,7 @@ dmap_control_share_login (DmapShare * share,
 	if (pairing_guid != NULL) {
 		gboolean allow_login;
 
-		g_signal_emit (share, signals[LOOKUP_GUID], 0, pairing_guid,
+		g_signal_emit (share, _signals[LOOKUP_GUID], 0, pairing_guid,
 			       &allow_login);
 
 		if (!allow_login) {
@@ -676,7 +682,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 	g_debug ("Path is %s.", path);
 	if (query) {
-		g_hash_table_foreach (query, debug_param, NULL);
+		g_hash_table_foreach (query, _debug_param, NULL);
 	}
 
 	rest_of_path = strchr (path + 1, '/');
@@ -688,7 +694,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 	    (!_dmap_share_session_id_validate
 	     (share, context, message, query, NULL))) {
 		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
-		return;
+		goto done;
 	}
 
 	if (rest_of_path == NULL) {
@@ -758,7 +764,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 		if (!properties_query) {
 			g_warning ("No property specified");
-			return;
+			goto done;
 		}
 
 		cmgt = dmap_structure_add (NULL, DMAP_CC_CMGT);
@@ -828,12 +834,11 @@ dmap_control_share_ctrl_int (DmapShare * share,
 						 priv->update_queue, message);
 			g_signal_connect_object (message, "finished",
 						 G_CALLBACK
-						 (status_update_message_finished),
+						 (_status_update_message_finished),
 						 dmap_control_share, 0);
 			soup_server_pause_message (server, message);
 		} else {
-			dmap_control_share_fill_playstatusupdate (dmap_control_share,
-							  message);
+			_fill_playstatusupdate (dmap_control_share, message);
 		}
 	} else if (g_ascii_strcasecmp ("/1/playpause", rest_of_path) == 0) {
 		dmap_control_player_play_pause (dmap_control_share->priv->player);
@@ -855,10 +860,12 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		gchar *buffer;
 		gsize buffer_len;
 
-		if (g_hash_table_lookup (query, "mw"))
+		if (g_hash_table_lookup (query, "mw")) {
 			width = atoi (g_hash_table_lookup (query, "mw"));
-		if (g_hash_table_lookup (query, "mh"))
+		}
+		if (g_hash_table_lookup (query, "mh")) {
 			height = atoi (g_hash_table_lookup (query, "mh"));
+		}
 		artwork_filename =
 			dmap_control_player_now_playing_artwork (dmap_control_share->
 							 priv->player, width,
@@ -867,7 +874,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_debug ("No artwork for currently playing song");
 			soup_message_set_status (message,
 						 SOUP_STATUS_NOT_FOUND);
-			return;
+			goto done;
 		}
 #ifdef HAVE_GDKPIXBUF
 		GdkPixbuf *artwork =
@@ -880,7 +887,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_free (artwork_filename);
 			soup_message_set_status (message,
 						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
-			return;
+			goto done;
 		}
 		if (!gdk_pixbuf_save_to_buffer
 		    (artwork, &buffer, &buffer_len, "png", NULL, NULL)) {
@@ -889,7 +896,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_free (artwork_filename);
 			soup_message_set_status (message,
 						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
-			return;
+			goto done;
 		}
 		g_object_unref (artwork);
 #else
@@ -899,7 +906,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_free (artwork_filename);
 			soup_message_set_status (message,
 						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
-			return;
+			goto done;
 		}
 #endif
 		g_free (artwork_filename);
@@ -916,7 +923,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_debug ("No CUE command specified");
 			soup_message_set_status (message,
 						 SOUP_STATUS_NO_CONTENT);
-			return;
+			goto done;
 		} else if (g_ascii_strcasecmp ("clear", command) == 0) {
 			dmap_control_player_cue_clear (dmap_control_share->priv->player);
 			soup_message_set_status (message,
@@ -970,22 +977,25 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_warning ("Unhandled cue command: %s", command);
 			soup_message_set_status (message,
 						 SOUP_STATUS_NO_CONTENT);
-			return;
+			goto done;
 		}
 	} else {
 		g_warning ("Unhandled ctrl-int command: %s", rest_of_path);
 		soup_message_set_status (message, SOUP_STATUS_BAD_REQUEST);
 	}
+
+done:
+	return;
 }
 
 #define PAIR_TXT_LENGTH 16
 #define PASSCODE_LENGTH 4
 
 static gchar *
-dmap_control_share_pairing_code (DmapControlShare * share, gchar * pair_txt,
-			 gchar passcode[4])
+_pairing_code (DmapControlShare * share, gchar * pair_txt, gchar passcode[4])
 {
 	int i;
+	gsize ssize, dsize;
 	GString *pairing_code;
 	gchar *pairing_string;
 	gchar *ret;
@@ -994,8 +1004,11 @@ dmap_control_share_pairing_code (DmapControlShare * share, gchar * pair_txt,
 	 * with the passcode, but the passcode takes 16-bits unicodes characters */
 	pairing_string =
 		g_strnfill (PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2, '\0');
-	g_strlcpy (pairing_string, pair_txt,
-		   PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2);
+
+	dsize = PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2;
+	ssize = g_strlcpy (pairing_string, pair_txt, dsize);
+	g_assert(dsize >= ssize);
+
 	for (i = 0; i < 4; i++) {
 		pairing_string[PAIR_TXT_LENGTH + i * 2] = passcode[i];
 	}
@@ -1005,14 +1018,13 @@ dmap_control_share_pairing_code (DmapControlShare * share, gchar * pair_txt,
 			      (G_CHECKSUM_MD5, (guchar *) pairing_string,
 			       PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2));
 	g_string_ascii_up (pairing_code);
-	ret = pairing_code->str;
-	g_string_free (pairing_code, FALSE);
+	ret = g_string_free (pairing_code, FALSE);
 
 	return ret;
 }
 
-void
-connection_handler_cb (DmapConnection * connection, guint status,
+static void
+_connection_handler_cb (DmapConnection * connection, guint status,
 		       GNode * structure, gpointer user_data)
 {
 	gboolean connected;
@@ -1032,15 +1044,16 @@ connection_handler_cb (DmapConnection * connection, guint status,
 	}
 
 	/* Get the pairing-guid to identify this remote in the future. */
-	if (structure)
+	if (structure) {
 		item = dmap_structure_find_item (structure, DMAP_CC_CMPG);
+	}
 	if (item) {
 		guint64 guid = g_value_get_int64 (&(item->content));
 
 		pairing_guid =
 			g_strdup_printf ("0x%.16" G_GINT64_MODIFIER "X",
 					 guid);
-		g_signal_emit (share, signals[ADD_GUID], 0, pairing_guid);
+		g_signal_emit (share, _signals[ADD_GUID], 0, pairing_guid);
 		g_free (pairing_guid);
 	}
 
@@ -1064,29 +1077,28 @@ connection_handler_cb (DmapConnection * connection, guint status,
 	g_object_unref (connection);
 
 	/* FIXME: Send more detailed error info, such as wrong pair code, etc */
-	g_signal_emit (share, signals[REMOTE_PAIRED], 0, service_name,
+	g_signal_emit (share, _signals[REMOTE_PAIRED], 0, service_name,
 		       connected);
 }
 
 void
 dmap_control_share_pair (DmapControlShare * share, gchar * service_name, gchar passcode[4])
 {
+	gboolean ok;
 	gchar *pairing_code;
-	gchar *name;
-	gchar *path;
+	gchar *name = NULL;
+	gchar *path = NULL;
 	DACPRemoteInfo *remote_info;
 
-	remote_info = g_hash_table_lookup (share->priv->remotes,
-					   service_name);
-
+	remote_info = g_hash_table_lookup (share->priv->remotes, service_name);
 	if (remote_info == NULL) {
 		g_warning ("Remote %s not found.", service_name);
-		return;
+		goto done;
 	}
 
 	if (remote_info->connection != NULL) {
 		g_warning ("Already pairing remote %s.", service_name);
-		return;
+		goto done;
 	}
 
 	g_object_get (share, "name", &name, NULL);
@@ -1099,9 +1111,7 @@ dmap_control_share_pair (DmapControlShare * share, gchar * service_name, gchar p
 	dmap_connection_setup (remote_info->connection);
 
 	/* Get the remote path for pairing */
-	pairing_code =
-		dmap_control_share_pairing_code (share, remote_info->pair_txt,
-					 passcode);
+	pairing_code = _pairing_code (share, remote_info->pair_txt, passcode);
 	path = g_strdup_printf ("/pair?pairingcode=%s&servicename=%s",
 				pairing_code, name);
 	g_free (pairing_code);
@@ -1109,10 +1119,14 @@ dmap_control_share_pair (DmapControlShare * share, gchar * service_name, gchar p
 	g_debug ("Pairing remote in %s:%d/%s", remote_info->host,
 		 remote_info->port, path);
 
-	/* Let DmapConnection do the heavy work */
-	dmap_connection_get (remote_info->connection, path, FALSE,
-			     connection_handler_cb, share);
+	/* Let DmapConnection do the heavy lifting. */
+	ok = dmap_connection_get (remote_info->connection, path, FALSE,
+	                          _connection_handler_cb, share);
+	if (!ok) {
+		g_debug("Error pairing remote");
+	}
 
+done:
 	g_free (name);
 	g_free (path);
 }

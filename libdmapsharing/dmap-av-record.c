@@ -266,7 +266,7 @@ START_TEST(dmap_av_record_read_test)
 	DmapAvRecord *record;
 	GInputStream *stream;
 	GError *error = NULL;
-	gssize count;
+	gssize count1, count2;
 	char buf[PATH_MAX];
 	char template[PATH_MAX];
 	char uri[PATH_MAX];
@@ -280,10 +280,12 @@ START_TEST(dmap_av_record_read_test)
 	}
 
 	/* Use randomization of template name for test data. */
-	count = write(tmp, template, strlen(template));
-	if (-1 == count) {
+	count1 = write(tmp, template, strlen(template));
+	if (-1 == count1) {
 		ck_abort();
 	}
+
+	ck_assert_int_eq(count1, strlen(template));
 
 	sprintf(uri, "file://%s", template);
 
@@ -294,12 +296,13 @@ START_TEST(dmap_av_record_read_test)
 
 	ck_assert(NULL == error);
 
-	count = g_input_stream_read(stream,
+	count2 = g_input_stream_read(stream,
 	                            buf,
 	                            BUFSIZ,
 	                            NULL,
 	                           &error);
 	ck_assert(NULL == error);
+	ck_assert_int_eq(count1, count2);
 	ck_assert_str_eq(buf, template);
 
 	g_input_stream_close(stream, NULL, NULL);

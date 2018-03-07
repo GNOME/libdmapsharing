@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef __DMAP_MDNS_AVAHI_H
-#define __DMAP_MDNS_AVAHI_H
+#ifndef _DMAP_MDNS_AVAHI_H
+#define _DMAP_MDNS_AVAHI_H
 
 #include <avahi-client/client.h>
 #include <avahi-client/publish.h>

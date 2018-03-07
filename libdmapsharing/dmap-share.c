@@ -948,7 +948,7 @@ void
 _dmap_share_name_collision (DmapShare * share,
 			    DmapMdnsPublisher * publisher, const char *name)
 {
-	char *new_name = "FIXME";
+	char *new_name = g_strdup("FIXME");
 
 	if (share->priv->name == NULL || name == NULL) {
 		return;
