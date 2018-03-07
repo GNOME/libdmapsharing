@@ -40,6 +40,7 @@
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-marshal.h>
 #include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap-share-private.h>
 
 #include <libdmapsharing/dmap-share.h>
 #include <libdmapsharing/dmap-connection-private.h>
@@ -451,8 +452,8 @@ dmap_control_share_new (const gchar * library_name,
 					  "transcode-mimetype", NULL, NULL));
 
 	g_debug ("Starting DACP server");
-	_dmap_share_server_start (DMAP_SHARE (share));
-	_dmap_share_publish_start (DMAP_SHARE (share));
+	dmap_share_server_start (DMAP_SHARE (share));
+	dmap_share_publish_start (DMAP_SHARE (share));
 
 	return share;
 }
@@ -589,7 +590,7 @@ _fill_playstatusupdate (DmapControlShare * share, SoupMessage * message)
 		g_object_unref (record);
 	}
 
-	_dmap_share_message_set_from_dmap_structure (DMAP_SHARE (share),
+	dmap_share_message_set_from_dmap_structure (DMAP_SHARE (share),
 						     message, cmst);
 	dmap_structure_destroy (cmst);
 }
@@ -666,7 +667,7 @@ dmap_control_share_login (DmapShare * share,
 		}
 	}
 
-	_dmap_share_login (share, server, message, path, query, context);
+	dmap_share_login (share, server, message, path, query, context);
 }
 
 void
@@ -691,7 +692,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 	 * session-id, otherwise it does and it should be validated. */
 	if ((rest_of_path != NULL)
 	    &&
-	    (!_dmap_share_session_id_validate
+	    (!dmap_share_session_id_validate
 	     (share, context, message, query, NULL))) {
 		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
 		goto done;
@@ -753,7 +754,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		dmap_structure_add (mlit, DMAP_CC_CASG, (gint32) 1);
 		dmap_structure_add (mlit, DMAP_CC_CMRL, 1);
 
-		_dmap_share_message_set_from_dmap_structure (share, message,
+		dmap_share_message_set_from_dmap_structure (share, message,
 							     caci);
 		dmap_structure_destroy (caci);
 	} else if (g_ascii_strcasecmp ("/1/getproperty", rest_of_path) == 0) {
@@ -788,7 +789,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 		g_strfreev (properties);
 
-		_dmap_share_message_set_from_dmap_structure (share, message,
+		dmap_share_message_set_from_dmap_structure (share, message,
 							     cmgt);
 		dmap_structure_destroy (cmgt);
 	} else if (g_ascii_strcasecmp ("/1/setproperty", rest_of_path) == 0) {
@@ -818,7 +819,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		g_object_get (dmap_control_share->priv->player, "volume", &volume, NULL);
 		dmap_structure_add (casp, DMAP_CC_CMVO, volume);
 
-		_dmap_share_message_set_from_dmap_structure (share, message,
+		dmap_share_message_set_from_dmap_structure (share, message,
 							     casp);
 		dmap_structure_destroy (casp);
 	} else if (g_ascii_strcasecmp ("/1/playstatusupdate", rest_of_path) ==
@@ -941,7 +942,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 			g_object_get (share, "db", &db, NULL);
 			record_query = g_hash_table_lookup (query, "query");
-			filter_def = _dmap_share_build_filter (record_query);
+			filter_def = dmap_share_build_filter (record_query);
 			records = dmap_db_apply_filter (db, filter_def);
 			sorted_records = g_hash_table_get_values (records);
 			sort_by = g_hash_table_lookup (query, "sort");
@@ -968,7 +969,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 					    DMAP_STATUS_OK);
 			dmap_structure_add (cacr, DMAP_CC_MIID, index);
 
-			_dmap_share_message_set_from_dmap_structure (share,
+			dmap_share_message_set_from_dmap_structure (share,
 								     message,
 								     cacr);
 			g_object_unref(db);

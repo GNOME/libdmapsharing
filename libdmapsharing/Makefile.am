@@ -120,6 +120,7 @@ noinst_HEADERS = \
 	dmap-marshal.h \
 	dmap-mdns-avahi.h \
 	dmap-private-utils.h \
+	dmap-share-private.h \
 	dmap-structure.h \
 	gst-util.h \
 	test-dmap-av-record-factory.h \
@@ -212,14 +213,24 @@ if HAVE_PEDANSEE
 		echo -n $${i}_get_type\;; \
 	done >> pedansee.conf
 	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
-		echo -n $${i}_init\;; \
 		echo -n $${i}_class_init\;; \
-		echo -n $${i}_parent_class\;; \
-		echo -n $${i}_get_instance_private\;; \
 		echo -n $${i}_class_intern_init\;; \
+		echo -n $${i}_get_instance_private\;; \
 		echo -n $${i}_get_type\;; \
+		echo -n $${i}_init\;; \
+		echo -n $${i}_parent_class\;; \
 	done >> pedansee.conf
 	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
+		echo -n $${i}_private_offset\;; \
+	done >> pedansee.conf
+	for i in $$(grep G_DEFINE_ABSTRACT_TYPE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
+		echo -n $${i}_class_init\;; \
+		echo -n $${i}_class_intern_init\;; \
+		echo -n $${i}_get_instance_private\;; \
+		echo -n $${i}_init\;; \
+		echo -n $${i}_parent_class\;; \
+	done >> pedansee.conf
+	for i in $$(grep G_DEFINE_ABSTRACT_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
 		echo -n $${i}_private_offset\;; \
 	done >> pedansee.conf
 	set -e; for i in $(libdmapsharing_4_0_la_SOURCES); do \

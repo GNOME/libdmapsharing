@@ -65,8 +65,8 @@ G_BEGIN_DECLS
 	GInputStream *original_stream;
 } ChunkData;
 
-void   dmap_write_next_chunk (SoupMessage * message, ChunkData * cd);
-void   dmap_chunked_message_finished (SoupMessage * message, ChunkData * cd);
+void   dmap_private_utils_write_next_chunk (SoupMessage * message, ChunkData * cd);
+void   dmap_private_utils_chunked_message_finished (SoupMessage * message, ChunkData * cd);
 
 G_END_DECLS
 #endif

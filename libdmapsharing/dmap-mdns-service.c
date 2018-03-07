@@ -53,10 +53,10 @@ enum {
 };
 
 static void
-dmap_mdns_service_set_property (GObject *object,
-                                guint prop_id,
-                                const GValue *value,
-                                GParamSpec *pspec)
+_set_property (GObject *object,
+               guint prop_id,
+               const GValue *value,
+               GParamSpec *pspec)
 {
 	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
@@ -95,10 +95,10 @@ dmap_mdns_service_set_property (GObject *object,
 }
 
 static void
-dmap_mdns_service_get_property (GObject *object,
-                                guint prop_id,
-                                GValue *value,
-                                GParamSpec *pspec)
+_get_property (GObject *object,
+               guint prop_id,
+               GValue *value,
+               GParamSpec *pspec)
 {
 	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
@@ -132,10 +132,8 @@ dmap_mdns_service_get_property (GObject *object,
 	}
 }
 
-static void dmap_mdns_service_class_init (DmapMdnsServiceClass * klass);
-static void dmap_mdns_service_init (DmapMdnsService * service);
-static void dmap_mdns_service_dispose (GObject * object);
-static void dmap_mdns_service_finalize (GObject * object);
+static void _dispose (GObject * object);
+static void _finalize (GObject * object);
 
 #define DMAP_MDNS_SERVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_SERVICE, DmapMdnsServicePrivate))
 
@@ -148,10 +146,10 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
 
 	g_type_class_add_private (klass, sizeof (DmapMdnsServicePrivate));
 
-	object_class->dispose = dmap_mdns_service_dispose;
-	object_class->finalize = dmap_mdns_service_finalize;
-	object_class->set_property = dmap_mdns_service_set_property;
-	object_class->get_property = dmap_mdns_service_get_property;
+	object_class->dispose = _dispose;
+	object_class->finalize = _finalize;
+	object_class->set_property = _set_property;
+	object_class->get_property = _get_property;
 
 	dmap_mdns_service_parent_class = g_type_class_peek_parent (klass);
 
@@ -223,13 +221,13 @@ dmap_mdns_service_init (DmapMdnsService * service)
 }
 
 static void
-dmap_mdns_service_dispose (GObject * object)
+_dispose (GObject * object)
 {
 	G_OBJECT_CLASS (dmap_mdns_service_parent_class)->dispose (object);
 }
 
 static void
-dmap_mdns_service_finalize (GObject * object)
+_finalize (GObject * object)
 {
 	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 

@@ -191,52 +191,6 @@ struct DmapMlclBits
 
 GType dmap_share_get_type (void);
 
-/* Non-virtual methods */
-guint _dmap_share_get_auth_method (DmapShare * share);
-
-guint _dmap_share_get_revision_number (DmapShare * share);
-
-gboolean _dmap_share_get_revision_number_from_query (GHashTable * query,
-						     guint * number);
-
-gboolean _dmap_share_session_id_validate (DmapShare * share,
-					  SoupClientContext * context,
-					  SoupMessage * msg,
-					  GHashTable * query, guint32 * id);
-
-guint32 _dmap_share_session_id_create (DmapShare * share,
-				       SoupClientContext * ctx);
-
-void _dmap_share_session_id_remove (DmapShare * share,
-				    SoupClientContext * ctx, guint32 id);
-
-gboolean _dmap_share_client_requested (DmapBits bits, gint field);
-
-gboolean _dmap_share_uri_is_local (const char *text_uri);
-
-gboolean _dmap_share_soup_auth_filter (SoupAuthDomain * auth_domain,
-				       SoupMessage * msg, gpointer user_data);
-
-gboolean _dmap_share_server_start (DmapShare * share);
-
-gboolean _dmap_share_publish_start (DmapShare * share);
-
-void _dmap_share_message_set_from_dmap_structure (DmapShare * share,
-						  SoupMessage * message,
-						  GNode * structure);
-
-DmapBits _dmap_share_parse_meta (GHashTable * query,
-				struct DmapMetaDataMap *mdm);
-
-DmapBits _dmap_share_parse_meta_str (const char *attrs,
-				    struct DmapMetaDataMap *mdm);
-
-void _dmap_share_add_playlist_to_mlcl (gpointer id,
-				       DmapContainerRecord * record,
-				       gpointer mb);
-
-GSList *_dmap_share_build_filter (gchar * filterstr);
-
 /**
  * dmap_share_free_filter:
  * @filter: (element-type GSList): The filter list to free.
@@ -244,53 +198,6 @@ GSList *_dmap_share_build_filter (gchar * filterstr);
  * Free the given filter list.
  */
 void dmap_share_free_filter (GSList * filter);
-
-/* Virtual methods (libsoup callbacks with default implementation): */
-void _dmap_share_content_codes (DmapShare * share,
-				SoupServer * server,
-				SoupMessage * message,
-				const char *path,
-				GHashTable * query,
-				SoupClientContext * context);
-
-void _dmap_share_login (DmapShare * share,
-			SoupServer * server,
-			SoupMessage * message,
-			const char *path,
-			GHashTable * query, SoupClientContext * context);
-
-void _dmap_share_logout (DmapShare * share,
-			 SoupServer * server,
-			 SoupMessage * message,
-			 const char *path,
-			 GHashTable * query, SoupClientContext * context);
-
-void _dmap_share_update (DmapShare * share,
-			 SoupServer * server,
-			 SoupMessage * message,
-			 const char *path,
-			 GHashTable * query, SoupClientContext * context);
-
-void
-_dmap_share_databases (DmapShare * share,
-		       SoupServer * server,
-		       SoupMessage * message,
-		       const char *path,
-		       GHashTable * query, SoupClientContext * context);
-
-void _dmap_share_ctrl_int (DmapShare * share,
-			   SoupServer * server,
-			   SoupMessage * message,
-			   const char *path,
-			   GHashTable * query, SoupClientContext * context);
-
-/* Virtual methods: MDNS callbacks */
-void _dmap_share_published (DmapShare * share,
-			    DmapMdnsPublisher * publisher, const char *name);
-
-void _dmap_share_name_collision (DmapShare * share,
-				 DmapMdnsPublisher * publisher,
-				 const char *name);
 
 #endif /* _DMAP_SHARE_H */
 

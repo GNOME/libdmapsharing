@@ -41,6 +41,7 @@
 #include <libsoup/soup-server.h>
 
 #include <libdmapsharing/dmap.h>
+#include <libdmapsharing/dmap-share-private.h>
 #include <libdmapsharing/dmap-private-utils.h>
 #include <libdmapsharing/dmap-structure.h>
 
@@ -175,8 +176,8 @@ dmap_image_share_new (const char *name,
 					  "container-db", container_db,
 					  NULL));
 
-	_dmap_share_server_start (DMAP_SHARE (share));
-	_dmap_share_publish_start (DMAP_SHARE (share));
+	dmap_share_server_start (DMAP_SHARE (share));
+	dmap_share_publish_start (DMAP_SHARE (share));
 
 	return share;
 }
@@ -242,7 +243,7 @@ dmap_image_share_server_info (DmapShare * share,
 	dmap_structure_add (msrv, DMAP_CC_MPRO, (gdouble) DMAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_PPRO, (gdouble) DPAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_MINM, nameprop);
-	/*dmap_structure_add (msrv, DMAP_CC_MSAU, _dmap_share_get_auth_method (share)); */
+	/*dmap_structure_add (msrv, DMAP_CC_MSAU, dmap_share_get_auth_method (share)); */
 	/* authentication method
 	 * 0 is nothing
 	 * 1 is name & password
@@ -260,7 +261,7 @@ dmap_image_share_server_info (DmapShare * share,
 	/* dmap_structure_add (msrv, DMAP_CC_MSRS, (gchar) 0); */
 	dmap_structure_add (msrv, DMAP_CC_MSDC, (gint32) 1);
 
-	_dmap_share_message_set_from_dmap_structure (share, message, msrv);
+	dmap_share_message_set_from_dmap_structure (share, message, msrv);
 	dmap_structure_destroy (msrv);
 
 	g_free (nameprop);
@@ -350,12 +351,12 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 
 	mlit = dmap_structure_add (mb->mlcl, DMAP_CC_MLIT);
 
-	if (_dmap_share_client_requested (mb->bits, ITEM_KIND))
+	if (dmap_share_client_requested (mb->bits, ITEM_KIND))
 		dmap_structure_add (mlit, DMAP_CC_MIKD,
 				    (gchar) DPAP_ITEM_KIND_PHOTO);
-	if (_dmap_share_client_requested (mb->bits, ITEM_ID))
+	if (dmap_share_client_requested (mb->bits, ITEM_ID))
 		dmap_structure_add (mlit, DMAP_CC_MIID, id);
-	if (_dmap_share_client_requested (mb->bits, ITEM_NAME)) {
+	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
 		gchar *filename = NULL;
 
 		g_object_get (record, "filename", &filename, NULL);
@@ -365,7 +366,7 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		} else
 			g_debug ("Filename requested but not available");
 	}
-	if (_dmap_share_client_requested (mb->bits, PERSISTENT_ID))
+	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID))
 		dmap_structure_add (mlit, DMAP_CC_MPER, id);
 	if (TRUE) {
 		/* dpap-sharp claims iPhoto '08 will not show thumbnails without PASP
@@ -380,13 +381,13 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 			g_debug
 				("Aspect ratio requested but not available");
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_CREATIONDATE)) {
 		gint creation_date = 0;
 
 		g_object_get (record, "creation-date", &creation_date, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PICD, creation_date);
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILENAME)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILENAME)) {
 		gchar *filename = NULL;
 
 		g_object_get (record, "filename", &filename, NULL);
@@ -396,7 +397,7 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		} else
 			g_debug ("Filename requested but not available");
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEFORMAT)) {
 		gchar *format = NULL;
 
 		g_object_get (record, "format", &format, NULL);
@@ -406,7 +407,7 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		} else
 			g_debug ("Format requested but not available");
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEFILESIZE)) {
 		GArray *thumbnail = NULL;
 
 		g_object_get (record, "thumbnail", &thumbnail, NULL);
@@ -417,32 +418,32 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 			dmap_structure_add (mlit, DMAP_CC_PIFS, 0);
 		}
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGELARGEFILESIZE)) {
 		gint large_filesize = 0;
 
 		g_object_get (record, "large-filesize", &large_filesize,
 			      NULL);
 		dmap_structure_add (mlit, DMAP_CC_PLSZ, large_filesize);
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELHEIGHT)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELHEIGHT)) {
 		gint pixel_height = 0;
 
 		g_object_get (record, "pixel-height", &pixel_height, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PHGT, pixel_height);
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELWIDTH)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGEPIXELWIDTH)) {
 		gint pixel_width = 0;
 
 		g_object_get (record, "pixel-width", &pixel_width, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PWTH, pixel_width);
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGERATING)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGERATING)) {
 		gint rating = 0;
 
 		g_object_get (record, "rating", &rating, NULL);
 		dmap_structure_add (mlit, DMAP_CC_PRAT, rating);
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_IMAGECOMMENTS)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_IMAGECOMMENTS)) {
 		gchar *comments = NULL;
 
 		g_object_get (record, "comments", &comments, NULL);
@@ -452,12 +453,12 @@ add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 		} else
 			g_debug ("Comments requested but not available");
 	}
-	if (_dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
+	if (dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
 		size_t size = 0;
 		char *data = NULL;
 		GArray *thumbnail = NULL;
 
-		if (_dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
+		if (dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
 			g_object_get (record, "thumbnail", &thumbnail, NULL);
 			if (thumbnail) {
 				data = thumbnail->data;
@@ -548,11 +549,11 @@ send_chunked_file (SoupServer * server, SoupMessage * message,
 				     "application/x-dmap-tagged");
 
 	g_signal_connect (message, "wrote_headers",
-			  G_CALLBACK (dmap_write_next_chunk), cd);
+			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd);
 	g_signal_connect (message, "wrote_chunk",
-			  G_CALLBACK (dmap_write_next_chunk), cd);
+			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd);
 	g_signal_connect (message, "finished",
-			  G_CALLBACK (dmap_chunked_message_finished), cd);
+			  G_CALLBACK (dmap_private_utils_chunked_message_finished), cd);
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
 
 done:
