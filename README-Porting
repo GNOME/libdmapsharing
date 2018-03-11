@@ -3,7 +3,10 @@ versions. The primary reason for these changes is to better support
 GObject introspection and thus languages such as Python. The following
 are the key differences between the new and old APIs:
 
-(1)  All symbols now exist in the DMAP/Dmap/dmap namespace.
+(1)  A program which shares a DMAP service must explicitly call
+dmap_share_serve() and dmap_share_publish().
+
+(2)  All symbols now exist in the DMAP/Dmap/dmap namespace.
 
 	(a) For example, DMAPDb is now DmapDb.
 
@@ -17,10 +20,10 @@ are the key differences between the new and old APIs:
 
 	(e) DACPPlayer is now DmapControlPlayer.
 
-(2)  The interface names exported by libdmapsharing now end in "Interface"
+(3)  The interface names exported by libdmapsharing now end in "Interface"
 instead of "Iface".
 
-(3)  The new API renames the following symbols as indicated:
+(4)  The new API renames the following symbols as indicated:
 
 	DMAP_TYPE_DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL became
 	DMAP_TYPE_DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL.
@@ -47,17 +50,17 @@ instead of "Iface".
 
 	DACPPlayState became DmapControlPlayState.
 
-(4)  The new API replaces the use of GHFunc with DMAPIdRecordFunc and
+(5)  The new API replaces the use of GHFunc with DMAPIdRecordFunc and
 DMAPContainerIdFunc.
 
-(5)  Setting an object property using g_object_set causes the object to
+(6)  Setting an object property using g_object_set causes the object to
 duplicate the passed value.  Thus the caller maintains control of the
 original value.
 
-(6)  Getting an object property using g_object_set returns a duplicate
+(7)  Getting an object property using g_object_set returns a duplicate
 of the value. Thus the caller should free or unref the obtained value.
 
-(7)  The "hash" property in the DAAPRecord interface and the "hash"
+(8)  The "hash" property in the DAAPRecord interface and the "hash"
 and "thumbnail" properties in the DPAPRecord interface are now boxed
 types.  The true type of each of these properties is a GArray. Thus
 implementations of these interfaces should now:
@@ -68,11 +71,11 @@ implementations of these interfaces should now:
 
 	(c) use GArray instead of GByteArray.
 
-(8)  The "base-uri" property in the DMAPConnection class is now a boxed
+(9)  The "base-uri" property in the DMAPConnection class is now a boxed
 type. The real type is SoupURI.
 
-(9)  The "db" and "container-db" properties in DMAPShare are now handled
+(10) The "db" and "container-db" properties in DMAPShare are now handled
 as object types instead of pointer types.
 
-(10) The properties contained in a DMAPMdnsService must now be accessed
+(11) The properties contained in a DMAPMdnsService must now be accessed
 using g_object_get.

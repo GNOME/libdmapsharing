@@ -163,23 +163,20 @@ dmap_image_share_dispose (GObject * object)
  */
 DmapImageShare *
 dmap_image_share_new (const char *name,
-		const char *password,
-		gpointer db,
-		gpointer container_db, gchar * transcode_mimetype)
+                      const char *password,
+                      gpointer db,
+                      gpointer container_db,
+                      gchar * transcode_mimetype)
 {
-	DmapImageShare *share;
+	g_object_ref (db);
+	g_object_ref (container_db);
 
-	share = DMAP_IMAGE_SHARE (g_object_new (DMAP_TYPE_IMAGE_SHARE,
-					  "name", name,
-					  "password", password,
-					  "db", db,
-					  "container-db", container_db,
-					  NULL));
-
-	dmap_share_server_start (DMAP_SHARE (share));
-	dmap_share_publish_start (DMAP_SHARE (share));
-
-	return share;
+	return DMAP_IMAGE_SHARE (g_object_new (DMAP_TYPE_IMAGE_SHARE,
+	                                      "name", name,
+	                                      "password", password,
+	                                      "db", db,
+	                                      "container-db", container_db,
+	                                       NULL));
 }
 
 void

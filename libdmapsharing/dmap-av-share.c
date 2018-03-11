@@ -97,37 +97,21 @@ dmap_av_share_init (DmapAvShare * share)
 
 DmapAvShare *
 dmap_av_share_new (const char *name,
-		const char *password,
-		DmapDb * db,
-		DmapContainerDb * container_db, gchar * transcode_mimetype)
+                   const char *password,
+                   DmapDb * db,
+                   DmapContainerDb * container_db,
+                   gchar * transcode_mimetype)
 {
-	DmapAvShare *share;
-
 	g_object_ref (db);
 	g_object_ref (container_db);
 
-	share = DMAP_AV_SHARE (g_object_new (DMAP_TYPE_AV_SHARE,
-					  "name", name,
-					  "password", password,
-					  "db", db,
-					  "container-db", container_db,
-					  "transcode-mimetype",
-					  transcode_mimetype, NULL));
-
-	if (!dmap_share_server_start (DMAP_SHARE (share))) {
-		g_object_unref(share);
-		share = NULL;
-		goto done;
-	}
-
-	if (!dmap_share_publish_start (DMAP_SHARE (share))) {
-		g_object_unref(share);
-		share = NULL;
-		goto done;
-	}
-
-done:
-	return share;
+	return DMAP_AV_SHARE (g_object_new (DMAP_TYPE_AV_SHARE,
+	                                   "name", name,
+	                                   "password", password,
+	                                   "db", db,
+	                                   "container-db", container_db,
+	                                   "transcode-mimetype",
+	                                    transcode_mimetype, NULL));
 }
 
 void
@@ -1090,11 +1074,11 @@ START_TEST(dmap_av_share_new_test)
 
 	dmap_db_add(db, record);
 
-	share  = DMAP_SHARE(dmap_av_share_new("name",
-	                                      "password",
-	                                       db,
-	                                       container_db,
-	                                       "audio/mp3"));
+	share = DMAP_SHARE(dmap_av_share_new("name",
+	                                     "password",
+	                                      db,
+	                                      container_db,
+	                                     "audio/mp3"));
 
 	g_object_get(share, "name", &str, NULL);
 	ck_assert_str_eq("name", str);
@@ -1112,6 +1096,99 @@ START_TEST(dmap_av_share_new_test)
 	g_object_unref(container_record);
 	g_object_unref(container_db);
 	g_object_unref(share);
+}
+END_TEST
+
+START_TEST(dmap_av_share_serve_publish_test)
+{
+	DmapDb *db;
+	gboolean ok;
+	DmapContainerRecord *container_record;
+	DmapContainerDb *container_db;
+	DmapRecord *record;
+	DmapShare *share;
+
+	db = DMAP_DB(test_dmap_db_new());
+	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
+	container_db = DMAP_CONTAINER_DB(test_dmap_container_db_new(container_record));
+
+
+	record = DMAP_RECORD(test_dmap_av_record_new());
+	g_object_set(record, "songgenre", "genre1", NULL);
+	g_object_set(record, "songartist", "artist1", NULL);
+	g_object_set(record, "songalbum", "album1", NULL);
+
+	dmap_db_add(db, record);
+
+	share = DMAP_SHARE(dmap_av_share_new("name",
+	                                     "password",
+	                                      db,
+	                                      container_db,
+	                                     "audio/mp3"));
+
+	ok = dmap_share_serve(share);
+	ck_assert(ok);
+
+	ok = dmap_share_publish(share);
+	ck_assert(ok);
+
+	g_object_unref(db);
+	g_object_unref(container_record);
+	g_object_unref(container_db);
+	g_object_unref(share);
+}
+END_TEST
+
+START_TEST(dmap_av_share_serve_publish_collision_test)
+{
+	DmapDb *db;
+	gboolean ok;
+	DmapContainerRecord *container_record;
+	DmapContainerDb *container_db;
+	DmapRecord *record;
+	DmapShare *share1, *share2;
+
+	db = DMAP_DB(test_dmap_db_new());
+	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
+	container_db = DMAP_CONTAINER_DB(test_dmap_container_db_new(container_record));
+
+
+	record = DMAP_RECORD(test_dmap_av_record_new());
+	g_object_set(record, "songgenre", "genre1", NULL);
+	g_object_set(record, "songartist", "artist1", NULL);
+	g_object_set(record, "songalbum", "album1", NULL);
+
+	dmap_db_add(db, record);
+
+	share1 = DMAP_SHARE(dmap_av_share_new("name",
+	                                      "password",
+	                                       db,
+	                                       container_db,
+	                                      "audio/mp3"));
+
+	ok = dmap_share_serve(share1);
+	ck_assert(ok);
+
+	ok = dmap_share_publish(share1);
+	ck_assert(ok);
+
+	share2 = DMAP_SHARE(dmap_av_share_new("name",
+	                                      "password",
+	                                       db,
+	                                       container_db,
+	                                      "audio/mp3"));
+
+	ok = dmap_share_serve(share2);
+	ck_assert(ok);
+
+	ok = dmap_share_publish(share2);
+	ck_assert(ok);
+
+	g_object_unref(db);
+	g_object_unref(container_record);
+	g_object_unref(container_db);
+	g_object_unref(share1);
+	g_object_unref(share2);
 }
 END_TEST
 

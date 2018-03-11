@@ -192,6 +192,27 @@ struct DmapMlclBits
 GType dmap_share_get_type (void);
 
 /**
+ * dmap_share_serve:
+ * @share: a #DmapShare instance.
+ *
+ * Begin serving the service defined by share. A program will normally also
+ * call dmap_share_publish.
+ *
+ * Returns: TRUE if serving succeeds, else FALSE.
+ */
+gboolean dmap_share_serve(DmapShare *share);
+
+/**
+ * dmap_share_publish:
+ * @share: a #DmapShare instance.
+ *
+ * Publish the availability of the given share using mDNS-SD.
+ *
+ * Returns: TRUE if publishing succeeds, else FALSE.
+ */
+gboolean dmap_share_publish(DmapShare *share);
+
+/**
  * dmap_share_free_filter:
  * @filter: (element-type GSList): The filter list to free.
  *

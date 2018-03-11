@@ -220,7 +220,7 @@ _ctrl_int_adapter (SoupServer * server,
 }
 
 gboolean
-dmap_share_server_start (DmapShare *share)
+dmap_share_serve (DmapShare *share)
 {
 	guint desired_port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
 	gboolean password_required, ok = FALSE;
@@ -342,7 +342,7 @@ _server_stop (DmapShare * share)
 }
 
 gboolean
-dmap_share_publish_start (DmapShare * share)
+dmap_share_publish (DmapShare * share)
 {
 	GError *error;
 	gboolean ok;
@@ -411,10 +411,10 @@ _restart (DmapShare * share)
 	gboolean res;
 
 	_server_stop (share);
-	res = dmap_share_server_start (share);
+	res = dmap_share_serve (share);
 	if (res) {
 		/* To update information just publish again */
-		dmap_share_publish_start (share);
+		dmap_share_publish (share);
 	} else {
 		_publish_stop (share);
 	}
@@ -456,12 +456,8 @@ _set_name (DmapShare * share, const char *name)
 static void
 _set_password (DmapShare * share, const char *password)
 {
-	if (NULL != share) {
-		goto done;
-	}
-
 	if (share->priv->password && password &&
-	    strcmp (password, share->priv->password) == 0) {
+	    0 == strcmp (password, share->priv->password)) {
 		goto done;
 	}
 
@@ -978,20 +974,13 @@ void
 dmap_share_name_collision (DmapShare * share,
 			    DmapMdnsPublisher * publisher, const char *name)
 {
-	char *new_name = g_strdup("FIXME");
+	g_assert(NULL != name);
+	g_assert(NULL != share->priv->name);
 
-	if (share->priv->name == NULL || name == NULL) {
-		goto done;
-	}
+	g_warning ("Duplicate share name on mDNS; renaming share to %s", name);
 
-	if (strcmp (share->priv->name, name) == 0) {
-		g_warning ("Duplicate share name on mDNS");
+	_set_name (DMAP_SHARE (share), name);
 
-		_set_name (DMAP_SHARE (share), new_name);
-		g_free (new_name);
-	}
-
-done:
 	return;
 }
 

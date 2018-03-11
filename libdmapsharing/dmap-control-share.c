@@ -436,26 +436,22 @@ _mdns_remote_removed (DmapMdnsBrowser * browser,
 }
 
 DmapControlShare *
-dmap_control_share_new (const gchar * library_name,
-		DmapControlPlayer * player,
-		DmapDb * db, DmapContainerDb * container_db)
+dmap_control_share_new (const gchar *library_name,
+                        DmapControlPlayer *player,
+                        DmapDb *db,
+                        DmapContainerDb *container_db)
 {
-	DmapControlShare *share;
+	g_object_ref (db);
+	g_object_ref (container_db);
 
-	share = DMAP_CONTROL_SHARE (g_object_new (DMAP_TYPE_CONTROL_SHARE,
-					  "name", _get_dbid (),
-					  "library-name", library_name,
-					  "password", NULL,
-					  "db", db,
-					  "container-db", container_db,
-					  "player", G_OBJECT (player),
-					  "transcode-mimetype", NULL, NULL));
-
-	g_debug ("Starting DACP server");
-	dmap_share_server_start (DMAP_SHARE (share));
-	dmap_share_publish_start (DMAP_SHARE (share));
-
-	return share;
+	return DMAP_CONTROL_SHARE (g_object_new (DMAP_TYPE_CONTROL_SHARE,
+	                                        "name", _get_dbid (),
+	                                        "library-name", library_name,
+	                                        "password", NULL,
+	                                        "db", db,
+	                                        "container-db", container_db,
+	                                        "player", G_OBJECT (player),
+	                                        "transcode-mimetype", NULL, NULL));
 }
 
 void

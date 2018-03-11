@@ -140,7 +140,8 @@ create_service (struct DmapMdnsPublisherService *service,
 	ret = avahi_entry_group_add_service_strlst (publisher->
 						    priv->entry_group,
 						    AVAHI_IF_UNSPEC,
-						    AVAHI_PROTO_UNSPEC, 0,
+						    AVAHI_PROTO_UNSPEC,
+	                                            0,
 						    service->name,
 						    service->type_of_service,
 						    NULL, NULL, service->port,
@@ -164,7 +165,10 @@ create_service (struct DmapMdnsPublisherService *service,
 static gboolean
 create_services (DmapMdnsPublisher * publisher, GError ** error)
 {
-	GSList *ptr;
+	static int suffix = 0;
+	gchar *name;
+	GSList *ptr1, *ptr2;
+	struct DmapMdnsPublisherService *service1, *service2;
 	int ret;
 
 	if (publisher->priv->entry_group == NULL) {
@@ -190,8 +194,25 @@ create_services (DmapMdnsPublisher * publisher, GError ** error)
 		avahi_entry_group_reset (publisher->priv->entry_group);
 	}
 
-	for (ptr = publisher->priv->service; ptr; ptr = g_slist_next (ptr)) {
-		if (!create_service (ptr->data, publisher, error)) {
+	for (ptr1 = publisher->priv->service; ptr1; ptr1 = g_slist_next (ptr1)) {
+		service1 = ptr1->data;
+		name = service1->name;
+		for (ptr2 = publisher->priv->service; ptr2; ptr2 = g_slist_next (ptr2)) {
+			if (ptr1 == ptr2) {
+				continue;
+			}
+			service2 = ptr2->data;
+			if (!strcmp(service1->name, service2->name)
+			 && !strcmp(service1->type_of_service, service2->type_of_service)) {
+				name = g_strdup_printf("%s-%d", service1->name, suffix++);
+			}
+		}
+		if (strcmp(name, service1->name)) {
+			g_free(service1->name);
+			service1->name = name;
+			g_signal_emit (publisher, signals[NAME_COLLISION], 0, name);
+		}
+		if (!create_service (service1, publisher, error)) {
 			return FALSE;
 		}
 	}
