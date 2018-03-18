@@ -32,7 +32,7 @@
 
 struct _DmapMdnsBrowserPrivate
 {
-	DmapMdnsBrowserServiceType service_type;
+	DmapMdnsServiceType service_type;
 	DNSServiceRef sd_browse_ref;
 	GSList *services;
 	GSList *backlog;
@@ -45,7 +45,7 @@ typedef struct _ServiceContext
 	DmapMdnsBrowser *browser;
 	DNSServiceFlags flags;
 	uint32_t interface_index;
-	DmapMdnsBrowserService service;
+	DmapMdnsService *service;
 	gchar *domain;
 } ServiceContext;
 
@@ -70,25 +70,13 @@ dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
 }
 
-free_service (DmapMdnsBrowserService * service)
-{
-	g_assert (NULL != service);
-
-	g_free (service->service_name);
-	g_free (service->name);
-	g_free (service->host);
-	g_free (service->pair);
-	g_free (service);
-}
-
 static void
 service_context_free (ServiceContext *ctx)
 {
 	g_assert (NULL != ctx);
 	g_assert (NULL != ctx->browser);
 
-	free_service (&ctx->service);
-
+	g_object_unref (&ctx->service);
 	g_object_unref (ctx->browser);
 
 	g_free (ctx->domain);
@@ -100,20 +88,40 @@ signal_service_added (ServiceContext *context)
 {
 	g_assert (NULL != context);
 
-	DmapMdnsBrowserService *service;
+	gchar                           *service_name       = NULL;
+	gchar                           *name               = NULL;
+	gchar                           *host               = NULL;
+	uint16_t                         port               = 0;
+	gchar                           *pair               = NULL;
+	DmapMdnsServiceTransportProtocol transport_protocol = DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP;
+	gboolean                         password_protected = FALSE;
 
-	service = g_new0 (DmapMdnsBrowserService, 1);
+	DmapMdnsService *service;
+
+	g_object_get(context->service,
+	            "service-name", &service_name,
+	            "name", &name,
+	            "host", &host,
+	            "port", &port,
+	            "pair", &pair,
+	            "transport-protocol", transport_protocol,
+	            "password-protected", password_protected,
+	             NULL);
 
 	// FIXME: The name and service_name variables need to be renamed.
 	// Wait until working on DACP because I think this is when
 	// they are different. See Avahi code.
-	service->service_name = g_strdup (context->service.service_name);
-	service->name = g_strdup (context->service.name);
-	service->host = g_strdup (context->service.host);
-	service->port = context->service.port;
-	service->pair = g_strdup (context->service.pair);
-	service->password_protected = context->service.password_protected;
-	service->transport_protocol = DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL_TCP;
+	service = g_object_new(DMAP_TYPE_MDNS_SERVICE,
+	                      "service-name", service_name,
+	                      "name", name,
+	                      "host", host,
+	                      "port", port,
+	                      "pair", pair,
+	                      "transport-protocol", transport_protocol,
+	                      "password-protected", password_protected,
+	                       NULL);
+
+	service = g_new0 (DmapMdnsService, 1);
 
 	// add to the services list
 	context->browser->priv->services =
@@ -184,8 +192,9 @@ dns_service_browse_reply (DNSServiceRef sd_ref,
 	context->browser = g_object_ref (browser);
 	context->flags = flags;
 	context->interface_index = interface_index;
-	context->service.service_name = g_strdup (service_name);
 	context->domain = g_strdup (domain);
+	context->service = g_object_new(DMAP_TYPE_MDNS_SERVICE, NULL);
+	g_object_set(context->service, "service-name", service_name, NULL);
 
 	browser->priv->backlog = g_slist_prepend (browser->priv->backlog, context);
 
@@ -212,19 +221,21 @@ dns_host_resolve_reply (DNSServiceRef sd_ref,
 
 	switch(address->sa_family) {
 	case AF_INET: {
+		gchar host[INET_ADDRSTRLEN];
 		struct sockaddr_in *addr_in = (struct sockaddr_in *) address;
-		ctx->service.host = malloc(INET_ADDRSTRLEN);
-		inet_ntop(AF_INET, &(addr_in->sin_addr), ctx->service.host, INET_ADDRSTRLEN);
+		inet_ntop(AF_INET, &(addr_in->sin_addr), host, INET_ADDRSTRLEN);
+		g_object_set(&ctx->service, "host", host, NULL);
 		break;
 	}
 	case AF_INET6: {
+		gchar host[INET6_ADDRSTRLEN];
 		struct sockaddr_in6 *addr_in6 = (struct sockaddr_in6 *) address;
-		ctx->service.host = malloc(INET6_ADDRSTRLEN);
-		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), ctx->service.host, INET6_ADDRSTRLEN);
+		inet_ntop(AF_INET6, &(addr_in6->sin6_addr), host, INET6_ADDRSTRLEN);
+		g_object_set(&ctx->service, "host", host, NULL);
 		break;
 	}
 	default:
-		ctx->service.host = NULL;
+		g_object_set(&ctx->service, "host", NULL, NULL);
 		break;
 	}
 }
@@ -299,11 +310,15 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 
 	ctx->flags = flags;
 	ctx->interface_index = interface_index;
-	ctx->service.port = htons (port);
-	ctx->service.name = extract_name (name);
-	ctx->service.pair = NULL;
-	ctx->service.password_protected = FALSE;
+	g_object_set(ctx->service,
+	            "port", htons(port),
+	            "name", extract_name (name),
+	            "pair", NULL,
+	            "password-protected", FALSE,
+	             NULL);
 
+	g_error("FIXME: Not implemented");
+/*
 	DNSServiceErrorType err = DNSServiceGetAddrInfo (&ref,
 	                              0,
 	                              ctx->interface_index,
@@ -315,6 +330,7 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 		g_warning ("Error setting up DNS-SD address info handler");
 		service_context_free (ctx);
 	}
+*/
 
 	ctx->host_lookup_ref = ref;
 
@@ -381,13 +397,16 @@ browse_result_available_cb (GIOChannel * gio,
 	}
 
 	while (browser->priv->backlog) {
+		gchar *service_name;
 		DNSServiceRef ref;
 		ServiceContext *ctx = (ServiceContext *) browser->priv->backlog->data;
+
+		g_object_get(ctx->service, "service-name", &service_name, NULL);
 
 		err = DNSServiceResolve (&ref,
 		                         ctx->flags,
 		                         ctx->interface_index,
-		                         ctx->service.service_name,
+		                         service_name,
 		                         service_type_name[browser->priv->service_type],
 		                         ctx->domain,
 		                         (DNSServiceResolveReply)
@@ -442,10 +461,10 @@ dmap_mdns_browser_dispose (GObject * object)
 {
 	DmapMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
 	GSList *walk;
-	DmapMdnsBrowserService *service;
+	DmapMdnsService *service;
 
 	for (walk = browser->priv->services; NULL != walk; walk = walk->next) {
-		service = (DmapMdnsBrowserService *) walk->data;
+		service = (DmapMdnsService *) walk->data;
 		g_object_unref (service);
 	}
 
@@ -494,12 +513,12 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 }
 
 DmapMdnsBrowser *
-dmap_mdns_browser_new (DmapMdnsBrowserServiceType type)
+dmap_mdns_browser_new (DmapMdnsServiceType type)
 {
 	DmapMdnsBrowser *browser_object = 0;
 
-	g_return_val_if_fail (type >= DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID
-			      && type <= DMAP_MDNS_BROWSER_SERVICE_TYPE_LAST,
+	g_return_val_if_fail (type >= DMAP_MDNS_SERVICE_TYPE_INVALID
+			      && type <= DMAP_MDNS_SERVICE_TYPE_LAST,
 			      NULL);
 
 	browser_object = DMAP_MDNS_BROWSER (g_object_new
@@ -572,11 +591,11 @@ dmap_mdns_browser_get_services (DmapMdnsBrowser * browser)
 	return browser->priv->services;
 }
 
-DmapMdnsBrowserServiceType
+DmapMdnsServiceType
 dmap_mdns_browser_get_service_type (DmapMdnsBrowser * browser)
 {
 	g_return_val_if_fail (browser != NULL,
-			      DMAP_MDNS_BROWSER_SERVICE_TYPE_INVALID);
+			      DMAP_MDNS_SERVICE_TYPE_INVALID);
 
 	return browser->priv->service_type;
 }
