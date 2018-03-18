@@ -77,7 +77,7 @@ dmap_control_player_now_playing_record (DmapControlPlayer * player)
 		now_playing_record (player);
 }
 
-guchar *
+gchar *
 dmap_control_player_now_playing_artwork (DmapControlPlayer * player, guint width,
 				 guint height)
 {

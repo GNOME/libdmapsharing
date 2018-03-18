@@ -853,7 +853,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		   == 0) {
 		guint width = 320;
 		guint height = 320;
-		guchar *artwork_filename;
+		gchar *artwork_filename;
 		gchar *buffer;
 		gsize buffer_len;
 
@@ -865,8 +865,8 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		}
 		artwork_filename =
 			dmap_control_player_now_playing_artwork (dmap_control_share->
-							 priv->player, width,
-							 height);
+			                                         priv->player, width,
+		                                                 height);
 		if (!artwork_filename) {
 			g_debug ("No artwork for currently playing song");
 			soup_message_set_status (message,
@@ -875,7 +875,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		}
 #ifdef HAVE_GDKPIXBUF
 		GdkPixbuf *artwork =
-			gdk_pixbuf_new_from_file_at_scale ((char *) artwork_filename,
+			gdk_pixbuf_new_from_file_at_scale (artwork_filename,
 							   width, height,
 							   TRUE, NULL);
 

@@ -77,8 +77,8 @@ struct _DmapControlPlayerInterface
 	GTypeInterface parent_class;
 
 	DmapAvRecord *(*now_playing_record) (DmapControlPlayer * player);
-	guchar *(*now_playing_artwork) (DmapControlPlayer * player,
-	                                guint width, guint height);
+	gchar *(*now_playing_artwork) (DmapControlPlayer * player,
+	                               guint width, guint height);
 	void (*play_pause) (DmapControlPlayer * player);
 	void (*pause) (DmapControlPlayer * player);
 	void (*next_item) (DmapControlPlayer * player);
@@ -104,8 +104,8 @@ DmapAvRecord *dmap_control_player_now_playing_record (DmapControlPlayer * player
  * @width: width
  * @height: height
  */
-guchar *dmap_control_player_now_playing_artwork (DmapControlPlayer * player,
-                                         guint width, guint height);
+gchar *dmap_control_player_now_playing_artwork (DmapControlPlayer * player,
+                                                guint width, guint height);
 
 /**
  * dmap_control_player_play_pause:
