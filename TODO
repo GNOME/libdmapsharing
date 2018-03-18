@@ -31,10 +31,6 @@ daap_record_read, unless I change API (see also dmapd.c)
 
 = Long term ====================================================================
 
-API Changes:
-	now_playing_artwork seems to return a filename, so should return a gchar *, not guchar *?
-	Allow single client to more easily make use of both DAAP and DPAP (embed type in browser service?)
-
 Mike: Audit remaining GSoC patch:
 --- dmap-db.c
 --- dmap-share.c
