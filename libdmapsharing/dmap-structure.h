@@ -73,8 +73,8 @@ struct _DmapContentCodeDefinition
 	DmapType type;
 };
 
-const DmapContentCodeDefinition * dmap_content_codes (guint * number);
-gint32 dmap_content_code_string_as_int32 (const gchar * str);
+const DmapContentCodeDefinition * dmap_structure_content_codes (guint * number);
+gint32 dmap_structure_cc_string_as_int32 (const gchar * str);
 const gchar *dmap_content_code_name (DmapContentCode code);
 DmapType dmap_content_code_dmap_type (DmapContentCode code);
 const gchar *dmap_content_code_string (DmapContentCode code);

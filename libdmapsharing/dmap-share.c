@@ -1007,7 +1007,7 @@ dmap_share_content_codes (DmapShare * share,
 
 	g_debug ("Path is %s.", path);
 
-	defs = dmap_content_codes (&num_defs);
+	defs = dmap_structure_content_codes (&num_defs);
 
 	mccr = dmap_structure_add (NULL, DMAP_CC_MCCR);
 	dmap_structure_add (mccr, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
@@ -1017,9 +1017,7 @@ dmap_share_content_codes (DmapShare * share,
 
 		mdcl = dmap_structure_add (mccr, DMAP_CC_MDCL);
 		dmap_structure_add (mdcl, DMAP_CC_MCNM,
-				    dmap_content_code_string_as_int32 (defs
-								       [i].
-								       string));
+				    dmap_structure_cc_string_as_int32 (defs[i].string));
 		dmap_structure_add (mdcl, DMAP_CC_MCNA, defs[i].name);
 		dmap_structure_add (mdcl, DMAP_CC_MCTY,
 				    (gint32) defs[i].type);
