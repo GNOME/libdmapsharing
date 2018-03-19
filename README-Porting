@@ -50,8 +50,8 @@ instead of "Iface".
 
 	DACPPlayState became DmapControlPlayState.
 
-(5)  The new API replaces the use of GHFunc with DMAPIdRecordFunc and
-DMAPContainerIdFunc.
+(5)  The new API replaces the use of GHFunc with DmapIdRecordFunc and
+DmapContainerIdFunc.
 
 (6)  Setting an object property using g_object_set causes the object to
 duplicate the passed value.  Thus the caller maintains control of the
@@ -71,11 +71,11 @@ implementations of these interfaces should now:
 
 	(c) use GArray instead of GByteArray.
 
-(9)  The "base-uri" property in the DMAPConnection class is now a boxed
+(9)  The "base-uri" property in the DmapConnection class is now a boxed
 type. The real type is SoupURI.
 
-(10) The "db" and "container-db" properties in DMAPShare are now handled
+(10) The "db" and "container-db" properties in DmapShare are now handled
 as object types instead of pointer types.
 
-(11) The properties contained in a DMAPMdnsService must now be accessed
+(11) The properties contained in a DmapMdnsService must now be accessed
 using g_object_get.
