@@ -1,11 +1,13 @@
 Name: libdmapsharing4
-Version: 3.9.0
+Version: 3.9.1
 Release: 1%{?dist}
-License: LGPLv2+
-Source: http://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
-URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
+
 Group: Development/Libraries
+License: LGPLv2+
+URL: https://www.flyn.org/projects/libdmapsharing/
+Source0: https://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
+
 BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32
 BuildRequires: gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
 BuildRequires: pkgconfig(avahi-client) pkgconfig(avahi-glib)
@@ -14,10 +16,6 @@ BuildRequires: vala-tools libgee-devel
 %description 
 libdmapsharing implements the DMAP protocols. This includes support for
 DAAP and DPAP.
-
-%files 
-%{_libdir}/libdmapsharing-4.0.so.*
-%doc AUTHORS COPYING ChangeLog README
 
 %package devel
 Summary: Libraries/include files for libdmapsharing
@@ -29,14 +27,6 @@ libdmapsharing implements the DMAP protocols. This includes support for
 DAAP and DPAP.  This package provides the libraries, include files, and
 other resources needed for developing applications using libdmapsharing.
 
-%files devel
-%{_libdir}/pkgconfig/libdmapsharing-4.0.pc
-%{_includedir}/libdmapsharing-4.0/
-%{_libdir}/libdmapsharing-4.0.so
-%{_libdir}/girepository-1.0/Dmap-4.0.typelib
-%{_datadir}/gtk-doc/html/libdmapsharing-4.0
-%{_datadir}/gir-1.0/Dmap-4.0.gir
-
 %package vala
 Summary: Vala language bindings for libdmapsharing
 Group: Development/Libraries
@@ -47,9 +37,6 @@ libdmapsharing implements the DMAP protocols. This includes support for
 DAAP and DPAP.  This package provides the Vala language bindings for
 libdmapsharing.
 
-%files vala
-%{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
-
 %prep
 %setup -q -n libdmapsharing-%{version}
 
@@ -58,16 +45,48 @@ libdmapsharing.
 make %{?_smp_mflags}
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
-rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-4.0.la
+%make_install
+rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
 
+%files
+%{_libdir}/libdmapsharing-4.0.so.*
+
+%doc AUTHORS ChangeLog README
+%license COPYING
+
+%files devel
+%{_libdir}/pkgconfig/libdmapsharing-4.0.pc
+%{_includedir}/libdmapsharing-4.0/
+%{_libdir}/libdmapsharing-4.0.so
+%{_libdir}/girepository-1.0/Dmap-4.0.typelib
+%{_datadir}/gtk-doc/html/libdmapsharing-4.0
+%{_datadir}/gir-1.0/Dmap-4.0.gir
+
+%files vala
+%{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
+
 %changelog
-* Sun Nov 19 2017 W. Michael Petullo <mike[@]flyn.org> - 3.9.0-1
+* Sun Mar 18 2018 W. Michael Petullo <mike[@]flyn.org> - 3.9.1-1
 - new upstream version with new API
+
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Fri Nov 11 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.37-1
+- new upstream version
 
 * Mon Aug 01 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.36-1
 - new upstream version to fix Bugzilla #1158652
