@@ -27,7 +27,7 @@ private class ValaDacpPlayer : GLib.Object, Dmap.ControlPlayer {
 		return null;
 	}
 
-	unowned uchar[] now_playing_artwork (uint width, uint height) {
+	unowned string now_playing_artwork (uint width, uint height) {
 		stdout.printf ("Now playing artwork request received\n");
 		return null;
 	}
