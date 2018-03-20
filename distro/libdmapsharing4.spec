@@ -3,7 +3,6 @@ Version: 3.9.1
 Release: 1%{?dist}
 Summary: A DMAP client and server library
 
-Group: Development/Libraries
 License: LGPLv2+
 URL: https://www.flyn.org/projects/libdmapsharing/
 Source0: https://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
@@ -20,7 +19,7 @@ DAAP and DPAP.
 %package devel
 Summary: Libraries/include files for libdmapsharing
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -30,7 +29,7 @@ other resources needed for developing applications using libdmapsharing.
 %package vala
 Summary: Vala language bindings for libdmapsharing
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
+Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %description vala
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -48,12 +47,12 @@ make %{?_smp_mflags}
 %make_install
 rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 %files
 %{_libdir}/libdmapsharing-4.0.so.*
+%{_libdir}/girepository-1.0/
+%{_libdir}/girepository-1.0/Dmap-4.0.typelib
 
 %doc AUTHORS ChangeLog README
 %license COPYING
@@ -62,11 +61,13 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 %{_libdir}/pkgconfig/libdmapsharing-4.0.pc
 %{_includedir}/libdmapsharing-4.0/
 %{_libdir}/libdmapsharing-4.0.so
-%{_libdir}/girepository-1.0/Dmap-4.0.typelib
 %{_datadir}/gtk-doc/html/libdmapsharing-4.0
+%{_datadir}/gir-1.0/
 %{_datadir}/gir-1.0/Dmap-4.0.gir
 
 %files vala
+%{_datadir}/vala/
+%{_datadir}/vala/vapi/
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %changelog
