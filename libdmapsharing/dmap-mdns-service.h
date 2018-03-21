@@ -69,10 +69,8 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DMAP_MDNS_SERVICE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_SERVICE, DmapMdnsServiceClass))
-typedef struct _DmapMdnsService DmapMdnsService;
-typedef struct _DmapMdnsServiceClass DmapMdnsServiceClass;
+
 typedef struct _DmapMdnsServicePrivate DmapMdnsServicePrivate;
-typedef struct _DmapMdnsServiceService DmapMdnsServiceService;
 
 /**
  * DmapMdnsServiceType:
@@ -113,17 +111,17 @@ static const char * const service_type_name[] = {
 	"_raop._tcp"
 };
 
-struct _DmapMdnsServiceClass
+typedef struct
 {
 	GObjectClass parent_class;
-};
+} DmapMdnsServiceClass;
 
-struct _DmapMdnsService
+typedef struct
 {
 	GObject object;
 
 	DmapMdnsServicePrivate *priv;
-};
+} DmapMdnsService;
 
 GType dmap_mdns_service_get_type (void);
 

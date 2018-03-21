@@ -74,8 +74,7 @@ G_BEGIN_DECLS
  * Returns: pointer to object class structure.
  */
 #define DMAP_MDNS_BROWSER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserClass))
-typedef struct _DmapMdnsBrowser DmapMdnsBrowser;
-typedef struct _DmapMdnsBrowserClass DmapMdnsBrowserClass;
+
 typedef struct _DmapMdnsBrowserPrivate DmapMdnsBrowserPrivate;
 
 typedef enum
@@ -84,7 +83,14 @@ typedef enum
 	DMAP_MDNS_BROWSER_ERROR_FAILED,
 } DmapMdnsBrowserError;
 
-struct _DmapMdnsBrowserClass
+typedef struct
+{
+	GObject object;
+
+	DmapMdnsBrowserPrivate *priv;
+} DmapMdnsBrowser;
+
+typedef struct
 {
 	GObjectClass parent_class;
 
@@ -92,14 +98,7 @@ struct _DmapMdnsBrowserClass
 			       DmapMdnsService * service);
 	void (*service_removed) (DmapMdnsBrowser * browser,
 				 DmapMdnsService * service);
-};
-
-struct _DmapMdnsBrowser
-{
-	GObject object;
-
-	DmapMdnsBrowserPrivate *priv;
-};
+} DmapMdnsBrowserClass;
 
 #define DMAP_MDNS_BROWSER_ERROR dmap_mdns_browser_error_quark ()
 

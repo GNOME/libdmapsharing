@@ -112,7 +112,7 @@ struct _DacpListenerPrivate {
 
 
 static gpointer vala_dacp_player_parent_class = NULL;
-static DmapControlPlayerInterface * vala_dacp_player_dmap_control_player_parent_iface = NULL;
+static DmapControlPlayerIface * vala_dacp_player_dmap_control_player_parent_iface = NULL;
 static gpointer dacp_listener_parent_class = NULL;
 
 GType vala_dacp_player_get_type (void) G_GNUC_CONST;
@@ -239,7 +239,7 @@ static void vala_dacp_player_class_init (ValaDacpPlayerClass * klass) {
 }
 
 
-static void vala_dacp_player_dmap_control_player_interface_init (DmapControlPlayerInterface * iface) {
+static void vala_dacp_player_dmap_control_player_interface_init (DmapControlPlayerIface * iface) {
 	vala_dacp_player_dmap_control_player_parent_iface = g_type_interface_peek_parent (iface);
 	iface->now_playing_record = (DmapAvRecord* (*) (DmapControlPlayer *)) vala_dacp_player_real_now_playing_record;
 	iface->now_playing_artwork = (const gchar* (*) (DmapControlPlayer *, guint, guint)) vala_dacp_player_real_now_playing_artwork;
