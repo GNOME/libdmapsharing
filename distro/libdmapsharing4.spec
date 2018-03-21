@@ -51,7 +51,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 
 %files
 %{_libdir}/libdmapsharing-4.0.so.*
-%{_libdir}/girepository-1.0/
+%dir %{_libdir}/girepository-1.0/
 %{_libdir}/girepository-1.0/Dmap-4.0.typelib
 
 %doc AUTHORS ChangeLog README
@@ -62,12 +62,12 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 %{_includedir}/libdmapsharing-4.0/
 %{_libdir}/libdmapsharing-4.0.so
 %{_datadir}/gtk-doc/html/libdmapsharing-4.0
-%{_datadir}/gir-1.0/
+%dir %{_datadir}/gir-1.0/
 %{_datadir}/gir-1.0/Dmap-4.0.gir
 
 %files vala
-%{_datadir}/vala/
-%{_datadir}/vala/vapi/
+%dir %{_datadir}/vala/
+%dir %{_datadir}/vala/vapi/
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %changelog
