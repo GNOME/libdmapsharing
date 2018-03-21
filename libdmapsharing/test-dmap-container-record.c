@@ -25,7 +25,7 @@ enum {
 	PROP_NAME
 };
 
-static DmapDb *entries = NULL;
+static DmapDb *_entries = NULL;
 
 static void
 test_dmap_container_record_set_property (GObject *object,
@@ -82,13 +82,13 @@ test_dmap_container_record_get_entry_count (DmapContainerRecord *record)
 DmapDb *
 test_dmap_container_record_get_entries (DmapContainerRecord *record)
 {
-	return g_object_ref (entries);
+	return g_object_ref (_entries);
 }
 
 static void
 test_dmap_container_record_init (TestDmapContainerRecord *record)
 {
-	entries = DMAP_DB (test_dmap_db_new ());
+	_entries = DMAP_DB (test_dmap_db_new ());
 }
 
 static void

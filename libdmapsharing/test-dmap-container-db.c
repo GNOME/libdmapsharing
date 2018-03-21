@@ -24,13 +24,13 @@
  * record.  Normally, one would befine some data structure to contain
  * multiple records.
  */
-static DmapContainerRecord *record = NULL;
+static DmapContainerRecord *_record = NULL;
 
 static DmapContainerRecord *
 test_dmap_container_db_lookup_by_id (DmapContainerDb *db, guint id)
 {
 	/* In reality, lookup the proper record and return it. */
-	return g_object_ref (record);
+	return g_object_ref (_record);
 }
 
 static void
@@ -39,7 +39,7 @@ test_dmap_container_db_foreach (DmapContainerDb *db,
 				gpointer data)
 {
 	/* In reality, pull each record from the db and execute func on it. */
-        func (1, record, data);
+        func (1, _record, data);
 }
 
 static gint64
@@ -82,7 +82,7 @@ test_dmap_container_db_new (DmapContainerRecord *r)
 
 	db = TEST_DMAP_CONTAINER_DB (g_object_new (TYPE_TEST_DMAP_CONTAINER_DB, NULL));
 
-	record = r;
+	_record = r;
 
 	return db;
 }
