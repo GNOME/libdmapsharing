@@ -61,7 +61,7 @@ struct _ValaDmapContainerDbPrivate {
 
 
 static gpointer vala_dmap_container_db_parent_class = NULL;
-static DmapContainerDbIface * vala_dmap_container_db_dmap_container_db_parent_iface = NULL;
+static DmapContainerDbInterface * vala_dmap_container_db_dmap_container_db_parent_iface = NULL;
 
 GType vala_dmap_container_db_get_type (void) G_GNUC_CONST;
 #define VALA_DMAP_CONTAINER_DB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), TYPE_VALA_DMAP_CONTAINER_DB, ValaDmapContainerDbPrivate))
@@ -171,7 +171,7 @@ static void vala_dmap_container_db_class_init (ValaDmapContainerDbClass * klass)
 }
 
 
-static void vala_dmap_container_db_dmap_container_db_interface_init (DmapContainerDbIface * iface) {
+static void vala_dmap_container_db_dmap_container_db_interface_init (DmapContainerDbInterface * iface) {
 	vala_dmap_container_db_dmap_container_db_parent_iface = g_type_interface_peek_parent (iface);
 	iface->count = (gint64 (*) (DmapContainerDb *)) vala_dmap_container_db_real_count;
 	iface->foreach = (void (*) (DmapContainerDb *, DmapIdContainerRecordFunc, void*)) vala_dmap_container_db_real_foreach;

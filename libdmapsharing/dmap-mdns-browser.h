@@ -94,10 +94,10 @@ typedef struct
 {
 	GObjectClass parent_class;
 
-	void (*service_added) (DmapMdnsBrowser * browser,
-			       DmapMdnsService * service);
-	void (*service_removed) (DmapMdnsBrowser * browser,
-				 DmapMdnsService * service);
+	void (*service_added) (DmapMdnsBrowser *browser,
+			       DmapMdnsService *service);
+	void (*service_removed) (DmapMdnsBrowser *browser,
+				 DmapMdnsService *service);
 } DmapMdnsBrowserClass;
 
 #define DMAP_MDNS_BROWSER_ERROR dmap_mdns_browser_error_quark ()
