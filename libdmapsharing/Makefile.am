@@ -208,6 +208,18 @@ if HAVE_PEDANSEE
 	echo    "[ignore-entirely]" >> pedansee.conf
 	echo    "	# Ignore CPP-generated GObject code." >> pedansee.conf
 	echo -n "	name = " >> pedansee.conf
+	echo -n  	      "dmap_mdns_browser_new;" >> pedansee.conf
+	echo -n  	      "dmap_mdns_browser_start;" >> pedansee.conf
+	echo -n  	      "dmap_mdns_browser_stop;" >> pedansee.conf
+	echo -n  	      "dmap_mdns_browser_error_quark;" >> pedansee.conf
+	echo -n  	      "dmap_mdns_browser_get_services;" >> pedansee.conf
+	echo -n  	      "dmap_mdns_browser_get_service_type;" >> pedansee.conf
+	echo -n		      "dmap_mdns_publisher_new;" >> pedansee.conf
+	echo -n		      "dmap_mdns_publisher_error_quark;" >> pedansee.conf
+	echo -n		      "dmap_mdns_publisher_rename_at_port;" >> pedansee.conf
+	echo -n		      "dmap_mdns_publisher_publish;" >> pedansee.conf
+	echo -n		      "dmap_mdns_publisher_withdraw;" >> pedansee.conf
+	echo -n		      "dmap_connection_get;" >> pedansee.conf
 	for i in $$(grep G_DEFINE_INTERFACE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
 		echo -n $${i}_default_init\;; \
 		echo -n $${i}_get_type\;; \
@@ -241,6 +253,15 @@ if HAVE_PEDANSEE
 	done
 	set -e; for i in $(libdmapsharinginclude_HEADERS) \
 	                 $(noinst_HEADERS); do \
+		if [ $$i = dmap-enums.h ]; then # Skip this generated code. \
+			continue; \
+		fi; \
+		if [ $$i = dmap-marshal.h ]; then # Skip this generated code. \
+			continue; \
+		fi; \
+		if [ $$i = dmap-share-private.h ]; then # Skip this generated code. \
+			continue; \
+		fi; \
 		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_4_0_la_CFLAGS); \
 	done
 endif

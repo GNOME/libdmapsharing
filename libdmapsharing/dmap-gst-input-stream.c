@@ -52,7 +52,7 @@ struct DmapGstInputStreamPrivate
 					   DmapGstInputStreamPrivate))
 
 static goffset
-dmap_gst_input_stream_tell (GSeekable * seekable)
+_tell (GSeekable * seekable)
 {
 	/* FIXME: implement return current position in stream. */
 	g_error ("Not implemented");
@@ -60,17 +60,18 @@ dmap_gst_input_stream_tell (GSeekable * seekable)
 }
 
 static gboolean
-dmap_gst_input_stream_can_seek (GSeekable * seekable)
+_can_seek (GSeekable * seekable)
 {
 	return TRUE;
 }
 
 static gboolean
-dmap_gst_input_stream_seek (GSeekable * seekable,
-			    goffset offset,
-			    GSeekType type,
-			    GCancellable * cacellable, GError ** error)
+_seek (GSeekable * seekable,
+       goffset offset,
+       GSeekType type,
+       GCancellable * cacellable, GError ** error)
 {
+	gboolean ok = FALSE;
 	// FIXME: implement: DmapGstInputStream *stream;
 	// FIXME: implement: goffset absolute;
 
@@ -96,8 +97,7 @@ dmap_gst_input_stream_seek (GSeekable * seekable,
 			     G_IO_ERROR,
 			     G_IO_ERROR_INVALID_ARGUMENT,
 			     "Invalid GSeekType supplied");
-
-		return FALSE;
+		goto done;
 	}
 
 	/* FIXME: implement:
@@ -106,7 +106,7 @@ dmap_gst_input_stream_seek (GSeekable * seekable,
 	 *              G_IO_ERROR,
 	 *              G_IO_ERROR_INVALID_ARGUMENT,
 	 *              _("Invalid seek request"));
-	 *      return FALSE;
+	 *	goto done;
 	 * }
 	 */
 
@@ -119,23 +119,26 @@ dmap_gst_input_stream_seek (GSeekable * seekable,
 	 * G_IO_ERROR,
 	 * G_IO_ERROR_FAILED,
 	 * "Seek failed");
-	 * return FALSE;
+	 * goto done;
 	 * }
 	 */
 
-	return TRUE;
+	ok = TRUE;
+
+done:
+	return ok;
 }
 
 static gboolean
-dmap_gst_input_stream_can_truncate (GSeekable * seekable)
+_can_truncate (GSeekable * seekable)
 {
 	return FALSE;
 }
 
 static gboolean
-dmap_gst_input_stream_truncate (GSeekable * seekable,
-				goffset offset,
-				GCancellable * cancellable, GError ** error)
+_truncate (GSeekable * seekable,
+           goffset offset,
+           GCancellable * cancellable, GError ** error)
 {
 	g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
 		     "Cannot truncate DmapGstInputStream");
@@ -143,13 +146,13 @@ dmap_gst_input_stream_truncate (GSeekable * seekable,
 }
 
 static void
-dmap_gst_input_stream_seekable_iface_init (GSeekableIface * iface)
+_seekable_iface_init (GSeekableIface * iface)
 {
-	iface->tell = dmap_gst_input_stream_tell;
-	iface->can_seek = dmap_gst_input_stream_can_seek;
-	iface->seek = dmap_gst_input_stream_seek;
-	iface->can_truncate = dmap_gst_input_stream_can_truncate;
-	iface->truncate_fn = dmap_gst_input_stream_truncate;
+	iface->tell = _tell;
+	iface->can_seek = _can_seek;
+	iface->seek = _seek;
+	iface->can_truncate = _can_truncate;
+	iface->truncate_fn = _truncate;
 }
 
 void
@@ -270,16 +273,16 @@ dmap_gst_input_stream_new (const gchar * transcode_mimetype,
 }
 
 static gssize
-min (gssize a, gssize b)
+_min (gssize a, gssize b)
 {
 	return a < b ? a : b;
 }
 
 static gssize
-dmap_gst_input_stream_read (GInputStream * stream,
-			    void *buffer,
-			    gsize count,
-			    GCancellable * cancellable, GError ** error)
+_read (GInputStream * stream,
+       void *buffer,
+       gsize count,
+       GCancellable * cancellable, GError ** error)
 {
 	int i;
 	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
@@ -301,7 +304,7 @@ dmap_gst_input_stream_read (GInputStream * stream,
 		/* Depending on timing, more data may have been written
 		 * since check: do not pull more than count:
 		 */
-		count = min (count, g_queue_get_length (gst_stream->priv->buffer));
+		count = _min (count, g_queue_get_length (gst_stream->priv->buffer));
 	}
 
 	for (i = 0; i < count; i++) {
@@ -309,10 +312,11 @@ dmap_gst_input_stream_read (GInputStream * stream,
 			GPOINTER_TO_INT (g_queue_pop_head (gst_stream->priv->buffer));
 	}
 
-	if (gst_stream->priv->write_request > count)
+	if (gst_stream->priv->write_request > count) {
 		gst_stream->priv->write_request -= count;
-	else
+	} else {
 		gst_stream->priv->write_request = 0;
+	}
 
 	if (gst_stream->priv->write_request <= 0) {
 		g_cond_signal (&gst_stream->priv->buffer_write_ready);
@@ -324,27 +328,26 @@ dmap_gst_input_stream_read (GInputStream * stream,
 }
 
 static gssize
-dmap_gst_input_stream_skip (GInputStream * stream,
-			    gsize count,
-			    GCancellable * cancellable, GError ** error)
+_skip (GInputStream * stream, gsize count, GCancellable * cancellable,
+       GError ** error)
 {
 	g_error ("Not implemented");
 	return 0;
 }
 
 static void
-dmap_gst_input_stream_kill_pipeline (DmapGstInputStream * stream)
+_kill_pipeline (DmapGstInputStream * stream)
 {
 	DMAP_GST_INPUT_STREAM_GET_CLASS (stream)->kill_pipeline (stream);
 }
 
 static gboolean
-dmap_gst_input_stream_close (GInputStream * stream,
-			     GCancellable * cancellable, GError ** error)
+_close (GInputStream * stream,
+        GCancellable * cancellable, GError ** error)
 {
 	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
 
-	dmap_gst_input_stream_kill_pipeline (gst_stream);
+	_kill_pipeline (gst_stream);
 
 	g_mutex_lock (&gst_stream->priv->buffer_mutex);
 
@@ -357,54 +360,54 @@ dmap_gst_input_stream_close (GInputStream * stream,
 }
 
 static gssize
-dmap_gst_input_stream_read_finish (GInputStream * stream,
-				   GAsyncResult * result, GError ** error)
+_read_finish (GInputStream * stream,
+              GAsyncResult * result, GError ** error)
 {
 	g_error ("Not implemented");
 	return 0;
 }
 
 static gssize
-dmap_gst_input_stream_skip_finish (GInputStream * stream,
-				   GAsyncResult * result, GError ** error)
+_skip_finish (GInputStream * stream,
+              GAsyncResult * result, GError ** error)
 {
 	g_error ("Not implemented");
 	return 0;
 }
 
 static void
-dmap_gst_input_stream_close_async (GInputStream * stream,
-				   int io_priority,
-				   GCancellable * cancellabl,
-				   GAsyncReadyCallback callback,
-				   gpointer data)
+_close_async (GInputStream * stream,
+              int io_priority,
+              GCancellable * cancellabl,
+              GAsyncReadyCallback callback,
+              gpointer data)
 {
 }
 
 static void
-dmap_gst_input_stream_read_async (GInputStream * stream,
-				  void *buffer,
-				  gsize count,
-				  int io_priority,
-				  GCancellable * cancellable,
-				  GAsyncReadyCallback callback,
-				  gpointer user_data)
+_read_async (GInputStream * stream,
+             void *buffer,
+             gsize count,
+             int io_priority,
+             GCancellable * cancellable,
+             GAsyncReadyCallback callback,
+             gpointer user_data)
 {
 }
 
 static void
-dmap_gst_input_stream_skip_async (GInputStream * stream,
-				  gsize count,
-				  int io_priority,
-				  GCancellable * cancellabl,
-				  GAsyncReadyCallback callback,
-				  gpointer datae)
+_skip_async (GInputStream * stream,
+             gsize count,
+             int io_priority,
+             GCancellable * cancellabl,
+             GAsyncReadyCallback callback,
+             gpointer datae)
 {
 }
 
 static gboolean
-dmap_gst_input_stream_close_finish (GInputStream * stream,
-				    GAsyncResult * result, GError ** error)
+_close_finish (GInputStream * stream,
+               GAsyncResult * result, GError ** error)
 {
 	g_error ("Not implemented");
 	return FALSE;
@@ -418,15 +421,15 @@ dmap_gst_input_stream_class_init (DmapGstInputStreamClass * klass)
 	g_type_class_add_private (klass, sizeof (DmapGstInputStreamPrivate));
 
 	istream_class = G_INPUT_STREAM_CLASS (klass);
-	istream_class->read_fn = dmap_gst_input_stream_read;
-	istream_class->skip = dmap_gst_input_stream_skip;
-	istream_class->close_fn = dmap_gst_input_stream_close;
-	istream_class->read_async = dmap_gst_input_stream_read_async;
-	istream_class->read_finish = dmap_gst_input_stream_read_finish;
-	istream_class->skip_async = dmap_gst_input_stream_skip_async;
-	istream_class->skip_finish = dmap_gst_input_stream_skip_finish;
-	istream_class->close_async = dmap_gst_input_stream_close_async;
-	istream_class->close_finish = dmap_gst_input_stream_close_finish;
+	istream_class->read_fn = _read;
+	istream_class->skip = _skip;
+	istream_class->close_fn = _close;
+	istream_class->read_async = _read_async;
+	istream_class->read_finish = _read_finish;
+	istream_class->skip_async = _skip_async;
+	istream_class->skip_finish = _skip_finish;
+	istream_class->close_async = _close_async;
+	istream_class->close_finish = _close_finish;
 }
 
 static void
@@ -450,4 +453,4 @@ dmap_gst_input_stream_init (DmapGstInputStream * stream)
 G_DEFINE_TYPE_WITH_CODE (DmapGstInputStream, dmap_gst_input_stream,
 			 G_TYPE_INPUT_STREAM,
 			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
-						dmap_gst_input_stream_seekable_iface_init));
+						_seekable_iface_init));

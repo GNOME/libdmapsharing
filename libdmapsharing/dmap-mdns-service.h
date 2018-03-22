@@ -103,7 +103,7 @@ typedef enum
 	DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_LAST = DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_UDP
 } DmapMdnsServiceTransportProtocol;
 
-static const char * const service_type_name[] = {
+static const char * const _service_type_name[] = {
 	NULL,
 	"_daap._tcp",
 	"_dpap._tcp",

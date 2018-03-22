@@ -233,8 +233,8 @@ dmap_mdns_browser_start (DmapMdnsBrowser * browser, GError ** error)
 		avahi_service_browser_new (browser->priv->client,
 					   AVAHI_IF_UNSPEC,
 					   AVAHI_PROTO_UNSPEC,
-					   service_type_name[browser->
-							     priv->service_type],
+					   _service_type_name[browser->
+		                                              priv->service_type],
 					   NULL,
 #ifdef HAVE_AVAHI_0_6
 					   0,
@@ -465,9 +465,8 @@ dmap_mdns_browser_resolve (DmapMdnsBrowser * browser,
 						       AVAHI_IF_UNSPEC,
 						       AVAHI_PROTO_INET,
 						       name,
-						       service_type_name
-						       [browser->
-							priv->service_type],
+						       _service_type_name
+						       [browser->priv->service_type],
 						       domain,
 						       AVAHI_PROTO_UNSPEC,
 #ifdef HAVE_AVAHI_0_6

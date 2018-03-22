@@ -40,17 +40,18 @@ enum {
 	LAST_SIGNAL
 };
 
-static guint signals [LAST_SIGNAL] = { 0, };
+static guint _signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DmapMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
 
-static gpointer publisher_object = NULL;
+static gpointer _publisher_object = NULL;
 
 GQuark
 dmap_mdns_publisher_error_quark (void)
 {        static GQuark quark = 0;
-        if (!quark)
+        if (!quark) {
                 quark = g_quark_from_static_string ("dmap_mdns_publisher_error");
+	}
 
         return quark;
 }
@@ -145,13 +146,13 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
                              "%s: %d",
                              "Error publishing via DNSSD", dns_err);
 		if (dns_err == kDNSServiceErr_NameConflict) {
-			g_signal_emit (publisher, signals[NAME_COLLISION], 0, publisher->priv->name);
+			g_signal_emit (publisher, _signals[NAME_COLLISION], 0, publisher->priv->name);
 		}
 		fnval = FALSE;
 		goto done;
         }
 
-	g_signal_emit (publisher, signals[PUBLISHED], 0, publisher->priv->name);
+	g_signal_emit (publisher, _signals[PUBLISHED], 0, publisher->priv->name);
 
 done:
 	g_free(txt_record);
@@ -170,10 +171,10 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
 }
 
 static void
-dmap_mdns_publisher_set_property (GObject         *object,
-                                     guint         prop_id,
-                                     const GValue *value,
-                                     GParamSpec   *pspec)
+_set_property (GObject      *object,
+               guint         prop_id,
+               const GValue *value,
+               GParamSpec   *pspec)
 {
         switch (prop_id) {
         default:
@@ -183,10 +184,10 @@ dmap_mdns_publisher_set_property (GObject         *object,
 }
 
 static void
-dmap_mdns_publisher_get_property (GObject        *object,
-                                     guint        prop_id,
-                                     GValue      *value,
-                                     GParamSpec  *pspec)
+_get_property (GObject    *object,
+               guint       prop_id,
+               GValue     *value,
+               GParamSpec *pspec)
 {
         switch (prop_id) {
         default:
@@ -196,12 +197,12 @@ dmap_mdns_publisher_get_property (GObject        *object,
 }
 
 static void
-dmap_mdns_publisher_finalize (GObject *object)
+_finalize (GObject *object)
 {
         DmapMdnsPublisher *publisher;
 
-        g_return_if_fail (object != NULL);
-        g_return_if_fail (IS_DMAP_MDNS_PUBLISHER (object));
+	g_assert(NULL != object);
+	g_assert(IS_DMAP_MDNS_PUBLISHER(object));
 
         publisher = DMAP_MDNS_PUBLISHER (object);
 
@@ -217,11 +218,11 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
 {
         GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-        object_class->finalize     = dmap_mdns_publisher_finalize;
-        object_class->get_property = dmap_mdns_publisher_get_property;
-        object_class->set_property = dmap_mdns_publisher_set_property;
+        object_class->finalize     = _finalize;
+        object_class->get_property = _get_property;
+        object_class->set_property = _set_property;
 
-	signals [PUBLISHED] =
+	_signals [PUBLISHED] =
                 g_signal_new ("published",
                               G_TYPE_FROM_CLASS (object_class),
                               G_SIGNAL_RUN_LAST,
@@ -231,7 +232,7 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
                               g_cclosure_marshal_VOID__STRING,
                               G_TYPE_NONE,
                               1, G_TYPE_STRING);
-        signals [NAME_COLLISION] =
+        _signals [NAME_COLLISION] =
                 g_signal_new ("name-collision",
                               G_TYPE_FROM_CLASS (object_class),
                               G_SIGNAL_RUN_LAST,
@@ -254,13 +255,13 @@ dmap_mdns_publisher_init (DmapMdnsPublisher *publisher)
 DmapMdnsPublisher *
 dmap_mdns_publisher_new (void)
 {
-        if (publisher_object) {
-                g_object_ref (publisher_object);
+        if (_publisher_object) {
+                g_object_ref (_publisher_object);
         } else {
-                publisher_object = g_object_new (DMAP_TYPE_MDNS_PUBLISHER, NULL);
-                g_object_add_weak_pointer (publisher_object,
-                                           (gpointer *) &publisher_object);
+                _publisher_object = g_object_new (DMAP_TYPE_MDNS_PUBLISHER, NULL);
+                g_object_add_weak_pointer (_publisher_object,
+                                           (gpointer *) &_publisher_object);
         }
 
-        return DMAP_MDNS_PUBLISHER (publisher_object);
+        return DMAP_MDNS_PUBLISHER (_publisher_object);
 }

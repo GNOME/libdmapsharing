@@ -20,11 +20,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_GST_INPUT_STREAM
-#define _DMAP_GST_INPUT_STREAM
+#ifndef _DMAP_GST_INPUT_STREAM_H
+#define _DMAP_GST_INPUT_STREAM_H
 
-#include <glib-object.h>
 #include <gio/gio.h>
+#include <glib-object.h>
+#include <gst/app/gstappsink.h>
+#include <gst/gst.h>
+
 
 G_BEGIN_DECLS
 #define DMAP_TYPE_GST_INPUT_STREAM         (dmap_gst_input_stream_get_type ())
@@ -70,10 +73,8 @@ enum
 GInputStream *dmap_gst_input_stream_new (const gchar * transcode_mimetype,
 					 GInputStream * src_stream);
 
-/* FIXME: this prototype was moved to the specific implementations in order to make this header file work without GStreamer installed:
-void dmap_gst_input_stream_new_buffer_cb		 (GstElement *element,
-						  DmapGstInputStream *stream);
-						  */
+void dmap_gst_input_stream_new_buffer_cb(GstElement *element,
+                                         DmapGstInputStream *stream);
 
 G_END_DECLS
-#endif /* _DMAP_GST_INPUT_STREAM */
+#endif /* _DMAP_GST_INPUT_STREAM_H */

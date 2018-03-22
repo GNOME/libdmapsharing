@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef __DMAP_MD5_H__
-#define __DMAP_MD5_H__
+#ifndef _DMAP_MD5_H__
+#define _DMAP_MD5_H__
 
 #include <glib.h>
 

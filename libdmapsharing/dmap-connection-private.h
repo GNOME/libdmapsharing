@@ -18,6 +18,10 @@
  *
  */
 
+#include <glib-object.h>
+
+#include <libdmapsharing/dmap-connection.h>
+
 #ifndef _DMAP_CONNECTION_PRIVATE_H
 #define _DMAP_CONNECTION_PRIVATE_H
 

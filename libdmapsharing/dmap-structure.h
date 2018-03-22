@@ -18,8 +18,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef __DMAP_STRUCTURE_H__
-#define __DMAP_STRUCTURE_H__
+#ifndef _DMAP_STRUCTURE_H
+#define _DMAP_STRUCTURE_H
 
 #include <glib.h>
 #include <glib-object.h>
@@ -75,11 +75,6 @@ struct _DmapContentCodeDefinition
 
 const DmapContentCodeDefinition * dmap_structure_content_codes (guint * number);
 gint32 dmap_structure_cc_string_as_int32 (const gchar * str);
-const gchar *dmap_content_code_name (DmapContentCode code);
-DmapType dmap_content_code_dmap_type (DmapContentCode code);
-const gchar *dmap_content_code_string (DmapContentCode code);
-
-DmapContentCode dmap_content_code_read_from_buffer (const gchar * buf);
 
 G_END_DECLS
 #endif

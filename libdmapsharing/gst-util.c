@@ -24,7 +24,7 @@
 #include "dmap-gst-input-stream.h"
 
 gboolean
-pads_compatible (GstPad * pad1, GstPad * pad2)
+gst_util_pads_compatible (GstPad * pad1, GstPad * pad2)
 {
 	gboolean fnval;
 	GstCaps *res, *caps1, *caps2;

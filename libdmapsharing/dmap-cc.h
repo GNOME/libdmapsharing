@@ -1,7 +1,11 @@
 #ifndef _DMAP_CC_H
 #define _DMAP_CC_H
 
-G_BEGIN_DECLS typedef enum
+#include <glib-object.h>
+
+G_BEGIN_DECLS
+
+typedef enum
 {
 	DMAP_CC_INVALID = 0,
 	DMAP_RAW,		/* The RAW type does not use a content code.

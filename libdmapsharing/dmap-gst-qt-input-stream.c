@@ -39,14 +39,10 @@ struct DmapGstQtInputStreamPrivate
 	GstElement *sink;
 };
 
-/* FIXME: See note in dmap-gst-input-stream.h */
-void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
-					  DmapGstInputStream * stream);
-
 static void
-pad_added_cb (GstElement * element,
-              GstPad * pad,
-              GstElement *convert)
+_pad_added_cb (GstElement * element,
+               GstPad * pad,
+               GstElement *convert)
 {
 	/* Link remaining pad after decodebin2 does its magic. */
 	GstPad *conv_pad;
@@ -54,7 +50,7 @@ pad_added_cb (GstElement * element,
 	conv_pad = gst_element_get_static_pad (convert, "sink");
 	g_assert (conv_pad != NULL);
 
-	if (pads_compatible (pad, conv_pad)) {
+	if (gst_util_pads_compatible (pad, conv_pad)) {
 		g_assert (!GST_PAD_IS_LINKED
 			  (gst_element_get_static_pad
 			   (convert, "sink")));
@@ -142,7 +138,7 @@ dmap_gst_qt_input_stream_new (GInputStream * src_stream)
 	gst_app_sink_set_max_buffers (GST_APP_SINK (sink), GST_APP_MAX_BUFFERS);
 	gst_app_sink_set_drop (GST_APP_SINK (sink), FALSE);
 
-	g_signal_connect (decode, "pad-added", G_CALLBACK (pad_added_cb), convert);
+	g_signal_connect (decode, "pad-added", G_CALLBACK (_pad_added_cb), convert);
 
 	/* FIXME: this technique is shared with dmapd-dmap-av-share.c */
 	sret = gst_element_set_state (pipeline, GST_STATE_PLAYING);
@@ -206,7 +202,7 @@ done:
 }
 
 static void
-dmap_gst_qt_input_stream_kill_pipeline (DmapGstInputStream * stream)
+_kill_pipeline (DmapGstInputStream * stream)
 {
 	DmapGstQtInputStream *qt_stream =
 		DMAP_GST_QT_INPUT_STREAM (stream);
@@ -231,7 +227,7 @@ dmap_gst_qt_input_stream_class_init (DmapGstQtInputStreamClass * klass)
 	g_type_class_add_private (klass,
 				  sizeof (DmapGstQtInputStreamPrivate));
 
-	parent_class->kill_pipeline = dmap_gst_qt_input_stream_kill_pipeline;
+	parent_class->kill_pipeline = _kill_pipeline;
 }
 
 static void

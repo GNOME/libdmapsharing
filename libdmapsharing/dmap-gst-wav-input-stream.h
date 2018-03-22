@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_GST_WAV_INPUT_STREAM
-#define _DMAP_GST_WAV_INPUT_STREAM
+#ifndef _DMAP_GST_WAV_INPUT_STREAM_H
+#define _DMAP_GST_WAV_INPUT_STREAM_H
 
 #include <gio/gio.h>
 
@@ -63,4 +63,4 @@ GType dmap_gst_wav_input_stream_get_type (void);
 GInputStream *dmap_gst_wav_input_stream_new (GInputStream * stream);
 
 G_END_DECLS
-#endif /* _DMAP_GST_WAV_INPUT_STREAM */
+#endif

@@ -17,8 +17,8 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef __DMAP_PRIVATE_UTILS_H__
-#define __DMAP_PRIVATE_UTILS_H__
+#ifndef _DMAP_PRIVATE_UTILS_H
+#define _DMAP_PRIVATE_UTILS_H
 
 #include <glib.h>
 #include <libsoup/soup.h>
