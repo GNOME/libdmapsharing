@@ -19,14 +19,14 @@
 	<refsect1>
 		<title>Share API</title>
 		<para>
-Finally, write the code that creates a new DAAPShare object (see
-test-dmap-server.c) and provide it your DAAPDb object.
+A DmapAvShare allows a program to share the media described by its DmapDb
+object. See libdmapsharing's test-dmap-server.c for an example of using DmapDb.
 
 		</para>
 
 		<para>
 The libdmapsharing package also provides an optional interface,
-DMAPRecordFactory, that may be convenient for application developers.
+DmapRecordFactory, that can be used in conjunction with a DmapDb implementation.
 
 		</para>
 	</refsect1>

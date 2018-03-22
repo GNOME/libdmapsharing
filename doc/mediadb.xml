@@ -19,11 +19,20 @@
 	<refsect1>
 		<title>Media Database Implementation</title>
 		<para>
-First, define classes that implement the DAAPDb (or DPAP) and DAAPRecord
-interfaces (for an example, see test-daap-db.c and test-daap-record.c). If
-your application already has a media database interface, then these new
-definitions will simply be adapter classes encapsulating your existing
-interface.
+A media database is a collection of records which describe the media a
+program can share or access; for example, connecting to a DAAP server
+will populate a media database with DmapAvRecords which correspond to
+the media the server provides.
+
+		</para>
+
+		<para>
+Creating a media database is a
+matter of implementing the DmapDb and DmapAvRecord (or DmapImageRecord)
+interfaces. For an example of this, see libdmapsharing's test-dmap-db.c
+and test-dmap-av-record.c. If your application already has a media
+database interface, then these new definitions will simply adapt your
+existing interface.
 
 		</para>
 	</refsect1>

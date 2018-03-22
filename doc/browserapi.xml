@@ -19,9 +19,11 @@
 	<refsect1>
 		<title>mDNS Browser API</title>
 		<para>
-Create a mDNS browser using dmap_mdns_browser_new. This object emits
-a "service-added" signal for each DMAP service encountered. Add a
-"service-added" callback and call dmap_mdns_browser_start.
+The mDNS browser API allows a client program to discover and connect to
+DMAP services.  The dmap_mdns_browser_new function creates a new mDNS
+browser object. The mDNS browser object emits a "service-added" signal for each
+DMAP service encountered, and it emits a "service-remove" signal when
+a service disappears. We describe callbacks in subsequent section.
 
 		</para>
 	</refsect1>

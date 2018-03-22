@@ -23,6 +23,12 @@
 #include <glib.h>
 #include <libsoup/soup.h>
 
+/**
+ * dmap_utils_mime_to_format:
+ * @transcode_mimetype: a string representing a MIME type (e.g., "audio/wav").
+ *
+ * Returns: a string representing the corresponding type  (e.g., "wav").
+ */
 gchar * dmap_utils_mime_to_format (const gchar * transcode_mimetype);
 
 G_END_DECLS

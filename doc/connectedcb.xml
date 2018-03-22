@@ -19,17 +19,18 @@
 	<refsect1>
 		<title>Connected Callback</title>
 		<para>
-Once the DMAPConnection object completes its interrogation of a DMAP
-server, it will emit the "connected" signal. The "connected" callback
-will receive a fully populated media database. The following is a simple
-"connected" callback:
+Once the DmapConnection object completes its interrogation of a DMAP
+server, it will emit the "connected" signal. Libdmapsharing has fully
+populated the DmapConnection's DmapDb by this point. The following is
+a simple "connected" callback which assumes db had previously been passed as the
+third argument to dmap_connection_start:
 
 		</para>
 		<screen>
-connected_cb (DMAPConnection *connection,
-	      gboolean        result,
-	      const char     *reason,
-	      DMAPDb         *db)
+connected_cb(DmapConnection *connection,
+             gboolean        result,
+             const char     *reason,
+             DmapDb         *db)
 {
 	g_print ("DB has %lu entries\n", dmap_db_count (db));
 	dmap_db_foreach (db, print_record, NULL);

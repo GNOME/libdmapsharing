@@ -58,17 +58,19 @@ EXTRA_HFILES=
 # Header files to ignore when scanning. Use base file name, no paths
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
 IGNORE_HFILES= \
-	dmap-marshal.h \
 	dmap-config.h \
-	dmap-md5.h \
+	dmap-connection-private.h \
+	dmap-gst-mp3-input-stream.h \
+	dmap-gst-qt-input-stream.h \
+	dmap-gst-wav-input-stream.h \
+	dmap.h \
+	dmap-marshal.h \
 	dmap-mdns-avahi.h \
-	dmap-mdns-publisher.h \
+	dmap-private-utils.h \
+	dmap-share-private.h \
 	dmap-structure.h \
-	dmap-utils.h \
-	g-gst-input-stream.h \
-	g-gst-mp3-input-stream.h \
-	g-gst-wav-input-stream.h \
-	gst-util.h
+	gst-util.h \
+	test-*.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

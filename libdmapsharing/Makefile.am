@@ -131,9 +131,17 @@ noinst_HEADERS = \
 	test-dmap-image-record-factory.h \
 	test-dmap-image-record.h
 
-BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
+BUILT_SOURCES = \
+	dmap-marshal.c \
+	dmap-marshal.h \
+	dmap-enums.c \
+	dmap-enums.h \
+	unit-test.stamp
 
-CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c pedansee.conf
+CLEANFILES = $(BUILT_SOURCES) \
+	../tests/unit-test.c \
+	*-suite.c \
+	pedansee.conf
 
 dmap-marshal.c: dmap-marshal.list
 	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --body > dmap-marshal.c

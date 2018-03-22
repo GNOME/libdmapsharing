@@ -19,10 +19,13 @@
 	<refsect1>
 		<title>Container Database Implementation</title>
 		<para>
-Second, define classes that implement the DMAPContainerDb and
-DMAPContainerRecord interfaces (see test-dmap-container-db.c and
-test-dmap-container-record.c). These classes will allow the creation of
-playlists (DAAP) or albums (DPAP).
+A program can collect media database records in a container database,
+allowing logical playlists (DAAP) or albums (DPAP).
+Creating a container database is a matter of implementing
+the DmapContainerDb and DmapContainerRecord interfaces. For an
+example of this, see libdmapsharing's test-dmap-container-db.c and
+test-dmap-container-record.c.
+
 		</para>
 	</refsect1>
 </refentry>
