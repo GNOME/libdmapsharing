@@ -3,28 +3,26 @@
 import gi
 import sys
 
-gi.require_version('DMAP', '4.0')
-gi.require_version('DAAP', '4.0')
+gi.require_version('Dmap', '4.0')
 
 from gi.repository import GObject
 from gi.repository import GLib
-from gi.repository import DMAP
-from gi.repository import DAAP
+from gi.repository import Dmap
 
 import testpython
 
-class TestDMAPServer(GObject.GObject):
+class TestDmapServer(GObject.GObject):
     def __init__(self):
-        super(TestDMAPServer, self).__init__()
+        super(TestDmapServer, self).__init__()
 
         name = 'Python libdmapsharing test'
 
-        self.container_record = testpython.PyDMAPContainerRecord()
-        self.container_db     = testpython.PyDMAPContainerDb()
-        self.factory          = testpython.PyDAAPRecordFactory()
-        self.db               = testpython.PyDMAPDb()
+        self.container_record = testpython.PyDmapContainerRecord()
+        self.container_db     = testpython.PyDmapContainerDb()
+        self.factory          = testpython.PyDaapRecordFactory()
+        self.db               = testpython.PyDmapDb()
 
-        record = testpython.PyDAAPRecord()
+        record = testpython.PyDaapRecord()
 
         record.set_property('title', 'test-title')
         record.set_property('songalbum', 'test-album')
@@ -43,11 +41,13 @@ class TestDMAPServer(GObject.GObject):
         record.set_property('disc', 7)
         record.set_property('bitrate', 8)
         record.set_property('has-video', False)
-        record.set_property('mediakind', DMAP.MediaKind.MUSIC)
+        record.set_property('mediakind', Dmap.MediaKind.MUSIC)
 
         self.db.add(record)
 
-        self.share            = DAAP.Share.new(name, 'password', self.db, self.container_db, 'audio/mp3')
+        self.share = Dmap.AvShare.new(name, 'password', self.db, self.container_db, 'audio/mp3')
+        self.share.serve()
+        self.share.publish()
 
-server = TestDMAPServer ()
+server = TestDmapServer ()
 GLib.MainLoop().run()

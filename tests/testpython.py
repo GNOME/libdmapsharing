@@ -1,14 +1,12 @@
 import gi
 
-gi.require_version('DMAP', '4.0')
-gi.require_version('DAAP', '4.0')
+gi.require_version('Dmap', '4.0')
 
 from gi.repository import GObject
 from gi.repository import GLib
-from gi.repository import DMAP
-from gi.repository import DAAP
+from gi.repository import Dmap
 
-class PyDMAPDb(GObject.GObject, DMAP.Db):
+class PyDmapDb(GObject.GObject, Dmap.Db):
     db = {}
     nextId = 0
 
@@ -29,9 +27,9 @@ class PyDMAPDb(GObject.GObject, DMAP.Db):
         return self.db[id]
 
     def __init__(self):
-        super(PyDMAPDb, self).__init__()
+        super(PyDmapDb, self).__init__()
 
-class PyDAAPRecord(GObject.GObject, DAAP.Record, DMAP.Record):
+class PyDaapRecord(GObject.GObject, Dmap.AvRecord, Dmap.Record):
     location    = GObject.property(type=GObject.TYPE_STRING,  default=None)
     title       = GObject.property(type=GObject.TYPE_STRING,  default=None)
     songalbum   = GObject.property(type=GObject.TYPE_STRING,  default=None)
@@ -50,23 +48,23 @@ class PyDAAPRecord(GObject.GObject, DAAP.Record, DMAP.Record):
     disc        = GObject.property(type=GObject.TYPE_INT,     default=0)
     bitrate     = GObject.property(type=GObject.TYPE_INT,     default=0)
     has_video   = GObject.property(type=GObject.TYPE_BOOLEAN, default=0)
-    mediakind   = GObject.property(type=DMAP.MediaKind,       default=DMAP.MediaKind.MUSIC)
+    mediakind   = GObject.property(type=Dmap.MediaKind,       default=Dmap.MediaKind.MUSIC)
     songalbumid = GObject.property(type=GObject.TYPE_INT64,   default=0)
     hash        = GObject.property(type=GLib.Array,           default=None)
 
     def __init__(self):
-        super(PyDAAPRecord, self).__init__()
+        super(PyDaapRecord, self).__init__()
 
-class PyDAAPRecordFactory(GObject.GObject, DMAP.RecordFactory):
+class PyDaapRecordFactory(GObject.GObject, Dmap.RecordFactory):
     def do_create (self, user_data=None):
-        return PyDAAPRecord()
+        return PyDaapRecord()
 
     def __init__(self):
-        super(PyDAAPRecordFactory, self).__init__()
+        super(PyDaapRecordFactory, self).__init__()
 
-class PyDMAPContainerRecord(GObject.GObject, DMAP.ContainerRecord):
+class PyDmapContainerRecord(GObject.GObject, Dmap.ContainerRecord):
     name = GObject.property(type=GObject.TYPE_STRING, default='Test')
-    entries = PyDMAPDb()
+    entries = PyDmapDb()
 
     def do_get_id(self):
         return 2
@@ -81,10 +79,10 @@ class PyDMAPContainerRecord(GObject.GObject, DMAP.ContainerRecord):
         return self.entries
 
     def __init__(self):
-        super(PyDMAPContainerRecord, self).__init__()
+        super(PyDmapContainerRecord, self).__init__()
 
-class PyDMAPContainerDb(GObject.GObject, DMAP.ContainerDb):
-    record = PyDMAPContainerRecord()
+class PyDmapContainerDb(GObject.GObject, Dmap.ContainerDb):
+    record = PyDmapContainerRecord()
 
     def do_add(self, record):
         pass
@@ -99,4 +97,4 @@ class PyDMAPContainerDb(GObject.GObject, DMAP.ContainerDb):
         return self.record
 
     def __init__(self):
-        super(PyDMAPContainerDb, self).__init__()
+        super(PyDmapContainerDb, self).__init__()

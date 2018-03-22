@@ -95,6 +95,10 @@ NULL));
 
 	g_assert (NULL != share);
 
+	dmap_share_serve(share);
+
+	dmap_share_publish(share);
+
 	g_free (name);
 }
 

@@ -30,7 +30,6 @@ private class DPAPCopy {
 		GLib.debug ("%" + int64.FORMAT + " entries\n", db.count ());
 
 		db.foreach ((k, v) => {
-
 			stdout.printf ("%s\n", ((ValaImageRecord) v).location);
 
 			/* Uncomment to copy the data:

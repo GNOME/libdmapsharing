@@ -138,6 +138,8 @@ DPAPServe* dpap_serve_construct (GType object_type, GError** error) {
 	ValaDmapDb* _tmp5_;
 	ValaDmapContainerDb* _tmp6_;
 	DmapImageShare* _tmp7_;
+	DmapImageShare* _tmp8_;
+	DmapImageShare* _tmp9_;
 	self = (DPAPServe*) g_type_create_instance (object_type);
 	_tmp0_ = vala_image_record_new ();
 	_g_object_unref0 (self->priv->record);
@@ -156,6 +158,10 @@ DPAPServe* dpap_serve_construct (GType object_type, GError** error) {
 	_tmp7_ = dmap_image_share_new ("dmapserve", NULL, _tmp5_, _tmp6_, NULL);
 	_g_object_unref0 (self->priv->share);
 	self->priv->share = _tmp7_;
+	_tmp8_ = self->priv->share;
+	dmap_share_serve ((DmapShare*) _tmp8_);
+	_tmp9_ = self->priv->share;
+	dmap_share_publish ((DmapShare*) _tmp9_);
 	return self;
 }
 

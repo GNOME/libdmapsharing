@@ -32,6 +32,8 @@ private class DPAPServe {
 		db.add (record);
 		container_db = new ValaDmapContainerDb ();
 		share = new Dmap.ImageShare ("dmapserve", null, db, container_db, null);
+		share.serve();
+		share.publish();
 	}
 }
 

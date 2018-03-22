@@ -38,19 +38,35 @@ static guint conn_type = DAAP;
 static void
 print_record (guint id, DmapRecord *record, gpointer user_data)
 {
-	gboolean has_video;
-	gchar   *artist, *title;
+	if (IS_DMAP_AV_RECORD(record)) {
+		gboolean has_video;
+		gchar   *artist, *title;
 
-	g_object_get (record,
-	             "has-video", &has_video,
-	             "songartist", &artist,
-	             "title",  &title,
-	              NULL);
+		g_object_get (record,
+			     "has-video", &has_video,
+			     "songartist", &artist,
+			     "title",  &title,
+			      NULL);
 
-	g_print ("%d: %s %s (has video: %s)\n", id, artist, title, has_video ? "Y" : "N");
+		g_print ("%d: %s %s (has video: %s)\n", id, artist, title, has_video ? "Y" : "N");
 
-	g_free (artist);
-	g_free (title);
+		g_free (artist);
+		g_free (title);
+	} else if (IS_DMAP_IMAGE_RECORD(record)) {
+		gchar   *format, *location;
+
+		g_object_get (record,
+			     "format", &format,
+			     "location", &location,
+			      NULL);
+
+		g_print ("%d: %s %s\n", id, format, location);
+
+		g_free (format);
+		g_free (location);
+	} else {
+		g_assert_not_reached();
+	}
 }
 
 static void
@@ -133,10 +149,29 @@ service_added_cb (DmapMdnsBrowser *browser,
     g_free(host);
 }
 
+static void
+_log_printf(const char *log_domain,
+            GLogLevelFlags level,
+            const gchar *message,
+            gpointer user_data)
+{
+    g_printerr("%s: %s\n", log_domain, message);
+}
+
 int main(int argc, char **argv)
 {
     DmapMdnsBrowser *browser;
     GError *error = NULL;
+
+    g_log_set_handler ("libdmapsharing",
+                        G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+                        _log_printf,
+                        NULL);
+
+    g_log_set_handler ("dmapd",
+                        G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION,
+                        _log_printf,
+                        NULL);
 
     if (argc == 2)
         conn_type = atoi (argv[1]);

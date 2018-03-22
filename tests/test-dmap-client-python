@@ -3,23 +3,21 @@
 import gi
 import sys
 
-gi.require_version('DMAP', '4.0')
-gi.require_version('DAAP', '4.0')
+gi.require_version('Dmap', '4.0')
 
 from gi.repository import GObject
 from gi.repository import GLib
-from gi.repository import DMAP
-from gi.repository import DAAP
+from gi.repository import Dmap
 
 import testpython
 
-class TestDMAPClient(GObject.GObject):
+class TestDmapClient(GObject.GObject):
     def __init__(self):
-        super(TestDMAPClient, self).__init__()
+        super(TestDmapClient, self).__init__()
 
-        self.factory = testpython.PyDAAPRecordFactory()
-        self.db      = testpython.PyDMAPDb()
-        self.browser = DMAP.MdnsBrowser.new(DMAP.MdnsServiceType.DAAP)
+        self.factory = testpython.PyDaapRecordFactory()
+        self.db      = testpython.PyDmapDb()
+        self.browser = Dmap.MdnsBrowser.new(Dmap.MdnsServiceType.DAAP)
 
     def start(self):
         self.browser.connect('service-added', self.service_added_cb, None)
@@ -66,10 +64,10 @@ class TestDMAPClient(GObject.GObject):
         host         = service.get_property('host')
         port         = service.get_property('port')
 
-        connection = DAAP.Connection.new(service_name, host, port, self.db, self.factory)
+        connection = Dmap.AvConnection.new(service_name, host, port, self.db, self.factory)
         connection.connect('authenticate', self.authenticate_cb)
         connection.start(self.connected_cb, self.db)
 
-client = TestDMAPClient ()
+client = TestDmapClient ()
 client.start ()
 GLib.MainLoop().run()

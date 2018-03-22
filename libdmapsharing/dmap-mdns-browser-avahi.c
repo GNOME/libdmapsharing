@@ -202,13 +202,12 @@ dmap_mdns_browser_new (DmapMdnsServiceType type)
 {
 	DmapMdnsBrowser *browser_object;
 
-	g_return_val_if_fail (type >= DMAP_MDNS_SERVICE_TYPE_INVALID
-			      && type <= DMAP_MDNS_SERVICE_TYPE_LAST,
-			      NULL);
+	g_assert(type >  DMAP_MDNS_SERVICE_TYPE_INVALID);
+	g_assert(type <= DMAP_MDNS_SERVICE_TYPE_LAST);
 
 	browser_object =
-		DMAP_MDNS_BROWSER (g_object_new
-				   (DMAP_TYPE_MDNS_BROWSER, NULL));
+		DMAP_MDNS_BROWSER (g_object_new (DMAP_TYPE_MDNS_BROWSER, NULL));
+
 	browser_object->priv->service_type = type;
 
 	return browser_object;

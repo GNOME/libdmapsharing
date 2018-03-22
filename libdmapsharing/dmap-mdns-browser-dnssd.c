@@ -515,14 +515,13 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 DmapMdnsBrowser *
 dmap_mdns_browser_new (DmapMdnsServiceType type)
 {
-	DmapMdnsBrowser *browser_object = 0;
+	DmapMdnsBrowser *browser_object;
 
 	g_assert(type >  DMAP_MDNS_SERVICE_TYPE_INVALID);
 	g_assert(type <= DMAP_MDNS_SERVICE_TYPE_LAST);
 
-	browser_object = DMAP_MDNS_BROWSER (g_object_new
-	                                   (DMAP_TYPE_MDNS_BROWSER,
-	                                    NULL));
+	browser_object =
+		DMAP_MDNS_BROWSER (g_object_new (DMAP_TYPE_MDNS_BROWSER, NULL));
 
 	browser_object->priv->service_type = type;
 
