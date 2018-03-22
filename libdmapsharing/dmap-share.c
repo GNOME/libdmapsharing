@@ -649,7 +649,7 @@ dmap_share_class_init (DmapShareClass * klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_REVISION_NUMBER,
-					 g_param_spec_uint ("revision_number",
+					 g_param_spec_uint ("revision-number",
 							    "Revision number",
 							    "Revision number",
 							    0,
@@ -659,7 +659,7 @@ dmap_share_class_init (DmapShareClass * klass)
 
 	g_object_class_install_property (object_class,
 					 PROP_AUTH_METHOD,
-					 g_param_spec_uint ("auth_method",
+					 g_param_spec_uint ("auth-method",
 							    "Authentication method",
 							    "Authentication method",
 							    DMAP_SHARE_AUTH_METHOD_NONE,
