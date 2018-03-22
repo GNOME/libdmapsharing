@@ -18,6 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <libdmapsharing/dmap-utils.h>
+#include <string.h>
+
 #include "test-dmap-image-record.h"
 
 struct TestDmapImageRecordPrivate {
@@ -32,6 +35,7 @@ struct TestDmapImageRecordPrivate {
 	char *format;
 	char *comments;
 	GArray *thumbnail;
+	GArray *hash;
 };
 
 enum {
@@ -46,6 +50,7 @@ enum {
         PROP_PIXEL_WIDTH,
         PROP_FORMAT,
         PROP_THUMBNAIL,
+	PROP_HASH,
         PROP_COMMENTS
 };
 
@@ -94,6 +99,12 @@ test_dmap_image_record_set_property (GObject *object,
 				g_array_unref(record->priv->thumbnail);
 			}
                         record->priv->thumbnail = g_value_dup_boxed (value);
+                        break;
+                case PROP_HASH:
+			if (record->priv->hash) {
+				g_array_unref(record->priv->hash);
+			}
+                        record->priv->hash= g_value_dup_boxed (value);
                         break;
                 case PROP_COMMENTS:
 			g_free (record->priv->comments);
@@ -144,6 +155,9 @@ test_dmap_image_record_get_property (GObject *object,
                         break;
                 case PROP_THUMBNAIL:
 			g_value_set_boxed (value, record->priv->thumbnail);
+                        break;
+                case PROP_HASH:
+			g_value_set_boxed (value, record->priv->hash);
                         break;
                 case PROP_COMMENTS:
                         g_value_set_string (value, record->priv->comments);
@@ -199,6 +213,7 @@ test_dmap_image_record_class_init (TestDmapImageRecordClass *klass)
         g_object_class_override_property (gobject_class, PROP_PIXEL_WIDTH, "pixel-width");
         g_object_class_override_property (gobject_class, PROP_FORMAT, "format");
         g_object_class_override_property (gobject_class, PROP_THUMBNAIL, "thumbnail");
+        g_object_class_override_property (gobject_class, PROP_HASH, "hash");
         g_object_class_override_property (gobject_class, PROP_COMMENTS, "comments");
 }
 
@@ -239,6 +254,10 @@ test_dmap_image_record_finalize (GObject *object)
 		g_array_unref (record->priv->thumbnail);
 	}
 
+	if (record->priv->hash) {
+		g_array_unref (record->priv->hash);
+	}
+
 	G_OBJECT_CLASS (test_dmap_image_record_parent_class)->finalize (object);
 }
 
@@ -250,6 +269,7 @@ test_dmap_image_record_new (void)
 	gchar *path;
 	gsize size;
 	TestDmapImageRecord *record;
+	guchar hash[DMAP_HASH_SIZE];
 
 	record = TEST_DMAP_IMAGE_RECORD (g_object_new (TYPE_TEST_DMAP_IMAGE_RECORD, NULL));
 
@@ -285,6 +305,10 @@ test_dmap_image_record_new (void)
 	g_free (path);
 	record->priv->thumbnail = g_array_sized_new (FALSE, FALSE, 1, size);
 	g_array_append_vals (record->priv->thumbnail, thumbnail, size);
+
+	record->priv->hash = g_array_sized_new (FALSE, FALSE, 1, size);
+	memset(hash, 0xaa, DMAP_HASH_SIZE);
+	g_array_append_vals (record->priv->hash, hash, DMAP_HASH_SIZE);
 
 	return record;
 }
