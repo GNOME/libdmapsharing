@@ -121,7 +121,7 @@ _dispose (GObject * object)
 	DmapConnectionPrivate *priv = DMAP_CONNECTION (object)->priv;
 	GSList *l;
 
-	g_debug ("DAAP connection dispose");
+	g_debug ("DMAP connection dispose");
 
 	if (priv->emit_progress_id != 0) {
 		g_source_remove (priv->emit_progress_id);
@@ -1397,7 +1397,7 @@ _finish (DmapConnection * connection)
 {
 	g_assert(IS_DMAP_CONNECTION (connection));
 
-	g_debug ("DAAP finish");
+	g_debug ("DMAP finish");
 	connection->priv->state = DMAP_DONE;
 	connection->priv->progress = 1.0f;
 
@@ -1419,29 +1419,29 @@ _do_something (DmapConnection * connection)
 
 	switch (priv->state) {
 	case DMAP_GET_INFO:
-		g_debug ("Getting DAAP server info");
+		g_debug ("Getting DMAP server info");
 		if (!_http_get
 		    (connection, "/server-info", FALSE, 0.0, 0, FALSE,
 		     (DmapResponseHandler) _handle_server_info, NULL, FALSE)) {
-			g_debug ("Could not get DAAP connection info");
+			g_debug ("Could not get DMAP connection info");
 			_state_done (connection, FALSE);
 		}
 		break;
 
 	case DMAP_LOGIN:
 		// NOTE: libsoup will signal if password required and not present.
-		g_debug ("Logging into DAAP server");
+		g_debug ("Logging into DMAP server");
 		if (!_http_get (connection, "/login", FALSE, 0.0, 0, FALSE,
 			       (DmapResponseHandler) _handle_login, NULL,
 			       FALSE)) {
-			g_debug ("Could not login to DAAP server");
+			g_debug ("Could not login to DMAP server");
 			_state_done (connection, FALSE);
 		}
 
 		break;
 
 	case DMAP_GET_REVISION_NUMBER:
-		g_debug ("Getting DAAP server database revision number");
+		g_debug ("Getting DMAP server database revision number");
 		path = g_strdup_printf
 			("/update?session-id=%u&revision-number=1",
 			 priv->session_id);
@@ -1455,7 +1455,7 @@ _do_something (DmapConnection * connection)
 		break;
 
 	case DMAP_GET_DB_INFO:
-		g_debug ("Getting DAAP database info");
+		g_debug ("Getting DMAP database info");
 		path = g_strdup_printf
 			("/databases?session-id=%u&revision-number=%d",
 			 priv->session_id, priv->revision_number);
@@ -1463,14 +1463,14 @@ _do_something (DmapConnection * connection)
 		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
 		     (DmapResponseHandler) _handle_database_info, NULL,
 		     FALSE)) {
-			g_debug ("Could not get DAAP database info");
+			g_debug ("Could not get DMAP database info");
 			_state_done (connection, FALSE);
 		}
 		g_free (path);
 		break;
 
-	case DMAP_GET_SONGS:
-		g_debug ("Getting DAAP song listing");
+	case DMAP_GET_MEDIA:
+		g_debug ("Getting DMAP song listing");
 		meta = DMAP_CONNECTION_GET_CLASS
 			(connection)->get_query_metadata (connection);
 		path = g_strdup_printf
@@ -1480,7 +1480,7 @@ _do_something (DmapConnection * connection)
 		if (!_http_get
 		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
 		     (DmapResponseHandler) _handle_song_listing, NULL, TRUE)) {
-			g_debug ("Could not get DAAP song listing");
+			g_debug ("Could not get DMAP song listing");
 			_state_done (connection, FALSE);
 		}
 		g_free (path);
@@ -1488,7 +1488,7 @@ _do_something (DmapConnection * connection)
 		break;
 
 	case DMAP_GET_PLAYLISTS:
-		g_debug ("Getting DAAP playlists");
+		g_debug ("Getting DMAP playlists");
 		path = g_strdup_printf
 			("/databases/%d/containers?session-id=%u&revision-number=%d",
 			 priv->database_id, priv->session_id,
@@ -1496,7 +1496,7 @@ _do_something (DmapConnection * connection)
 		if (!_http_get
 		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
 		     (DmapResponseHandler) _handle_playlists, NULL, TRUE)) {
-			g_debug ("Could not get DAAP playlists");
+			g_debug ("Could not get DMAP playlists");
 			_state_done (connection, FALSE);
 		}
 		g_free (path);
@@ -1510,7 +1510,7 @@ _do_something (DmapConnection * connection)
 						  priv->reading_playlist);
 
 			g_assert (playlist);
-			g_debug ("Reading DAAP playlist %d entries",
+			g_debug ("Reading DMAP playlist %d entries",
 				 priv->reading_playlist);
 			path = g_strdup_printf
 				("/databases/%d/containers/%d/items?session-id=%u&revision-number=%d&meta=dmap.itemid",
@@ -1521,7 +1521,7 @@ _do_something (DmapConnection * connection)
 			     FALSE,
 			     (DmapResponseHandler) _handle_playlist_entries,
 			     NULL, TRUE)) {
-				g_debug ("Could not get entries for DAAP playlist %d", priv->reading_playlist);
+				g_debug ("Could not get entries for DMAP playlist %d", priv->reading_playlist);
 				_state_done (connection,
 							    FALSE);
 			}
@@ -1530,13 +1530,13 @@ _do_something (DmapConnection * connection)
 		break;
 
 	case DMAP_LOGOUT:
-		g_debug ("Logging out of DAAP server");
+		g_debug ("Logging out of DMAP server");
 		path = g_strdup_printf ("/logout?session-id=%u",
 					priv->session_id);
 		if (!_http_get
 		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
 		     (DmapResponseHandler) _handle_logout, NULL, FALSE)) {
-			g_debug ("Could not log out of DAAP server");
+			g_debug ("Could not log out of DMAP server");
 			_state_done (connection, FALSE);
 		}
 
@@ -1544,7 +1544,7 @@ _do_something (DmapConnection * connection)
 		break;
 
 	case DMAP_DONE:
-		g_debug ("DAAP done");
+		g_debug ("DMAP done");
 
 		_finish (connection);
 
@@ -1674,7 +1674,7 @@ dmap_connection_start (DmapConnection * connection,
 	g_assert(IS_DMAP_CONNECTION (connection));
 	g_assert(connection->priv->state == DMAP_GET_INFO);
 
-	g_debug ("Creating new DAAP connection to %s:%d",
+	g_debug ("Creating new DMAP connection to %s:%d",
 		 connection->priv->host, connection->priv->port);
 
 	dmap_connection_setup (connection);

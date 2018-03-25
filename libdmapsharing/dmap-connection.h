@@ -88,13 +88,27 @@ typedef struct
 
 typedef struct DmapConnectionPrivate DmapConnectionPrivate;
 
+/**
+ * DmapConnectionState:
+ * @DMAP_GET_INFO: getting DMAP server information
+ * @DMAP_LOGIN: logging in to DMAP server
+ * @DMAP_GET_REVISION_NUMBER: getting server's database revision number
+ * @DMAP_GET_DB_INFO: getting DMAP database information
+ * @DMAP_GET_MEDIA: getting DMAP media listing
+ * @DMAP_GET_PLAYLISTS: getting DMAP playlists
+ * @DMAP_GET_PLAYLIST_ENTRIES: getting entries in playlist
+ * @DMAP_LOGOUT: logging out of DMAP server
+ * @DMAP_DONE: done
+ *
+ * Enumeration of connection states.
+ */
 typedef enum
 {
 	DMAP_GET_INFO = 0,
 	DMAP_LOGIN,
 	DMAP_GET_REVISION_NUMBER,
 	DMAP_GET_DB_INFO,
-	DMAP_GET_SONGS,
+	DMAP_GET_MEDIA,
 	DMAP_GET_PLAYLISTS,
 	DMAP_GET_PLAYLIST_ENTRIES,
 	DMAP_LOGOUT,
