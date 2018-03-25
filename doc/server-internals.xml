@@ -19,41 +19,44 @@
 	<refsect1>
 		<title>Libdmapsharing Server Internals</title>
 		<para>
-I will use DAAPShare to document the libdmapsharing internals. DAAPShare
-provides an example appropriate for any implmentation of the
-abstract class DMAPShare, including DPAPShare. DAAPShare calls
-_dmap_share_server_start() and _dmap_share_publish_start() when an
-object is created. The latter function starts a new web server by calling
-soup_server_new() and adds callbacks to the SoupServer object to handle
+This description uses DmapAvShare to describe the libdmapsharing internals.
+DmapAvShare resembles each implmentation of
+the abstract class DMAPShare, including its cousin DmapImageShare. 
+After creating a new DmapAvShare, an application should call the object's
+dmap_share_serve and dmap_share_publish methods.
+The former method starts a new web server by calling
+soup_server_new, and it adds callbacks to the SoupServer object to handle
 the various paths required by the DMAP specification (/server-info,
-/content-codes, /login, etc). These callbacks are implemented in
-DAAPShare and provided to the SoupServer object after being wrapped
-in adapter functions (note that some callbacks are common to all
-DMAP protocols and are implemented in DMAPShare; e.g., the login
-callback). The latter function, _dmap_share_publish_start, starts the
-mDNS subsystem. It does this by using the mDNS implmentation option
-choosen at compile-time (e.g., Avahi, Howl or DNS-SD).
+/content-codes, /login, and so on). DmapAvShare implements these callbacks,
+and DmapShare wraps them in an adapter method to make them suitable
+for the SoupServer's requirements.
+(Note that some callbacks are common to all DMAP protocols
+and are implemented in DMAPShare; e.g., the login callback.) The latter
+method, dmap_share_publish, starts the mDNS subsystem. It does
+this by using the mDNS implmentation option choosen at compile-time
+(either Avahi, DNS-SD, or Howl).
 
 		</para>
 		<para>
-The DMAPStructure class is used to build a representation of the data
-that makes up a DMAP request or response. The array cc_defs defines all
-possible valid entries in a DMAPStructure representation. Likewise,
+The DmapStructure class represents the data
+which makes up a DMAP request or response. The _cc_defs array defines the
+allowed entries in a DmapStructure representation. Likewise,
 the numeric content code used by each node is defined by the enum
-DMAPContentCode. Both the cc_defs array and the DMAPContentCode enum
-must be in the same order. That is, if you add an entry to cc_defs,
-then you must add its corresponding content code to DMAPContentCode in
-the same order.
+DmapContentCode. Both the _cc_defs array and the DmapContentCode enum
+must be in the same order. That is, if you add an entry to _cc_defs,
+then you must add its corresponding content code to DmapContentCode
+at the same relative position.
 
 		</para>
 		<para>
-Assuming DMAPStructure defines all the entries you require, the actual
-protocol-specific structures are built in DAAPShare. Note the use of the
-function dmap_structure_add(). Often, the data dmap_structure_add()
-adds is provided by a DAAPRecord object that exists in a DMAPDb
+Assuming DmapStructure defines all the entries you require, DmapAvShare builds
+the actual
+protocol-specific structures. Note the use of the
+function dmap_structure_add. Often, the data dmap_structure_add
+adds is provided by a DmapAvRecord object that exists in a DmapDb
 object (both interfaces are implemented by the application). Eventually,
-the DAAPShare provides the DMAPStructure to the SoupServer object using
-the _dmap_share_message_set_from_dmap_structure() function.
+the DmapAvShare provides the DmapStructure to the SoupServer object using
+the dmap_share_message_set_from_dmap_structure function.
 
 		</para>
 	</refsect1>

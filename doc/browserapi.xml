@@ -21,9 +21,16 @@
 		<para>
 The mDNS browser API allows a client program to discover and connect to
 DMAP services.  The dmap_mdns_browser_new function creates a new mDNS
-browser object. The mDNS browser object emits a "service-added" signal for each
+browser object. Passing DMAP_MDNS_SERVICE_TYPE_DAAP to this function
+results in a DAAP browser, and passing DMAP_MDNS_SERVICE_TYPE_DPAP results in
+a DPAP browser. Subsequently calling dmap_mdns_browser_start and g_main_loop_run
+causes the browser to begin watching for services of the appropriate type.
+
+		</para>
+		<para>
+The mDNS browser object emits a "service-added" signal for each
 DMAP service encountered, and it emits a "service-remove" signal when
-a service disappears. We describe callbacks in subsequent section.
+a service disappears. We describe these callbacks in the next sections.
 
 		</para>
 	</refsect1>

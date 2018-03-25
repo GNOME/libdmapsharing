@@ -19,15 +19,41 @@
 	<refsect1>
 		<title>Share API</title>
 		<para>
-A DmapAvShare allows a program to share the media described by its DmapDb
-object. See libdmapsharing's test-dmap-server.c for an example of using DmapDb.
+A DmapAvShare (or DmapImageShare) allows a program to share the media
+described by its DmapDb object.  The libdmapsharing package also provides
+an optional interface, DmapRecordFactory, that can be used in conjunction
+with a DmapDb implementation.  The following demonstrates the use of
+the share API; it serves up a media database made up of a single record.
 
 		</para>
+		<screen>
+DmapRecordFactory *factory;
+DmapRecord *record;
+DmapDb *db;
+DmapShare *share;
+gboolean ok;
 
-		<para>
-The libdmapsharing package also provides an optional interface,
-DmapRecordFactory, that can be used in conjunction with a DmapDb implementation.
+factory = DMAP_RECORD_FACTORY (my_dmap_av_record_factory_new ());
+record  = DMAP_RECORD (dmap_record_factory_create (factory, path_to_media_file));
 
-		</para>
+db = DMAP_DB (my_dmap_db_new ());
+dmap_db_add (db, record);
+g_object_unref (record);
+
+share = DMAP_SHARE(dmap_av_share_new (name, NULL, db, dmap_container_db, NULL);
+
+ok = dmap_share_serve(share);
+if (!ok) {
+	g_error("Error sharing");
+}
+
+ok = dmap_share_publish(share);
+if (!ok) {
+	g_error("Error publishing");
+}
+
+g_main_loop_run(loop);
+
+		</screen>
 	</refsect1>
 </refentry>

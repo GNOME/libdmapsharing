@@ -35,20 +35,14 @@ The following is a simple "service-added" callback which creates a DAAP connecti
 static void
 service_added_cb(DmapMdnsBrowser *browser, DmapMdnsBrowserService *service, gpointer user_data)
 
+	DmapDb *db;
 	DmapRecordFactory *factory;
 	DmapConnection *conn;
-	DmapDb *db;
 
-	db = DMAP_DB(my_dmap_db_new());
-	if (db == NULL) {
-		g_error("Error creating DB");
-	}
-
+	db      = DMAP_DB(my_dmap_db_new());
 	factory = DMAP_RECORD_FACTORY(my_dmap_av_record_factory_new());
-	if (factory == NULL) {
-		g_error("Error creating record factory");
-	}
-	conn = DMAP_CONNECTION(dmap_av_connection_new(service->name, service->host, service->port, db, factory));
+	conn    = DMAP_CONNECTION(dmap_av_connection_new(service->name, service->host, service->port, db, factory));
+
 	dmap_connection_start(conn, (DmapConnectionFunc) connected_cb, db);
 }
 		</screen>
