@@ -84,7 +84,7 @@ create_share (guint conn_type)
                                                        NULL,
                                                        db,
                                                        dmap_container_db,
-NULL));
+		                                       NULL));
 	} else {
 		share = DMAP_SHARE (dmap_image_share_new (name,
                                                           NULL,
