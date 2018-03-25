@@ -51,9 +51,7 @@ class TestDmapClient(GObject.GObject):
         username = connection.get_property('username')
         print('Require password for %s@%s: ' % (username, name), end='', file=sys.stderr)
         password = input()
-        connection.set_property('password', password)
-        auth.authenticate(username, password)
-        session.unpause_message(msg)
+        connection.authenticate_message(connection, session, msg, auth, password)
 
     def connected_cb(self, connection, result, reason, user_data):
         self.db.foreach(self.print_record, None)

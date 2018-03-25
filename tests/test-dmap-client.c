@@ -94,9 +94,8 @@ authenticate_cb (DmapConnection *connection,
 	g_print ("Password required (username is %s): ", username);
 	fgets (password, BUFSIZ, stdin);
 	password[strlen(password) - 1] = 0x00; // Remove newline.
-	g_object_set (connection, "password", password, NULL);
-	soup_auth_authenticate (auth, username, password);
-	soup_session_unpause_message (session, msg);
+
+	dmap_connection_authenticate_message(connection, session, msg, auth, password);
 
 	g_free(username);
 }
