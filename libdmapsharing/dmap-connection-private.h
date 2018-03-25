@@ -31,4 +31,6 @@ gboolean dmap_connection_get (DmapConnection * self,
                               DmapResponseHandler handler,
                               gpointer user_data);
 
+void dmap_connection_setup (DmapConnection * connection);
+
 #endif

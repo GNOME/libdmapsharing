@@ -129,12 +129,12 @@ typedef struct {
 				    DmapRecordFactory * factory, GNode * mlcl,
 				    gint * item_id);
 
-	SoupMessage *(*build_message)
-	 
-		(DmapConnection * connection,
-	   const gchar * path,
-	   gboolean need_hash,
-	   gdouble version, gint req_id, gboolean send_close);
+	SoupMessage *(*build_message) (DmapConnection * connection,
+	                               const gchar * path,
+	                               gboolean need_hash,
+	                               gdouble version,
+	                               gint req_id,
+	                               gboolean send_close);
 	void (*connected) (DmapConnection * connection);
 	void (*disconnected) (DmapConnection * connection);
 
@@ -158,8 +158,13 @@ typedef void (*DmapResponseHandler) (DmapConnection * connection,
 
 GType dmap_connection_get_type (void);
 
+/**
+ * dmap_connection_is_connected:
+ * @connection: The connection.
+ *
+ * Returns TRUE if the connection is presently connected.
+ */
 gboolean dmap_connection_is_connected (DmapConnection * connection);
-void dmap_connection_setup (DmapConnection * connection);
 
 /**
  * dmap_connection_start:

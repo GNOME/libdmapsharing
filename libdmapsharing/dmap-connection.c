@@ -1591,7 +1591,7 @@ _connected_cb (DmapConnection * connection, ConnectionResponseData * rdata)
 					      rdata);
 
 	/* if connected then we succeeded */
-	result = dmap_connection_is_connected (connection);
+	result = connection->priv->is_connected;
 
 	if (rdata->callback) {
 		rdata->callback (rdata->connection,
@@ -1717,7 +1717,7 @@ _disconnected_cb (DmapConnection * connection, ConnectionResponseData * rdata)
 					      rdata);
 
 	/* if not connected then we succeeded */
-	result = !dmap_connection_is_connected (connection);
+	result = !connection->priv->is_connected;
 
 	if (rdata->callback) {
 		rdata->callback (rdata->connection,
