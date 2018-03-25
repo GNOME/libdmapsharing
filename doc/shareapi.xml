@@ -30,26 +30,31 @@ the share API; it serves up a media database made up of a single record.
 DmapRecordFactory *factory;
 DmapRecord *record;
 DmapDb *db;
-DmapShare *share;
 gboolean ok;
+DmapShare *share;
+GError *error = NULL;
 
 factory = DMAP_RECORD_FACTORY (my_dmap_av_record_factory_new ());
-record  = DMAP_RECORD (dmap_record_factory_create (factory, path_to_media_file));
+
+record  = DMAP_RECORD (dmap_record_factory_create (factory, path_to_media_file, &amp;error));
+if (record == NULL) {
+	g_error("Error reading record: %s\n", error->messaage);
+}
 
 db = DMAP_DB (my_dmap_db_new ());
-dmap_db_add (db, record);
+dmap_db_add (db, record, &amp;error);
 g_object_unref (record);
 
 share = DMAP_SHARE(dmap_av_share_new (name, NULL, db, dmap_container_db, NULL);
 
-ok = dmap_share_serve(share);
+ok = dmap_share_serve(share, &amp;error);
 if (!ok) {
-	g_error("Error sharing");
+	g_error("Error sharing: %s", error->message);
 }
 
-ok = dmap_share_publish(share);
+ok = dmap_share_publish(share, &amp;errro);
 if (!ok) {
-	g_error("Error publishing");
+	g_error("Error publishing: %s", error->message);
 }
 
 g_main_loop_run(loop);
