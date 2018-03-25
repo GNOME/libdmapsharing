@@ -73,9 +73,10 @@ typedef struct _ValaDmapDbClass ValaDmapDbClass;
 typedef struct _ValaDmapContainerDb ValaDmapContainerDb;
 typedef struct _ValaDmapContainerDbClass ValaDmapContainerDbClass;
 #define _g_object_unref0(var) ((var == NULL) ? NULL : (var = (g_object_unref (var), NULL)))
+#define _dpap_serve_unref0(var) ((var == NULL) ? NULL : (var = (dpap_serve_unref (var), NULL)))
+#define _g_error_free0(var) ((var == NULL) ? NULL : (var = (g_error_free (var), NULL)))
 typedef struct _ParamSpecDPAPServe ParamSpecDPAPServe;
 #define _g_main_loop_unref0(var) ((var == NULL) ? NULL : (var = (g_main_loop_unref (var), NULL)))
-#define _dpap_serve_unref0(var) ((var == NULL) ? NULL : (var = (dpap_serve_unref (var), NULL)))
 
 struct _DPAPServe {
 	GTypeInstance parent_instance;
@@ -138,8 +139,7 @@ DPAPServe* dpap_serve_construct (GType object_type, GError** error) {
 	ValaDmapDb* _tmp5_;
 	ValaDmapContainerDb* _tmp6_;
 	DmapImageShare* _tmp7_;
-	DmapImageShare* _tmp8_;
-	DmapImageShare* _tmp9_;
+	GError * _inner_error_ = NULL;
 	self = (DPAPServe*) g_type_create_instance (object_type);
 	_tmp0_ = vala_image_record_new ();
 	_g_object_unref0 (self->priv->record);
@@ -149,7 +149,12 @@ DPAPServe* dpap_serve_construct (GType object_type, GError** error) {
 	self->priv->db = _tmp1_;
 	_tmp2_ = self->priv->db;
 	_tmp3_ = self->priv->record;
-	dmap_db_add ((DmapDb*) _tmp2_, (DmapRecord*) _tmp3_);
+	dmap_db_add ((DmapDb*) _tmp2_, (DmapRecord*) _tmp3_, &_inner_error_);
+	if (G_UNLIKELY (_inner_error_ != NULL)) {
+		g_propagate_error (error, _inner_error_);
+		_dpap_serve_unref0 (self);
+		return NULL;
+	}
 	_tmp4_ = vala_dmap_container_db_new ();
 	_g_object_unref0 (self->priv->container_db);
 	self->priv->container_db = _tmp4_;
@@ -158,10 +163,37 @@ DPAPServe* dpap_serve_construct (GType object_type, GError** error) {
 	_tmp7_ = dmap_image_share_new ("dmapserve", NULL, _tmp5_, _tmp6_, NULL);
 	_g_object_unref0 (self->priv->share);
 	self->priv->share = _tmp7_;
-	_tmp8_ = self->priv->share;
-	dmap_share_serve ((DmapShare*) _tmp8_);
-	_tmp9_ = self->priv->share;
-	dmap_share_publish ((DmapShare*) _tmp9_);
+	{
+		DmapImageShare* _tmp8_;
+		DmapImageShare* _tmp9_;
+		_tmp8_ = self->priv->share;
+		dmap_share_serve ((DmapShare*) _tmp8_, &_inner_error_);
+		if (G_UNLIKELY (_inner_error_ != NULL)) {
+			goto __catch0_g_error;
+		}
+		_tmp9_ = self->priv->share;
+		dmap_share_publish ((DmapShare*) _tmp9_, &_inner_error_);
+		if (G_UNLIKELY (_inner_error_ != NULL)) {
+			goto __catch0_g_error;
+		}
+	}
+	goto __finally0;
+	__catch0_g_error:
+	{
+		GError* e = NULL;
+		const gchar* _tmp10_;
+		e = _inner_error_;
+		_inner_error_ = NULL;
+		_tmp10_ = e->message;
+		g_error ("dmapserve.vala:39: Error starting server: %s", _tmp10_);
+		_g_error_free0 (e);
+	}
+	__finally0:
+	if (G_UNLIKELY (_inner_error_ != NULL)) {
+		g_propagate_error (error, _inner_error_);
+		_dpap_serve_unref0 (self);
+		return NULL;
+	}
 	return self;
 }
 

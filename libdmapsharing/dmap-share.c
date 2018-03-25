@@ -220,11 +220,10 @@ _ctrl_int_adapter (SoupServer * server,
 }
 
 gboolean
-dmap_share_serve (DmapShare *share)
+dmap_share_serve (DmapShare *share, GError **error)
 {
 	guint desired_port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
 	gboolean password_required, ok = FALSE;
-	GError *error = NULL;
 	GSList *listening_uri_list;
 	SoupURI *listening_uri;
 	gboolean ret;
@@ -279,20 +278,18 @@ dmap_share_serve (DmapShare *share)
 				 (SoupServerCallback) _ctrl_int_adapter,
 				 share, NULL);
 
-	ret = soup_server_listen_all (share->priv->server, desired_port, 0, &error);
-
+	ret = soup_server_listen_all (share->priv->server, desired_port, 0, error);
 	if (ret == FALSE) {
 		g_debug ("Unable to start music sharing server on port %d: %s. "
-			 "Trying any open IPv6 port", desired_port, error->message);
-		g_clear_error (&error);
+			 "Trying any open IPv6 port", desired_port, (*error)->message);
+		g_clear_error (error);
 
 		ret = soup_server_listen_all (share->priv->server, SOUP_ADDRESS_ANY_PORT,
-					      0, &error);
+					      0, error);
 	}
 
 	listening_uri_list = soup_server_get_uris (share->priv->server);
 	if (ret == FALSE || listening_uri_list == NULL) {
-		g_warning ("Unable to start music sharing server on any port.");
 		goto done;
 	}
 
@@ -342,36 +339,25 @@ _server_stop (DmapShare * share)
 }
 
 gboolean
-dmap_share_publish (DmapShare * share)
+dmap_share_publish (DmapShare *share, GError **error)
 {
-	GError *error;
 	gboolean ok;
 	gboolean password_required;
 
 	password_required =
 		(share->priv->auth_method != DMAP_SHARE_AUTH_METHOD_NONE);
 
-	error = NULL;
 	ok = dmap_mdns_publisher_publish (share->priv->publisher,
 	                                  share->priv->name,
 	                                  share->priv->port,
 	                                  DMAP_SHARE_GET_CLASS (share)->
 	                                  get_type_of_service (share),
 	                                  password_required,
-	                                  share->priv->txt_records, &error);
+	                                  share->priv->txt_records, error);
 
 	if (ok == FALSE) {
-		if (error != NULL) {
-			g_warning
-				("Unable to notify network of media sharing: %s",
-				 error->message);
-			g_error_free (error);
-		} else {
-			g_warning
-				("Unable to notify network of media sharing");
-		}
-	}
 		goto done;
+	}
 
 	g_debug ("Published DMAP server information to mdns");
 
@@ -411,10 +397,11 @@ _restart (DmapShare * share)
 	gboolean res;
 
 	_server_stop (share);
-	res = dmap_share_serve (share);
+	/* FIXME: second argument, NULL, is GError; how to handle? */
+	res = dmap_share_serve (share, NULL);
 	if (res) {
 		/* To update information just publish again */
-		dmap_share_publish (share);
+		dmap_share_publish (share, NULL);
 	} else {
 		_publish_stop (share);
 	}

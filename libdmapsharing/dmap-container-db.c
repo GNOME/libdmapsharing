@@ -28,9 +28,9 @@ dmap_container_db_default_init (DmapContainerDbInterface * iface)
 G_DEFINE_INTERFACE(DmapContainerDb, dmap_container_db, G_TYPE_OBJECT)
 
 void
-dmap_container_db_add (DmapContainerDb * db, DmapContainerRecord *record)
+dmap_container_db_add (DmapContainerDb *db, DmapContainerRecord *record, GError **error)
 {
-	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->add (db, record);
+	return DMAP_CONTAINER_DB_GET_INTERFACE (db)->add (db, record, error);
 }
 
 DmapContainerRecord *

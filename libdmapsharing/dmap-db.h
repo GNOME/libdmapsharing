@@ -77,14 +77,14 @@ struct _DmapDbInterface
 {
 	GTypeInterface parent;
 
-	  guint (*add) (DmapDb * db, DmapRecord * record);
-	  guint (*add_with_id) (DmapDb * db, DmapRecord * record, guint id);
-	  guint (*add_path) (DmapDb * db, const gchar * path);
+	guint (*add) (DmapDb *db, DmapRecord *record, GError **error);
+	guint (*add_with_id) (DmapDb * db, DmapRecord * record, guint id, GError **error);
+	guint (*add_path) (DmapDb * db, const gchar * path, GError **error);
 	DmapRecord *(*lookup_by_id) (const DmapDb * db, guint id);
-	  guint (*lookup_id_by_location) (const DmapDb * db,
-					  const gchar * location);
+	guint (*lookup_id_by_location) (const DmapDb * db,
+				  const gchar * location);
 	void (*foreach) (const DmapDb * db, DmapIdRecordFunc func, gpointer data);
-	  gint64 (*count) (const DmapDb * db);
+	gint64 (*count) (const DmapDb * db);
 };
 
 typedef struct DmapDbFilterDefinition
@@ -100,6 +100,7 @@ GType dmap_db_get_type (void);
  * dmap_db_add:
  * @db: A media database.
  * @record: A database record.
+ * @error: return location for a GError, or NULL.
  *
  * Add a record to the database. 
  *
@@ -109,13 +110,14 @@ GType dmap_db_get_type (void);
  * be placed elsewhere). In all cases, the record should be unrefed by the 
  * calling code.
  */
-guint dmap_db_add (DmapDb * db, DmapRecord * record);
+guint dmap_db_add (DmapDb *db, DmapRecord *record, GError **error);
 
 /**
  * dmap_db_add_with_id:
  * @db: A media database.
  * @record: A database record.
  * @id: A database record ID.
+ * @error: return location for a GError, or NULL.
  *
  * Add a record to the database and assign it the given ID. 
  *
@@ -123,12 +125,13 @@ guint dmap_db_add (DmapDb * db, DmapRecord * record);
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
-guint dmap_db_add_with_id (DmapDb * db, DmapRecord * record, guint id);
+guint dmap_db_add_with_id (DmapDb *db, DmapRecord *record, guint id, GError **error);
 
 /**
  * dmap_db_add_path:
  * @db: A media database.
  * @path: A path to an appropriate media file.
+ * @error: return location for a GError, or NULL.
  *
  * Create a record and add it to the database. 
  *
@@ -136,7 +139,7 @@ guint dmap_db_add_with_id (DmapDb * db, DmapRecord * record, guint id);
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
-guint dmap_db_add_path (DmapDb * db, const gchar * path);
+guint dmap_db_add_path (DmapDb * db, const gchar * path, GError **error);
 
 /**
  * dmap_db_lookup_by_id:

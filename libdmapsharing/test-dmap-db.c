@@ -51,7 +51,7 @@ test_dmap_db_count (const DmapDb *db)
 }
 
 guint
-test_dmap_db_add (DmapDb *db, DmapRecord *record)
+test_dmap_db_add (DmapDb *db, DmapRecord *record, GError **error)
 {
         guint id;
 	id = TEST_DMAP_DB (db)->priv->nextid--;

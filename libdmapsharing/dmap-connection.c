@@ -1205,7 +1205,8 @@ _handle_song_listing (DmapConnection * connection,
 			/*} */
 
 			g_object_set (record, "location", uri, NULL);
-			dmap_db_add (connection->priv->db, record);
+			/* FIXME: third argument, NULL, is GError; how to handle? */
+			dmap_db_add (connection->priv->db, record, NULL);
 			g_object_unref (record);
 			g_hash_table_insert (connection->priv->item_id_to_uri,
 					     GINT_TO_POINTER (item_id),
@@ -1662,7 +1663,7 @@ dmap_connection_setup (DmapConnection * connection)
 }
 
 // FIXME: it would be nice if this mirrored the use of DmapMdnsBrowser. That is, connect callback handler to a signal.
-// This would allow Vala to associated a lambda function with the signal.
+// This would allow Vala to associate a lambda function with the signal.
 void
 dmap_connection_start (DmapConnection * connection,
                        DmapConnectionFunc callback, gpointer user_data)
@@ -1676,13 +1677,6 @@ dmap_connection_start (DmapConnection * connection,
 		 connection->priv->host, connection->priv->port);
 
 	dmap_connection_setup (connection);
-
-	if (connection->priv->base_uri == NULL) {
-		g_debug ("Error parsing http://%s:%d", connection->priv->host,
-			 connection->priv->port);
-		/* FIXME: do callback */
-		return;
-	}
 
 	connection->priv->daap_base_uri =
 		g_strdup_printf ("daap://%s:%d", connection->priv->host,
@@ -1732,9 +1726,9 @@ _disconnected_cb (DmapConnection * connection, ConnectionResponseData * rdata)
 }
 
 void
-dmap_connection_disconnect (DmapConnection * connection,
-			    DmapConnectionFunc callback,
-			    gpointer user_data)
+dmap_connection_stop(DmapConnection * connection,
+                     DmapConnectionFunc callback,
+                     gpointer user_data)
 {
 	DmapConnectionPrivate *priv = connection->priv;
 	ConnectionResponseData *rdata;

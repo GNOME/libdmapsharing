@@ -63,6 +63,8 @@ create_share (guint conn_type)
 	DmapRecordFactory *factory;
 	DmapRecord *record;
 	DmapShare *share = NULL;
+	GError *error = NULL;
+	gboolean ok;
 	DmapDb *db;
 
 	if (conn_type == DAAP) { 
@@ -72,9 +74,9 @@ create_share (guint conn_type)
 		factory = DMAP_RECORD_FACTORY (test_dmap_image_record_factory_new ());
 	}
 
-	record = DMAP_RECORD (dmap_record_factory_create (factory, NULL));
+	record = DMAP_RECORD (dmap_record_factory_create (factory, NULL, NULL));
 	db = DMAP_DB (test_dmap_db_new ());
-	dmap_db_add (db, record);
+	dmap_db_add (db, record, NULL);
 	g_object_unref (record);
 
 	g_warning ("initialize DAAP sharing");
@@ -95,9 +97,15 @@ create_share (guint conn_type)
 
 	g_assert (NULL != share);
 
-	dmap_share_serve(share);
+	ok = dmap_share_serve(share, &error);
+	if (!ok) {
+		g_error("Error starting server: %s", error->message);
+	}
 
-	dmap_share_publish(share);
+	ok = dmap_share_publish(share, &error);
+	if (!ok) {
+		g_error("Error publishing server: %s", error->message);
+	}
 
 	g_free (name);
 }

@@ -47,11 +47,13 @@ typedef struct {
 	GObjectClass parent;
 } TestDmapImageRecordFactoryClass;
 
-GType                  test_dmap_image_record_factory_get_type (void);
+GType                  test_dmap_image_record_factory_get_type(void);
 
-TestDmapImageRecordFactory *test_dmap_image_record_factory_new      (void);
+TestDmapImageRecordFactory *test_dmap_image_record_factory_new(void);
 
-DmapRecord            *test_dmap_image_record_factory_create   (DmapRecordFactory *factory, gpointer user_data);
+DmapRecord            *test_dmap_image_record_factory_create(DmapRecordFactory *factory,
+                                                             gpointer user_data,
+                                                             GError **error);
 
 G_END_DECLS
 

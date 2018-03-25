@@ -179,16 +179,16 @@ void dmap_connection_start (DmapConnection * connection,
 			    gpointer user_data);
 
 /**
- * dmap_connection_disconnect:
+ * dmap_connection_stop:
  * @connection: The connection.
  * @callback: (scope async): The function to call once the connection is complete.
  * @user_data: The data to pass to the callback.
  *
  * Disconnect from the remote DMAP share.
  */
-void dmap_connection_disconnect (DmapConnection * connection,
-				 DmapConnectionFunc callback,
-				 gpointer user_data);
+void dmap_connection_stop(DmapConnection * connection,
+                          DmapConnectionFunc callback,
+                          gpointer user_data);
 
 SoupMessageHeaders *dmap_connection_get_headers (DmapConnection * connection,
 						 const char *uri);

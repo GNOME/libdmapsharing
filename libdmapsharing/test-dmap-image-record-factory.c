@@ -22,7 +22,9 @@
 #include "test-dmap-image-record.h"
 
 DmapRecord *
-test_dmap_image_record_factory_create  (DmapRecordFactory *factory, gpointer user_data)
+test_dmap_image_record_factory_create(DmapRecordFactory *factory,
+                                      gpointer user_data,
+                                      GError **error)
 {
 	return DMAP_RECORD (test_dmap_image_record_new ());
 }

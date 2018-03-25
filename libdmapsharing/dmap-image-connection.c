@@ -112,7 +112,8 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 		}
 	}
 
-	record = dmap_record_factory_create (factory, NULL);
+	/* FIXME: third argument, NULL, is GError; how to handle? */
+	record = dmap_record_factory_create (factory, NULL, NULL);
 	if (record == NULL) {
 		goto _return;
 	}

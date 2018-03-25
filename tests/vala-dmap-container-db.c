@@ -68,7 +68,7 @@ GType vala_dmap_container_db_get_type (void) G_GNUC_CONST;
 static gint64 vala_dmap_container_db_real_count (DmapContainerDb* base);
 static void vala_dmap_container_db_real_foreach (DmapContainerDb* base, GHFunc func, void* func_target);
 static DmapContainerRecord* vala_dmap_container_db_real_lookup_by_id (DmapContainerDb* base, guint id);
-static void vala_dmap_container_db_real_add (DmapContainerDb* base, DmapContainerRecord* record);
+static void vala_dmap_container_db_real_add (DmapContainerDb* base, DmapContainerRecord* record, GError** error);
 ValaDmapContainerDb* vala_dmap_container_db_new (void);
 ValaDmapContainerDb* vala_dmap_container_db_construct (GType object_type);
 static void vala_dmap_container_db_finalize (GObject * obj);
@@ -144,7 +144,7 @@ static DmapContainerRecord* vala_dmap_container_db_real_lookup_by_id (DmapContai
 }
 
 
-static void vala_dmap_container_db_real_add (DmapContainerDb* base, DmapContainerRecord* record) {
+static void vala_dmap_container_db_real_add (DmapContainerDb* base, DmapContainerRecord* record, GError** error) {
 	ValaDmapContainerDb * self;
 	self = (ValaDmapContainerDb*) base;
 	g_return_if_fail (record != NULL);
@@ -176,7 +176,7 @@ static void vala_dmap_container_db_dmap_container_db_interface_init (DmapContain
 	iface->count = (gint64 (*) (DmapContainerDb *)) vala_dmap_container_db_real_count;
 	iface->foreach = (void (*) (DmapContainerDb *, DmapIdContainerRecordFunc, void*)) vala_dmap_container_db_real_foreach;
 	iface->lookup_by_id = (DmapContainerRecord* (*) (DmapContainerDb *, guint)) vala_dmap_container_db_real_lookup_by_id;
-	iface->add = (void (*) (DmapContainerDb *, DmapContainerRecord*)) vala_dmap_container_db_real_add;
+	iface->add = (void (*) (DmapContainerDb *, DmapContainerRecord*, GError**)) vala_dmap_container_db_real_add;
 }
 
 

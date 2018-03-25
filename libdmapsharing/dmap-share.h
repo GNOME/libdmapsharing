@@ -191,23 +191,25 @@ GType dmap_share_get_type (void);
 /**
  * dmap_share_serve:
  * @share: a #DmapShare instance.
+ * @error: return location for a GError, or NULL.
  *
  * Begin serving the service defined by share. A program will normally also
  * call dmap_share_publish.
  *
  * Returns: TRUE if serving succeeds, else FALSE.
  */
-gboolean dmap_share_serve(DmapShare *share);
+gboolean dmap_share_serve(DmapShare *share, GError **error);
 
 /**
  * dmap_share_publish:
  * @share: a #DmapShare instance.
+ * @error: return location for a GError, or NULL.
  *
  * Publish the availability of the given share using mDNS-SD.
  *
  * Returns: TRUE if publishing succeeds, else FALSE.
  */
-gboolean dmap_share_publish(DmapShare *share);
+gboolean dmap_share_publish(DmapShare *share, GError **error);
 
 /**
  * dmap_share_free_filter:

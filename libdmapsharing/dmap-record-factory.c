@@ -28,8 +28,11 @@ dmap_record_factory_default_init (DmapRecordFactoryInterface * iface)
 G_DEFINE_INTERFACE(DmapRecordFactory, dmap_record_factory, G_TYPE_OBJECT)
 
 DmapRecord *
-dmap_record_factory_create (DmapRecordFactory * factory, gpointer user_data)
+dmap_record_factory_create (DmapRecordFactory *factory,
+                            gpointer user_data,
+                            GError **error)
 {
 	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory,
-								    user_data);
+								    user_data,
+	                                                            error);
 }

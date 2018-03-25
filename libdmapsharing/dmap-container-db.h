@@ -78,7 +78,7 @@ struct _DmapContainerDbInterface
 {
 	GTypeInterface parent;
 
-	void (*add) (DmapContainerDb * db, DmapContainerRecord * record);
+	void (*add) (DmapContainerDb *db, DmapContainerRecord *record, GError **error);
 
 	DmapContainerRecord *(*lookup_by_id) (DmapContainerDb * db, guint id);
 
@@ -93,11 +93,13 @@ GType dmap_container_db_get_type (void);
  * dmap_container_db_add:
  * @db: A container database.
  * @record: A record.
+ * @error: return location for a GError, or NULL.
  *
  * Add a record to the database.
  */
 void dmap_container_db_add (DmapContainerDb * db,
-                            DmapContainerRecord * record);
+                            DmapContainerRecord * record,
+                            GError **error);
 
 /**
  * dmap_container_db_lookup_by_id:

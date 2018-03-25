@@ -68,8 +68,9 @@ test_dmap_container_record_get_id (DmapContainerRecord *record)
 
 void
 test_dmap_container_record_add_entry (DmapContainerRecord *container_record,
-				      DmapRecord *record,
-				      gint id)
+                                      DmapRecord *record,
+                                      gint id,
+                                      GError **error)
 {
 }
 

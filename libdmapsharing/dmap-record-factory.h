@@ -71,7 +71,8 @@ struct _DmapRecordFactoryInterface
 	GTypeInterface parent;
 
 	DmapRecord *(*create) (DmapRecordFactory * factory,
-			       gpointer user_data);
+	                       gpointer user_data,
+	                       GError **error);
 };
 
 GType dmap_record_factory_get_type (void);
@@ -80,11 +81,13 @@ GType dmap_record_factory_get_type (void);
  * dmap_record_factory_create:
  * @factory: A DmapRecordFactory.
  * @user_data: Some piece of data that may be used to initialize return value.
+ * @error: return location for a GError, or NULL.
  *
  * Returns: (transfer full): a new DmapRecord.
  */
 DmapRecord *dmap_record_factory_create (DmapRecordFactory * factory,
-					gpointer user_data);
+					gpointer user_data,
+                                        GError **error);
 
 #endif /* _DMAP_RECORD_FACTORY_H */
 

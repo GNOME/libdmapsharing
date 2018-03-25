@@ -1019,7 +1019,7 @@ _build_share_test(char *name)
 	g_object_set(record, "location", "file:///etc/services", NULL);
 	g_object_set(record, "filesize", statbuf.st_size, NULL);
 
-	dmap_db_add(db, record);
+	dmap_db_add(db, record, NULL);
 
 	if (-1 == stat("/etc/group", &statbuf)) {
 		ck_abort();
@@ -1031,7 +1031,8 @@ _build_share_test(char *name)
 	g_object_set(record, "songalbum", "album2", NULL);
 	g_object_set(record, "location", "file:///etc/group", NULL);
 	g_object_set(record, "filesize", statbuf.st_size, NULL);
-	dmap_db_add(db, record);
+
+	dmap_db_add(db, record, NULL);
 
 	share  = DMAP_SHARE(dmap_av_share_new(name,
 	                                   NULL,
@@ -1071,7 +1072,7 @@ START_TEST(dmap_av_share_new_test)
 	g_object_set(record, "songartist", "artist1", NULL);
 	g_object_set(record, "songalbum", "album1", NULL);
 
-	dmap_db_add(db, record);
+	dmap_db_add(db, record, NULL);
 
 	share = DMAP_SHARE(dmap_av_share_new("name",
 	                                     "password",
@@ -1117,7 +1118,7 @@ START_TEST(dmap_av_share_serve_publish_test)
 	g_object_set(record, "songartist", "artist1", NULL);
 	g_object_set(record, "songalbum", "album1", NULL);
 
-	dmap_db_add(db, record);
+	dmap_db_add(db, record, NULL);
 
 	share = DMAP_SHARE(dmap_av_share_new("name",
 	                                     "password",
@@ -1125,10 +1126,10 @@ START_TEST(dmap_av_share_serve_publish_test)
 	                                      container_db,
 	                                     "audio/mp3"));
 
-	ok = dmap_share_serve(share);
+	ok = dmap_share_serve(share, NULL);
 	ck_assert(ok);
 
-	ok = dmap_share_publish(share);
+	ok = dmap_share_publish(share, NULL);
 	ck_assert(ok);
 
 	g_object_unref(db);
@@ -1157,7 +1158,7 @@ START_TEST(dmap_av_share_serve_publish_collision_test)
 	g_object_set(record, "songartist", "artist1", NULL);
 	g_object_set(record, "songalbum", "album1", NULL);
 
-	dmap_db_add(db, record);
+	dmap_db_add(db, record, NULL);
 
 	share1 = DMAP_SHARE(dmap_av_share_new("name",
 	                                      "password",
@@ -1165,10 +1166,10 @@ START_TEST(dmap_av_share_serve_publish_collision_test)
 	                                       container_db,
 	                                      "audio/mp3"));
 
-	ok = dmap_share_serve(share1);
+	ok = dmap_share_serve(share1, NULL);
 	ck_assert(ok);
 
-	ok = dmap_share_publish(share1);
+	ok = dmap_share_publish(share1, NULL);
 	ck_assert(ok);
 
 	share2 = DMAP_SHARE(dmap_av_share_new("name",
@@ -1177,10 +1178,10 @@ START_TEST(dmap_av_share_serve_publish_collision_test)
 	                                       container_db,
 	                                      "audio/mp3"));
 
-	ok = dmap_share_serve(share2);
+	ok = dmap_share_serve(share2, NULL);
 	ck_assert(ok);
 
-	ok = dmap_share_publish(share2);
+	ok = dmap_share_publish(share2, NULL);
 	ck_assert(ok);
 
 	g_object_unref(db);
@@ -1206,12 +1207,12 @@ _tabulator_test(char *property,
 	record1 = DMAP_RECORD(test_dmap_av_record_new());
 	g_object_set(record1, property, "str1", NULL);
 
-	id1 = dmap_db_add(db, record1);
+	id1 = dmap_db_add(db, record1, NULL);
 
 	record2 = DMAP_RECORD(test_dmap_av_record_new());
 	g_object_set(record2, property, "str2", NULL);
 
-	id2 = dmap_db_add(db, record2);
+	id2 = dmap_db_add(db, record2, NULL);
 
 	ht = g_hash_table_new (g_str_hash, g_str_equal);
 

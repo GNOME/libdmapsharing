@@ -371,21 +371,21 @@ START_TEST(dmap_av_record_cmp_by_album_test)
 	record = test_dmap_av_record_new();
 	g_object_set(record, "songalbum", "a", NULL);
 	g_object_set(record, "sort-album", "a", NULL);
-	id = dmap_db_add(db, DMAP_RECORD(record));
+	id = dmap_db_add(db, DMAP_RECORD(record), NULL);
 	g_object_unref(record);
 	records = g_list_append (records, GINT_TO_POINTER(id));
 
 	record = test_dmap_av_record_new();
 	g_object_set(record, "songalbum",  "c", NULL);
 	g_object_set(record, "sort-album", "c", NULL);
-	id = dmap_db_add(db, DMAP_RECORD(record));
+	id = dmap_db_add(db, DMAP_RECORD(record), NULL);
 	g_object_unref(record);
 	records = g_list_append (records, GINT_TO_POINTER(id));
 
 	record = test_dmap_av_record_new();
 	g_object_set(record, "songalbum",  "b", NULL);
 	g_object_set(record, "sort-album", "b", NULL);
-	id = dmap_db_add(db, DMAP_RECORD(record));
+	id = dmap_db_add(db, DMAP_RECORD(record), NULL);
 	g_object_unref(record);
 	records = g_list_append (records, GINT_TO_POINTER(id));
 

@@ -56,21 +56,21 @@ dmap_db_foreach (const DmapDb * db, DmapIdRecordFunc func, gpointer data)
 }
 
 guint
-dmap_db_add (DmapDb * db, DmapRecord * record)
+dmap_db_add (DmapDb *db, DmapRecord *record, GError **error)
 {
-	return DMAP_DB_GET_INTERFACE (db)->add (db, record);
+	return DMAP_DB_GET_INTERFACE (db)->add (db, record, error);
 }
 
 guint
-dmap_db_add_with_id (DmapDb * db, DmapRecord * record, guint id)
+dmap_db_add_with_id (DmapDb *db, DmapRecord *record, guint id, GError **error)
 {
-	return DMAP_DB_GET_INTERFACE (db)->add_with_id (db, record, id);
+	return DMAP_DB_GET_INTERFACE (db)->add_with_id (db, record, id, error);
 }
 
 guint
-dmap_db_add_path (DmapDb * db, const gchar * path)
+dmap_db_add_path (DmapDb *db, const gchar *path, GError **error)
 {
-	return DMAP_DB_GET_INTERFACE (db)->add_path (db, path);
+	return DMAP_DB_GET_INTERFACE (db)->add_path (db, path, error);
 }
 
 gulong

@@ -70,7 +70,7 @@ struct _DmapContainerRecordInterface
 	  guint (*get_id) (DmapContainerRecord * record);
 
 	void (*add_entry) (DmapContainerRecord * container_record,
-			   DmapRecord * record, gint id);
+			   DmapRecord * record, gint id, GError **error);
 
 	  guint64 (*get_entry_count) (DmapContainerRecord * record);
 
@@ -92,12 +92,13 @@ guint dmap_container_record_get_id (DmapContainerRecord * record);
  * @container_record: A DmapContainerRecord.
  * @record: A DmapRecord.
  * @id: The record's ID.
+ * @error: return location for a GError, or NULL.
  *
  * Add a record to the database. It is assumed that the record is placed
  * directly into the database (not copied) and not freed.
  */
 void dmap_container_record_add_entry (DmapContainerRecord * container_record,
-				      DmapRecord * record, gint id);
+				      DmapRecord * record, gint id, GError **error);
 
 /**
  * dmap_container_record_get_entry_count:
