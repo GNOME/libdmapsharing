@@ -79,3 +79,15 @@ as object types instead of pointer types.
 
 (11) The properties contained in a DmapMdnsService must now be accessed
 using g_object_get.
+
+(12) The following methods now take a GError ** as their last argument:
+
+	(a) dmap_record_factory_create().
+
+	(b) dmap_db_add(), dmap_db_add_with_id(), and dmap_db_add_path().
+
+	(c) dmap_share_serve().
+
+	(d) dmap_share_publish().
+
+	(e) dmap_container_record_add_entry().
