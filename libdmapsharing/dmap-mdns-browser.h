@@ -77,21 +77,18 @@ G_BEGIN_DECLS
 
 typedef struct _DmapMdnsBrowserPrivate DmapMdnsBrowserPrivate;
 
-typedef enum
-{
+typedef enum {
 	DMAP_MDNS_BROWSER_ERROR_NOT_RUNNING = 0,
 	DMAP_MDNS_BROWSER_ERROR_FAILED,
 } DmapMdnsBrowserError;
 
-typedef struct
-{
+typedef struct {
 	GObject object;
 
 	DmapMdnsBrowserPrivate *priv;
 } DmapMdnsBrowser;
 
-typedef struct
-{
+typedef struct {
 	GObjectClass parent_class;
 
 	void (*service_added) (DmapMdnsBrowser *browser,

@@ -5,8 +5,7 @@
 
 G_BEGIN_DECLS
 
-typedef enum
-{
+typedef enum {
 	DMAP_CC_INVALID = 0,
 	DMAP_RAW,		/* The RAW type does not use a content code.
 				 * Instead of:

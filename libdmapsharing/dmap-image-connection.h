@@ -72,13 +72,11 @@ G_BEGIN_DECLS
 #define DMAP_IMAGE_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_IMAGE_CONNECTION, DmapImageConnectionClass))
 typedef struct DmapImageConnectionPrivate DmapImageConnectionPrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapConnectionClass dmap_connection_class;
 } DmapImageConnectionClass;
 
-typedef struct
-{
+typedef struct {
 	DmapConnection dmap_connection_instance;
 	DmapImageConnectionPrivate *priv;
 } DmapImageConnection;

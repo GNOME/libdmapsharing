@@ -84,13 +84,11 @@ G_BEGIN_DECLS
 				 DMAP_TYPE_AV_SHARE, DmapAvShareClass))
 typedef struct DmapAvSharePrivate DmapAvSharePrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapShareClass dmap_share_class;
 } DmapAvShareClass;
 
-typedef struct
-{
+typedef struct {
 	DmapShare dmap_share_instance;
 	DmapAvSharePrivate *priv;
 } DmapAvShare;

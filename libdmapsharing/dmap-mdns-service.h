@@ -84,8 +84,7 @@ typedef struct _DmapMdnsServicePrivate DmapMdnsServicePrivate;
  * Enum values used to specify the service type.
  *
  */
-typedef enum
-{
+typedef enum {
 	DMAP_MDNS_SERVICE_TYPE_INVALID = 0,
 	DMAP_MDNS_SERVICE_TYPE_DAAP,
 	DMAP_MDNS_SERVICE_TYPE_DPAP,
@@ -96,8 +95,7 @@ typedef enum
 
 // FIXME: this is only for RAOP and corresponds to the "tp" txt record.
 // This should be in a sub-class.
-typedef enum
-{
+typedef enum {
 	DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP = 0,
 	DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_UDP,
 	DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_LAST = DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_UDP
@@ -111,13 +109,11 @@ static const char * const _service_type_name[] = {
 	"_raop._tcp"
 };
 
-typedef struct
-{
+typedef struct {
 	GObjectClass parent_class;
 } DmapMdnsServiceClass;
 
-typedef struct
-{
+typedef struct {
 	GObject object;
 
 	DmapMdnsServicePrivate *priv;

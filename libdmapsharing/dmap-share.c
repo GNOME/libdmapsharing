@@ -1446,8 +1446,7 @@ dmap_share_free_filter (GSList * filter)
 	}
 }
 
-typedef struct
-{
+typedef struct {
 	gchar *name;
 	gint64 group_id;
 	gchar *artist;

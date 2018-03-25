@@ -72,13 +72,11 @@ G_BEGIN_DECLS
 #define DMAP_AV_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_AV_CONNECTION, DmapAvConnectionClass))
 typedef struct DmapAvConnectionPrivate DmapAvConnectionPrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapConnectionClass dmap_connection_class;
 } DmapAvConnectionClass;
 
-typedef struct
-{
+typedef struct {
 	DmapConnection dmap_connection_instance;
 	DmapAvConnectionPrivate *priv;
 } DmapAvConnection;

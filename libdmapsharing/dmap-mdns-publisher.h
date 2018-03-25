@@ -36,15 +36,13 @@ G_BEGIN_DECLS
 #define DMAP_MDNS_PUBLISHER_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), DMAP_TYPE_MDNS_PUBLISHER, DmapMdnsPublisherClass))
 typedef struct DmapMdnsPublisherPrivate DmapMdnsPublisherPrivate;
 
-typedef struct
-{
+typedef struct {
 	GObject object;
 
 	DmapMdnsPublisherPrivate *priv;
 } DmapMdnsPublisher;
 
-typedef struct
-{
+typedef struct {
 	GObjectClass parent_class;
 
 	void (*published) (DmapMdnsPublisher * publisher, const char *name);
@@ -52,8 +50,7 @@ typedef struct
 				const char *name);
 } DmapMdnsPublisherClass;
 
-typedef enum
-{
+typedef enum {
 	DMAP_MDNS_PUBLISHER_ERROR_NOT_RUNNING,
 	DMAP_MDNS_PUBLISHER_ERROR_FAILED,
 } DmapMdnsPublisherError;

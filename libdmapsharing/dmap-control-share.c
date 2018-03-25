@@ -79,8 +79,7 @@ struct DmapControlSharePrivate
 /*
  * Internal representation of a DACP remote.
  */
-typedef struct
-{
+typedef struct {
 	gchar *host;
 	guint port;
 	gchar *pair_txt;
@@ -89,15 +88,13 @@ typedef struct
 
 #define DMAP_CONTROL_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONTROL_SHARE, DmapControlSharePrivate))
 
-enum
-{
+enum {
 	PROP_0,
 	PROP_LIBRARY_NAME,
 	PROP_PLAYER
 };
 
-enum
-{
+enum {
 	REMOTE_FOUND,
 	REMOTE_LOST,
 	REMOTE_PAIRED,

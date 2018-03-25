@@ -59,18 +59,15 @@ G_BEGIN_DECLS
 #define DMAP_RECORD_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				      DMAP_TYPE_RECORD, DmapRecordInterface))
 typedef struct _DmapRecord DmapRecord;
-typedef struct _DmapRecordInterface DmapRecordInterface;
 
-struct _DmapRecordInterface
-{
+typedef struct {
 	GTypeInterface parent;
 
 	GArray *(*to_blob) (DmapRecord * record);
 	gboolean   (*set_from_blob) (DmapRecord * record, GArray * blob);
-};
+} DmapRecordInterface;
 
-typedef enum
-{
+typedef enum {
 	DMAP_MEDIA_KIND_MUSIC = 1,
 	DMAP_MEDIA_KIND_MOVIE = 2,
 	DMAP_MEDIA_KIND_PODCAST = 32,

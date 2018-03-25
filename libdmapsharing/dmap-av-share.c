@@ -203,8 +203,7 @@ dmap_av_share_server_info (DmapShare * share,
 	g_free (nameprop);
 }
 
-typedef enum
-{
+typedef enum {
 	ITEM_ID = 0,
 	ITEM_NAME,
 	ITEM_KIND,

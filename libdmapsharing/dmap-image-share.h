@@ -81,13 +81,11 @@ G_BEGIN_DECLS
 				 DMAP_TYPE_IMAGE_SHARE, DmapImageShareClass))
 typedef struct DmapImageSharePrivate DmapImageSharePrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapShareClass dmap_share_class;
 } DmapImageShareClass;
 
-typedef struct
-{
+typedef struct {
 	DmapShare dmap_share_instance;
 	DmapImageSharePrivate *priv;
 } DmapImageShare;

@@ -592,8 +592,7 @@ _connection_set_error_message (DmapConnection * connection,
 	}
 }
 
-typedef struct
-{
+typedef struct {
 	SoupMessage *message;
 	int status;
 	DmapConnection *connection;
@@ -1562,8 +1561,7 @@ dmap_connection_is_connected (DmapConnection * connection)
 	return connection->priv->is_connected;
 }
 
-typedef struct
-{
+typedef struct {
 	DmapConnection *connection;
 	DmapConnectionFunc callback;
 	gpointer user_data;

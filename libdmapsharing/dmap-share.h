@@ -90,23 +90,20 @@ G_BEGIN_DECLS
 #define DMAP_STATUS_OK 200
 typedef struct DmapSharePrivate DmapSharePrivate;
 
-typedef struct
-{
+typedef struct {
 	GObject parent;
 	DmapSharePrivate *priv;
 } DmapShare;
 
 typedef struct DmapMetaDataMap DmapMetaDataMap;
 
-typedef enum
-{
+typedef enum {
 	DMAP_SHARE_AUTH_METHOD_NONE = 0,
 	DMAP_SHARE_AUTH_METHOD_NAME_AND_PASSWORD = 1,
 	DMAP_SHARE_AUTH_METHOD_PASSWORD = 2
 } DmapShareAuthMethod;
 
-typedef struct
-{
+typedef struct {
 	GObjectClass parent;
 
 	/* Pure virtual methods: */

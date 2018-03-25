@@ -84,14 +84,12 @@ G_BEGIN_DECLS
 				 DMAP_TYPE_CONTROL_SHARE, DmapControlShareClass))
 typedef struct DmapControlSharePrivate DmapControlSharePrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapAvShare dmap_av_share_instance;
 	DmapControlSharePrivate *priv;
 } DmapControlShare;
 
-typedef struct
-{
+typedef struct {
 	DmapAvShareClass dmap_av_share_class;
 
 	  gboolean (*lookup_guid) (DmapControlShare * share, gchar * guid);

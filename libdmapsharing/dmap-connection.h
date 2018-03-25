@@ -31,8 +31,7 @@
 
 G_BEGIN_DECLS
 
-typedef struct
-{
+typedef struct {
 	char *name;
 	int id;
 	GList *uris;
@@ -102,8 +101,7 @@ typedef struct DmapConnectionPrivate DmapConnectionPrivate;
  *
  * Enumeration of connection states.
  */
-typedef enum
-{
+typedef enum {
 	DMAP_GET_INFO = 0,
 	DMAP_LOGIN,
 	DMAP_GET_REVISION_NUMBER,
@@ -115,14 +113,12 @@ typedef enum
 	DMAP_DONE
 } DmapConnectionState;
 
-typedef struct
-{
+typedef struct {
 	GObject parent;
 	DmapConnectionPrivate *priv;
 } DmapConnection;
 
-typedef struct
-{
+typedef struct {
 	GObjectClass parent;
 
 	/* Pure virtual methods: */

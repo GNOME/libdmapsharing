@@ -58,15 +58,13 @@ G_BEGIN_DECLS
 typedef struct _DmapControlPlayerInterface DmapControlPlayerInterface;
 typedef struct _DmapControlPlayer DmapControlPlayer;
 
-typedef enum
-{
+typedef enum {
 	CONTROL_REPEAT_NONE = 0,
 	CONTROL_REPEAT_SINGLE = 1,
 	CONTROL_REPEAT_ALL = 2
 } DmapControlRepeatState;
 
-typedef enum
-{
+typedef enum {
 	CONTROL_PLAY_STOPPED = 2,
 	CONTROL_PLAY_PAUSED = 3,
 	CONTROL_PLAY_PLAYING = 4

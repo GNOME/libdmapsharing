@@ -46,14 +46,12 @@ G_BEGIN_DECLS
 					       DmapGstInputStreamClass))
 typedef struct DmapGstInputStreamPrivate DmapGstInputStreamPrivate;
 
-typedef struct
-{
+typedef struct {
 	GInputStream parent;
 	DmapGstInputStreamPrivate *priv;
 } DmapGstInputStream;
 
-typedef struct
-{
+typedef struct {
 	GInputStreamClass parent;
 
 	void (*kill_pipeline) (DmapGstInputStream *stream);

@@ -72,13 +72,11 @@ G_BEGIN_DECLS
 #define DMAP_CONTROL_CONNECTION_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), DACP_TYPE_CONNECTION, DmapControlConnectionClass))
 typedef struct DmapControlConnectionPrivate DmapControlConnectionPrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapConnectionClass dmap_connection_class;
 } DmapControlConnectionClass;
 
-typedef struct
-{
+typedef struct {
 	DmapConnection dmap_connection_instance;
 	DmapControlConnectionPrivate *priv;
 } DmapControlConnection;

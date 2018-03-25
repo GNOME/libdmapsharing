@@ -47,8 +47,7 @@ guint dmap_structure_get_size (GNode * structure);
 void dmap_structure_increase_by_predicted_size (GNode * structure,
 						guint size);
 
-typedef enum
-{
+typedef enum {
 	DMAP_TYPE_BYTE = 0x0001,
 	DMAP_TYPE_SIGNED_INT = 0x0002,
 	DMAP_TYPE_SHORT = 0x0003,
@@ -62,16 +61,13 @@ typedef enum
 	DMAP_TYPE_INVALID = 0xFFFF
 } DmapType;
 
-typedef struct _DmapContentCodeDefinition DmapContentCodeDefinition;
-
-struct _DmapContentCodeDefinition
-{
+typedef struct {
 	DmapContentCode code;
 	gint32 int_code;
 	const gchar *name;
 	const gchar *string;
 	DmapType type;
-};
+} DmapContentCodeDefinition;
 
 const DmapContentCodeDefinition * dmap_structure_content_codes (guint * number);
 gint32 dmap_structure_cc_string_as_int32 (const gchar * str);

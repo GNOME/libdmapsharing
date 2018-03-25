@@ -28,8 +28,7 @@
 
 #define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_PUBLISHER, DmapMdnsPublisherPrivate))
 
-struct DmapMdnsPublisherPrivate
-{
+struct DmapMdnsPublisherPrivate {
 	DNSServiceRef	 sdref;
         char            *name;
 };

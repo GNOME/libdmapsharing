@@ -47,14 +47,12 @@ G_BEGIN_DECLS
 					   DmapGstWavInputStreamPrivate))
 typedef struct DmapGstWavInputStreamPrivate DmapGstWavInputStreamPrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapGstInputStream parent;
 	DmapGstWavInputStreamPrivate *priv;
 } DmapGstWavInputStream;
 
-typedef struct
-{
+typedef struct {
 	DmapGstInputStreamClass parent;
 } DmapGstWavInputStreamClass;
 

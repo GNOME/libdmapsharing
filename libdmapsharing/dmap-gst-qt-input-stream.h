@@ -47,14 +47,12 @@ G_BEGIN_DECLS
 					   DmapGstQtInputStreamPrivate))
 typedef struct DmapGstQtInputStreamPrivate DmapGstQtInputStreamPrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapGstInputStream parent;
 	DmapGstQtInputStreamPrivate *priv;
 } DmapGstQtInputStream;
 
-typedef struct
-{
+typedef struct {
 	DmapGstInputStreamClass parent;
 } DmapGstQtInputStreamClass;
 

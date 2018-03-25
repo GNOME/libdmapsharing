@@ -47,14 +47,12 @@ G_BEGIN_DECLS
 					   DmapGstMP3InputStreamPrivate))
 typedef struct DmapGstMP3InputStreamPrivate DmapGstMP3InputStreamPrivate;
 
-typedef struct
-{
+typedef struct {
 	DmapGstInputStream parent;
 	DmapGstMP3InputStreamPrivate *priv;
 } DmapGstMP3InputStream;
 
-typedef struct
-{
+typedef struct {
 	DmapGstInputStreamClass parent;
 } DmapGstMP3InputStreamClass;
 

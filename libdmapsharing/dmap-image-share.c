@@ -63,8 +63,7 @@ struct DmapImageSharePrivate
 	gchar unused;
 };
 
-typedef enum
-{
+typedef enum {
 	ITEM_ID = 0,
 	ITEM_NAME,
 	ITEM_KIND,

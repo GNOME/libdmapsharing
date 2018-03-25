@@ -30,8 +30,7 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 
-struct _DmapMdnsServicePrivate
-{
+struct _DmapMdnsServicePrivate {
 	gchar *service_name;
         gchar *name;
         gchar *host;
