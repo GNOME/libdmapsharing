@@ -27,12 +27,12 @@
 
 #include "dmap-mdns-avahi.h"
 
-static AvahiClient *client = NULL;
-static AvahiEntryGroup *entry_group = NULL;
-static gsize client_init = 0;
+static AvahiClient *_client = NULL;
+static AvahiEntryGroup *_entry_group = NULL;
+static gsize _client_init = 0;
 
 static void
-client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
+_client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
 {
 	/* FIXME
 	 * check to make sure we're in the _RUNNING state before we publish
@@ -55,14 +55,14 @@ client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
 		 * in AVAHI_SERVER_RUNNING state we will register them
 		 * again with the new host name.
 		 */
-		if (entry_group) {
-			avahi_entry_group_reset (entry_group);
+		if (_entry_group) {
+			avahi_entry_group_reset (_entry_group);
 		}
 		break;
 
 	case AVAHI_CLIENT_FAILURE:
 		g_warning ("Client failure: %s\n",
-			   avahi_strerror (avahi_client_errno (client)));
+			   avahi_strerror (avahi_client_errno (_client)));
 		break;
 
 	case AVAHI_CLIENT_CONNECTING:
@@ -75,7 +75,7 @@ client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
 AvahiClient *
 dmap_mdns_avahi_get_client (void)
 {
-	if (g_once_init_enter (&client_init)) {
+	if (g_once_init_enter (&_client_init)) {
 		AvahiClientFlags flags = 0;
 		AvahiGLibPoll *apoll;
 		int error = 0;
@@ -88,19 +88,19 @@ dmap_mdns_avahi_get_client (void)
 				("Unable to create AvahiGlibPoll object for mDNS");
 		}
 
-		client = avahi_client_new (avahi_glib_poll_get (apoll),
+		_client = avahi_client_new (avahi_glib_poll_get (apoll),
 					   flags,
-					   (AvahiClientCallback) client_cb,
+					   (AvahiClientCallback) _client_cb,
 					   NULL, &error);
 		if (error != 0) {
 			g_warning ("Unable to initialize mDNS: %s",
 				   avahi_strerror (error));
 		}
 
-		g_once_init_leave (&client_init, 1);
+		g_once_init_leave (&_client_init, 1);
 	}
 
-	return client;
+	return _client;
 }
 
 void
@@ -110,6 +110,6 @@ dmap_mdns_avahi_set_entry_group (AvahiEntryGroup * eg)
 	 * per process code. Refactor?
 	 * g_assert (eg == NULL || entry_group == NULL);
 	 */
-	g_assert (avahi_entry_group_get_client (eg) == client);
-	entry_group = eg;
+	g_assert (avahi_entry_group_get_client (eg) == _client);
+	_entry_group = eg;
 }
