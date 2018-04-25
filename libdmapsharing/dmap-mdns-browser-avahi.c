@@ -65,10 +65,10 @@ enum
 
 static void dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass);
 static void dmap_mdns_browser_init (DmapMdnsBrowser * browser);
-static void dmap_mdns_browser_dispose (GObject * object);
-static void dmap_mdns_browser_finalize (GObject * object);
-static void avahi_client_init (DmapMdnsBrowser * browser);
-static void resolve_cb (AvahiServiceResolver * service_resolver,
+static void _dispose (GObject * object);
+static void _finalize (GObject * object);
+static void _client_init (DmapMdnsBrowser * browser);
+static void _resolve_cb (AvahiServiceResolver * service_resolver,
 			AvahiIfIndex interface,
 			AvahiProtocol protocol,
 			AvahiResolverEvent event,
@@ -82,28 +82,28 @@ static void resolve_cb (AvahiServiceResolver * service_resolver,
 			AvahiLookupResultFlags flags,
 #endif
 			DmapMdnsBrowser * browser);
-static gboolean dmap_mdns_browser_resolve (DmapMdnsBrowser * browser,
-					   const gchar * name,
-					   const gchar * domain);
-static void browser_add_service (DmapMdnsBrowser * browser,
-				 const gchar * service_name,
-				 const gchar * domain);
-static void browser_remove_service (DmapMdnsBrowser * browser,
-				    const gchar * service_name);
-static void browse_cb (AvahiServiceBrowser * service_browser,
-		       AvahiIfIndex interface,
-		       AvahiProtocol protocol,
-		       AvahiBrowserEvent event,
-		       const gchar * name,
-		       const gchar * type, const gchar * domain,
+static gboolean _resolve (DmapMdnsBrowser * browser,
+                          const gchar * name,
+                          const gchar * domain);
+static void _add_service (DmapMdnsBrowser * browser,
+                          const gchar * service_name,
+                          const gchar * domain);
+static void _remove_service (DmapMdnsBrowser * browser,
+                             const gchar * service_name);
+static void _browse_cb (AvahiServiceBrowser * service_browser,
+                        AvahiIfIndex interface,
+                        AvahiProtocol protocol,
+                        AvahiBrowserEvent event,
+                        const gchar * name,
+                        const gchar * type, const gchar * domain,
 #ifdef HAVE_AVAHI_0_6
-		       AvahiLookupResultFlags flags,
+                        AvahiLookupResultFlags flags,
 #endif
-		       DmapMdnsBrowser * browser);
+                        DmapMdnsBrowser * browser);
 
 #define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserPrivate))
 
-static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
+static guint _signals[LAST_SIGNAL] = { 0, };
 
 G_DEFINE_TYPE (DmapMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
@@ -126,12 +126,12 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 
 	dmap_mdns_browser_parent_class = g_type_class_peek_parent (klass);
 
-	object_class->dispose = dmap_mdns_browser_dispose;
-	object_class->finalize = dmap_mdns_browser_finalize;
+	object_class->dispose  = _dispose;
+	object_class->finalize = _finalize;
 
 	g_type_class_add_private (klass, sizeof (DmapMdnsBrowserPrivate));
 
-	dmap_mdns_browser_signals[SERVICE_ADDED] =
+	_signals[SERVICE_ADDED] =
 		g_signal_new ("service-added",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -139,7 +139,7 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 					       service_added), NULL, NULL,
 			      g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE,
 			      1, DMAP_TYPE_MDNS_SERVICE);
-	dmap_mdns_browser_signals[SERVICE_REMOVED] =
+	_signals[SERVICE_REMOVED] =
 		g_signal_new ("service-removed",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
@@ -153,11 +153,11 @@ static void
 dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 {
 	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
-	avahi_client_init (browser);
+	_client_init (browser);
 }
 
 static void
-dmap_mdns_browser_dispose (GObject * object)
+_dispose (GObject * object)
 {
 	DmapMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
 	GSList *walk;
@@ -191,7 +191,7 @@ dmap_mdns_browser_dispose (GObject * object)
 }
 
 static void
-dmap_mdns_browser_finalize (GObject * object)
+_finalize (GObject * object)
 {
 	g_signal_handlers_destroy (object);
 	G_OBJECT_CLASS (dmap_mdns_browser_parent_class)->finalize (object);
@@ -239,7 +239,7 @@ dmap_mdns_browser_start (DmapMdnsBrowser * browser, GError ** error)
 					   0,
 #endif
 					   (AvahiServiceBrowserCallback)
-					   browse_cb, browser);
+					   _browse_cb, browser);
 	if (browser->priv->service_browser == NULL) {
 		g_debug ("Error starting mDNS discovery using AvahiServiceBrowser");
 		g_set_error (error,
@@ -292,8 +292,8 @@ dmap_mdns_browser_get_service_type (DmapMdnsBrowser * browser)
 }
 
 static void
-client_cb (AvahiClient * client,
-	   AvahiClientState state, DmapMdnsBrowser * browser)
+_client_cb (AvahiClient * client,
+            AvahiClientState state, DmapMdnsBrowser * browser)
 {
 	/* Called whenever the client or server state changes */
 
@@ -310,7 +310,7 @@ client_cb (AvahiClient * client,
 }
 
 static void
-avahi_client_init (DmapMdnsBrowser * browser)
+_client_init (DmapMdnsBrowser * browser)
 {
 	gint error = 0;
 
@@ -324,7 +324,7 @@ avahi_client_init (DmapMdnsBrowser * browser)
 #ifdef HAVE_AVAHI_0_5
 	browser->priv->client =
 		avahi_client_new (avahi_glib_poll_get (browser->priv->poll),
-				  (AvahiClientCallback) client_cb, browser,
+				  (AvahiClientCallback) _client_cb, browser,
 				  &error);
 #endif
 #ifdef HAVE_AVAHI_0_6
@@ -334,27 +334,27 @@ avahi_client_init (DmapMdnsBrowser * browser)
 		browser->priv->client =
 			avahi_client_new (avahi_glib_poll_get
 					  (browser->priv->poll), flags,
-					  (AvahiClientCallback) client_cb,
+					  (AvahiClientCallback) _client_cb,
 					  browser, &error);
 	}
 #endif
 }
 
 static void
-resolve_cb (AvahiServiceResolver * service_resolver,
-	    AvahiIfIndex interface,
-	    AvahiProtocol protocol,
-	    AvahiResolverEvent event,
-	    const gchar * service_name,
-	    const gchar * type,
-	    const gchar * domain,
-	    const gchar * host_name,
-	    const AvahiAddress * address,
-	    uint16_t port, AvahiStringList * text,
+_resolve_cb (AvahiServiceResolver * service_resolver,
+             AvahiIfIndex interface,
+             AvahiProtocol protocol,
+             AvahiResolverEvent event,
+             const gchar * service_name,
+             const gchar * type,
+             const gchar * domain,
+             const gchar * host_name,
+             const AvahiAddress * address,
+             uint16_t port, AvahiStringList * text,
 #ifdef HAVE_AVAHI_0_6
-	    AvahiLookupResultFlags flags,
+             AvahiLookupResultFlags flags,
 #endif
-	    DmapMdnsBrowser * browser)
+             DmapMdnsBrowser * browser)
 {
 	gchar *name = NULL;
 	gchar *pair = NULL;	/* FIXME: extract DACP-specific items into sub-class. Ensure in Howl and dns-sd code too. */
@@ -401,11 +401,13 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 						pp = TRUE;
 					}
 				} else if (strcmp (key, "Machine Name") == 0) {
-					if (name == NULL)
+					if (name == NULL) {
 						name = g_strdup (value);
+					}
 				} else if (strcmp (key, "DvNm") == 0) {
-					if (name != NULL)
+					if (name != NULL) {
 						g_free (name);
+					}
 					/* Remote's name is presented as DvNm in DACP */
 					name = g_strdup (value);
 				} else if (strcmp (key, "Pair") == 0) {
@@ -441,7 +443,7 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 		browser->priv->services =
 			g_slist_append (browser->priv->services, service);
 		g_signal_emit (browser,
-			       dmap_mdns_browser_signals[SERVICE_ADDED], 0,
+			       _signals[SERVICE_ADDED], 0,
 			       service);
 		break;
 	default:
@@ -455,9 +457,10 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 }
 
 static gboolean
-dmap_mdns_browser_resolve (DmapMdnsBrowser * browser,
-			   const gchar * name, const gchar * domain)
+_resolve (DmapMdnsBrowser * browser,
+          const gchar * name, const gchar * domain)
 {
+	gboolean ok = FALSE;
 	AvahiServiceResolver *service_resolver;
 
 	service_resolver = avahi_service_resolver_new (browser->priv->client,
@@ -471,43 +474,46 @@ dmap_mdns_browser_resolve (DmapMdnsBrowser * browser,
 #ifdef HAVE_AVAHI_0_6
 						       0,
 #endif
-						       (AvahiServiceResolverCallback) resolve_cb, browser);
+						       (AvahiServiceResolverCallback) _resolve_cb, browser);
 	if (service_resolver == NULL) {
 		g_debug ("Error starting mDNS resolving using AvahiServiceResolver");
-		return FALSE;
+		goto done;
 	}
 
 	browser->priv->resolvers =
 		g_slist_prepend (browser->priv->resolvers, service_resolver);
 
-	return TRUE;
+	ok = TRUE;
+
+done:
+	return ok;
 }
 
 static void
-browser_add_service (DmapMdnsBrowser * browser,
+_add_service (DmapMdnsBrowser * browser,
 		     const gchar * service_name, const gchar * domain)
 {
-	dmap_mdns_browser_resolve (browser, service_name, domain);
+	_resolve (browser, service_name, domain);
 }
 
 static void
-browser_remove_service (DmapMdnsBrowser * browser, const gchar * service_name)
+_remove_service (DmapMdnsBrowser * browser, const gchar * service_name)
 {
 	g_signal_emit (browser,
-		       dmap_mdns_browser_signals[SERVICE_REMOVED],
+		       _signals[SERVICE_REMOVED],
 		       0, service_name);
 }
 
 static void
-browse_cb (AvahiServiceBrowser * service_browser,
-	   AvahiIfIndex interface,
-	   AvahiProtocol protocol,
-	   AvahiBrowserEvent event,
-	   const gchar * name, const gchar * type, const gchar * domain,
+_browse_cb (AvahiServiceBrowser * service_browser,
+            AvahiIfIndex interface,
+            AvahiProtocol protocol,
+            AvahiBrowserEvent event,
+            const gchar * name, const gchar * type, const gchar * domain,
 #ifdef HAVE_AVAHI_0_6
-	   AvahiLookupResultFlags flags,
+            AvahiLookupResultFlags flags,
 #endif
-	   DmapMdnsBrowser * browser)
+            DmapMdnsBrowser * browser)
 {
 	gboolean local;
 
@@ -525,8 +531,8 @@ browse_cb (AvahiServiceBrowser * service_browser,
 	}
 
 	if (event == AVAHI_BROWSER_NEW) {
-		browser_add_service (browser, name, domain);
+		_add_service (browser, name, domain);
 	} else if (event == AVAHI_BROWSER_REMOVE) {
-		browser_remove_service (browser, name);
+		_remove_service (browser, name);
 	}
 }
