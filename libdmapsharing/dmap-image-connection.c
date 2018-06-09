@@ -115,7 +115,7 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 
 	record = dmap_record_factory_create (factory, NULL, &error);
 	if (NULL != error) {
-		g_signal_emit_by_name (connection, "error", 0, error);
+		g_signal_emit_by_name (connection, "error", error);
 	}
 	if (record == NULL) {
 		goto _return;
