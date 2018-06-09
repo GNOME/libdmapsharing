@@ -69,6 +69,13 @@ print_record (guint id, DmapRecord *record, gpointer user_data)
 	}
 }
 
+static void error_cb(DmapConnection *connection,
+                     GError *error,
+                     gpointer user_data)
+{
+	g_error("%s", error->message);
+}
+
 static void
 connected_cb (DmapConnection *connection,
               gboolean        result,
@@ -141,6 +148,8 @@ service_added_cb (DmapMdnsBrowser *browser,
         conn = DMAP_CONNECTION (dmap_image_connection_new (name, host, port, db, factory));
     }
     g_signal_connect (DMAP_CONNECTION (conn), "authenticate", G_CALLBACK(authenticate_cb), NULL);
+    g_signal_connect (DMAP_CONNECTION (conn), "error", G_CALLBACK(error_cb), NULL);
+
     dmap_connection_start (DMAP_CONNECTION (conn), (DmapConnectionFunc) connected_cb, db);
 
     g_free(service_name);

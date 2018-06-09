@@ -110,6 +110,7 @@ enum
 	CONNECTED,
 	DISCONNECTED,
 	OPERATION_DONE,
+	ERROR,
 	LAST_SIGNAL
 };
 
@@ -468,6 +469,13 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 			      G_STRUCT_OFFSET (DmapConnectionClass,
 					       operation_done), NULL, NULL,
 			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+	_signals[ERROR] =
+		g_signal_new ("error",
+		              G_TYPE_FROM_CLASS (object_class),
+		              G_SIGNAL_RUN_FIRST,
+		              0, NULL, NULL,
+		              g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		              G_TYPE_POINTER);
 }
 
 static void
@@ -1179,6 +1187,7 @@ _handle_song_listing (DmapConnection * connection,
 			 &item_id);
 
 		if (record) {
+			GError *error = NULL;
 			gchar *uri = NULL;
 			gchar *format = NULL;
 
@@ -1205,8 +1214,10 @@ _handle_song_listing (DmapConnection * connection,
 			/*} */
 
 			g_object_set (record, "location", uri, NULL);
-			/* FIXME: third argument, NULL, is GError; how to handle? */
-			dmap_db_add (connection->priv->db, record, NULL);
+			dmap_db_add (connection->priv->db, record, &error);
+			if (NULL != error) {
+				g_signal_emit (connection, _signals[ERROR], 0, error);
+			}
 			g_object_unref (record);
 			g_hash_table_insert (connection->priv->item_id_to_uri,
 					     GINT_TO_POINTER (item_id),

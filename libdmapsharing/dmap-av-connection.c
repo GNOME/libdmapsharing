@@ -48,6 +48,7 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 	      GNode * n, int *item_id)
 {
 	GNode *n2;
+	GError *error = NULL;
 	DmapRecord *record = NULL;
 	const gchar *title = NULL;
 	const gchar *album = NULL;
@@ -123,8 +124,10 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 		}
 	}
 
-	/* FIXME: third argument, NULL, is GError; how to handle? */
-	record = dmap_record_factory_create (factory, NULL, NULL);
+	record = dmap_record_factory_create (factory, NULL, &error);
+	if (NULL != error) {
+		g_signal_emit_by_name (connection, "error", 0, error);
+	}
 	if (record == NULL) {
 		goto done;
 	}
