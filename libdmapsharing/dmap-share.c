@@ -54,6 +54,14 @@ enum
 	PROP_TXT_RECORDS
 };
 
+enum
+{
+	ERROR,
+	LAST_SIGNAL
+};
+
+static guint _signals[LAST_SIGNAL] = { 0, };
+
 struct DmapSharePrivate
 {
 	gchar *name;
@@ -394,11 +402,14 @@ done:
 static void
 _restart (DmapShare * share)
 {
+	GError *error = NULL;
 	gboolean res;
 
 	_server_stop (share);
-	/* FIXME: second argument, NULL, is GError; how to handle? */
-	res = dmap_share_serve (share, NULL);
+	res = dmap_share_serve (share, &error);
+	if (NULL != error) {
+		g_signal_emit (share, _signals[ERROR], 0, error);
+	}
 	if (res) {
 		/* To update information just publish again */
 		dmap_share_publish (share, NULL);
@@ -690,6 +701,14 @@ dmap_share_class_init (DmapShareClass * klass)
 							     G_PARAM_READWRITE));
 
 	g_type_class_add_private (klass, sizeof (DmapSharePrivate));
+
+	_signals[ERROR] =
+		g_signal_new ("error",
+		               G_TYPE_FROM_CLASS (object_class),
+		               G_SIGNAL_RUN_FIRST,
+		               0, NULL, NULL,
+		               g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		               G_TYPE_POINTER);
 }
 
 static void
