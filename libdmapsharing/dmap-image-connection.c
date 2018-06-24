@@ -116,10 +116,9 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 	record = dmap_record_factory_create (factory, NULL, &error);
 	if (NULL != error) {
 		g_signal_emit_by_name (connection, "error", error);
+		goto done;
 	}
-	if (record == NULL) {
-		goto _return;
-	}
+	g_assert(NULL != record);
 
 	if (filesize) {
 		ptr = g_array_sized_new (FALSE, FALSE, 1, filesize);

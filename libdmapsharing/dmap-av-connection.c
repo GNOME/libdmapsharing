@@ -127,10 +127,9 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 	record = dmap_record_factory_create (factory, NULL, &error);
 	if (NULL != error) {
 		g_signal_emit_by_name (connection, "error", error);
-	}
-	if (record == NULL) {
 		goto done;
 	}
+	g_assert(NULL != record);
 
 	/*
 	 * We do not free the dynamically-allocated properties

@@ -409,12 +409,12 @@ _restart (DmapShare * share)
 	res = dmap_share_serve (share, &error);
 	if (NULL != error) {
 		g_signal_emit (share, _signals[ERROR], 0, error);
-	}
-	if (res) {
+		_publish_stop (share);
+	} else {
+		g_assert(FALSE != res);
+
 		/* To update information just publish again */
 		dmap_share_publish (share, NULL);
-	} else {
-		_publish_stop (share);
 	}
 }
 
