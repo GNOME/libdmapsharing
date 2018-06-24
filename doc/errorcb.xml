@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
+]>
+<refentry id="errorcb">
+	<refmeta>
+		<refentrytitle>Error Callback</refentrytitle>
+		<manvolnum>3</manvolnum>
+		<refmiscinfo>Libdmapsharing</refmiscinfo>
+	</refmeta>
+
+	<refnamediv>
+		<refname>Error Added Callback</refname>
+		<refpurpose>
+			Defining an Error Callback
+		</refpurpose>
+	</refnamediv>
+
+	<refsect1>
+		<title>Error Callback</title>
+		<para>
+The "error" callback handles errors which might occur while executing the libdmapsharing
+mainloop. The parameters are a DmapConnection, GError, and pointer to user data.
+
+		</para>
+		<para>
+The following is a simple "error" callback:
+
+		</para>
+		<screen>
+static void
+error_cb(DmapConnection *connection, GError *error, gpointer user_data)
+{
+	fprintf(stderr, "%s\n", error->message);
+}
+		</screen>
+	</refsect1>
+</refentry>

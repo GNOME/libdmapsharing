@@ -24,7 +24,6 @@ DmapRecordFactory objects, and then passes these objects to
 dmap_connection_new. A subsequent call to the dmap_connection_start
 method causes this connection object to interact with the DAAP share in order to
 populate the client's DmapDb.
-The next section describes the "connected" callback.
 
 		</para>
 		<para>
@@ -42,6 +41,9 @@ service_added_cb(DmapMdnsBrowser *browser, DmapMdnsBrowserService *service, gpoi
 	db      = DMAP_DB(my_dmap_db_new());
 	factory = DMAP_RECORD_FACTORY(my_dmap_av_record_factory_new());
 	conn    = DMAP_CONNECTION(dmap_av_connection_new(service->name, service->host, service->port, db, factory));
+
+	g_signal_connect(conn, "authenticate", G_CALLBACK(authenticate_cb), NULL, NULL);
+	g_signal_connect(conn, "error", G_CALLBACK(error_cb), NULL, NULL);
 
 	dmap_connection_start(conn, (DmapConnectionFunc) connected_cb, db);
 }

@@ -29,6 +29,8 @@
     <xi:include href="containerdb.xml"/>
     <xi:include href="browserapi.xml"/>
     <xi:include href="serviceaddedcb.xml"/>
+    <xi:include href="authenticatecb.xml"/>
+    <xi:include href="errorcb.xml"/>
     <xi:include href="connectedcb.xml"/>
   </chapter>
 
