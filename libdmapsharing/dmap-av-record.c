@@ -261,6 +261,8 @@ dmap_av_record_cmp_by_album (gpointer a, gpointer b, DmapDb * db)
 #include <libdmapsharing/test-dmap-av-record.h>
 #include <libdmapsharing/test-dmap-db.h>
 
+#define TMP "/tmp/libdmapsharing-test-XXXXXX"
+
 START_TEST(dmap_av_record_read_test)
 {
 	DmapAvRecord *record;
@@ -268,11 +270,11 @@ START_TEST(dmap_av_record_read_test)
 	GError *error = NULL;
 	gssize count1, count2;
 	char buf[PATH_MAX];
-	char template[PATH_MAX];
+	char template[sizeof TMP];
 	char uri[PATH_MAX];
 	int tmp;
 
-	strcpy(template, "/tmp/libdmapsharing-test-XXXXXX");
+	strcpy(template, TMP);
 
 	tmp = mkstemp(template);
 	if (-1 == tmp) {
