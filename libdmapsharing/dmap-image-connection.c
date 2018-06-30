@@ -146,11 +146,11 @@ _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
 		      "rating", rating,
 		      "comments", comments, "thumbnail", ptr, NULL);
 
+done:
 	if (ptr) {
 		g_array_unref (ptr);
 	}
 
-      _return:
 	return record;
 }
 
