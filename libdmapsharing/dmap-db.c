@@ -79,54 +79,6 @@ dmap_db_count (const DmapDb * db)
 	return DMAP_DB_GET_INTERFACE (db)->count (db);
 }
 
-static gchar **
-_strsplit_using_quotes (const gchar * str)
-{
-	/* What we are splitting looks something like this:
-	 * 'foo'text to ignore'bar'.
-	 */
-
-	gchar **fnval = NULL;
-
-	if (str != NULL) {
-		int i, j;
-
-		fnval = g_strsplit (str, "\'", 0);
-
-		for (i = j = 0; fnval[i]; i++) {
-			gchar *token = fnval[i];
-
-			/* Handle areas around ':
-			 * 'foo' 'bar'
-			 * ^
-			 * 'foo' 'bar'
-			 *      ^
-			 * 'foo'+'bar'
-			 *      ^
-			 */
-			if (*token == '\0' || *token == ' ' || *token == '+') {
-				continue;
-			}
-
-			/* Handle mistaken split at escaped '. */
-			if (token[strlen (token) - 1] == '\\') {
-				token = g_strconcat (fnval[i], "'",
-						     fnval[i + 1], NULL);
-				g_free (fnval[i]);
-				g_free (fnval[i + 1]);
-				i++;
-			}
-
-			fnval[j++] = token;
-
-		}
-
-		fnval[j] = 0x00;
-	}
-
-	return fnval;
-}
-
 static gboolean
 _compare_record_property (DmapRecord * record, const gchar * property_name,
                           const gchar * property_value)
