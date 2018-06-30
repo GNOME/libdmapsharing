@@ -451,16 +451,10 @@ dmap_control_share_new (const gchar *library_name,
 	                                        "transcode-mimetype", NULL, NULL));
 }
 
-void
-dmap_control_share_start_lookup (DmapControlShare * share)
+gboolean
+dmap_control_share_start_lookup (DmapControlShare * share, GError **error)
 {
-	gboolean ok;
-	GError *error;
-
-	if (share->priv->mdns_browser) {
-		g_warning ("DACP browsing already started");
-		return;
-	}
+	g_assert(NULL == share->priv->mdns_browser);
 
 	share->priv->mdns_browser =
 		dmap_mdns_browser_new (DMAP_MDNS_SERVICE_TYPE_DACP);
@@ -472,13 +466,7 @@ dmap_control_share_start_lookup (DmapControlShare * share)
 				 "service-removed",
 				 G_CALLBACK (_mdns_remote_removed), share, 0);
 
-	error = NULL;
-	ok = dmap_mdns_browser_start (share->priv->mdns_browser, &error);
-	if (!ok) {
-		g_warning ("Unable to start Remote lookup: %s",
-			   error->message);
-		g_error_free (error);
-	}
+	return dmap_mdns_browser_start (share->priv->mdns_browser, error);
 }
 
 static gboolean
@@ -490,30 +478,28 @@ _remove_remotes_cb (gpointer service_name, gpointer remote_info,
 	return TRUE;
 }
 
-void
-dmap_control_share_stop_lookup (DmapControlShare * share)
+gboolean
+dmap_control_share_stop_lookup (DmapControlShare * share, GError **error)
 {
-	gboolean ok;
-	GError *error;
+	gboolean ok = FALSE;
 
-	if (!share->priv->mdns_browser) {
-		g_warning ("DACP browsing not started");
-		return;
-	}
+	g_assert(NULL != share->priv->mdns_browser);
 
 	g_hash_table_foreach_remove (share->priv->remotes,	
                                      _remove_remotes_cb,
 	                             share);
 
-	error = NULL;
-	ok = dmap_mdns_browser_stop (share->priv->mdns_browser, &error);
+	ok = dmap_mdns_browser_stop (share->priv->mdns_browser, error);
 	if (!ok) {
-		g_warning ("Unable to stop Remote lookup: %s",
-			   error->message);
-		g_error_free (error);
+		goto done;
 	}
 
 	share->priv->mdns_browser = NULL;
+
+	ok = TRUE;
+
+done:
+	return ok;
 }
 
 static void
@@ -653,7 +639,7 @@ dmap_control_share_login (DmapShare * share,
 			       &allow_login);
 
 		if (!allow_login) {
-			g_debug ("Unknown remote trying to connect");
+			g_warning("Unknown remote trying to connect");
 			soup_message_set_status (message,
 						 SOUP_STATUS_FORBIDDEN);
 			return;

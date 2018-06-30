@@ -136,21 +136,25 @@ void dmap_control_share_pair (DmapControlShare * share, gchar * service_name,
 /**
  * dmap_control_share_start_lookup:
  * @share: A #DmapControlShare.
+ * @error: A #GError.
  *     
  * Start looking up for DACP remotes. Connect to #DmapControlShare::remote-found signal
  * to detect new remotes. Be aware that when a #DmapControlShare is created, only 
  * after calling this function is that it starts looking up for Remotes on the
  * network.
+ *
+ * Returns: TRUE on success, else FALSE with error set.
  */
-void dmap_control_share_start_lookup (DmapControlShare * share);
+gboolean dmap_control_share_start_lookup (DmapControlShare * share, GError **error);
 
 /**
  * dmap_control_share_stop_lookup:
  * @share: A #DmapControlShare.
+ * @error: A #GError.
  *     
  * Stop looking up for DACP remotes.
  */
-void dmap_control_share_stop_lookup (DmapControlShare * share);
+gboolean dmap_control_share_stop_lookup (DmapControlShare * share, GError **error);
 
 /**
  * dmap_control_share_player_update:
