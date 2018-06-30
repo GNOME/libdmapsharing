@@ -196,7 +196,7 @@ GType dmap_share_get_type (void);
  * Begin serving the service defined by share. A program will normally also
  * call dmap_share_publish.
  *
- * Returns: TRUE if serving succeeds, else FALSE.
+ * Returns: TRUE if serving succeeds, else FALSE with error set.
  */
 gboolean dmap_share_serve(DmapShare *share, GError **error);
 

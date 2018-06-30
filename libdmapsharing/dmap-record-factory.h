@@ -83,7 +83,7 @@ GType dmap_record_factory_get_type (void);
  * @user_data: Some piece of data that may be used to initialize return value.
  * @error: return location for a GError, or NULL.
  *
- * Returns: (transfer full): a new DmapRecord.
+ * Returns: (transfer full): a new DmapRecord, else NULL with error set.
  */
 DmapRecord *dmap_record_factory_create (DmapRecordFactory * factory,
 					gpointer user_data,
