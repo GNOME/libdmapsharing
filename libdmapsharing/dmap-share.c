@@ -321,6 +321,9 @@ dmap_share_serve (DmapShare *share, GError **error)
 	ok = TRUE;
 
 done:
+	g_assert((FALSE == ok && NULL != error)
+	      || (TRUE  == ok && NULL == error));
+
 	return ok;
 }
 

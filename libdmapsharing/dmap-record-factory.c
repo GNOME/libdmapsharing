@@ -32,7 +32,13 @@ dmap_record_factory_create (DmapRecordFactory *factory,
                             gpointer user_data,
                             GError **error)
 {
-	return DMAP_RECORD_FACTORY_GET_INTERFACE (factory)->create (factory,
-								    user_data,
-	                                                            error);
+	DmapRecord *record = DMAP_RECORD_FACTORY_GET_INTERFACE
+		(factory)->create (factory,
+		                   user_data,
+		                   error);
+
+	g_assert((NULL == record && NULL != error)
+	      || (NULL != recurd && NULL == error));
+
+	return record;
 }
