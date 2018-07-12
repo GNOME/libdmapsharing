@@ -1,12 +1,11 @@
 Version 4.0 of the libdmapsharing API is incompatible with previous
-versions. The primary reason for these changes is to better support
+versions. The primary reason for the changes is to better support
 GObject introspection and thus languages such as Python. The following
-are the key differences between the new and old APIs:
+are the key differences between the new and old APIs. Refer also to the
+libdmapsharing API documentation and the programs distributed along with
+the libdmapsharing source in the "tests" directory.
 
-(1)  A program which shares a DMAP service must explicitly call
-dmap_share_serve() and dmap_share_publish().
-
-(2)  All symbols now exist in the DMAP/Dmap/dmap namespace.
+(1)  All symbols now exist in the DMAP/Dmap/dmap namespace.
 
 	(a) For example, DMAPDb is now DmapDb.
 
@@ -16,42 +15,62 @@ dmap_share_serve() and dmap_share_publish().
 
 	(d) DAAPRecord is now DmapAvRecord.
 
-	(d) DPAPRecord is now DmapImageRecord.
+	(e) daap_share_new is now dmap_av_share_new.
 
-	(e) DACPPlayer is now DmapControlPlayer.
+	(f) DAAP_TYPE_RECORD is now DMAP_TYPE_AV_RECORD.
+
+	(g) DPAPRecord is now DmapImageRecord.
+
+	(h) dpap_share_new is now dmap_image_share_new.
+
+	(i) DPAP_TYPE_RECORD is now DMAP_TYPE_IMAGE_RECORD.
+
+	(j) DACPPlayer is now DmapControlPlayer.
+
+	(k) dacp_share_new is now dmap_control_share_new.
+
+	(l) DACP_TYPE_RECORD is now DMAP_TYPE_CONTROL_RECORD.
+
+(2)  A program which shares a DMAP service must explicitly call
+dmap_share_serve() and dmap_share_publish().
 
 (3)  The interface names exported by libdmapsharing now end in "Interface"
 instead of "Iface".
 
 (4)  The new API renames the following symbols as indicated:
 
-	DMAP_TYPE_DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL became
+	(a) DMAP_TYPE_DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL became
 	DMAP_TYPE_DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL.
 
-	DMAPMdnsBrowserTransportProtocol became DMAPMdnsServiceTransportProtocol.
+	(b) DMAPMdnsBrowserTransportProtocol became DmapMdnsServiceTransportProtocol.
 
-	DMAPMdnsBrowserServiceType became DMAPMdnsServiceType.
+	(c) DMAPMdnsBrowserServiceType became DmapMdnsServiceType.
 
-	DMAPMdnsBrowserService became DMAPMdnsService.
+	(d) DMAPMdnsBrowserService became DmapMdnsService.
 
-	DMAPConnectionCallback became DMAPConnectionFunc.
+	(e) DMAPConnectionCallback became DmapConnectionFunc.
 
-	DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL* became DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL*.
+	(f) DMAP_MDNS_BROWSER_TRANSPORT_PROTOCOL* became
+	DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL*.
 
-	DMAP_MDNS_BROWSER_SERVICE_TYPE_* became DMAP_MDNS_SERVICE_TYPE_*.
+	(g) DMAP_MDNS_BROWSER_SERVICE_TYPE_* became DMAP_MDNS_SERVICE_TYPE_*.
 
-	dmap_connection_connect became dmap_connection_start.
+	(h) dmap_connection_connect became dmap_connection_start.
 
-	The dmap_hash functions became dmap_md5 functions.
+	(i) The dmap_hash functions became dmap_md5 functions.
 
-	DACP_PLAY_STOPPED and so on became, for example, CONTROL_PLAY_STOPPED.
+	(j) DACP_PLAY_STOPPED and so on became, for example, DMAP_CONTROL_PLAY_STOPPED.
 
-	DACPRepeatState became DmapControlRepeatState.
+	(k) DACPRepeatState became DmapControlRepeatState.
 
-	DACPPlayState became DmapControlPlayState.
+	(l) DACPPlayState became DmapControlPlayState.
+
+	(m) DMAP_GET_SONGS became DMAP_GET_MEDIA
+
+	(n) dmap_connection_disconnect became dmap_connection_stop
 
 (5)  The new API replaces the use of GHFunc with DmapIdRecordFunc and
-DmapContainerIdFunc.
+DmapIdContainerRecordFunc.
 
 (6)  Setting an object property using g_object_set causes the object to
 duplicate the passed value.  Thus the caller maintains control of the
@@ -91,3 +110,9 @@ using g_object_get.
 	(d) dmap_share_publish().
 
 	(e) dmap_container_record_add_entry().
+
+	(f) dmap_container_record_add_entry().
+
+	(g) dmap_control_share_start_lookup().
+
+	(h) dmap_control_share_stop_lookup().
