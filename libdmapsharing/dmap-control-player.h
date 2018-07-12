@@ -59,15 +59,15 @@ typedef struct _DmapControlPlayerInterface DmapControlPlayerInterface;
 typedef struct _DmapControlPlayer DmapControlPlayer;
 
 typedef enum {
-	CONTROL_REPEAT_NONE = 0,
-	CONTROL_REPEAT_SINGLE = 1,
-	CONTROL_REPEAT_ALL = 2
+	DMAP_CONTROL_REPEAT_NONE = 0,
+	DMAP_CONTROL_REPEAT_SINGLE = 1,
+	DMAP_CONTROL_REPEAT_ALL = 2
 } DmapControlRepeatState;
 
 typedef enum {
-	CONTROL_PLAY_STOPPED = 2,
-	CONTROL_PLAY_PAUSED = 3,
-	CONTROL_PLAY_PLAYING = 4
+	DMAP_CONTROL_PLAY_STOPPED = 2,
+	DMAP_CONTROL_PLAY_PAUSED = 3,
+	DMAP_CONTROL_PLAY_PLAYING = 4
 } DmapControlPlayState;
 
 struct _DmapControlPlayerInterface

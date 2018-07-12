@@ -48,7 +48,7 @@ dmap_control_player_default_init (DmapControlPlayerInterface * iface)
 						      "Repeat state",
 						      "Repeat state",
 						      DMAP_TYPE_DMAP_CONTROL_REPEAT_STATE,
-						      CONTROL_REPEAT_NONE,
+						      DMAP_CONTROL_REPEAT_NONE,
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
@@ -57,7 +57,7 @@ dmap_control_player_default_init (DmapControlPlayerInterface * iface)
 						      "Play state",
 						      "Play state",
 						      DMAP_TYPE_DMAP_CONTROL_PLAY_STATE,
-						      CONTROL_PLAY_STOPPED,
+						      DMAP_CONTROL_PLAY_STOPPED,
 						      G_PARAM_READWRITE));
 
 		g_object_interface_install_property (iface,
