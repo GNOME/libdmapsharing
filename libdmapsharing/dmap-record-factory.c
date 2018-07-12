@@ -38,7 +38,7 @@ dmap_record_factory_create (DmapRecordFactory *factory,
 		                   error);
 
 	g_assert((NULL == record && NULL != error)
-	      || (NULL != recurd && NULL == error));
+	      || (NULL != record && NULL == error));
 
 	return record;
 }
