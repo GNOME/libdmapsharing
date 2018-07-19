@@ -235,6 +235,7 @@ dmap_share_serve (DmapShare *share, GError **error)
 	GSList *listening_uri_list;
 	SoupURI *listening_uri;
 	gboolean ret;
+	GError *error2 = NULL;
 
 	share->priv->server = soup_server_new (NULL, NULL);
 
@@ -286,11 +287,11 @@ dmap_share_serve (DmapShare *share, GError **error)
 				 (SoupServerCallback) _ctrl_int_adapter,
 				 share, NULL);
 
-	ret = soup_server_listen_all (share->priv->server, desired_port, 0, error);
+	ret = soup_server_listen_all (share->priv->server, desired_port, 0, &error2);
 	if (ret == FALSE) {
 		g_debug ("Unable to start music sharing server on port %d: %s. "
-			 "Trying any open IPv6 port", desired_port, (*error)->message);
-		g_clear_error (error);
+			 "Trying any open IPv6 port", desired_port, error2->message);
+		g_error_free(error2);
 
 		ret = soup_server_listen_all (share->priv->server, SOUP_ADDRESS_ANY_PORT,
 					      0, error);
