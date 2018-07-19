@@ -321,10 +321,10 @@ _should_transcode (DmapAvShare *share,
 
 	format2 = dmap_utils_mime_to_format (transcode_mimetype);
 	if (NULL == format2) {
-		GError *error = g_error_new(DMAP_ERROR,
-		                            DMAP_ERROR_FAILED,
-		                           "Configured to transcode, but target format bad");
-		g_signal_emit_by_name(share, "error", error);
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Configured to transcode, but target format bad"));
 		goto done;
 	}
 
@@ -357,7 +357,10 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 	if (NULL == location) {
-		g_warning ("Error getting location from record\n");
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Error getting location from record"));
 		goto done;
 	}
 
@@ -369,13 +372,16 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	stream = G_INPUT_STREAM (dmap_av_record_read (record, &error));
 	if (error != NULL) {
-		g_warning ("Couldn't open %s: %s.", location, error->message);
+		g_signal_emit_by_name(share, "error", error);
 		goto done;
 	}
 
 	g_object_get (record, "format", &format, NULL);
 	if (NULL == format) {
-		g_warning ("Error getting format from record\n");
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Error getting format from record"));
 		goto done;
 	}
 
@@ -385,7 +391,11 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 		cd->original_stream = stream;
 		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
 #else
-		g_warning ("Transcode format %s not supported", transcode_mimetype);
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Transcode format %s not supported",
+			            transcode_mimetype));
 		cd->original_stream = NULL;
 		cd->stream = stream;
 #endif /* HAVE_GSTREAMERAPP */
@@ -396,13 +406,16 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 	}
 
 	if (cd->stream == NULL) {
-		g_warning ("Could not set up input stream");
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Could not setup input stream"));
 		goto done;
 	}
 
 	if (offset != 0) {
 		if (g_seekable_seek (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL, &error) == FALSE) {
-			g_warning ("Error seeking: %s.", error->message);
+			g_signal_emit_by_name(share, "error", error);
 			goto done;
 		}
 		filesize -= offset;
@@ -444,19 +457,28 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	if (0 == g_signal_connect (message, "wrote_headers",
 			           G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
-		g_warning ("Error connecting to wrote_headers signal.");
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Error connecting to wrote_headers signal"));
 		goto done;
 	}
 
 	if (0 == g_signal_connect (message, "wrote_chunk",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
-		g_warning ("Error connecting to wrote_chunk signal.");
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Error connecting to wrote_chunk signal"));
 		goto done;
 	}
 
 	if (0 == g_signal_connect (message, "finished",
 			  G_CALLBACK (dmap_private_utils_chunked_message_finished), cd)) {
-		g_warning ("Error connecting to finished signal.");
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+				    DMAP_ERROR_FAILED,
+				   "Error connecting to finished signal"));
 		goto done;
 	}
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
@@ -472,14 +494,14 @@ done:
 		if (NULL != cd && NULL != cd->stream) {
 			ok = g_input_stream_close (cd->stream, NULL, &error);
 			if (!ok) {
-				g_warning ("Error closing transcode stream: %s.", error->message);
+				g_signal_emit_by_name(share, "error", error);
 			}
 		}
 
 		if (NULL != stream) {
 			ok = g_input_stream_close (stream, NULL, &error);
 			if (!ok) {
-				g_warning ("Error closing stream: %s.", error->message);
+				g_signal_emit_by_name(share, "error", error);
 			}
 		}
 
@@ -489,10 +511,6 @@ done:
 
 	g_free (location);
 	g_free (format);
-
-	if (NULL != error) {
-		g_error_free (error);
-	}
 
 	return;
 }
@@ -922,7 +940,8 @@ _databases_items_xxx (DmapShare * share,
                       const char *path,
                       GHashTable * query, SoupClientContext * context)
 {
-	DmapDb *db;
+	DmapDb *db = NULL;
+	DmapAvRecord *record = NULL;
 	gchar *transcode_mimetype = NULL;
 	const gchar *rest_of_path;
 	const gchar *id_str;
@@ -930,14 +949,23 @@ _databases_items_xxx (DmapShare * share,
 	const gchar *range_header;
 	guint64 filesize;
 	guint64 offset = 0;
-	DmapAvRecord *record;
 
 	rest_of_path = strchr (path + 1, '/');
 	id_str = rest_of_path + 9;
 	id = strtoul (id_str, NULL, 10);
 
 	g_object_get (share, "db", &db, NULL);
+
 	record = DMAP_AV_RECORD (dmap_db_lookup_by_id (db, id));
+	if (NULL == record) {
+		g_signal_emit_by_name(share, "error",
+			g_error_new(DMAP_ERROR,
+			            DMAP_ERROR_FAILED,
+			           "Bad record identifier requested"));
+		soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
+		goto done;
+	}
+
 	g_object_get (record, "filesize", &filesize, NULL);
 
 	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers
@@ -976,8 +1004,15 @@ _databases_items_xxx (DmapShare * share,
 	_send_chunked_file (DMAP_AV_SHARE(share), server, msg, record, filesize,
 	                    offset, transcode_mimetype);
 
-	g_object_unref (record);
-	g_object_unref (db);
+done:
+	if (NULL != record) {
+		g_object_unref (record);
+	}
+
+	if (NULL != db) {
+		g_object_unref (db);
+	}
+
 	g_free(transcode_mimetype);
 }
 
@@ -1704,7 +1739,11 @@ START_TEST(_databases_items_xxx_test_bad_id)
 
 	/* IDs go from G_MAXINT down, so 0 does not exist. */
 	g_snprintf(path, sizeof path, "/db/1/items/%d", 0);
+
+	error_triggered = FALSE;
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	_databases_items_xxx(share, server, message, path, NULL, NULL);
+	ck_assert(error_triggered);
 
 	g_object_unref(share);
 }
