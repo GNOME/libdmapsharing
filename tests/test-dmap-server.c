@@ -51,9 +51,8 @@ dmap_sharing_default_share_name ()
 	return g_strdup_printf ("%s's Media (libdmapsharing test)", real_name);
 }
 
-static void error_cb(DmapShare *share,
-                     GError *error,
-                     gpointer user_data)
+static void
+error_cb(DmapShare *share, GError *error, gpointer user_data)
 {
 	g_error("%s", error->message);
 }
