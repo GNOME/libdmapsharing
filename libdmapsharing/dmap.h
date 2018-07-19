@@ -24,5 +24,6 @@
 #include <libdmapsharing/dmap-control-share.h>
 #include <libdmapsharing/dmap-control-player.h>
 #include <libdmapsharing/dmap-control-connection.h>
+#include <libdmapsharing/dmap-error.h>
 
 #endif /* _DMAP_H */

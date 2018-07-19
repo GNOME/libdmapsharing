@@ -302,7 +302,8 @@ static struct DmapMetaDataMap _meta_data_map[] = {
 #define DAAP_SONG_DATA_KIND_NONE 0
 
 static gboolean
-_should_transcode (const gchar *format,
+_should_transcode (DmapAvShare *share,
+                   const gchar *format,
                    const gboolean has_video,
                    const gchar *transcode_mimetype)
 {
@@ -320,7 +321,10 @@ _should_transcode (const gchar *format,
 
 	format2 = dmap_utils_mime_to_format (transcode_mimetype);
 	if (NULL == format2) {
-		g_warning ("Configured to transcode, but target format is bad");
+		GError *error = g_error_new(DMAP_ERROR,
+		                            DMAP_ERROR_FAILED,
+		                           "Configured to transcode, but target format bad");
+		g_signal_emit_by_name(share, "error", error);
 		goto done;
 	}
 
@@ -337,7 +341,7 @@ done:
 }
 
 static void
-_send_chunked_file (SoupServer * server, SoupMessage * message,
+_send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * message,
 		   DmapAvRecord * record, guint64 filesize, guint64 offset,
 		   const gchar * transcode_mimetype)
 {
@@ -376,7 +380,7 @@ _send_chunked_file (SoupServer * server, SoupMessage * message,
 	}
 
 	// Not presently transcoding videos (see also same comments elsewhere).
-	if (_should_transcode (format, has_video, transcode_mimetype)) {
+	if (_should_transcode (share, format, has_video, transcode_mimetype)) {
 #ifdef HAVE_GSTREAMERAPP
 		cd->original_stream = stream;
 		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
@@ -407,7 +411,7 @@ _send_chunked_file (SoupServer * server, SoupMessage * message,
 	/* Free memory after each chunk sent out over network. */
 	soup_message_body_set_accumulate (message->response_body, FALSE);
 
-	if (! _should_transcode (format, has_video, transcode_mimetype)) {
+	if (! _should_transcode (share, format, has_video, transcode_mimetype)) {
 	        /* NOTE: iTunes seems to require this or it stops reading
 	         * video data after about 2.5MB. Perhaps this is so iTunes
 	         * knows how much data to buffer.
@@ -969,8 +973,8 @@ _databases_items_xxx (DmapShare * share,
 		soup_message_set_status (msg, SOUP_STATUS_OK);
 	}
 	g_object_get (share, "transcode-mimetype", &transcode_mimetype, NULL);
-	_send_chunked_file (server, msg, record, filesize, offset,
-			   transcode_mimetype);
+	_send_chunked_file (DMAP_AV_SHARE(share), server, msg, record, filesize,
+	                    offset, transcode_mimetype);
 
 	g_object_unref (record);
 	g_object_unref (db);
@@ -1249,45 +1253,81 @@ START_TEST(_album_tabulator_test)
 }
 END_TEST
 
-START_TEST(_should_transcode_test)
+gboolean error_triggered = FALSE;
+
+static void
+_error_cb(DmapShare *share, GError *error, gpointer user_data)
 {
-	ck_assert_int_eq(FALSE, _should_transcode("mp3", TRUE, "audio/wav"));
+	error_triggered = TRUE;
+}
+
+START_TEST(_should_transcode_test_no)
+{
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", TRUE, "audio/wav"));
+	ck_assert(!error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype)
 {
-	ck_assert_int_eq(FALSE, _should_transcode("foo", FALSE, NULL));
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(FALSE, _should_transcode(share, "foo", FALSE, NULL));
+	ck_assert(!error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype_unknown_mimetype)
 {
-	ck_assert_int_eq(FALSE, _should_transcode("mp3", FALSE, "foo"));
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", FALSE, "foo"));
+	ck_assert(error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype_already_good)
 {
-	ck_assert_int_eq(FALSE, _should_transcode("mp3", FALSE, "audio/mp3"));
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", FALSE, "audio/mp3"));
+	ck_assert(!error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_wav)
 {
-	ck_assert_int_eq(TRUE, _should_transcode("mp3", FALSE, "audio/wav"));
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(TRUE, _should_transcode(share, "mp3", FALSE, "audio/wav"));
+	ck_assert(!error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp3)
 {
-	ck_assert_int_eq(TRUE, _should_transcode("wav", FALSE, "audio/mp3"));
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(TRUE, _should_transcode(share, "wav", FALSE, "audio/mp3"));
+	ck_assert(!error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp4)
 {
-	ck_assert_int_eq(TRUE, _should_transcode("wav", FALSE, "video/quicktime"));
+	error_triggered = FALSE;
+	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
+	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
+	ck_assert_int_eq(TRUE, _should_transcode(share, "wav", FALSE, "video/quicktime"));
+	ck_assert(!error_triggered);
 }
 END_TEST
 
