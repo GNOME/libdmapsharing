@@ -37,8 +37,8 @@ dmap_record_factory_create (DmapRecordFactory *factory,
 		                   user_data,
 		                   error);
 
-	g_assert((NULL == record && NULL != *error)
-	      || (NULL != record && NULL == *error));
+	g_assert((NULL == record && (NULL == error || NULL != *error))
+	      || (NULL != record && (NULL == error || NULL == *error)));
 
 	return record;
 }
