@@ -321,10 +321,8 @@ _should_transcode (DmapAvShare *share,
 
 	format2 = dmap_utils_mime_to_format (transcode_mimetype);
 	if (NULL == format2) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Configured to transcode, but target format bad"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Configured to transcode, but target format bad");
 		goto done;
 	}
 
@@ -357,10 +355,8 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 	if (NULL == location) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Error getting location from record"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Error getting location from record");
 		goto done;
 	}
 
@@ -372,16 +368,15 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	stream = G_INPUT_STREAM (dmap_av_record_read (record, &error));
 	if (error != NULL) {
-		g_signal_emit_by_name(share, "error", error);
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Cannot open %s", error->message);
 		goto done;
 	}
 
 	g_object_get (record, "format", &format, NULL);
 	if (NULL == format) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Error getting format from record"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Error getting format from record");
 		goto done;
 	}
 
@@ -391,11 +386,9 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 		cd->original_stream = stream;
 		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
 #else
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Transcode format %s not supported",
-			            transcode_mimetype));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Transcode format %s not supported",
+		                      transcode_mimetype);
 		cd->original_stream = NULL;
 		cd->stream = stream;
 #endif /* HAVE_GSTREAMERAPP */
@@ -406,16 +399,15 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 	}
 
 	if (cd->stream == NULL) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Could not setup input stream"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Could not setup input stream");
 		goto done;
 	}
 
 	if (offset != 0) {
 		if (g_seekable_seek (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL, &error) == FALSE) {
-			g_signal_emit_by_name(share, "error", error);
+			dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+			                     "Error seeking: %s.", error->message);
 			goto done;
 		}
 		filesize -= offset;
@@ -457,28 +449,22 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	if (0 == g_signal_connect (message, "wrote_headers",
 			           G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Error connecting to wrote_headers signal"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Error connecting to wrote_headers signal");
 		goto done;
 	}
 
 	if (0 == g_signal_connect (message, "wrote_chunk",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
-			           "Error connecting to wrote_chunk signal"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Error connecting to wrote_chunk signal");
 		goto done;
 	}
 
 	if (0 == g_signal_connect (message, "finished",
 			  G_CALLBACK (dmap_private_utils_chunked_message_finished), cd)) {
-		g_signal_emit_by_name(share, "error",
-			g_error_new(DMAP_ERROR,
-				    DMAP_ERROR_FAILED,
-				   "Error connecting to finished signal"));
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		                     "Error connecting to finished signal");
 		goto done;
 	}
 	/* NOTE: cd g_free'd by chunked_message_finished(). */
@@ -494,14 +480,20 @@ done:
 		if (NULL != cd && NULL != cd->stream) {
 			ok = g_input_stream_close (cd->stream, NULL, &error);
 			if (!ok) {
-				g_signal_emit_by_name(share, "error", error);
+				dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+				                     "Error closing transcode stream: %s.",
+				                      error->message);
 			}
 		}
+
+		g_clear_error(&error);
 
 		if (NULL != stream) {
 			ok = g_input_stream_close (stream, NULL, &error);
 			if (!ok) {
-				g_signal_emit_by_name(share, "error", error);
+				dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+				                     "Error closing stream: %s.",
+				                      error->message);
 			}
 		}
 
@@ -511,6 +503,10 @@ done:
 
 	g_free (location);
 	g_free (format);
+
+	if (NULL != error) {
+		g_error_free(error);
+	}
 
 	return;
 }
@@ -779,7 +775,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 }
 
 static void
-_genre_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
+_genre_tabulator (gpointer id, DmapRecord *record, GHashTable *ht)
 {
 	const gchar *genre;
 
@@ -898,8 +894,9 @@ _databases_browse_xxx (DmapShare * share,
 				      category_items);
 		category_cc = DMAP_CC_ABAL;
 	} else {
-		g_warning ("Unsupported browse category: %s",
-			   browse_category);
+		dmap_share_emit_error(share, DMAP_ERROR_FAILED,
+		                     "Unsupported browse category: %s",
+		                      browse_category);
 		goto _bad_category;
 	}
 

@@ -23,6 +23,7 @@
 #include "config.h"
 
 #include <time.h>
+#include <stdarg.h>
 #include <string.h>
 #include <stdlib.h>
 
@@ -1454,6 +1455,19 @@ dmap_share_free_filter (GSList * filter)
 			g_free (ptr2->data);
 		}
 	}
+}
+
+void
+dmap_share_emit_error(DmapShare *share, gint code, const gchar *format, ...)
+{
+	va_list ap;
+	GError *error;
+
+	va_start(ap, format);
+	error = g_error_new_valist(DMAP_ERROR, code, format, ap);
+	g_signal_emit_by_name(share, "error", error);
+
+	va_end(ap);
 }
 
 typedef struct {

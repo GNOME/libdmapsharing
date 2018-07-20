@@ -219,6 +219,15 @@ gboolean dmap_share_publish(DmapShare *share, GError **error);
  */
 void dmap_share_free_filter (GSList * filter);
 
+/**
+ * dmap_share_emit_error:
+ * @share: a #DmapShare instance.
+ * @code: error code.
+ * @format: printf()-style format for error message
+ * @...: parameters for message format
+ */
+void dmap_share_emit_error(DmapShare *share, gint code, const gchar *format, ...);
+
 #endif /* _DMAP_SHARE_H */
 
 G_END_DECLS
