@@ -1285,81 +1285,81 @@ START_TEST(_album_tabulator_test)
 }
 END_TEST
 
-gboolean error_triggered = FALSE;
+static gboolean _error_triggered = FALSE;
 
 static void
 _error_cb(DmapShare *share, GError *error, gpointer user_data)
 {
-	error_triggered = TRUE;
+	_error_triggered = TRUE;
 }
 
 START_TEST(_should_transcode_test_no)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", TRUE, "audio/wav"));
-	ck_assert(!error_triggered);
+	ck_assert(!_error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "foo", FALSE, NULL));
-	ck_assert(!error_triggered);
+	ck_assert(!_error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype_unknown_mimetype)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", FALSE, "foo"));
-	ck_assert(error_triggered);
+	ck_assert(_error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype_already_good)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", FALSE, "audio/mp3"));
-	ck_assert(!error_triggered);
+	ck_assert(!_error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_wav)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(TRUE, _should_transcode(share, "mp3", FALSE, "audio/wav"));
-	ck_assert(!error_triggered);
+	ck_assert(!_error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp3)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(TRUE, _should_transcode(share, "wav", FALSE, "audio/mp3"));
-	ck_assert(!error_triggered);
+	ck_assert(!_error_triggered);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp4)
 {
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(TRUE, _should_transcode(share, "wav", FALSE, "video/quicktime"));
-	ck_assert(!error_triggered);
+	ck_assert(!_error_triggered);
 }
 END_TEST
 
@@ -1737,10 +1737,10 @@ START_TEST(_databases_items_xxx_test_bad_id)
 	/* IDs go from G_MAXINT down, so 0 does not exist. */
 	g_snprintf(path, sizeof path, "/db/1/items/%d", 0);
 
-	error_triggered = FALSE;
+	_error_triggered = FALSE;
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	_databases_items_xxx(share, server, message, path, NULL, NULL);
-	ck_assert(error_triggered);
+	ck_assert(_error_triggered);
 
 	g_object_unref(share);
 }
