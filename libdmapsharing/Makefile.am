@@ -202,6 +202,11 @@ CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
 
 check:
+	../tests/unit-test
+	set -e; for i in $(libdmapsharing_4_0_la_SOURCES); do \
+		gcov -r -o $(patsubst %.c,%.o,.libs/libdmapsharing_4_0_la-$$i) $$i > /dev/null; \
+	done
+	../tests/summarize-coverage $(patsubst %,%.gcov,$(libdmapsharing_4_0_la_SOURCES))
 if HAVE_PEDANSEE
 	echo    "[flags]" > pedansee.conf
 	echo    "	skip-unit-test-present = true" >> pedansee.conf

@@ -34,9 +34,9 @@ AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],[enable debugging build])])
 AC_ARG_ENABLE(coverage, [AC_HELP_STRING([--enable-coverage],[enable code-coverage build])])
 if test "x$enable_debug" = "xyes"; then
-	CFLAGS="$CFLAGS -g"
+	CFLAGS="$CFLAGS -O0 -g"
 elif test "x$enable_coverage" = "xyes"; then
-	CFLAGS="$CFLAGS -fprofile-arcs -ftest-coverage"
+	CFLAGS="$CFLAGS -O0 -g -fprofile-arcs -ftest-coverage"
 else
 	CFLAGS="$CFLAGS -O2"
 fi

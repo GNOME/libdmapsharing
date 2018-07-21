@@ -1,0 +1,47 @@
+#!/usr/bin/awk -f
+
+BEGIN {
+	checked         = 0
+	totalchecked    = 0
+	unchecked       = 0
+	totalunchecked  = 0
+	irrelevant      = 0
+	totalirrelevant = 0
+	argprev         = 0
+	filenameprev    = FILENAME
+}
+
+function printstats(name, checked, unchecked, irrelevant) {
+	total = checked + unchecked
+	if (total == 0) {
+		return
+	}
+	printf "%s: %d checked (%.2f%) %d unchecked (%.2f%) %d irrelevant\n",
+                name,
+                checked,
+                checked / total * 100,
+                unchecked,
+                unchecked / total * 100,
+                irrelevant
+}
+
+# Print and reset when file changes.
+# (Note that FILENAME already changed; hence filenameprev).
+{
+	if (ARGIND != argprev) {
+		printstats(filenameprev, checked, unchecked, irrelevant)
+		checked = unchecked = irrelevant = 0
+		argprev      = ARGIND
+		filenameprev = FILENAME
+	}
+}
+
+/^ *[0-9]*:/ { checked++;    totalchecked++ }
+/^ *#####:/  { unchecked++;  totalunchecked++ }
+/^ *-:/      { irrelevant++; totalirrelevant++ }
+
+# Print statistics for last file and totals.
+END {
+	printstats(FILENAME, checked, unchecked, irrelevant)
+	printstats("total", totalchecked, totalunchecked, totalirrelevant)
+}
