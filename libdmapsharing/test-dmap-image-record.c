@@ -218,7 +218,7 @@ test_dmap_image_record_class_init (TestDmapImageRecordClass *klass)
 }
 
 static void
-test_dmap_image_record_dpap_iface_init (gpointer iface, gpointer data)
+_dmap_image_record_iface_init (gpointer iface, gpointer data)
 {
 	DmapImageRecordInterface *dmap_image_record = iface;
 
@@ -228,7 +228,7 @@ test_dmap_image_record_dpap_iface_init (gpointer iface, gpointer data)
 }
 
 static void
-test_dmap_image_record_dmap_iface_init (gpointer iface, gpointer data)
+_dmap_record_iface_init (gpointer iface, gpointer data)
 {
         DmapRecordInterface *dmap_record = iface;
 
@@ -236,8 +236,8 @@ test_dmap_image_record_dmap_iface_init (gpointer iface, gpointer data)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapImageRecord, test_dmap_image_record, G_TYPE_OBJECT, 
-			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_IMAGE_RECORD, test_dmap_image_record_dpap_iface_init)
-			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, test_dmap_image_record_dmap_iface_init))
+			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_IMAGE_RECORD, _dmap_image_record_iface_init)
+			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, _dmap_record_iface_init))
 
 static void
 test_dmap_image_record_finalize (GObject *object)

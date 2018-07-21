@@ -79,7 +79,7 @@ test_dmap_db_class_init (TestDmapDbClass *klass)
 }
 
 static void
-test_dmap_db_interface_init (gpointer iface, gpointer data)
+_dmap_db_iface_init (gpointer iface, gpointer data)
 {
 	DmapDbInterface *dmap_db = iface;
 
@@ -93,7 +93,7 @@ test_dmap_db_interface_init (gpointer iface, gpointer data)
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapDb, test_dmap_db, G_TYPE_OBJECT, 
 			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_DB,
-					        test_dmap_db_interface_init))
+					        _dmap_db_iface_init))
 
 TestDmapDb *
 test_dmap_db_new (void)

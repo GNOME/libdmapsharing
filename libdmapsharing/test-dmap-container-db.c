@@ -60,7 +60,7 @@ test_dmap_container_db_class_init (TestDmapContainerDbClass *klass)
 }
 
 static void
-test_dmap_container_db_interface_init (gpointer iface, gpointer data)
+_dmap_container_db_iface_init (gpointer iface, gpointer data)
 {
 	DmapContainerDbInterface *dmap_container_db = iface;
 
@@ -73,7 +73,7 @@ test_dmap_container_db_interface_init (gpointer iface, gpointer data)
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapContainerDb, test_dmap_container_db, G_TYPE_OBJECT, 
 			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_CONTAINER_DB,
-						test_dmap_container_db_interface_init))
+						_dmap_container_db_iface_init))
 
 TestDmapContainerDb *
 test_dmap_container_db_new (DmapContainerRecord *r)

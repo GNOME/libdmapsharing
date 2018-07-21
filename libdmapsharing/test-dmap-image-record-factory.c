@@ -40,7 +40,7 @@ test_dmap_image_record_factory_class_init (TestDmapImageRecordFactoryClass *klas
 }
 
 static void
-test_dmap_image_record_factory_interface_init (gpointer iface, gpointer data)
+_dmap_record_factory_iface_init (gpointer iface, gpointer data)
 {
 	DmapRecordFactoryInterface *factory = iface;
 
@@ -51,7 +51,7 @@ test_dmap_image_record_factory_interface_init (gpointer iface, gpointer data)
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapImageRecordFactory, test_dmap_image_record_factory, G_TYPE_OBJECT, 
 			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD_FACTORY,
-					        test_dmap_image_record_factory_interface_init))
+					        _dmap_record_factory_iface_init))
 
 TestDmapImageRecordFactory *
 test_dmap_image_record_factory_new (void)
