@@ -32,6 +32,7 @@
 
 #include "dmap-md5.h"
 #include "dmap-connection.h"
+#include "dmap-error.h"
 #include "dmap-record-factory.h"
 #include "dmap-marshal.h"
 #include "dmap-structure.h"
@@ -607,7 +608,7 @@ typedef struct {
 
 	DmapResponseHandler response_handler;
 	gpointer user_data;
-} DAAPResponseData;
+} DmapResponseData;
 
 static gboolean
 _emit_progress_idle (DmapConnection * connection)
@@ -623,7 +624,7 @@ _emit_progress_idle (DmapConnection * connection)
 }
 
 static void
-_actual_http_response_handler (DAAPResponseData * data)
+_actual_http_response_handler (DmapResponseData * data)
 {
 	DmapConnectionPrivate *priv;
 	GNode *structure;
@@ -749,6 +750,7 @@ _actual_http_response_handler (DAAPResponseData * data)
 		_connection_set_error_message (data->connection,
 					      ("libdmapsharing is not able to connect to iTunes 7 shares"));
 	} else if (SOUP_STATUS_IS_SUCCESSFUL (data->status)) {
+		GError *error = NULL;
 		DmapStructureItem *item;
 
 		if ( /* FIXME: !rb_is_main_thread () */ TRUE) {
@@ -760,12 +762,13 @@ _actual_http_response_handler (DAAPResponseData * data)
 				g_idle_add ((GSourceFunc) _emit_progress_idle,
 					    data->connection);
 		}
-		structure = dmap_structure_parse (response, response_length);
+		structure = dmap_structure_parse (response, response_length, &error);
 		if (structure == NULL) {
-			g_debug ("No daap structure returned from %s",
-				 message_path);
-
+			dmap_connection_emit_error(data->connection, DMAP_ERROR_FAILED,
+			                          "Error parsing %s response: %s\n", message_path,
+			                           error->message);
 			data->status = SOUP_STATUS_MALFORMED;
+			g_clear_error(&error);
 		} else {
 			int dmap_status = 0;
 
@@ -818,7 +821,7 @@ _actual_http_response_handler (DAAPResponseData * data)
 
 static void
 _http_response_handler (SoupSession * session,
-                        SoupMessage * message, DAAPResponseData * data)
+                        SoupMessage * message, DmapResponseData * data)
 {
 	int response_length;
 
@@ -866,7 +869,7 @@ _http_get (DmapConnection * connection,
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
-	DAAPResponseData *data;
+	DmapResponseData *data;
 	SoupMessage *message;
 
 	message = _build_message (connection, path, need_hash,
@@ -879,7 +882,7 @@ _http_get (DmapConnection * connection,
 
 	priv->use_response_handler_thread = use_thread;
 
-	data = g_new0 (DAAPResponseData, 1);
+	data = g_new0 (DmapResponseData, 1);
 	data->response_handler = handler;
 	data->user_data = user_data;
 
@@ -1828,3 +1831,128 @@ dmap_connection_get_playlists (DmapConnection * connection)
 {
 	return connection->priv->playlists;
 }
+
+void
+dmap_connection_emit_error(DmapConnection *connection, gint code,
+                           const gchar *format, ...)
+{
+	va_list ap;
+	GError *error;
+
+	va_start(ap, format);
+	error = g_error_new_valist(DMAP_ERROR, code, format, ap);
+	g_signal_emit_by_name(connection, "error", error);
+
+	va_end(ap);
+}
+
+#ifdef HAVE_CHECK
+
+#include <check.h>
+#include <libdmapsharing/dmap-av-connection.h>
+
+static gboolean _error_triggered = FALSE;
+
+static void
+_error_cb(DmapConnection *share, GError *error, gpointer user_data)
+{
+	_error_triggered = TRUE;
+}
+
+START_TEST(_actual_http_response_handler_test)
+{
+	SoupMessage      *message;
+	DmapConnection   *connection;
+	const char        body[] = "minm\x00\x00\x00\x0dHello, world!";
+	DmapResponseData *data;
+
+	_error_triggered = FALSE;
+
+	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
+	soup_message_set_response(message,
+	                         "application/x-dmap-tagged",
+	                          SOUP_MEMORY_STATIC,
+	                          body,
+	                          sizeof body);
+	soup_message_set_status(message, SOUP_STATUS_OK);
+
+	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL);
+	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL);
+
+	data = g_new0(DmapResponseData, 1);
+	data->message    = message;
+	data->status     = SOUP_STATUS_OK;
+	data->connection = connection;
+
+	_actual_http_response_handler(data);
+
+	ck_assert(!_error_triggered);
+}
+END_TEST
+
+START_TEST(_actual_http_response_handler_bad_cc_test)
+{
+	SoupMessage      *message;
+	DmapConnection   *connection;
+	const char       *body = "xxx";
+	DmapResponseData *data;
+
+	_error_triggered = FALSE;
+
+	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
+	soup_message_set_response(message,
+	                         "application/x-dmap-tagged",
+	                          SOUP_MEMORY_STATIC,
+	                          body,
+	                          sizeof body);
+	soup_message_set_status(message, SOUP_STATUS_OK);
+
+	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL);
+	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL);
+
+	data = g_new0(DmapResponseData, 1);
+	data->message    = message;
+	data->status     = SOUP_STATUS_OK;
+	data->connection = connection;
+
+	_actual_http_response_handler(data);
+
+	ck_assert(_error_triggered);
+}
+END_TEST
+
+START_TEST(_actual_http_response_handler_bad_length_test)
+{
+	SoupMessage      *message;
+	DmapConnection   *connection;
+	/* Length of 99 is larger than sizeof containing array. */
+	const char        body[] = "minm\x00\x00\x00\x99Hello, world!";
+	DmapResponseData *data;
+
+	_error_triggered = FALSE;
+
+	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
+	soup_message_set_response(message,
+	                         "application/x-dmap-tagged",
+	                          SOUP_MEMORY_STATIC,
+	                          body,
+	                          sizeof body);
+	soup_message_set_status(message, SOUP_STATUS_OK);
+
+	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL);
+	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL);
+
+	data = g_new0(DmapResponseData, 1);
+	data->message    = message;
+	data->status     = SOUP_STATUS_OK;
+	data->connection = connection;
+
+	_actual_http_response_handler(data);
+
+	ck_assert(_error_triggered);
+}
+END_TEST
+
+#include "dmap-connection-suite.c"
+
+#endif

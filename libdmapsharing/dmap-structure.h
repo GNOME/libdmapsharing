@@ -37,7 +37,7 @@ struct _DmapStructureItem
 
 GNode *dmap_structure_add (GNode * parent, DmapContentCode cc, ...);
 gchar *dmap_structure_serialize (GNode * structure, guint * length);
-GNode *dmap_structure_parse (const guint8 * buf, gsize buf_length);
+GNode *dmap_structure_parse (const guint8 * buf, gsize buf_length, GError **error);
 DmapStructureItem *dmap_structure_find_item (GNode * structure,
 					     DmapContentCode code);
 GNode *dmap_structure_find_node (GNode * structure, DmapContentCode code);

@@ -1405,7 +1405,7 @@ START_TEST(dmap_av_share_server_info_test)
 	buffer = soup_message_body_flatten(body);
 	soup_buffer_get_data(buffer, &data, &length);
 
-	root = dmap_structure_parse(data, length);
+	root = dmap_structure_parse(data, length, NULL);
 
 	item = dmap_structure_find_item(root, DMAP_CC_MSTT);
 	ck_assert_int_eq(DMAP_STATUS_OK, item->content.data->v_int);
@@ -1510,7 +1510,7 @@ START_TEST(_databases_browse_xxx_test)
 	buffer = soup_message_body_flatten(body);
 	soup_buffer_get_data(buffer, &data, &length);
 
-	root = dmap_structure_parse(data, length);
+	root = dmap_structure_parse(data, length, NULL);
 
 	item = dmap_structure_find_item(root, DMAP_CC_MSTT);
 	ck_assert_int_eq(DMAP_STATUS_OK, item->content.data->v_int);
@@ -1566,7 +1566,7 @@ START_TEST(_databases_browse_xxx_artists_test)
 	buffer = soup_message_body_flatten(body);
 	soup_buffer_get_data(buffer, &data, &length);
 
-	root = dmap_structure_parse(data, length);
+	root = dmap_structure_parse(data, length, NULL);
 
 	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
 	ck_assert(NULL != root);
@@ -1607,7 +1607,7 @@ START_TEST(_databases_browse_xxx_albums_test)
 	buffer = soup_message_body_flatten(body);
 	soup_buffer_get_data(buffer, &data, &length);
 
-	root = dmap_structure_parse(data, length);
+	root = dmap_structure_parse(data, length, NULL);
 
 	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
 	ck_assert(NULL != root);
@@ -1648,7 +1648,7 @@ START_TEST(_databases_browse_xxx_bad_category_test)
 	buffer = soup_message_body_flatten(body);
 	soup_buffer_get_data(buffer, &data, &length);
 
-	root = dmap_structure_parse(data, length);
+	root = dmap_structure_parse(data, length, NULL);
 	ck_assert(NULL == root);
 
 	g_object_unref(share);

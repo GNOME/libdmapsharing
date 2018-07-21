@@ -223,5 +223,15 @@ void dmap_connection_authenticate_message (DmapConnection *connection,
 					   SoupAuth *auth,
 					   const char *password);
 
+/**
+ * dmap_connection_emit_error:
+ * @connection: a #DmapConnection instance.
+ * @code: error code.
+ * @format: printf()-style format for error message
+ * @...: parameters for message format
+ */
+void dmap_connection_emit_error(DmapConnection *connection, gint code,
+                                const gchar *format, ...);
+
 G_END_DECLS
 #endif /* _DMAP_CONNECTION_H */
