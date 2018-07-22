@@ -425,6 +425,10 @@ _resolve_cb (AvahiServiceResolver * service_resolver,
 			}
 		}
 
+		if (name == NULL) {
+			name = g_strdup(service_name);
+		}
+
 		avahi_address_snprint (host, AVAHI_ADDRESS_STR_MAX, address);
 
 		service = g_object_new (DMAP_TYPE_MDNS_SERVICE,
