@@ -363,7 +363,7 @@ _cc_dmap_type (DmapContentCode code, GError **error)
 	if (code < sizeof _cc_defs / sizeof(DmapContentCodeDefinition)) {
 		type = _cc_defs[code - 1].type;
 	} else {
-		g_set_error(error, DMAP_ERROR, DMAP_ERROR_FAILED,
+		g_set_error(error, DMAP_ERROR, DMAP_STATUS_INVALID_CONTENT_CODE,
 			   "Invalid content code: %d", code);
 	}
 
@@ -548,7 +548,7 @@ _cc_read_from_buffer (const gchar * buf, GError **error)
 		}
 	}
 
-	g_set_error(error, DMAP_ERROR, DMAP_ERROR_FAILED,
+	g_set_error(error, DMAP_ERROR, DMAP_STATUS_INVALID_CONTENT_CODE,
 		   "Invalid content code: %4s", buf);
 
 done:
@@ -606,7 +606,7 @@ _parse_container_buffer (GNode * parent, const guint8 * buf,
 		 * content_code and 4 of size) is odd.
 		 */
 		if (buf_length - l < 8) {
-			g_set_error(error, DMAP_ERROR, DMAP_ERROR_FAILED,
+			g_set_error(error, DMAP_ERROR, DMAP_STATUS_RESPONSE_TOO_SHORT,
 				   "Malformed response received");
 			goto done;
 		}
@@ -625,7 +625,7 @@ _parse_container_buffer (GNode * parent, const guint8 * buf,
 		 * then get out before we start processing it
 		 */
 		if (codesize > buf_length - l - 4 || codesize < 0) {
-			g_set_error(error, DMAP_ERROR, DMAP_ERROR_FAILED,
+			g_set_error(error, DMAP_ERROR, DMAP_STATUS_INVALID_CONTENT_CODE_SIZE,
 				   "Invalid codesize %d received in buffer of length %zd",
 			            codesize, buf_length);
 			goto done;

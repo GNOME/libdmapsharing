@@ -39,7 +39,6 @@
 #define DMAP_VERSION 2.0
 #define DAAP_VERSION 3.0
 #define DMAP_TIMEOUT 1800
-#define DMAP_STATUS_OK 200
 
 enum
 {
@@ -1021,7 +1020,7 @@ dmap_share_content_codes (DmapShare * share,
 	defs = dmap_structure_content_codes (&num_defs);
 
 	mccr = dmap_structure_add (NULL, DMAP_CC_MCCR);
-	dmap_structure_add (mccr, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+	dmap_structure_add (mccr, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);
 
 	for (i = 0; i < num_defs; i++) {
 		GNode *mdcl;
@@ -1057,7 +1056,7 @@ dmap_share_login (DmapShare * share,
 	session_id = dmap_share_session_id_create (share, context);
 
 	mlog = dmap_structure_add (NULL, DMAP_CC_MLOG);
-	dmap_structure_add (mlog, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+	dmap_structure_add (mlog, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);
 	dmap_structure_add (mlog, DMAP_CC_MLID, session_id);
 
 	dmap_share_message_set_from_dmap_structure (share, message, mlog);
@@ -1112,7 +1111,7 @@ dmap_share_update (DmapShare * share,
 
 		mupd = dmap_structure_add (NULL, DMAP_CC_MUPD);
 		dmap_structure_add (mupd, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (mupd, DMAP_CC_MUSR,
 				    (gint32)
 				    dmap_share_get_revision_number (share));
@@ -1674,7 +1673,7 @@ dmap_share_databases (DmapShare * share,
 
 		avdb = dmap_structure_add (NULL, DMAP_CC_AVDB);
 		dmap_structure_add (avdb, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (avdb, DMAP_CC_MUTY, 0);
 		dmap_structure_add (avdb, DMAP_CC_MTCO, (gint32) 1);
 		dmap_structure_add (avdb, DMAP_CC_MRCO, (gint32) 1);
@@ -1737,7 +1736,7 @@ dmap_share_databases (DmapShare * share,
 
 		agal = dmap_structure_add (NULL, DMAP_CC_AGAL);
 		dmap_structure_add (agal, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (agal, DMAP_CC_MUTY, 0);
 
 		num = g_hash_table_size (groups);
@@ -1866,7 +1865,7 @@ dmap_share_databases (DmapShare * share,
 		/* 2: */
 		adbs = dmap_structure_add (NULL, DMAP_CC_ADBS);
 		dmap_structure_add (adbs, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (adbs, DMAP_CC_MUTY, 0);
 		dmap_structure_add (adbs, DMAP_CC_MTCO, (gint32) num_songs);
 		dmap_structure_add (adbs, DMAP_CC_MRCO, (gint32) num_songs);
@@ -1932,7 +1931,7 @@ dmap_share_databases (DmapShare * share,
 
 		aply = dmap_structure_add (NULL, DMAP_CC_APLY);
 		dmap_structure_add (aply, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (aply, DMAP_CC_MUTY, 0);
 		dmap_structure_add (aply, DMAP_CC_MTCO,
 				    (gint32) dmap_container_db_count (share->
@@ -1999,7 +1998,7 @@ dmap_share_databases (DmapShare * share,
 
 		apso = dmap_structure_add (NULL, DMAP_CC_APSO);
 		dmap_structure_add (apso, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (apso, DMAP_CC_MUTY, 0);
 
 		if (g_ascii_strcasecmp ("/1/items", rest_of_path + 13) == 0) {

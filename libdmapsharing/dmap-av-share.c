@@ -171,7 +171,7 @@ dmap_av_share_server_info (DmapShare * share,
 	g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
 	msrv = dmap_structure_add (NULL, DMAP_CC_MSRV);
-	dmap_structure_add (msrv, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+	dmap_structure_add (msrv, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);
 	dmap_structure_add (msrv, DMAP_CC_MPRO, (gdouble) DAAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_APRO, (gdouble) DAAP_VERSION);
 	/* 2/3 is for itunes 4.8 (at least).  its determined by the
@@ -321,7 +321,7 @@ _should_transcode (DmapAvShare *share,
 
 	format2 = dmap_utils_mime_to_format (transcode_mimetype);
 	if (NULL == format2) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_BAD_FORMAT,
 		                     "Configured to transcode, but target format bad");
 		goto done;
 	}
@@ -355,7 +355,7 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	g_object_get (record, "location", &location, "has-video", &has_video, NULL);
 	if (NULL == location) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_RECORD_MISSING_FIELD,
 		                     "Error getting location from record");
 		goto done;
 	}
@@ -368,14 +368,14 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	stream = G_INPUT_STREAM (dmap_av_record_read (record, &error));
 	if (error != NULL) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_OPEN_FAILED,
 		                     "Cannot open %s", error->message);
 		goto done;
 	}
 
 	g_object_get (record, "format", &format, NULL);
 	if (NULL == format) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_RECORD_MISSING_FIELD,
 		                     "Error getting format from record");
 		goto done;
 	}
@@ -386,7 +386,7 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 		cd->original_stream = stream;
 		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
 #else
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_BAD_FORMAT,
 		                     "Transcode format %s not supported",
 		                      transcode_mimetype);
 		cd->original_stream = NULL;
@@ -399,14 +399,14 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 	}
 
 	if (cd->stream == NULL) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_OPEN_FAILED,
 		                     "Could not setup input stream");
 		goto done;
 	}
 
 	if (offset != 0) {
 		if (g_seekable_seek (G_SEEKABLE (cd->stream), offset, G_SEEK_SET, NULL, &error) == FALSE) {
-			dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+			dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_SEEK_FAILED,
 			                     "Error seeking: %s.", error->message);
 			goto done;
 		}
@@ -449,21 +449,21 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 
 	if (0 == g_signal_connect (message, "wrote_headers",
 			           G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_FAILED,
 		                     "Error connecting to wrote_headers signal");
 		goto done;
 	}
 
 	if (0 == g_signal_connect (message, "wrote_chunk",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_FAILED,
 		                     "Error connecting to wrote_chunk signal");
 		goto done;
 	}
 
 	if (0 == g_signal_connect (message, "finished",
 			  G_CALLBACK (dmap_private_utils_chunked_message_finished), cd)) {
-		dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_FAILED,
 		                     "Error connecting to finished signal");
 		goto done;
 	}
@@ -480,7 +480,7 @@ done:
 		if (NULL != cd && NULL != cd->stream) {
 			ok = g_input_stream_close (cd->stream, NULL, &error);
 			if (!ok) {
-				dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+				dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_CLOSE_FAILED,
 				                     "Error closing transcode stream: %s.",
 				                      error->message);
 			}
@@ -491,7 +491,7 @@ done:
 		if (NULL != stream) {
 			ok = g_input_stream_close (stream, NULL, &error);
 			if (!ok) {
-				dmap_share_emit_error(DMAP_SHARE(share), DMAP_ERROR_FAILED,
+				dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_CLOSE_FAILED,
 				                     "Error closing stream: %s.",
 				                      error->message);
 			}
@@ -894,14 +894,14 @@ _databases_browse_xxx (DmapShare * share,
 				      category_items);
 		category_cc = DMAP_CC_ABAL;
 	} else {
-		dmap_share_emit_error(share, DMAP_ERROR_FAILED,
+		dmap_share_emit_error(share, DMAP_STATUS_BAD_BROWSE_CATEGORY,
 		                     "Unsupported browse category: %s",
 		                      browse_category);
 		goto _bad_category;
 	}
 
 	abro = dmap_structure_add (NULL, DMAP_CC_ABRO);
-	dmap_structure_add (abro, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+	dmap_structure_add (abro, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);
 	dmap_structure_add (abro, DMAP_CC_MUTY, 0);
 
 	num_genre = g_hash_table_size (category_items);
@@ -957,7 +957,7 @@ _databases_items_xxx (DmapShare * share,
 	if (NULL == record) {
 		g_signal_emit_by_name(share, "error",
 			g_error_new(DMAP_ERROR,
-			            DMAP_ERROR_FAILED,
+			            DMAP_STATUS_DB_BAD_ID,
 			           "Bad record identifier requested"));
 		soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
 		goto done;
@@ -1285,81 +1285,81 @@ START_TEST(_album_tabulator_test)
 }
 END_TEST
 
-static gboolean _error_triggered = FALSE;
+static int _status = DMAP_STATUS_OK;
 
 static void
 _error_cb(DmapShare *share, GError *error, gpointer user_data)
 {
-	_error_triggered = TRUE;
+	_status = error->code;
 }
 
 START_TEST(_should_transcode_test_no)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", TRUE, "audio/wav"));
-	ck_assert(!_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_OK, _status);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "foo", FALSE, NULL));
-	ck_assert(!_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_OK, _status);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype_unknown_mimetype)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", FALSE, "foo"));
-	ck_assert(_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_BAD_FORMAT, _status);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_no_trancode_mimetype_already_good)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(FALSE, _should_transcode(share, "mp3", FALSE, "audio/mp3"));
-	ck_assert(!_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_OK, _status);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_wav)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(TRUE, _should_transcode(share, "mp3", FALSE, "audio/wav"));
-	ck_assert(!_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_OK, _status);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp3)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(TRUE, _should_transcode(share, "wav", FALSE, "audio/mp3"));
-	ck_assert(!_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_OK, _status);
 }
 END_TEST
 
 START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp4)
 {
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	DmapAvShare *share = dmap_av_share_new("test", NULL, NULL, NULL, NULL);
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	ck_assert_int_eq(TRUE, _should_transcode(share, "wav", FALSE, "video/quicktime"));
-	ck_assert(!_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_OK, _status);
 }
 END_TEST
 
@@ -1408,7 +1408,7 @@ START_TEST(dmap_av_share_server_info_test)
 	root = dmap_structure_parse(data, length, NULL);
 
 	item = dmap_structure_find_item(root, DMAP_CC_MSTT);
-	ck_assert_int_eq(DMAP_STATUS_OK, item->content.data->v_int);
+	ck_assert_int_eq(SOUP_STATUS_OK, item->content.data->v_int);
 
 	item = dmap_structure_find_item(root, DMAP_CC_MPRO);
 	ck_assert_int_eq(DAAP_VERSION, item->content.data->v_double);
@@ -1513,7 +1513,7 @@ START_TEST(_databases_browse_xxx_test)
 	root = dmap_structure_parse(data, length, NULL);
 
 	item = dmap_structure_find_item(root, DMAP_CC_MSTT);
-	ck_assert_int_eq(DMAP_STATUS_OK, item->content.data->v_int);
+	ck_assert_int_eq(SOUP_STATUS_OK, item->content.data->v_int);
 
 	item = dmap_structure_find_item(root, DMAP_CC_MUTY);
 	ck_assert_int_eq(0, item->content.data->v_int);
@@ -1737,10 +1737,10 @@ START_TEST(_databases_items_xxx_test_bad_id)
 	/* IDs go from G_MAXINT down, so 0 does not exist. */
 	g_snprintf(path, sizeof path, "/db/1/items/%d", 0);
 
-	_error_triggered = FALSE;
+	_status = DMAP_STATUS_OK;
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
 	_databases_items_xxx(share, server, message, path, NULL, NULL);
-	ck_assert(_error_triggered);
+	ck_assert_int_eq(DMAP_STATUS_DB_BAD_ID, _status);
 
 	g_object_unref(share);
 }

@@ -566,7 +566,7 @@ dmap_image_share_server_info (DmapShare * share,
 	g_object_get ((gpointer) share, "name", &nameprop, NULL);
 
 	msrv = dmap_structure_add (NULL, DMAP_CC_MSRV);
-	dmap_structure_add (msrv, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+	dmap_structure_add (msrv, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);
 	dmap_structure_add (msrv, DMAP_CC_MPRO, (gdouble) DMAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_PPRO, (gdouble) DPAP_VERSION);
 	dmap_structure_add (msrv, DMAP_CC_MINM, nameprop);

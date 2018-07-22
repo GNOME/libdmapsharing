@@ -87,7 +87,6 @@ G_BEGIN_DECLS
  */
 #define DMAP_SHARE_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				 DMAP_TYPE_SHARE, DmapShareClass))
-#define DMAP_STATUS_OK 200
 typedef struct DmapSharePrivate DmapSharePrivate;
 
 typedef struct {

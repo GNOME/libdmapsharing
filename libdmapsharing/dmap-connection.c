@@ -764,7 +764,7 @@ _actual_http_response_handler (DmapResponseData * data)
 		}
 		structure = dmap_structure_parse (response, response_length, &error);
 		if (structure == NULL) {
-			dmap_connection_emit_error(data->connection, DMAP_ERROR_FAILED,
+			dmap_connection_emit_error(data->connection, error->code,
 			                          "Error parsing %s response: %s\n", message_path,
 			                           error->message);
 			data->status = SOUP_STATUS_MALFORMED;
@@ -1851,22 +1851,22 @@ dmap_connection_emit_error(DmapConnection *connection, gint code,
 #include <check.h>
 #include <libdmapsharing/dmap-av-connection.h>
 
-static gboolean _error_triggered = FALSE;
+static int _status = DMAP_STATUS_OK;
 
 static void
 _error_cb(DmapConnection *share, GError *error, gpointer user_data)
 {
-	_error_triggered = TRUE;
+	_status = error->code;
 }
 
-#define _ACTUAL_HTTP_RESPONSE_HANDLER_TEST(bytes, size, ok) \
+#define _ACTUAL_HTTP_RESPONSE_HANDLER_TEST(bytes, size, __status) \
 { \
 	SoupMessage      *message; \
 	DmapConnection   *connection; \
 	char              body[] = bytes; \
 	DmapResponseData *data; \
 	\
-	_error_triggered = FALSE; \
+	_status = DMAP_STATUS_OK; \
 	\
 	message = soup_message_new(SOUP_METHOD_GET, "http://test/"); \
 	soup_message_set_response(message, \
@@ -1886,20 +1886,30 @@ _error_cb(DmapConnection *share, GError *error, gpointer user_data)
 	\
 	_actual_http_response_handler(data); \
 	\
-	ck_assert(_error_triggered != ok); \
+	ck_assert(_status == __status); \
 } \
 
 START_TEST(_actual_http_response_handler_test) \
-_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x0dHello, world!", sizeof bytes, TRUE);
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x0dHello, world!",
+                                    sizeof bytes, DMAP_STATUS_OK);
+END_TEST
+
+/* Length < 8 only allowed for DMAP_RAW. */
+START_TEST(_actual_http_response_handler_too_short_test) \
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("xxxx", sizeof bytes,
+                                    DMAP_STATUS_RESPONSE_TOO_SHORT);
 END_TEST
 
 START_TEST(_actual_http_response_handler_bad_cc_test) \
-_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("xxxx", sizeof bytes, FALSE);
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("xxxx\x00\x00\x00\x00", sizeof bytes,
+                                    DMAP_STATUS_INVALID_CONTENT_CODE);
 END_TEST
 
 /* Length of 99 is larger than sizeof containing array. */
 START_TEST(_actual_http_response_handler_bad_len_test) \
-_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x99Hello, world!", sizeof bytes, FALSE);
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x99Hello, world!",
+                                    sizeof bytes,
+                                    DMAP_STATUS_INVALID_CONTENT_CODE_SIZE);
 END_TEST
 
 #include "dmap-connection-suite.c"

@@ -2,7 +2,7 @@
 
 # Generate test suite for each source file containing "^START_TEST":
 for f in *.c; do
-	tests=$(grep ^START_TEST $f | cut -c 12- | sed 's/.$//')
+	tests=$(grep ^START_TEST $f | cut -c 12- | sed 's/).*//')
 	suitefn=$(echo ${f%.*} | sed 's/-/_/g')
 
 	# Continue if no tests.
@@ -47,7 +47,7 @@ EOF
 
 for f in *.c; do
         # Get list of tests in given source file.
-        tests=$(grep ^START_TEST $f | cut -c 12- | sed 's/.$//')
+        tests=$(grep ^START_TEST $f | cut -c 12- | sed 's/).*//')
 	suitefn=$(echo ${f%.*} | sed 's/-/_/g')
 
         # Continue if no tests.
@@ -91,7 +91,7 @@ EOF
 
 for f in *.c; do
         # Get list of tests in given source file.
-        tests=$(grep ^START_TEST $f | cut -c 12- | sed 's/.$//')
+        tests=$(grep ^START_TEST $f | cut -c 12- | sed 's/).*//')
 	suitefn=$(echo ${f%.*} | sed 's/-/_/g')
 
         # Continue if no tests.

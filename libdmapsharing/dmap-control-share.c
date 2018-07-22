@@ -521,7 +521,7 @@ _fill_playstatusupdate (DmapControlShare * share, SoupMessage * message)
 	record = dmap_control_player_now_playing_record (share->priv->player);
 
 	cmst = dmap_structure_add (NULL, DMAP_CC_CMST);
-	dmap_structure_add (cmst, DMAP_CC_MSTT, (gint32) DMAP_STATUS_OK);
+	dmap_structure_add (cmst, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);
 	dmap_structure_add (cmst, DMAP_CC_CMSR,
 			    share->priv->current_revision);
 	dmap_structure_add (cmst, DMAP_CC_CAVC, 1);
@@ -702,7 +702,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		caci = dmap_structure_add (NULL, DMAP_CC_CACI);
 		// dmap.status
 		dmap_structure_add (caci, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		// dmap.updatetype
 		dmap_structure_add (caci, DMAP_CC_MUTY, 0);
 		// dmap.specifiedtotalcount
@@ -748,7 +748,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		}
 
 		cmgt = dmap_structure_add (NULL, DMAP_CC_CMGT);
-		dmap_structure_add (cmgt, DMAP_CC_MSTT, DMAP_STATUS_OK);
+		dmap_structure_add (cmgt, DMAP_CC_MSTT, SOUP_STATUS_OK);
 
 		properties = g_strsplit (properties_query, ",", -1);
 		for (property = properties; *property; property++) {
@@ -786,7 +786,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 		casp = dmap_structure_add (NULL, DMAP_CC_CASP);
 		dmap_structure_add (casp, DMAP_CC_MSTT,
-				    (gint32) DMAP_STATUS_OK);
+				    (gint32) SOUP_STATUS_OK);
 		dmap_structure_add (casp, DMAP_CC_MDCL);
 
 		dmap_structure_add (casp, DMAP_CC_CAIA, TRUE);
@@ -945,7 +945,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 			cacr = dmap_structure_add (NULL, DMAP_CC_CACR);
 			dmap_structure_add (cacr, DMAP_CC_MSTT,
-					    DMAP_STATUS_OK);
+					    SOUP_STATUS_OK);
 			dmap_structure_add (cacr, DMAP_CC_MIID, index);
 
 			dmap_share_message_set_from_dmap_structure (share,
