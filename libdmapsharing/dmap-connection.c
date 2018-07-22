@@ -1859,98 +1859,47 @@ _error_cb(DmapConnection *share, GError *error, gpointer user_data)
 	_error_triggered = TRUE;
 }
 
-START_TEST(_actual_http_response_handler_test)
-{
-	SoupMessage      *message;
-	DmapConnection   *connection;
-	const char        body[] = "minm\x00\x00\x00\x0dHello, world!";
-	DmapResponseData *data;
+#define _ACTUAL_HTTP_RESPONSE_HANDLER_TEST(bytes, size, ok) \
+{ \
+	SoupMessage      *message; \
+	DmapConnection   *connection; \
+	char              body[] = bytes; \
+	DmapResponseData *data; \
+	\
+	_error_triggered = FALSE; \
+	\
+	message = soup_message_new(SOUP_METHOD_GET, "http://test/"); \
+	soup_message_set_response(message, \
+	                         "application/x-dmap-tagged", \
+	                          SOUP_MEMORY_STATIC, \
+	                          body, \
+	                          sizeof body); \
+	soup_message_set_status(message, SOUP_STATUS_OK); \
+	\
+	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL); \
+	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL); \
+	\
+	data = g_new0(DmapResponseData, 1); \
+	data->message    = message; \
+	data->status     = SOUP_STATUS_OK; \
+	data->connection = connection; \
+	\
+	_actual_http_response_handler(data); \
+	\
+	ck_assert(_error_triggered != ok); \
+} \
 
-	_error_triggered = FALSE;
-
-	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
-	soup_message_set_response(message,
-	                         "application/x-dmap-tagged",
-	                          SOUP_MEMORY_STATIC,
-	                          body,
-	                          sizeof body);
-	soup_message_set_status(message, SOUP_STATUS_OK);
-
-	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL);
-	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL);
-
-	data = g_new0(DmapResponseData, 1);
-	data->message    = message;
-	data->status     = SOUP_STATUS_OK;
-	data->connection = connection;
-
-	_actual_http_response_handler(data);
-
-	ck_assert(!_error_triggered);
-}
+START_TEST(_actual_http_response_handler_test) \
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x0dHello, world!", sizeof bytes, TRUE);
 END_TEST
 
-START_TEST(_actual_http_response_handler_bad_cc_test)
-{
-	SoupMessage      *message;
-	DmapConnection   *connection;
-	const char       *body = "xxx";
-	DmapResponseData *data;
-
-	_error_triggered = FALSE;
-
-	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
-	soup_message_set_response(message,
-	                         "application/x-dmap-tagged",
-	                          SOUP_MEMORY_STATIC,
-	                          body,
-	                          sizeof body);
-	soup_message_set_status(message, SOUP_STATUS_OK);
-
-	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL);
-	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL);
-
-	data = g_new0(DmapResponseData, 1);
-	data->message    = message;
-	data->status     = SOUP_STATUS_OK;
-	data->connection = connection;
-
-	_actual_http_response_handler(data);
-
-	ck_assert(_error_triggered);
-}
+START_TEST(_actual_http_response_handler_bad_cc_test) \
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("xxxx", sizeof bytes, FALSE);
 END_TEST
 
-START_TEST(_actual_http_response_handler_bad_length_test)
-{
-	SoupMessage      *message;
-	DmapConnection   *connection;
-	/* Length of 99 is larger than sizeof containing array. */
-	const char        body[] = "minm\x00\x00\x00\x99Hello, world!";
-	DmapResponseData *data;
-
-	_error_triggered = FALSE;
-
-	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
-	soup_message_set_response(message,
-	                         "application/x-dmap-tagged",
-	                          SOUP_MEMORY_STATIC,
-	                          body,
-	                          sizeof body);
-	soup_message_set_status(message, SOUP_STATUS_OK);
-
-	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL);
-	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL);
-
-	data = g_new0(DmapResponseData, 1);
-	data->message    = message;
-	data->status     = SOUP_STATUS_OK;
-	data->connection = connection;
-
-	_actual_http_response_handler(data);
-
-	ck_assert(_error_triggered);
-}
+/* Length of 99 is larger than sizeof containing array. */
+START_TEST(_actual_http_response_handler_bad_len_test) \
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x99Hello, world!", sizeof bytes, FALSE);
 END_TEST
 
 #include "dmap-connection-suite.c"
