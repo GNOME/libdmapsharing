@@ -104,7 +104,7 @@ test_dmap_image_record_set_property (GObject *object,
 			if (record->priv->hash) {
 				g_array_unref(record->priv->hash);
 			}
-                        record->priv->hash= g_value_dup_boxed (value);
+                        record->priv->hash = g_value_dup_boxed (value);
                         break;
                 case PROP_COMMENTS:
 			g_free (record->priv->comments);
