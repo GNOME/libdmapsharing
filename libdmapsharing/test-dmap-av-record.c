@@ -158,7 +158,7 @@ test_dmap_av_record_set_property (GObject *object,
 			if (record->priv->hash) {
 				g_array_unref(record->priv->hash);
 			}
-			record->priv->hash = g_value_dup_boxed (value);
+			record->priv->hash = g_value_get_boxed (value);
 			break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
