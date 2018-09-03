@@ -60,6 +60,18 @@ G_BEGIN_DECLS
  */
 #define DMAP_DB_GET_INTERFACE(o) (G_TYPE_INSTANCE_GET_INTERFACE ((o), \
 				  DMAP_TYPE_DB, DmapDbInterface))
+
+/**
+ * DmapDbId:
+ * @DMAP_DB_ID_BAD: the value which represents a bad DmapDb ID.
+ *
+ * Special DmapDb ID values.
+ */
+typedef enum
+{
+	DMAP_DB_ID_BAD = 0,
+} DmapDbId;
+
 typedef struct _DmapDb DmapDb;
 typedef struct _DmapDbInterface DmapDbInterface;
 
@@ -104,11 +116,11 @@ GType dmap_db_get_type (void);
  *
  * Add a record to the database. 
  *
- * Returns: The ID for the newly added record. A reference to the record
- * will be retained by the database (if required; an adapter-type 
- * implementation may not want to retain a reference as the record data may
- * be placed elsewhere). In all cases, the record should be unrefed by the 
- * calling code.
+ * Returns: The ID for the newly added record or @DMAP_DB_ID_BAD on failure. A
+ * reference to the record will be retained by the database (if required; an
+ * adapter-type implementation might not want to retain a reference as the
+ * record data may be placed elsewhere). In all cases, a returned record should
+ * be unrefed by the calling code.
  */
 guint dmap_db_add (DmapDb *db, DmapRecord *record, GError **error);
 
@@ -119,9 +131,10 @@ guint dmap_db_add (DmapDb *db, DmapRecord *record, GError **error);
  * @id: A database record ID.
  * @error: return location for a GError, or NULL.
  *
- * Add a record to the database and assign it the given ID. 
+ * Add a record to the database and assign it the given ID. @id cannot be
+ * @DMAP_DB_ID_BAD.
  *
- * Returns: The ID for the newly added record.
+ * Returns: The ID for the newly added record or DMAP_DB_ID_BAD on failure.
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
@@ -135,7 +148,7 @@ guint dmap_db_add_with_id (DmapDb *db, DmapRecord *record, guint id, GError **er
  *
  * Create a record and add it to the database. 
  *
- * Returns: The ID for the newly added record.
+ * Returns: The ID for the newly added record or DMAP_DB_ID_BAD on failure.
  *
  * See also the notes for dmap_db_add regarding reference counting.
  */
@@ -146,8 +159,9 @@ guint dmap_db_add_path (DmapDb * db, const gchar * path, GError **error);
  * @db: A media database. 
  * @id: A record ID.
  *
- * Returns: (transfer full): the database record corresponding to @id. This record should
- * be unrefed by the calling code when no longer required.
+ * Returns: (transfer full): the database record corresponding to @id. @id
+ * cannot be DMAP_DB_ID_BAD. The returned record should be unrefed by the
+ * calling code when no longer required.
  *
  * If you are implementing a full database using this API, then you
  * probably want to increment the reference count before returning a record
@@ -167,8 +181,8 @@ DmapRecord *dmap_db_lookup_by_id (const DmapDb * db, guint id);
  * @db: A media database. 
  * @location: A record location.
  *
- * Returns: the database id for the record corresponding to @path or 0 if
- * such a record does not exist.
+ * Returns: the database id for the record corresponding to @path or
+ * DMAP_DB_ID_BAD if such a record does not exist.
  */
 guint dmap_db_lookup_id_by_location (const DmapDb * db,
 				     const gchar * location);
