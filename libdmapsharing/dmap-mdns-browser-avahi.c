@@ -105,7 +105,10 @@ static void _browse_cb (AvahiServiceBrowser * service_browser,
 
 static guint _signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DmapMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (DmapMdnsBrowser,
+                         dmap_mdns_browser,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (DmapMdnsBrowser));
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -128,8 +131,6 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 
 	object_class->dispose  = _dispose;
 	object_class->finalize = _finalize;
-
-	g_type_class_add_private (klass, sizeof (DmapMdnsBrowserPrivate));
 
 	_signals[SERVICE_ADDED] =
 		g_signal_new ("service-added",

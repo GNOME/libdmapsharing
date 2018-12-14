@@ -107,7 +107,10 @@ enum {
 
 static guint _signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DmapControlShare, dmap_control_share, DMAP_TYPE_SHARE);
+G_DEFINE_TYPE_WITH_CODE (DmapControlShare,
+                         dmap_control_share,
+                         DMAP_TYPE_SHARE,
+                         G_ADD_PRIVATE (DmapControlShare));
 
 static gchar *
 _get_dbid (void)
@@ -365,8 +368,6 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 			      NULL,
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
-
-	g_type_class_add_private (klass, sizeof (DmapControlSharePrivate));
 }
 
 static void

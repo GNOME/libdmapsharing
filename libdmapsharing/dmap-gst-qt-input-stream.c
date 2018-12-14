@@ -215,17 +215,16 @@ _kill_pipeline (DmapGstInputStream * stream)
 	gst_object_unref (GST_OBJECT (qt_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE (DmapGstQtInputStream, dmap_gst_qt_input_stream,
-	       DMAP_TYPE_GST_INPUT_STREAM);
+G_DEFINE_TYPE_WITH_CODE (DmapGstQtInputStream,
+                         dmap_gst_qt_input_stream,
+                         DMAP_TYPE_GST_INPUT_STREAM,
+                         G_ADD_PRIVATE (DmapGstQtInputStream));
 
 static void
 dmap_gst_qt_input_stream_class_init (DmapGstQtInputStreamClass * klass)
 {
 	DmapGstInputStreamClass *parent_class =
 		DMAP_GST_INPUT_STREAM_CLASS (klass);
-
-	g_type_class_add_private (klass,
-				  sizeof (DmapGstQtInputStreamPrivate));
 
 	parent_class->kill_pipeline = _kill_pipeline;
 }

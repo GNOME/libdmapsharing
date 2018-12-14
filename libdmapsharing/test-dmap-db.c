@@ -75,7 +75,6 @@ test_dmap_db_init (TestDmapDb *db)
 static void
 test_dmap_db_class_init (TestDmapDbClass *klass)
 {
-	g_type_class_add_private (klass, sizeof (TestDmapDbPrivate));
 }
 
 static void
@@ -92,8 +91,9 @@ _dmap_db_iface_init (gpointer iface, gpointer data)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapDb, test_dmap_db, G_TYPE_OBJECT, 
-			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_DB,
-					        _dmap_db_iface_init))
+                         G_IMPLEMENT_INTERFACE (DMAP_TYPE_DB,
+                                                _dmap_db_iface_init)
+                         G_ADD_PRIVATE (TestDmapDb))
 
 TestDmapDb *
 test_dmap_db_new (void)

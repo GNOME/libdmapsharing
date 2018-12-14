@@ -115,7 +115,10 @@ static GMappedFile *_mapped_file = NULL;
 
 #define DMAP_IMAGE_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_IMAGE_SHARE, DmapImageSharePrivate))
 
-G_DEFINE_TYPE (DmapImageShare, dmap_image_share, DMAP_TYPE_SHARE);
+G_DEFINE_TYPE_WITH_CODE (DmapImageShare,
+                         dmap_image_share,
+                         DMAP_TYPE_SHARE,
+                         G_ADD_PRIVATE (DmapImageShare));
 
 static void
 _set_property (GObject * object,
@@ -477,8 +480,6 @@ dmap_image_share_class_init (DmapImageShareClass * klass)
 	parent_class->databases_browse_xxx = _databases_browse_xxx;
 	parent_class->databases_items_xxx = _databases_items_xxx;
 	parent_class->server_info = dmap_image_share_server_info;
-
-	g_type_class_add_private (klass, sizeof (DmapImageSharePrivate));
 }
 
 static void

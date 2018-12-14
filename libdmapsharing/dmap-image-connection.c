@@ -25,11 +25,6 @@
 
 #define DMAP_IMAGE_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_IMAGE_CONNECTION, DmapImageConnectionPrivate))
 
-/* FIXME:
-struct DmapImageConnectionPrivate {
-};
-*/
-
 static DmapContentCode
 _get_protocol_version_cc (DmapConnection * connection)
 {
@@ -164,10 +159,6 @@ dmap_image_connection_class_init (DmapImageConnectionClass * klass)
 	parent_class->get_protocol_version_cc = _get_protocol_version_cc;
 	parent_class->get_query_metadata = _get_query_metadata;
 	parent_class->handle_mlcl = _handle_mlcl;
-
-	/* FIXME:
-	 * g_type_class_add_private (klass, sizeof (DmapImageConnectionPrivate));
-	 */
 }
 
 DmapImageConnection *
@@ -190,9 +181,6 @@ dmap_image_connection_new (const char *name,
 static void
 dmap_image_connection_init (DmapImageConnection * connection)
 {
-	/* FIXME: 
-	 * connection->priv = DMAP_IMAGE_CONNECTION_GET_PRIVATE (connection);
-	 */
 }
 
 G_DEFINE_TYPE (DmapImageConnection, dmap_image_connection, DMAP_TYPE_CONNECTION);

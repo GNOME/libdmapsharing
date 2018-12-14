@@ -81,7 +81,10 @@ static void dmap_mdns_browser_finalize (GObject * object);
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DmapMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_CODE (DmapMdnsBrowser,
+                         dmap_mdns_browser,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (DmapMdnsBrowser));
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -452,8 +455,6 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 					       service_removed), NULL, NULL,
 			      g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
-
-	g_type_class_add_private (klass, sizeof (DmapMdnsBrowserPrivate));
 }
 
 static void

@@ -43,9 +43,6 @@
 
 static gboolean _do_something (DmapConnection * connection);
 
-G_DEFINE_TYPE (DmapConnection, dmap_connection, G_TYPE_OBJECT);
-#define DMAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONNECTION, DmapConnectionPrivate))
-
 struct DmapConnectionPrivate
 {
 	char *name;
@@ -85,6 +82,13 @@ struct DmapConnectionPrivate
 	gboolean result;
 	char *last_error_message;
 };
+
+G_DEFINE_TYPE_WITH_CODE (DmapConnection,
+                         dmap_connection,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (DmapConnection));
+
+#define DMAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONNECTION, DmapConnectionPrivate))
 
 enum
 {
@@ -328,8 +332,6 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 	object_class->finalize = _finalize;
 	object_class->set_property = _set_property;
 	object_class->get_property = _get_property;
-
-	g_type_class_add_private (klass, sizeof (DmapConnectionPrivate));
 
 	g_object_class_install_property (object_class,
 					 PROP_DB,

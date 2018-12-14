@@ -418,8 +418,6 @@ dmap_gst_input_stream_class_init (DmapGstInputStreamClass * klass)
 {
 	GInputStreamClass *istream_class;
 
-	g_type_class_add_private (klass, sizeof (DmapGstInputStreamPrivate));
-
 	istream_class = G_INPUT_STREAM_CLASS (klass);
 	istream_class->read_fn = _read;
 	istream_class->skip = _skip;
@@ -453,4 +451,5 @@ dmap_gst_input_stream_init (DmapGstInputStream * stream)
 G_DEFINE_TYPE_WITH_CODE (DmapGstInputStream, dmap_gst_input_stream,
 			 G_TYPE_INPUT_STREAM,
 			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
-						_seekable_iface_init));
+						_seekable_iface_init)
+                         G_ADD_PRIVATE (DmapGstInputStream));

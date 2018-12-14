@@ -41,7 +41,10 @@ enum {
 
 static guint _signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DmapMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_CODE (DmapMdnsPublisher,
+                         dmap_mdns_publisher,
+                         G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (DmapMdnsPublisher))
 
 static gpointer _publisher_object = NULL;
 
@@ -241,8 +244,6 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass *klass)
                               g_cclosure_marshal_VOID__STRING,
                               G_TYPE_NONE,
                               1, G_TYPE_STRING);
-
-        g_type_class_add_private (klass, sizeof (DmapMdnsPublisherPrivate));
 }
 
 static void

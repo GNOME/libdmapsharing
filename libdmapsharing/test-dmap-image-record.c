@@ -197,8 +197,6 @@ test_dmap_image_record_class_init (TestDmapImageRecordClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-	g_type_class_add_private (klass, sizeof (TestDmapImageRecordPrivate));
-
 	gobject_class->set_property = test_dmap_image_record_set_property;
         gobject_class->get_property = test_dmap_image_record_get_property;
         gobject_class->finalize     = test_dmap_image_record_finalize;
@@ -236,8 +234,9 @@ _dmap_record_iface_init (gpointer iface, gpointer data)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapImageRecord, test_dmap_image_record, G_TYPE_OBJECT, 
-			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_IMAGE_RECORD, _dmap_image_record_iface_init)
-			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, _dmap_record_iface_init))
+                         G_IMPLEMENT_INTERFACE (DMAP_TYPE_IMAGE_RECORD, _dmap_image_record_iface_init)
+                         G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, _dmap_record_iface_init)
+                         G_ADD_PRIVATE (TestDmapImageRecord))
 
 static void
 test_dmap_image_record_finalize (GObject *object)

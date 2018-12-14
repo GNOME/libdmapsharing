@@ -25,11 +25,6 @@
 
 #define DMAP_CONTROL_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DACP_TYPE_CONNECTION, DmapControlConnectionPrivate))
 
-/* FIXME:
-struct DmapControlConnectionPrivate {
-};
-*/
-
 static DmapContentCode
 _get_protocol_version_cc (DmapConnection * connection)
 {
@@ -65,10 +60,6 @@ dmap_control_connection_class_init (DmapControlConnectionClass * klass)
 	parent_class->get_protocol_version_cc = _get_protocol_version_cc;
 	parent_class->get_query_metadata = _get_query_metadata;
 	parent_class->handle_mlcl = _handle_mlcl;
-
-	/* FIXME:
-	 * g_type_class_add_private (klass, sizeof (DmapControlConnectionPrivate));
-	 */
 }
 
 DmapControlConnection *

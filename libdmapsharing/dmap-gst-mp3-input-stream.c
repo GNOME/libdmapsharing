@@ -204,17 +204,16 @@ _kill_pipeline (DmapGstInputStream * stream)
 	gst_object_unref (GST_OBJECT (mp3_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE (DmapGstMP3InputStream, dmap_gst_mp3_input_stream,
-	       DMAP_TYPE_GST_INPUT_STREAM);
+G_DEFINE_TYPE_WITH_CODE (DmapGstMP3InputStream,
+                         dmap_gst_mp3_input_stream,
+	                 DMAP_TYPE_GST_INPUT_STREAM,
+                         G_ADD_PRIVATE (DmapGstMP3InputStream));
 
 static void
 dmap_gst_mp3_input_stream_class_init (DmapGstMP3InputStreamClass * klass)
 {
 	DmapGstInputStreamClass *parent_class =
 		DMAP_GST_INPUT_STREAM_CLASS (klass);
-
-	g_type_class_add_private (klass,
-				  sizeof (DmapGstMP3InputStreamPrivate));
 
 	parent_class->kill_pipeline = _kill_pipeline;
 }

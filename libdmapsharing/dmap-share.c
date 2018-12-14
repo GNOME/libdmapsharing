@@ -116,7 +116,10 @@ struct share_bitwise_t
 static void dmap_share_init (DmapShare * share);
 static void dmap_share_class_init (DmapShareClass * klass);
 
-G_DEFINE_ABSTRACT_TYPE (DmapShare, dmap_share, G_TYPE_OBJECT)
+G_DEFINE_ABSTRACT_TYPE_WITH_CODE (DmapShare,
+                                  dmap_share,
+                                  G_TYPE_OBJECT,
+                                  G_ADD_PRIVATE (DmapShare))
 #define DMAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
 				   DMAP_TYPE_SHARE, DmapSharePrivate));
 
@@ -703,8 +706,6 @@ dmap_share_class_init (DmapShareClass * klass)
 							     "Set TXT-Records used for MDNS publishing",
 							     G_TYPE_STRV,
 							     G_PARAM_READWRITE));
-
-	g_type_class_add_private (klass, sizeof (DmapSharePrivate));
 
 	_signals[ERROR] =
 		g_signal_new ("error",
