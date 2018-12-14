@@ -789,7 +789,7 @@ _genre_tabulator (gpointer id, DmapRecord *record, GHashTable *ht)
 
 		ok = g_hash_table_insert (ht, (gchar *) genre, NULL);
 		if (!ok) {
-			g_warning("error inserting %s\n", genre);
+			g_warning("error inserting %s", genre);
 		}
 	}
 }
@@ -809,7 +809,7 @@ _artist_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
 
 		ok = g_hash_table_insert (ht, (gchar *) artist, NULL);
 		if (!ok) {
-			g_warning("error inserting %s\n", artist);
+			g_warning("error inserting %s", artist);
 		}
 	}
 }
@@ -829,7 +829,7 @@ _album_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
 
 		ok = g_hash_table_insert (ht, (gchar *) album, NULL);
 		if (!ok) {
-			g_warning("error inserting %s\n", album);
+			g_warning("error inserting %s", album);
 		}
 	}
 }

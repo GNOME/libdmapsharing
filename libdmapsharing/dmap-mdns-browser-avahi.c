@@ -300,7 +300,7 @@ _client_cb (AvahiClient * client,
 	switch (state) {
 #ifdef HAVE_AVAHI_0_6
 	case AVAHI_CLIENT_FAILURE:
-		g_warning ("Client failure: %s\n",
+		g_warning ("Client failure: %s",
 			   avahi_strerror (avahi_client_errno (client)));
 		break;
 #endif

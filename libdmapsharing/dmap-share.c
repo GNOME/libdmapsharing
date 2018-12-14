@@ -917,7 +917,7 @@ dmap_share_message_set_from_dmap_structure (DmapShare * share,
 	resp = dmap_structure_serialize (structure, &length);
 
 	if (resp == NULL) {
-		g_warning ("Serialize gave us null?\n");
+		g_warning ("Serialize gave us null?");
 		return;
 	}
 
@@ -2119,7 +2119,7 @@ dmap_share_databases (DmapShare * share,
 		g_debug ("Assuming no artwork for requested group/album");
 		soup_message_set_status (message, SOUP_STATUS_NOT_FOUND);
 	} else {
-		g_warning ("Unhandled: %s\n", path);
+		g_warning ("Unhandled: %s", path);
 	}
 
 done:

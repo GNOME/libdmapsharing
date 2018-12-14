@@ -649,7 +649,7 @@ _actual_http_response_handler (DmapResponseData * data)
 		soup_uri_to_string (soup_message_get_uri (data->message),
 				    FALSE);
 
-	g_debug ("Received response from %s: %d, %s\n",
+	g_debug ("Received response from %s: %d, %s",
 		 message_path,
 		 data->message->status_code, data->message->reason_phrase);
 
@@ -795,7 +795,7 @@ _actual_http_response_handler (DmapResponseData * data)
 					    data->connection);
 		}
 	} else {
-		g_debug ("Error getting %s: %d, %s\n",
+		g_debug ("Error getting %s: %d, %s",
 			 message_path,
 			 data->message->status_code,
 			 data->message->reason_phrase);
@@ -1096,7 +1096,7 @@ _handle_database_info (DmapConnection * connection,
 
 	n_databases = g_value_get_int (&(item->content));
 	if (n_databases != 1) {
-		g_debug ("Host seems to have more than 1 database, how strange\n");
+		g_debug ("Host seems to have more than 1 database, how strange");
 	}
 
 	listing_node = dmap_structure_find_node (structure, DMAP_CC_MLCL);
@@ -1377,7 +1377,7 @@ _handle_playlist_entries (DmapConnection * connection,
 					     GINT_TO_POINTER
 					     (playlist_item_id));
 		if (item_uri == NULL) {
-			g_debug ("Entry %d in playlist %s doesn't exist in the database\n", playlist_item_id, playlist->name);
+			g_debug ("Entry %d in playlist %s doesn't exist in the database", playlist_item_id, playlist->name);
 			continue;
 		}
 

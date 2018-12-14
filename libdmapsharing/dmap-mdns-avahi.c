@@ -61,7 +61,7 @@ _client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
 		break;
 
 	case AVAHI_CLIENT_FAILURE:
-		g_warning ("Client failure: %s\n",
+		g_warning ("Client failure: %s",
 			   avahi_strerror (avahi_client_errno (_client)));
 		break;
 

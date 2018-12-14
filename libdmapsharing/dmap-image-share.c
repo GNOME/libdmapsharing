@@ -369,7 +369,7 @@ _databases_browse_xxx (DmapShare * share,
 		      const char *path,
 		      GHashTable * query, SoupClientContext * context)
 {
-	g_warning ("Unhandled: %s\n", path);
+	g_warning ("Unhandled: %s", path);
 }
 
 static void
