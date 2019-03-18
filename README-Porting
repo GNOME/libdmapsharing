@@ -76,7 +76,7 @@ DmapIdContainerRecordFunc.
 duplicate the passed value.  Thus the caller maintains control of the
 original value.
 
-(7)  Getting an object property using g_object_set returns a duplicate
+(7)  Getting an object property using g_object_get returns a duplicate
 of the value. Thus the caller should free or unref the obtained value.
 
 (8)  The "hash" property in the DAAPRecord interface and the "hash"
