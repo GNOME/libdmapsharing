@@ -158,7 +158,7 @@ test_dmap_av_record_set_property (GObject *object,
 			if (record->priv->hash) {
 				g_array_unref(record->priv->hash);
 			}
-			record->priv->hash = g_value_get_boxed (value);
+			record->priv->hash = g_array_ref(g_value_get_boxed (value));
 			break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -236,7 +236,7 @@ test_dmap_av_record_get_property (GObject *object,
                         g_value_set_enum (value, record->priv->mediakind);
 			break;
 		case PROP_HASH:
-			g_value_set_boxed (value, record->priv->hash);
+			g_value_set_boxed (value, g_array_ref(record->priv->hash));
 			break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
