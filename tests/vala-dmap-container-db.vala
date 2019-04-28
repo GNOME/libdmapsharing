@@ -23,8 +23,7 @@
 private class ValaDmapContainerDb : GLib.Object, Dmap.ContainerDb {
 	// A dumb database that stores everything in an array
 
-	/* FIXME: What is with this unowned? */
-	private Gee.ArrayList<unowned Dmap.Record> db = new Gee.ArrayList<Dmap.Record> ();
+	private Gee.ArrayList<Dmap.Record> db = new Gee.ArrayList<Dmap.Record> ();
 
 	public int64 count () {
 		return db.size;
