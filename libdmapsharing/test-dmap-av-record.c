@@ -274,6 +274,7 @@ test_dmap_av_record_init (TestDmapAvRecord *record)
 	record->priv = TEST_DMAP_AV_RECORD_GET_PRIVATE (record);
 }
 
+static void test_dmap_av_record_dispose  (GObject *object);
 static void test_dmap_av_record_finalize (GObject *object);
 
 static void
@@ -283,6 +284,7 @@ test_dmap_av_record_class_init (TestDmapAvRecordClass *klass)
 
 	gobject_class->set_property = test_dmap_av_record_set_property;
         gobject_class->get_property = test_dmap_av_record_get_property;
+        gobject_class->dispose      = test_dmap_av_record_dispose;
         gobject_class->finalize     = test_dmap_av_record_finalize;
 
         g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
@@ -340,6 +342,19 @@ G_DEFINE_TYPE_WITH_CODE (TestDmapAvRecord, test_dmap_av_record, G_TYPE_OBJECT,
                          G_ADD_PRIVATE (TestDmapAvRecord))
 
 static void
+test_dmap_av_record_dispose (GObject *object)
+{
+	TestDmapAvRecord *record = TEST_DMAP_AV_RECORD (object);
+
+	if (record->priv->hash) {
+		g_array_unref(record->priv->hash);
+	}
+	record->priv->hash = NULL;
+
+	G_OBJECT_CLASS (test_dmap_av_record_parent_class)->dispose (object);
+}
+
+static void
 test_dmap_av_record_finalize (GObject *object)
 {
 	TestDmapAvRecord *record = TEST_DMAP_AV_RECORD (object);
@@ -353,10 +368,6 @@ test_dmap_av_record_finalize (GObject *object)
 	g_free (record->priv->artist);
 	g_free (record->priv->sort_artist);
 	g_free (record->priv->genre);
-
-	if (record->priv->hash) {
-		g_array_unref(record->priv->hash);
-	}
 
 	G_OBJECT_CLASS (test_dmap_av_record_parent_class)->finalize (object);
 }
@@ -374,19 +385,14 @@ TestDmapAvRecord *test_dmap_av_record_new (void)
 	g_free (dir);
 
 	record->priv->title = g_strdup ("Unknown");
-
 	record->priv->album = g_strdup ("Unknown");
-
+	record->priv->sort_album = g_strdup ("Unknown");
 	record->priv->artist = g_strdup ("Unknown");
-
+	record->priv->sort_artist = g_strdup ("Unknown");
 	record->priv->bitrate = 128;
-
 	record->priv->firstseen = 1;
-
 	record->priv->mtime = 1;
-
 	record->priv->disc = 1;
-
 	record->priv->genre = g_strdup ("Unknown");
 
 	ext = strrchr (record->priv->location, '.');
@@ -396,6 +402,7 @@ TestDmapAvRecord *test_dmap_av_record_new (void)
 		ext++;
 	}
 	record->priv->format = g_strdup (ext);
+	record->priv->real_format = g_strdup (ext);
 
 	record->priv->filesize = 33729;
 

@@ -240,8 +240,6 @@ dmap_share_serve (DmapShare *share, GError **error)
 	gboolean ret;
 	GError *error2 = NULL;
 
-	share->priv->server = soup_server_new (NULL, NULL);
-
 	password_required = (share->priv->auth_method != DMAP_SHARE_AUTH_METHOD_NONE);
 
 	if (password_required) {
@@ -315,11 +313,6 @@ dmap_share_serve (DmapShare *share, GError **error)
 
 	g_debug ("Started DMAP server on port %u", share->priv->port);
 
-	/* using direct since there is no g_uint_hash or g_uint_equal */
-	share->priv->session_ids =
-		g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL,
-				       g_free);
-
 	share->priv->server_active = TRUE;
 
 	ok = TRUE;
@@ -339,13 +332,10 @@ _server_stop (DmapShare * share)
 
 	if (share->priv->server) {
 		soup_server_disconnect (share->priv->server);
-		g_object_unref (share->priv->server);
-		share->priv->server = NULL;
 	}
 
 	if (share->priv->session_ids) {
-		g_hash_table_destroy (share->priv->session_ids);
-		share->priv->session_ids = NULL;
+		g_hash_table_remove_all (share->priv->session_ids);
 	}
 
 	share->priv->server_active = FALSE;
@@ -569,10 +559,18 @@ _dispose (GObject * object)
 {
 	DmapShare *share = DMAP_SHARE (object);
 
-	g_clear_object (&share->priv->db);
-	g_clear_object (&share->priv->container_db);
+	if (share->priv->published) {
+		_publish_stop (share);
+	}
+
+	if (share->priv->server_active) {
+		_server_stop (share);
+	}
+
 	g_clear_object (&share->priv->publisher);
 	g_clear_object (&share->priv->server);
+	g_clear_object (&share->priv->db);
+	g_clear_object (&share->priv->container_db);
 
 	G_OBJECT_CLASS (dmap_share_parent_class)->dispose (object);
 }
@@ -584,13 +582,8 @@ _finalize (GObject * object)
 
 	g_debug ("Finalizing DmapShare");
 
-	if (share->priv->published) {
-		_publish_stop (share);
-	}
-
-	if (share->priv->server_active) {
-		_server_stop (share);
-	}
+	g_hash_table_destroy (share->priv->session_ids);
+	share->priv->session_ids = NULL;
 
 	g_free (share->priv->name);
 	g_free (share->priv->password);
@@ -738,6 +731,12 @@ dmap_share_init (DmapShare * share)
 	share->priv->revision_number = 5;
 	share->priv->auth_method = DMAP_SHARE_AUTH_METHOD_NONE;
 	share->priv->publisher = dmap_mdns_publisher_new ();
+	share->priv->server = soup_server_new (NULL, NULL);
+
+	/* using direct since there is no g_uint_hash or g_uint_equal */
+	share->priv->session_ids =
+		g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL,
+				       g_free);
 
 	g_signal_connect_object (share->priv->publisher,
 				 "published",

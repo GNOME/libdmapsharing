@@ -57,13 +57,20 @@ error_cb(DmapShare *share, GError *error, gpointer user_data)
 	g_error("%s", error->message);
 }
 
-static void
-create_share (guint conn_type)
+static gboolean
+_quit(gpointer user_data)
+{
+	g_main_loop_quit(user_data);
+	return FALSE;
+}
+
+static DmapShare *
+create_share (guint conn_type, GMainLoop *loop)
 {
 	char *name = dmap_sharing_default_share_name ();
 	DmapContainerRecord *dmap_container_record = \
 		DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
-	DmapContainerDb *dmap_container_db = \
+	DmapContainerDb *container_db = \
 		DMAP_CONTAINER_DB (test_dmap_container_db_new
 					(dmap_container_record));
 	DmapRecordFactory *factory;
@@ -73,11 +80,15 @@ create_share (guint conn_type)
 	gboolean ok;
 	DmapDb *db;
 
-	if (conn_type == DAAP) { 
+	switch (conn_type) {
+	default:
+		g_idle_add(_quit, loop);
+	case DAAP:
 		factory = DMAP_RECORD_FACTORY (test_dmap_av_record_factory_new ());
-
-	} else {
+		break;
+	case DPAP:
 		factory = DMAP_RECORD_FACTORY (test_dmap_image_record_factory_new ());
+		break;
 	}
 
 	record = DMAP_RECORD (dmap_record_factory_create (factory, NULL, NULL));
@@ -87,18 +98,22 @@ create_share (guint conn_type)
 
 	g_warning ("initialize DAAP sharing");
 
-	if (conn_type == DAAP) {
+	switch (conn_type) {
+	default:
+	case DAAP:
 		share = DMAP_SHARE (dmap_av_share_new (name,
                                                        NULL,
                                                        db,
-                                                       dmap_container_db,
+                                                       container_db,
 		                                       NULL));
-	} else {
+		break;
+	case DPAP:
 		share = DMAP_SHARE (dmap_image_share_new (name,
                                                           NULL,
                                                           db,
-                                                          dmap_container_db,
+                                                          container_db,
                                                           NULL));
+		break;
 	}
 
 	g_assert (NULL != share);
@@ -115,12 +130,18 @@ create_share (guint conn_type)
 		g_error("Error publishing server: %s", error->message);
 	}
 
+	g_object_unref (factory);
+	g_object_unref (container_db);
+	g_object_unref (db);
 	g_free (name);
+
+	return share;
 }
 
 int
 main (int argc, char *argv[])
 {
+	DmapShare *share = NULL;
 	guint conn_type = DAAP;
 	static GMainLoop *loop;
 
@@ -129,9 +150,11 @@ main (int argc, char *argv[])
 
 	loop = g_main_loop_new (NULL, FALSE);
 
-	create_share (conn_type);
+	share = create_share (conn_type, loop);
 
 	g_main_loop_run (loop);
+
+	g_object_unref(share);
 
 	exit(EXIT_SUCCESS);
 }

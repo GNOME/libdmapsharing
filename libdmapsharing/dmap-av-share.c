@@ -102,9 +102,6 @@ dmap_av_share_new (const char *name,
                    DmapContainerDb * container_db,
                    gchar * transcode_mimetype)
 {
-	g_object_ref (db);
-	g_object_ref (container_db);
-
 	return DMAP_AV_SHARE (g_object_new (DMAP_TYPE_AV_SHARE,
 	                                   "name", name,
 	                                   "password", password,

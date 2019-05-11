@@ -32,8 +32,7 @@ test_dmap_db_lookup_by_id (const DmapDb *db, guint id)
 {
 	DmapRecord *record;
 	record = g_hash_table_lookup (TEST_DMAP_DB (db)->priv->db, GUINT_TO_POINTER (id));
-	g_object_ref (record);
-	return record;
+	return g_object_ref(record);
 }
 
 static void
@@ -64,17 +63,12 @@ static void
 test_dmap_db_init (TestDmapDb *db)
 {
 	db->priv = TEST_DMAP_DB_GET_PRIVATE (db);
-	db->priv->db = g_hash_table_new (g_direct_hash, g_direct_equal);
+	db->priv->db = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
 
 	/* Media ID's start at max and go down.
 	 * Container ID's start at 1 and go up.
 	 */
 	db->priv->nextid = G_MAXINT;
-}
-
-static void
-test_dmap_db_class_init (TestDmapDbClass *klass)
-{
 }
 
 static void
@@ -94,6 +88,23 @@ G_DEFINE_TYPE_WITH_CODE (TestDmapDb, test_dmap_db, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (DMAP_TYPE_DB,
                                                 _dmap_db_iface_init)
                          G_ADD_PRIVATE (TestDmapDb))
+
+static void
+_finalize(GObject *object)
+{
+	TestDmapDb *db = TEST_DMAP_DB(object);
+	g_hash_table_destroy(db->priv->db);
+
+	G_OBJECT_CLASS (test_dmap_db_parent_class)->finalize (object);
+}
+
+static void
+test_dmap_db_class_init (TestDmapDbClass *klass)
+{
+	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+	gobject_class->finalize = _finalize;
+}
 
 TestDmapDb *
 test_dmap_db_new (void)
