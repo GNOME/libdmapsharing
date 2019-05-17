@@ -21,7 +21,7 @@
 #include <libdmapsharing/dmap-record-factory.h>
 
 static void
-dmap_record_factory_default_init (DmapRecordFactoryInterface * iface)
+dmap_record_factory_default_init (G_GNUC_UNUSED DmapRecordFactoryInterface * iface)
 {
 }
 

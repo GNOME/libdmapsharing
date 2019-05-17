@@ -216,7 +216,7 @@ test_dmap_image_record_class_init (TestDmapImageRecordClass *klass)
 }
 
 static void
-_dmap_image_record_iface_init (gpointer iface, gpointer data)
+_dmap_image_record_iface_init (gpointer iface)
 {
 	DmapImageRecordInterface *dmap_image_record = iface;
 
@@ -226,7 +226,7 @@ _dmap_image_record_iface_init (gpointer iface, gpointer data)
 }
 
 static void
-_dmap_record_iface_init (gpointer iface, gpointer data)
+_dmap_record_iface_init (gpointer iface)
 {
         DmapRecordInterface *dmap_record = iface;
 

@@ -48,10 +48,8 @@
 guint dmap_image_share_get_desired_port (DmapShare * share);
 const char *dmap_image_share_get_type_of_service (DmapShare * share);
 void dmap_image_share_server_info (DmapShare * share,
-			     SoupServer * server,
-			     SoupMessage * message,
-			     const char *path,
-			     GHashTable * query, SoupClientContext * context);
+                                   SoupMessage * message,
+                                   const char *path);
 void dmap_image_share_message_add_standard_headers (DmapShare * share,
 					      SoupMessage * message);
 
@@ -120,42 +118,8 @@ G_DEFINE_TYPE_WITH_CODE (DmapImageShare,
                          DMAP_TYPE_SHARE,
                          G_ADD_PRIVATE (DmapImageShare));
 
-static void
-_set_property (GObject * object,
-               guint prop_id,
-               const GValue * value, GParamSpec * pspec)
-{
-	// DmapImageShare *share = DMAP_IMAGE_SHARE (object);
-
-	switch (prop_id) {
-		/* FIXME: */
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-_get_property (GObject * object,
-               guint prop_id, GValue * value, GParamSpec * pspec)
-{
-	// DmapImageShare *share = DMAP_IMAGE_SHARE (object);
-
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-_dispose (GObject * object)
-{
-	/* FIXME: implement in parent */
-}
-
 static struct DmapMetaDataMap *
-_get_meta_data_map (DmapShare * share)
+_get_meta_data_map (G_GNUC_UNUSED DmapShare * share)
 {
 	return _meta_data_map;
 }
@@ -193,7 +157,7 @@ done:
 }
 
 static void
-_add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
+_add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	struct DmapMlclBits *mb = (struct DmapMlclBits *) _mb;
@@ -206,7 +170,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MIID, id);
+		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT(id));
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
@@ -222,7 +186,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MPER, id);
+		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT(id));
 	}
 
 	if (TRUE) {
@@ -366,11 +330,10 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 }
 
 static void
-_databases_browse_xxx (DmapShare * share,
-		      SoupServer * server,
-		      SoupMessage * msg,
-		      const char *path,
-		      GHashTable * query, SoupClientContext * context)
+_databases_browse_xxx (G_GNUC_UNUSED DmapShare * share,
+                       G_GNUC_UNUSED SoupMessage * msg,
+                       const char *path,
+                       G_GNUC_UNUSED GHashTable *query)
 {
 	g_warning ("Unhandled: %s", path);
 }
@@ -434,8 +397,7 @@ static void
 _databases_items_xxx (DmapShare * share,
                       SoupServer * server,
                       SoupMessage * msg,
-                      const char *path,
-                      GHashTable * query, SoupClientContext * context)
+                      const char *path)
 {
 	DmapDb *db;
 	const gchar *rest_of_path;
@@ -467,10 +429,6 @@ dmap_image_share_class_init (DmapImageShareClass * klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DmapShareClass *parent_class = DMAP_SHARE_CLASS (object_class);
 
-	object_class->get_property = _get_property;
-	object_class->set_property = _set_property;
-	object_class->dispose = _dispose;
-
 	parent_class->get_desired_port = dmap_image_share_get_desired_port;
 	parent_class->get_type_of_service = dmap_image_share_get_type_of_service;
 	parent_class->message_add_standard_headers =
@@ -497,7 +455,7 @@ dmap_image_share_new (const char *name,
                       const char *password,
                       gpointer db,
                       gpointer container_db,
-                      gchar * transcode_mimetype)
+                      G_GNUC_UNUSED gchar * transcode_mimetype)
 {
 	g_object_ref (db);
 	g_object_ref (container_db);
@@ -511,8 +469,8 @@ dmap_image_share_new (const char *name,
 }
 
 void
-dmap_image_share_message_add_standard_headers (DmapShare * share,
-					 SoupMessage * message)
+dmap_image_share_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
+                                               SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DPAP-Server",
 				     "libdmapsharing" VERSION);
@@ -523,23 +481,21 @@ dmap_image_share_message_add_standard_headers (DmapShare * share,
 #define DPAP_TIMEOUT 1800
 
 guint
-dmap_image_share_get_desired_port (DmapShare * share)
+dmap_image_share_get_desired_port (G_GNUC_UNUSED DmapShare * share)
 {
 	return DPAP_PORT;
 }
 
 const char *
-dmap_image_share_get_type_of_service (DmapShare * share)
+dmap_image_share_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DPAP_TYPE_OF_SERVICE;
 }
 
 void
 dmap_image_share_server_info (DmapShare * share,
-			SoupServer * server,
-			SoupMessage * message,
-			const char *path,
-			GHashTable * query, SoupClientContext * context)
+                              SoupMessage * message,
+                              const char *path)
 {
 /* MSRV	server info response
  * 	MSTT status

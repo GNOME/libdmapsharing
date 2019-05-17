@@ -21,7 +21,7 @@
 #include <libdmapsharing/dmap-container-db.h>
 
 static void
-dmap_container_db_default_init (DmapContainerDbInterface * iface)
+dmap_container_db_default_init (G_GNUC_UNUSED DmapContainerDbInterface * iface)
 {
 }
 

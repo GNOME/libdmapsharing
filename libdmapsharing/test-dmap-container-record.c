@@ -30,7 +30,7 @@ static DmapDb *_entries = NULL;
 static void
 test_dmap_container_record_set_property (GObject *object,
                                          guint prop_id,
-                                         const GValue *value,
+                                         G_GNUC_UNUSED const GValue *value,
                                          GParamSpec *pspec)
 {
         switch (prop_id) {
@@ -61,33 +61,33 @@ test_dmap_container_record_get_property (GObject *object,
 
 
 guint
-test_dmap_container_record_get_id (DmapContainerRecord *record)
+test_dmap_container_record_get_id (G_GNUC_UNUSED DmapContainerRecord *record)
 {
 	return 2;
 }
 
 void
-test_dmap_container_record_add_entry (DmapContainerRecord *container_record,
-                                      DmapRecord *record,
-                                      gint id,
-                                      GError **error)
+test_dmap_container_record_add_entry (G_GNUC_UNUSED DmapContainerRecord *container_record,
+                                      G_GNUC_UNUSED DmapRecord *record,
+                                      G_GNUC_UNUSED gint id,
+                                      G_GNUC_UNUSED GError **error)
 {
 }
 
 guint64 
-test_dmap_container_record_get_entry_count (DmapContainerRecord *record)
+test_dmap_container_record_get_entry_count (G_GNUC_UNUSED DmapContainerRecord *record)
 {
         return 1;
 }
 
 DmapDb *
-test_dmap_container_record_get_entries (DmapContainerRecord *record)
+test_dmap_container_record_get_entries (G_GNUC_UNUSED DmapContainerRecord *record)
 {
 	return g_object_ref (_entries);
 }
 
 static void
-test_dmap_container_record_init (TestDmapContainerRecord *record)
+test_dmap_container_record_init (G_GNUC_UNUSED TestDmapContainerRecord *record)
 {
 	_entries = DMAP_DB (test_dmap_db_new ());
 }
@@ -104,7 +104,7 @@ test_dmap_container_record_class_init (TestDmapContainerRecordClass *klass)
 }
 
 static void
-_dmap_container_record_iface_init (gpointer iface, gpointer data)
+_dmap_container_record_iface_init (gpointer iface)
 {
 	DmapContainerRecordInterface *dmap_container_record = iface;
 

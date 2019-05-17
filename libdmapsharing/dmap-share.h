@@ -111,40 +111,36 @@ typedef struct {
 	void (*message_add_standard_headers) (DmapShare * share,
 					      SoupMessage * msg);
 	struct DmapMetaDataMap *(*get_meta_data_map) (DmapShare * share);
-	void (*add_entry_to_mlcl) (guint id, DmapRecord * record, gpointer mb);
+	void (*add_entry_to_mlcl) (gpointer id, DmapRecord * record, gpointer mb);
 	void (*databases_browse_xxx) (DmapShare * share,
-				      SoupServer * server,
 				      SoupMessage * msg,
 				      const char *path,
-				      GHashTable * query,
-				      SoupClientContext * context);
+				      GHashTable * query);
 	void (*databases_items_xxx) (DmapShare * share,
 				     SoupServer * server,
 				     SoupMessage * msg,
-				     const char *path,
-				     GHashTable * query,
-				     SoupClientContext * context);
+	                             const char *path);
 
 	/* Pure virtual methods: libsoup callbacks */
-	void (*server_info) (DmapShare * share, SoupServer * server,
-			     SoupMessage * message, const char *path,
-			     GHashTable * query, SoupClientContext * ctx);
+	void (*server_info) (DmapShare * share,
+			     SoupMessage * message,
+	                     const char *path);
 
-	void (*content_codes) (DmapShare * share, SoupServer * server,
-			       SoupMessage * message, const char *path,
-			       GHashTable * query, SoupClientContext * ctx);
+	void (*content_codes) (DmapShare * share, SoupMessage * message,
+                               const char *path, SoupClientContext * ctx);
 
-	void (*login) (DmapShare * share, SoupServer * server,
+	void (*login) (DmapShare * share,
 		       SoupMessage * message, const char *path,
-		       GHashTable * query, SoupClientContext * ctx);
+                       GHashTable * query,
+		       SoupClientContext * ctx);
 
-	void (*logout) (DmapShare * share, SoupServer * server,
-			SoupMessage * message, const char *path,
-			GHashTable * query, SoupClientContext * ctx);
+	void (*logout) (DmapShare * share, SoupMessage * message,
+                        const char *path, GHashTable * query,
+                        SoupClientContext * ctx);
 
 	void (*update) (DmapShare * share, SoupServer * server,
 			SoupMessage * message, const char *path,
-			GHashTable * query, SoupClientContext * ctx);
+			GHashTable * query);
 
 	void (*ctrl_int) (DmapShare * share, SoupServer * server,
 			  SoupMessage * message, const char *path,
@@ -152,7 +148,8 @@ typedef struct {
 
 	/* Virtual methods: MDNS callbacks */
 	void (*published) (DmapShare * share,
-			   DmapMdnsPublisher * publisher, const char *name);
+                           DmapMdnsPublisher * publisher,
+                           const char *name);
 
 	void (*name_collision) (DmapShare * share,
 				DmapMdnsPublisher * publisher,

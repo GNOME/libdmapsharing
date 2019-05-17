@@ -460,7 +460,7 @@ dmap_md5_generate (short version_major,
 {
 	unsigned char buf[16];
 	DmapHashContext ctx;
-	gint i;
+	gsize i;
 
 	unsigned char *hashTable = (version_major == 3) ?
 		_45 : _42;
@@ -527,7 +527,7 @@ dmap_md5_progressive_final (DmapHashContext *context,
 	/* FIXME: This is only equivalent to dmap_md5_generate()
          *        when it is called with (3, x, 2, y, 0).
          */
-	int i;
+	gsize i;
 
 	/* FIXME: Share this stuff with dmap_md5_generate() */
 	if (_ac_unfudged == FALSE) {

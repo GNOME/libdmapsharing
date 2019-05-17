@@ -52,7 +52,7 @@ dmap_sharing_default_share_name ()
 }
 
 static void
-error_cb(DmapShare *share, GError *error, gpointer user_data)
+error_cb(G_GNUC_UNUSED DmapShare *share, GError *error, G_GNUC_UNUSED gpointer user_data)
 {
 	g_error("%s", error->message);
 }
@@ -83,6 +83,7 @@ create_share (guint conn_type, GMainLoop *loop)
 	switch (conn_type) {
 	default:
 		g_idle_add(_quit, loop);
+		G_GNUC_FALLTHROUGH;
 	case DAAP:
 		factory = DMAP_RECORD_FACTORY (test_dmap_av_record_factory_new ());
 		break;

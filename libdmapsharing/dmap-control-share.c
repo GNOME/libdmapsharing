@@ -54,7 +54,6 @@ void dmap_control_share_ctrl_int (DmapShare * share,
 			  const char *path,
 			  GHashTable * query, SoupClientContext * context);
 void dmap_control_share_login (DmapShare * share,
-		       SoupServer * server,
 		       SoupMessage * message,
 		       const char *path,
 		       GHashTable * query, SoupClientContext * context);
@@ -236,7 +235,7 @@ _finalize (GObject * object)
 }
 
 const char *
-dmap_control_share_get_type_of_service (DmapShare * share)
+dmap_control_share_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DACP_TYPE_OF_SERVICE;
 }
@@ -386,7 +385,7 @@ dmap_control_share_init (DmapControlShare * share)
 }
 
 static void
-_mdns_remote_added (DmapMdnsBrowser * browser,
+_mdns_remote_added (G_GNUC_UNUSED DmapMdnsBrowser * browser,
                     DmapMdnsService * service, DmapControlShare * share)
 {
 	gboolean new;
@@ -423,7 +422,7 @@ _mdns_remote_added (DmapMdnsBrowser * browser,
 }
 
 static void
-_mdns_remote_removed (DmapMdnsBrowser * browser,
+_mdns_remote_removed (G_GNUC_UNUSED DmapMdnsBrowser * browser,
                       const char *service_name, DmapControlShare * share)
 {
 	gboolean found;
@@ -471,7 +470,7 @@ dmap_control_share_start_lookup (DmapControlShare * share, GError **error)
 }
 
 static gboolean
-_remove_remotes_cb (gpointer service_name, gpointer remote_info,
+_remove_remotes_cb (gpointer service_name, G_GNUC_UNUSED gpointer remote_info,
                     gpointer share)
 {
 	g_signal_emit ((DmapControlShare *) share,
@@ -612,14 +611,13 @@ _status_update_message_finished (SoupMessage * message, DmapControlShare * share
 }
 
 static void
-_debug_param (gpointer key, gpointer val, gpointer user_data)
+_debug_param (gpointer key, gpointer val, G_GNUC_UNUSED gpointer user_data)
 {
 	g_debug ("%s %s", (char *) key, (char *) val);
 }
 
 void
 dmap_control_share_login (DmapShare * share,
-		  SoupServer * server,
 		  SoupMessage * message,
 		  const char *path,
 		  GHashTable * query, SoupClientContext * context)
@@ -647,15 +645,16 @@ dmap_control_share_login (DmapShare * share,
 		}
 	}
 
-	dmap_share_login (share, server, message, path, query, context);
+	dmap_share_login (share, message, path, query, context);
 }
 
 void
 dmap_control_share_ctrl_int (DmapShare * share,
-		     SoupServer * server,
-		     SoupMessage * message,
-		     const char *path,
-		     GHashTable * query, SoupClientContext * context)
+                             SoupServer * server,
+                             SoupMessage * message,
+                             const char *path,
+                             GHashTable * query,
+                             SoupClientContext * context)
 {
 	const char *rest_of_path;
 
@@ -673,7 +672,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 	if ((rest_of_path != NULL)
 	    &&
 	    (!dmap_share_session_id_validate
-	     (share, context, message, query, NULL))) {
+	     (share, context, query, NULL))) {
 		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
 		goto done;
 	}
@@ -973,7 +972,7 @@ done:
 #define PASSCODE_LENGTH 4
 
 static gchar *
-_pairing_code (DmapControlShare * share, gchar * pair_txt, gchar passcode[4])
+_pairing_code (gchar * pair_txt, gchar passcode[4])
 {
 	int i;
 	gsize ssize, dsize;
@@ -1092,7 +1091,7 @@ dmap_control_share_pair (DmapControlShare * share, gchar * service_name, gchar p
 	dmap_connection_setup (remote_info->connection);
 
 	/* Get the remote path for pairing */
-	pairing_code = _pairing_code (share, remote_info->pair_txt, passcode);
+	pairing_code = _pairing_code (remote_info->pair_txt, passcode);
 	path = g_strdup_printf ("/pair?pairingcode=%s&servicename=%s",
 				pairing_code, name);
 	g_free (pairing_code);
@@ -1101,7 +1100,7 @@ dmap_control_share_pair (DmapControlShare * share, gchar * service_name, gchar p
 		 remote_info->port, path);
 
 	/* Let DmapConnection do the heavy lifting. */
-	ok = dmap_connection_get (remote_info->connection, path, FALSE,
+	ok = dmap_connection_get (remote_info->connection, path,
 	                          _connection_handler_cb, share);
 	if (!ok) {
 		g_debug("Error pairing remote");

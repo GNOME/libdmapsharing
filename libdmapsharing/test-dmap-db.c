@@ -50,7 +50,7 @@ test_dmap_db_count (const DmapDb *db)
 }
 
 guint
-test_dmap_db_add (DmapDb *db, DmapRecord *record, GError **error)
+test_dmap_db_add (DmapDb *db, DmapRecord *record, G_GNUC_UNUSED GError **error)
 {
         guint id;
 	id = TEST_DMAP_DB (db)->priv->nextid--;
@@ -72,7 +72,7 @@ test_dmap_db_init (TestDmapDb *db)
 }
 
 static void
-_dmap_db_iface_init (gpointer iface, gpointer data)
+_dmap_db_iface_init (gpointer iface)
 {
 	DmapDbInterface *dmap_db = iface;
 

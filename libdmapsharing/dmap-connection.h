@@ -147,14 +147,10 @@ typedef struct {
 } DmapConnectionClass;
 
 /* hmm, maybe should give more error information? */
-typedef gboolean (*DmapConnectionFunc) (DmapConnection * connection,
-					    gboolean result,
-					    const char *reason,
-					    gpointer user_data);
-
-typedef void (*DmapResponseHandler) (DmapConnection * connection,
-				     guint status,
-				     GNode * structure, gpointer user_data);
+typedef void (*DmapConnectionFunc) (DmapConnection * connection,
+                                    gboolean result,
+                                    const char *reason,
+                                    gpointer user_data);
 
 GType dmap_connection_get_type (void);
 

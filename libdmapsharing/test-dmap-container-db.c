@@ -27,40 +27,41 @@
 static DmapContainerRecord *_record = NULL;
 
 static DmapContainerRecord *
-test_dmap_container_db_lookup_by_id (DmapContainerDb *db, guint id)
+test_dmap_container_db_lookup_by_id (G_GNUC_UNUSED DmapContainerDb *db,
+                                     G_GNUC_UNUSED guint id)
 {
 	/* In reality, lookup the proper record and return it. */
 	return g_object_ref (_record);
 }
 
 static void
-test_dmap_container_db_foreach (DmapContainerDb *db,
+test_dmap_container_db_foreach (G_GNUC_UNUSED DmapContainerDb *db,
 				DmapIdContainerRecordFunc func,
 				gpointer data)
 {
 	/* In reality, pull each record from the db and execute func on it. */
-        func (1, _record, data);
+        func (GUINT_TO_POINTER(1), _record, data);
 }
 
 static gint64
-test_dmap_container_db_count (DmapContainerDb *db)
+test_dmap_container_db_count (G_GNUC_UNUSED DmapContainerDb *db)
 {
 	/* In reality, return the record count. */
 	return 1;
 }
 
 static void
-test_dmap_container_db_init (TestDmapContainerDb *db)
+test_dmap_container_db_init (G_GNUC_UNUSED TestDmapContainerDb *db)
 {
 }
 
 static void
-test_dmap_container_db_class_init (TestDmapContainerDbClass *klass)
+test_dmap_container_db_class_init (G_GNUC_UNUSED TestDmapContainerDbClass *klass)
 {
 }
 
 static void
-_dmap_container_db_iface_init (gpointer iface, gpointer data)
+_dmap_container_db_iface_init (gpointer iface)
 {
 	DmapContainerDbInterface *dmap_container_db = iface;
 

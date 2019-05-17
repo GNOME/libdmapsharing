@@ -95,7 +95,7 @@ _emit_published (char *name, DmapMdnsPublisher * publisher)
 }
 
 static void
-_entry_group_cb (AvahiEntryGroup * group,
+_entry_group_cb (G_GNUC_UNUSED AvahiEntryGroup * group,
                  AvahiEntryGroupState state, DmapMdnsPublisher * publisher)
 {
 	if (state == AVAHI_ENTRY_GROUP_ESTABLISHED) {
@@ -327,7 +327,7 @@ dmap_mdns_publisher_publish (DmapMdnsPublisher * publisher,
 }
 
 static void
-_free_service (struct DmapMdnsPublisherService *service, gpointer user_data)
+_free_service (struct DmapMdnsPublisherService *service, G_GNUC_UNUSED gpointer user_data)
 {
 	g_free (service->name);
 	g_free (service->type_of_service);
@@ -376,28 +376,6 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher * publisher,
 	return TRUE;
 }
 
-static void
-_set_property (GObject * object, guint prop_id, const GValue * value,
-               GParamSpec * pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-static void
-_get_property (GObject * object, guint prop_id, GValue * value,
-               GParamSpec * pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
 static GObject *
 _constructor (GType type,
               guint n_construct_params,
@@ -428,8 +406,6 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass * klass)
 
 	object_class->constructor  = _constructor;
 	object_class->finalize     = _finalize;
-	object_class->get_property = _get_property;
-	object_class->set_property = _set_property;
 
 	_signals[PUBLISHED] =
 		g_signal_new ("published",

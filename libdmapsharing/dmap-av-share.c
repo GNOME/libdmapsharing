@@ -47,26 +47,20 @@
 guint dmap_av_share_get_desired_port (DmapShare * share);
 const char *dmap_av_share_get_type_of_service (DmapShare * share);
 void dmap_av_share_server_info (DmapShare * share,
-			     SoupServer * server,
 			     SoupMessage * message,
-			     const char *path,
-			     GHashTable * query, SoupClientContext * context);
+			     const char *path);
 void dmap_av_share_message_add_standard_headers (DmapShare * share,
 					      SoupMessage * message);
 static void _databases_browse_xxx (DmapShare * share,
-                                   SoupServer * server,
                                    SoupMessage * msg,
                                    const char *path,
-                                   GHashTable * query,
-                                   SoupClientContext * context);
+                                   GHashTable * query);
 static void _databases_items_xxx (DmapShare * share,
                                   SoupServer * server,
                                   SoupMessage * msg,
-                                  const char *path,
-                                  GHashTable * query,
-                                  SoupClientContext * context);
+                                  const char *path);
 static struct DmapMetaDataMap *_get_meta_data_map (DmapShare * share);
-static void _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer mb);
+static void _add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer mb);
 
 #define DAAP_TYPE_OF_SERVICE "_daap._tcp"
 #define DAAP_PORT 3689
@@ -91,7 +85,7 @@ dmap_av_share_class_init (DmapAvShareClass * klass)
 }
 
 static void
-dmap_av_share_init (DmapAvShare * share)
+dmap_av_share_init (G_GNUC_UNUSED DmapAvShare * share)
 {
 }
 
@@ -112,7 +106,7 @@ dmap_av_share_new (const char *name,
 }
 
 void
-dmap_av_share_message_add_standard_headers (DmapShare * share,
+dmap_av_share_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
 					 SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DMAP-Server",
@@ -124,23 +118,21 @@ dmap_av_share_message_add_standard_headers (DmapShare * share,
 #define DAAP_TIMEOUT 1800
 
 guint
-dmap_av_share_get_desired_port (DmapShare * share)
+dmap_av_share_get_desired_port (G_GNUC_UNUSED DmapShare * share)
 {
 	return DAAP_PORT;
 }
 
 const char *
-dmap_av_share_get_type_of_service (DmapShare * share)
+dmap_av_share_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DAAP_TYPE_OF_SERVICE;
 }
 
 void
 dmap_av_share_server_info (DmapShare * share,
-			SoupServer * server,
-			SoupMessage * message,
-			const char *path,
-			GHashTable * query, SoupClientContext * context)
+                           SoupMessage * message,
+                           const char *path)
 {
 /* MSRV	server info response
  * 	MSTT status
@@ -509,7 +501,7 @@ done:
 }
 
 static void
-_add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
+_add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	gboolean has_video = 0;
@@ -524,7 +516,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MIID, id);
+		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT(id));
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
@@ -540,11 +532,11 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MPER, id);
+		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT(id));
 	}
 
 	if (dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MCTI, id);
+		dmap_structure_add (mlit, DMAP_CC_MCTI, GPOINTER_TO_UINT(id));
 	}
 
 	if (dmap_share_client_requested (mb->bits, SONG_DATA_KIND)) {
@@ -772,7 +764,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 }
 
 static void
-_genre_tabulator (gpointer id, DmapRecord *record, GHashTable *ht)
+_genre_tabulator (G_GNUC_UNUSED gpointer id, DmapRecord *record, GHashTable *ht)
 {
 	const gchar *genre;
 
@@ -792,7 +784,7 @@ _genre_tabulator (gpointer id, DmapRecord *record, GHashTable *ht)
 }
 
 static void
-_artist_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
+_artist_tabulator (G_GNUC_UNUSED gpointer id, DmapRecord * record, GHashTable * ht)
 {
 	const gchar *artist;
 
@@ -812,7 +804,7 @@ _artist_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
 }
 
 static void
-_album_tabulator (gpointer id, DmapRecord * record, GHashTable * ht)
+_album_tabulator (G_GNUC_UNUSED gpointer id, DmapRecord * record, GHashTable * ht)
 {
 	const gchar *album;
 
@@ -843,10 +835,9 @@ _add_to_category_listing (gpointer key, gpointer user_data)
 
 static void
 _databases_browse_xxx (DmapShare * share,
-                       SoupServer * server,
                        SoupMessage * msg,
                        const char *path,
-                       GHashTable * query, SoupClientContext * context)
+                       GHashTable * query)
 {
 	/* ABRO database browse
 	 *      MSTT status
@@ -931,8 +922,7 @@ static void
 _databases_items_xxx (DmapShare * share,
                       SoupServer * server,
                       SoupMessage * msg,
-                      const char *path,
-                      GHashTable * query, SoupClientContext * context)
+                      const char *path)
 {
 	DmapDb *db = NULL;
 	DmapAvRecord *record = NULL;
@@ -1011,7 +1001,7 @@ done:
 }
 
 static struct DmapMetaDataMap *
-_get_meta_data_map (DmapShare * share)
+_get_meta_data_map (G_GNUC_UNUSED DmapShare * share)
 {
 	return _meta_data_map;
 }
@@ -1285,7 +1275,7 @@ END_TEST
 static int _status = DMAP_STATUS_OK;
 
 static void
-_error_cb(DmapShare *share, GError *error, gpointer user_data)
+_error_cb(G_GNUC_UNUSED DmapShare *share, GError *error, G_GNUC_UNUSED gpointer user_data)
 {
 	_status = error->code;
 }
@@ -1380,7 +1370,6 @@ START_TEST(dmap_av_share_server_info_test)
 {
 	char *nameprop = "dmap_av_share_server_info_test";
 	DmapShare *share;
-	SoupServer *server;
 	SoupMessage *message;
 	SoupMessageBody *body;
 	SoupBuffer *buffer;
@@ -1390,13 +1379,12 @@ START_TEST(dmap_av_share_server_info_test)
 	DmapStructureItem *item;
 
 	share   = _build_share_test(nameprop);
-	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
 
 	/* Causes auth. method to be set to DMAP_SHARE_AUTH_METHOD_PASSWORD. */
 	g_object_set(share, "password", "password", NULL);
 
-	dmap_av_share_server_info(share, server, message, "/", NULL, NULL);
+	dmap_av_share_server_info(share, message, "/");
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1484,7 +1472,6 @@ START_TEST(_databases_browse_xxx_test)
 {
 	char *nameprop = "databases_browse_xxx_test";
 	DmapShare *share;
-	SoupServer *server;
 	SoupMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
@@ -1495,13 +1482,12 @@ START_TEST(_databases_browse_xxx_test)
 	DmapStructureItem *item;
 
 	share   = _build_share_test(nameprop);
-	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	_databases_browse_xxx(share, server, message, "/db/1/browse/genres", query, NULL);
+	_databases_browse_xxx(share, message, "/db/1/browse/genres", query);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1541,7 +1527,6 @@ START_TEST(_databases_browse_xxx_artists_test)
 {
 	char *nameprop = "databases_browse_xxx_artists_test";
 	DmapShare *share;
-	SoupServer *server;
 	SoupMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
@@ -1551,13 +1536,12 @@ START_TEST(_databases_browse_xxx_artists_test)
 	GNode *root;
 
 	share   = _build_share_test(nameprop);
-	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	_databases_browse_xxx(share, server, message, "/db/1/browse/artists", query, NULL);
+	_databases_browse_xxx(share, message, "/db/1/browse/artists", query);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1568,9 +1552,9 @@ START_TEST(_databases_browse_xxx_artists_test)
 	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
 	ck_assert(NULL != root);
 
-	ck_assert_str_eq("artist2",
-                        ((DmapStructureItem *) root->children->data)->content.data->v_pointer);
 	ck_assert_str_eq("artist1",
+                        ((DmapStructureItem *) root->children->data)->content.data->v_pointer);
+	ck_assert_str_eq("artist2",
                         ((DmapStructureItem *) root->next->children->data)->content.data->v_pointer);
 
 	g_object_unref(share);
@@ -1582,7 +1566,6 @@ START_TEST(_databases_browse_xxx_albums_test)
 {
 	char *nameprop = "databases_browse_xxx_albums_test";
 	DmapShare *share;
-	SoupServer *server;
 	SoupMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
@@ -1592,13 +1575,12 @@ START_TEST(_databases_browse_xxx_albums_test)
 	GNode *root;
 
 	share   = _build_share_test(nameprop);
-	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	_databases_browse_xxx(share, server, message, "/db/1/browse/albums", query, NULL);
+	_databases_browse_xxx(share, message, "/db/1/browse/albums", query);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1609,9 +1591,9 @@ START_TEST(_databases_browse_xxx_albums_test)
 	root = dmap_structure_find_node(root, DMAP_CC_MLIT);
 	ck_assert(NULL != root);
 
-	ck_assert_str_eq("album2",
-                        ((DmapStructureItem *) root->children->data)->content.data->v_pointer);
 	ck_assert_str_eq("album1",
+                        ((DmapStructureItem *) root->children->data)->content.data->v_pointer);
+	ck_assert_str_eq("album2",
                         ((DmapStructureItem *) root->next->children->data)->content.data->v_pointer);
 
 	g_object_unref(share);
@@ -1623,7 +1605,6 @@ START_TEST(_databases_browse_xxx_bad_category_test)
 {
 	char *nameprop = "databases_browse_xxx_bad_category_test";
 	DmapShare *share;
-	SoupServer *server;
 	SoupMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
@@ -1633,13 +1614,12 @@ START_TEST(_databases_browse_xxx_bad_category_test)
 	GNode *root;
 
 	share   = _build_share_test(nameprop);
-	server  = soup_server_new(NULL, NULL);
 	message = soup_message_new(SOUP_METHOD_GET, "http://test");
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
-	_databases_browse_xxx(share, server, message, "/db/1/browse/bad_category", query, NULL);
+	_databases_browse_xxx(share, message, "/db/1/browse/bad_category", query);
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1677,7 +1657,7 @@ START_TEST(_databases_items_xxx_test)
 
 	g_snprintf(path, sizeof path, "/db/1/items/%d", G_MAXINT);
 
-	_databases_items_xxx(share, server, message, path, NULL, NULL);
+	_databases_items_xxx(share, server, message, path);
 
 	g_object_get(share, "db", &db, NULL);
 	ck_assert(NULL != db);
@@ -1691,7 +1671,7 @@ START_TEST(_databases_items_xxx_test)
 
 	g_signal_emit_by_name(message, "wrote_headers", NULL);
 
-	for (int i = 0; i < size1 / DMAP_SHARE_CHUNK_SIZE + 1; i++) {
+	for (guint64 i = 0; i < size1 / DMAP_SHARE_CHUNK_SIZE + 1; i++) {
 		g_signal_emit_by_name(message, "wrote_chunk", NULL);
 	}
 
@@ -1736,7 +1716,7 @@ START_TEST(_databases_items_xxx_test_bad_id)
 
 	_status = DMAP_STATUS_OK;
 	g_signal_connect(share, "error", G_CALLBACK(_error_cb), NULL);
-	_databases_items_xxx(share, server, message, path, NULL, NULL);
+	_databases_items_xxx(share, server, message, path);
 	ck_assert_int_eq(DMAP_STATUS_DB_BAD_ID, _status);
 
 	g_object_unref(share);

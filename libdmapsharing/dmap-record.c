@@ -21,7 +21,7 @@
 #include <libdmapsharing/dmap-record.h>
 
 static void
-dmap_record_default_init (DmapRecordInterface * iface)
+dmap_record_default_init (G_GNUC_UNUSED DmapRecordInterface * iface)
 {
 }
 

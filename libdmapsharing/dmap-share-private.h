@@ -46,15 +46,12 @@ gboolean dmap_share_get_revision_number_from_query (GHashTable * query,
 						     guint * number);
 
 gboolean dmap_share_session_id_validate (DmapShare * share,
-					  SoupClientContext * context,
-					  SoupMessage * msg,
-					  GHashTable * query, guint32 * id);
+                                         SoupClientContext * context,
+                                         GHashTable * query,
+                                         guint32 * id);
 
 guint32 dmap_share_session_id_create (DmapShare * share,
 				       SoupClientContext * ctx);
-
-void dmap_share_session_id_remove (DmapShare * share,
-				    SoupClientContext * ctx, guint32 id);
 
 gboolean dmap_share_client_requested (DmapBits bits, gint field);
 
@@ -81,29 +78,27 @@ GSList *dmap_share_build_filter (gchar * filterstr);
 
 /* Virtual methods (libsoup callbacks with default implementation): */
 void dmap_share_content_codes (DmapShare * share,
-				SoupServer * server,
 				SoupMessage * message,
 				const char *path,
-				GHashTable * query,
 				SoupClientContext * context);
 
 void dmap_share_login (DmapShare * share,
-			SoupServer * server,
-			SoupMessage * message,
-			const char *path,
-			GHashTable * query, SoupClientContext * context);
+                       SoupMessage * message,
+                       const char *path,
+                       GHashTable * query,
+                       SoupClientContext * context);
 
 void dmap_share_logout (DmapShare * share,
-			 SoupServer * server,
-			 SoupMessage * message,
-			 const char *path,
-			 GHashTable * query, SoupClientContext * context);
+                        SoupMessage * message,
+                        const char *path,
+                        GHashTable * query,
+                        SoupClientContext * context);
 
 void dmap_share_update (DmapShare * share,
 			 SoupServer * server,
 			 SoupMessage * message,
 			 const char *path,
-			 GHashTable * query, SoupClientContext * context);
+			 GHashTable * query);
 
 void dmap_share_databases (DmapShare * share,
 		       SoupServer * server,
@@ -118,9 +113,6 @@ void dmap_share_ctrl_int (DmapShare * share,
 			   GHashTable * query, SoupClientContext * context);
 
 /* Virtual methods: MDNS callbacks */
-void dmap_share_published (DmapShare * share,
-			    DmapMdnsPublisher * publisher, const char *name);
-
 void dmap_share_name_collision (DmapShare * share,
 				 DmapMdnsPublisher * publisher,
 				 const char *name);

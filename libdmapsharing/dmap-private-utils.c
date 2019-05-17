@@ -51,7 +51,7 @@ dmap_private_utils_write_next_chunk (SoupMessage * message, ChunkData * cd)
 }
 
 void
-dmap_private_utils_chunked_message_finished (SoupMessage * message, ChunkData * cd)
+dmap_private_utils_chunked_message_finished (G_GNUC_UNUSED SoupMessage * message, ChunkData * cd)
 {
 	g_debug ("Finished sending chunked file.");
 	g_input_stream_close (cd->stream, NULL, NULL);

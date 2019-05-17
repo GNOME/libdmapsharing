@@ -36,7 +36,7 @@ static GMainLoop *loop;
 static guint conn_type = DAAP;
 
 static void
-print_record (guint id, DmapRecord *record, gpointer user_data)
+print_record (gpointer id, DmapRecord *record, G_GNUC_UNUSED gpointer user_data)
 {
 	if (IS_DMAP_AV_RECORD(record)) {
 		gboolean has_video;
@@ -48,7 +48,7 @@ print_record (guint id, DmapRecord *record, gpointer user_data)
 			     "title",  &title,
 			      NULL);
 
-		g_print ("%d: %s %s (has video: %s)\n", id, artist, title, has_video ? "Y" : "N");
+		g_print ("%d: %s %s (has video: %s)\n", GPOINTER_TO_UINT(id), artist, title, has_video ? "Y" : "N");
 
 		g_free (artist);
 		g_free (title);
@@ -60,7 +60,7 @@ print_record (guint id, DmapRecord *record, gpointer user_data)
 			     "location", &location,
 			      NULL);
 
-		g_print ("%d: %s %s\n", id, format, location);
+		g_print ("%d: %s %s\n", GPOINTER_TO_UINT(id), format, location);
 
 		g_free (format);
 		g_free (location);
@@ -69,17 +69,17 @@ print_record (guint id, DmapRecord *record, gpointer user_data)
 	}
 }
 
-static void error_cb(DmapConnection *connection,
+static void error_cb(G_GNUC_UNUSED DmapConnection *connection,
                      GError *error,
-                     gpointer user_data)
+                     G_GNUC_UNUSED gpointer user_data)
 {
 	g_error("%s", error->message);
 }
 
 static void
-connected_cb (DmapConnection *connection,
-              gboolean        result,
-              const char     *reason,
+connected_cb (G_GNUC_UNUSED DmapConnection *connection,
+              G_GNUC_UNUSED gboolean        result,
+              G_GNUC_UNUSED const char     *reason,
               DmapDb         *db)
 {
 	g_print ("Connection cb., DB has %lu entries\n", dmap_db_count (db));
@@ -89,12 +89,12 @@ connected_cb (DmapConnection *connection,
 
 static void
 authenticate_cb (DmapConnection *connection,
-		 const char *name,
+		 G_GNUC_UNUSED const char *name,
 		 SoupSession *session,
 		 SoupMessage *msg,
 		 SoupAuth *auth,
-		 gboolean retrying,
-		 gpointer user_data)
+		 G_GNUC_UNUSED gboolean retrying,
+		 G_GNUC_UNUSED gpointer user_data)
 {
 	char *username, password[BUFSIZ + 1];
 	g_object_get (connection, "username", &username, NULL);
@@ -108,9 +108,9 @@ authenticate_cb (DmapConnection *connection,
 }
 
 static void
-service_added_cb (DmapMdnsBrowser *browser,
+service_added_cb (G_GNUC_UNUSED DmapMdnsBrowser *browser,
                   DmapMdnsService *service,
-                  gpointer user_data)
+                  G_GNUC_UNUSED gpointer user_data)
 {
     DmapRecordFactory *factory;
     DmapConnection *conn;
@@ -159,9 +159,9 @@ service_added_cb (DmapMdnsBrowser *browser,
 
 static void
 _log_printf(const char *log_domain,
-            GLogLevelFlags level,
+            G_GNUC_UNUSED GLogLevelFlags level,
             const gchar *message,
-            gpointer user_data)
+            G_GNUC_UNUSED gpointer user_data)
 {
     g_printerr("%s: %s\n", log_domain, message);
 }

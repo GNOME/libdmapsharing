@@ -30,7 +30,7 @@ typedef struct FilterData
 } FilterData;
 
 static void
-dmap_db_default_init (DmapDbInterface * iface)
+dmap_db_default_init (G_GNUC_UNUSED DmapDbInterface * iface)
 {
 }
 
@@ -170,7 +170,7 @@ done:
 }
 
 static void
-_apply_filter (guint id, DmapRecord * record, gpointer data)
+_apply_filter (gpointer id, DmapRecord * record, gpointer data)
 {
 	g_assert(IS_DMAP_RECORD (record));
 
@@ -182,8 +182,7 @@ _apply_filter (guint id, DmapRecord * record, gpointer data)
 
 	fd = data;
 	if (fd->filter_def == NULL) {
-		g_hash_table_insert (fd->ht, GUINT_TO_POINTER (id),
-				     g_object_ref (record));
+		g_hash_table_insert (fd->ht, id, g_object_ref (record));
 		goto done;
 	}
 
@@ -237,7 +236,7 @@ _apply_filter (guint id, DmapRecord * record, gpointer data)
 		}
 	}
 	if (accept) {
-		g_hash_table_insert (fd->ht, GUINT_TO_POINTER (id),
+		g_hash_table_insert (fd->ht, id,
 				     g_object_ref (record));
 	}
 

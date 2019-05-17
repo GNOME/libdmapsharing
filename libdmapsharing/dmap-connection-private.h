@@ -25,9 +25,13 @@
 #ifndef _DMAP_CONNECTION_PRIVATE_H
 #define _DMAP_CONNECTION_PRIVATE_H
 
+typedef void (*DmapResponseHandler) (DmapConnection * connection,
+				     guint status,
+				     GNode * structure,
+                                     gpointer user_data);
+
 gboolean dmap_connection_get (DmapConnection * self,
                               const gchar * path,
-                              gboolean need_hash,
                               DmapResponseHandler handler,
                               gpointer user_data);
 

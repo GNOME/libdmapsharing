@@ -27,13 +27,13 @@
 #define DMAP_AV_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_AV_CONNECTION, DmapAvConnectionPrivate))
 
 static DmapContentCode
-_get_protocol_version_cc (DmapConnection * connection)
+_get_protocol_version_cc (G_GNUC_UNUSED DmapConnection * connection)
 {
 	return DMAP_CC_APRO;
 }
 
 static gchar *
-_get_query_metadata (DmapConnection * connection)
+_get_query_metadata (G_GNUC_UNUSED DmapConnection * connection)
 {
 	return g_strdup ("dmap.itemid,dmap.itemname,daap.songalbum,"
 			 "daap.songartist,daap.songgenre,daap.songsize,"
@@ -192,7 +192,7 @@ dmap_av_connection_new (const char *name,
 }
 
 static void
-dmap_av_connection_init (DmapAvConnection * connection)
+dmap_av_connection_init (G_GNUC_UNUSED DmapAvConnection * connection)
 {
 }
 

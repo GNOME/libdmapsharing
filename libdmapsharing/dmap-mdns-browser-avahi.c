@@ -95,7 +95,8 @@ static void _browse_cb (AvahiServiceBrowser * service_browser,
                         AvahiProtocol protocol,
                         AvahiBrowserEvent event,
                         const gchar * name,
-                        const gchar * type, const gchar * domain,
+                        const gchar * type,
+                        const gchar * domain,
 #ifdef HAVE_AVAHI_0_6
                         AvahiLookupResultFlags flags,
 #endif
@@ -158,6 +159,12 @@ dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 }
 
 static void
+_avahi_service_resolver_free_adapter(gpointer data, G_GNUC_UNUSED gpointer user_data)
+{
+	avahi_service_resolver_free(data);
+}
+
+static void
 _dispose (GObject * object)
 {
 	DmapMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
@@ -172,7 +179,8 @@ _dispose (GObject * object)
 
 	if (browser->priv->resolvers) {
 		g_slist_foreach (browser->priv->resolvers,
-				 (GFunc) avahi_service_resolver_free, NULL);
+		         (GFunc) _avahi_service_resolver_free_adapter,
+		                 NULL);
 		g_slist_free (browser->priv->resolvers);
 	}
 
@@ -294,7 +302,8 @@ dmap_mdns_browser_get_service_type (DmapMdnsBrowser * browser)
 
 static void
 _client_cb (AvahiClient * client,
-            AvahiClientState state, DmapMdnsBrowser * browser)
+            AvahiClientState state,
+            G_GNUC_UNUSED DmapMdnsBrowser * browser)
 {
 	/* Called whenever the client or server state changes */
 
@@ -343,17 +352,17 @@ _client_init (DmapMdnsBrowser * browser)
 
 static void
 _resolve_cb (AvahiServiceResolver * service_resolver,
-             AvahiIfIndex interface,
-             AvahiProtocol protocol,
+             G_GNUC_UNUSED AvahiIfIndex interface,
+             G_GNUC_UNUSED AvahiProtocol protocol,
              AvahiResolverEvent event,
              const gchar * service_name,
              const gchar * type,
              const gchar * domain,
-             const gchar * host_name,
+             G_GNUC_UNUSED const gchar * host_name,
              const AvahiAddress * address,
              uint16_t port, AvahiStringList * text,
 #ifdef HAVE_AVAHI_0_6
-             AvahiLookupResultFlags flags,
+             G_GNUC_UNUSED AvahiLookupResultFlags flags,
 #endif
              DmapMdnsBrowser * browser)
 {
@@ -510,11 +519,13 @@ _remove_service (DmapMdnsBrowser * browser, const gchar * service_name)
 }
 
 static void
-_browse_cb (AvahiServiceBrowser * service_browser,
-            AvahiIfIndex interface,
-            AvahiProtocol protocol,
+_browse_cb (G_GNUC_UNUSED AvahiServiceBrowser * service_browser,
+            G_GNUC_UNUSED AvahiIfIndex interface,
+            G_GNUC_UNUSED AvahiProtocol protocol,
             AvahiBrowserEvent event,
-            const gchar * name, const gchar * type, const gchar * domain,
+            const gchar * name,
+            G_GNUC_UNUSED const gchar * type,
+            const gchar * domain,
 #ifdef HAVE_AVAHI_0_6
             AvahiLookupResultFlags flags,
 #endif

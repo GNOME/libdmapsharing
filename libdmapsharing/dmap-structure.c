@@ -573,11 +573,11 @@ static void
 _parse_container_buffer (GNode * parent, const guint8 * buf,
                          gsize buf_length, GError **error)
 {
-	gint l = 0;
+	gsize l = 0;
 
 	while (l < buf_length) {
 		DmapContentCode cc;
-		gint codesize = 0;
+		gsize codesize = 0;
 		DmapStructureItem *item = NULL;
 		GNode *node = NULL;
 		GType gtype;
@@ -624,9 +624,9 @@ _parse_container_buffer (GNode * parent, const guint8 * buf,
 		 * a codesize that is larger than the remaining data)
 		 * then get out before we start processing it
 		 */
-		if (codesize > buf_length - l - 4 || codesize < 0) {
+		if (codesize > buf_length - l - 4) {
 			g_set_error(error, DMAP_ERROR, DMAP_STATUS_INVALID_CONTENT_CODE_SIZE,
-				   "Invalid codesize %d received in buffer of length %zd",
+				   "Invalid codesize %zd received in buffer of length %zd",
 			            codesize, buf_length);
 			goto done;
 		}
@@ -937,7 +937,7 @@ _dmap_item_free (DmapStructureItem * item)
 }
 
 static gboolean
-_gnode_free_dmap_item (GNode * node, gpointer data)
+_gnode_free_dmap_item (GNode * node, G_GNUC_UNUSED gpointer data)
 {
 	_dmap_item_free ((DmapStructureItem *) node->data);
 
@@ -981,12 +981,12 @@ dmap_structure_cc_string_as_int32 (const gchar * str)
 }
 
 static gboolean
-_print_dmap_item (GNode * node, gpointer data)
+_print_dmap_item (GNode * node, G_GNUC_UNUSED gpointer data)
 {
 	DmapStructureItem *item;
 	const gchar *name;
 	gchar *value;
-	gint i;
+	guint i;
 
 	for (i = 1; i < g_node_depth (node); i++) {
 		g_print ("\t");

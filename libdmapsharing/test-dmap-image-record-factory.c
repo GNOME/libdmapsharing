@@ -22,25 +22,25 @@
 #include "test-dmap-image-record.h"
 
 DmapRecord *
-test_dmap_image_record_factory_create(DmapRecordFactory *factory,
-                                      gpointer user_data,
-                                      GError **error)
+test_dmap_image_record_factory_create(G_GNUC_UNUSED DmapRecordFactory *factory,
+                                      G_GNUC_UNUSED gpointer user_data,
+                                      G_GNUC_UNUSED GError **error)
 {
 	return DMAP_RECORD (test_dmap_image_record_new ());
 }
 
 static void
-test_dmap_image_record_factory_init (TestDmapImageRecordFactory *factory)
+test_dmap_image_record_factory_init (G_GNUC_UNUSED TestDmapImageRecordFactory *factory)
 {
 }
 
 static void
-test_dmap_image_record_factory_class_init (TestDmapImageRecordFactoryClass *klass)
+test_dmap_image_record_factory_class_init (G_GNUC_UNUSED TestDmapImageRecordFactoryClass *klass)
 {
 }
 
 static void
-_dmap_record_factory_iface_init (gpointer iface, gpointer data)
+_dmap_record_factory_iface_init (gpointer iface)
 {
 	DmapRecordFactoryInterface *factory = iface;
 

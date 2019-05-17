@@ -26,7 +26,7 @@
 #define DMAP_CONTROL_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DACP_TYPE_CONNECTION, DmapControlConnectionPrivate))
 
 static DmapContentCode
-_get_protocol_version_cc (DmapConnection * connection)
+_get_protocol_version_cc (G_GNUC_UNUSED DmapConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -34,7 +34,7 @@ _get_protocol_version_cc (DmapConnection * connection)
 }
 
 static gchar *
-_get_query_metadata (DmapConnection * connection)
+_get_query_metadata (G_GNUC_UNUSED DmapConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -42,8 +42,10 @@ _get_query_metadata (DmapConnection * connection)
 }
 
 static DmapRecord *
-_handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
-	     GNode * n, int *item_id)
+_handle_mlcl (G_GNUC_UNUSED DmapConnection * connection,
+              G_GNUC_UNUSED DmapRecordFactory * factory,
+              G_GNUC_UNUSED GNode * n,
+              G_GNUC_UNUSED int *item_id)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -82,9 +84,7 @@ dmap_control_connection_new (const char *name,
 static void
 dmap_control_connection_init (DmapControlConnection * connection)
 {
-	/* FIXME: 
-	 * connection->priv = DMAP_CONTROL_CONNECTION_GET_PRIVATE (connection);
-	 */
+	 connection->priv = DMAP_CONTROL_CONNECTION_GET_PRIVATE (connection);
 }
 
 G_DEFINE_TYPE (DmapControlConnection, dmap_control_connection, DMAP_TYPE_CONNECTION);

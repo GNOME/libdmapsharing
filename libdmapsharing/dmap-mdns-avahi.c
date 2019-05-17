@@ -32,7 +32,9 @@ static AvahiEntryGroup *_entry_group = NULL;
 static gsize _client_init = 0;
 
 static void
-_client_cb (AvahiClient * client, AvahiClientState state, gpointer data)
+_client_cb (G_GNUC_UNUSED AvahiClient * client,
+            AvahiClientState state,
+            G_GNUC_UNUSED gpointer data)
 {
 	/* FIXME
 	 * check to make sure we're in the _RUNNING state before we publish

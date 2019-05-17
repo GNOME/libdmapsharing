@@ -63,6 +63,8 @@ libdmapsharing_4_0_la_SOURCES += \
 endif
 
 libdmapsharing_4_0_la_CFLAGS = \
+	-Wall \
+	-Wextra \
 	-DG_LOG_DOMAIN=\"libdmapsharing\" \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \

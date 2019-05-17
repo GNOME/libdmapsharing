@@ -52,7 +52,7 @@ struct DmapGstInputStreamPrivate
 					   DmapGstInputStreamPrivate))
 
 static goffset
-_tell (GSeekable * seekable)
+_tell (G_GNUC_UNUSED GSeekable * seekable)
 {
 	/* FIXME: implement return current position in stream. */
 	g_error ("Not implemented");
@@ -60,16 +60,17 @@ _tell (GSeekable * seekable)
 }
 
 static gboolean
-_can_seek (GSeekable * seekable)
+_can_seek (G_GNUC_UNUSED GSeekable * seekable)
 {
 	return TRUE;
 }
 
 static gboolean
-_seek (GSeekable * seekable,
-       goffset offset,
+_seek (G_GNUC_UNUSED GSeekable * seekable,
+       G_GNUC_UNUSED goffset offset,
        GSeekType type,
-       GCancellable * cacellable, GError ** error)
+       G_GNUC_UNUSED GCancellable * cacellable,
+       GError ** error)
 {
 	gboolean ok = FALSE;
 	// FIXME: implement: DmapGstInputStream *stream;
@@ -130,15 +131,16 @@ done:
 }
 
 static gboolean
-_can_truncate (GSeekable * seekable)
+_can_truncate (G_GNUC_UNUSED GSeekable * seekable)
 {
 	return FALSE;
 }
 
 static gboolean
-_truncate (GSeekable * seekable,
-           goffset offset,
-           GCancellable * cancellable, GError ** error)
+_truncate (G_GNUC_UNUSED GSeekable * seekable,
+           G_GNUC_UNUSED goffset offset,
+           G_GNUC_UNUSED GCancellable * cancellable,
+           GError ** error)
 {
 	g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
 		     "Cannot truncate DmapGstInputStream");
@@ -282,9 +284,10 @@ static gssize
 _read (GInputStream * stream,
        void *buffer,
        gsize count,
-       GCancellable * cancellable, GError ** error)
+       G_GNUC_UNUSED GCancellable * cancellable,
+       G_GNUC_UNUSED GError ** error)
 {
-	int i;
+	gsize i;
 	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
 	gint64 end_time;
 
@@ -328,8 +331,10 @@ _read (GInputStream * stream,
 }
 
 static gssize
-_skip (GInputStream * stream, gsize count, GCancellable * cancellable,
-       GError ** error)
+_skip (G_GNUC_UNUSED GInputStream * stream,
+       G_GNUC_UNUSED gsize count,
+       G_GNUC_UNUSED GCancellable * cancellable,
+       G_GNUC_UNUSED GError ** error)
 {
 	g_error ("Not implemented");
 	return 0;
@@ -343,7 +348,8 @@ _kill_pipeline (DmapGstInputStream * stream)
 
 static gboolean
 _close (GInputStream * stream,
-        GCancellable * cancellable, GError ** error)
+        G_GNUC_UNUSED GCancellable * cancellable,
+        G_GNUC_UNUSED GError ** error)
 {
 	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
 
@@ -360,54 +366,60 @@ _close (GInputStream * stream,
 }
 
 static gssize
-_read_finish (GInputStream * stream,
-              GAsyncResult * result, GError ** error)
+_read_finish (G_GNUC_UNUSED GInputStream * stream,
+              G_GNUC_UNUSED GAsyncResult * result,
+              G_GNUC_UNUSED GError ** error)
 {
 	g_error ("Not implemented");
 	return 0;
 }
 
 static gssize
-_skip_finish (GInputStream * stream,
-              GAsyncResult * result, GError ** error)
+_skip_finish (G_GNUC_UNUSED GInputStream * stream,
+              G_GNUC_UNUSED GAsyncResult * result,
+              G_GNUC_UNUSED GError ** error)
 {
 	g_error ("Not implemented");
 	return 0;
 }
 
 static void
-_close_async (GInputStream * stream,
-              int io_priority,
-              GCancellable * cancellabl,
-              GAsyncReadyCallback callback,
-              gpointer data)
+_close_async (G_GNUC_UNUSED GInputStream * stream,
+              G_GNUC_UNUSED int io_priority,
+              G_GNUC_UNUSED GCancellable * cancellable,
+              G_GNUC_UNUSED GAsyncReadyCallback callback,
+              G_GNUC_UNUSED gpointer data)
 {
+	g_error ("Not implemented");
 }
 
 static void
-_read_async (GInputStream * stream,
-             void *buffer,
-             gsize count,
-             int io_priority,
-             GCancellable * cancellable,
-             GAsyncReadyCallback callback,
-             gpointer user_data)
+_read_async (G_GNUC_UNUSED GInputStream * stream,
+             G_GNUC_UNUSED void *buffer,
+             G_GNUC_UNUSED gsize count,
+             G_GNUC_UNUSED int io_priority,
+             G_GNUC_UNUSED GCancellable * cancellable,
+             G_GNUC_UNUSED GAsyncReadyCallback callback,
+             G_GNUC_UNUSED gpointer user_data)
 {
+	g_error ("Not implemented");
 }
 
 static void
-_skip_async (GInputStream * stream,
-             gsize count,
-             int io_priority,
-             GCancellable * cancellabl,
-             GAsyncReadyCallback callback,
-             gpointer datae)
+_skip_async (G_GNUC_UNUSED GInputStream * stream,
+             G_GNUC_UNUSED gsize count,
+             G_GNUC_UNUSED int io_priority,
+             G_GNUC_UNUSED GCancellable * cancellabl,
+             G_GNUC_UNUSED GAsyncReadyCallback callback,
+             G_GNUC_UNUSED gpointer datae)
 {
+	g_error ("Not implemented");
 }
 
 static gboolean
-_close_finish (GInputStream * stream,
-               GAsyncResult * result, GError ** error)
+_close_finish (G_GNUC_UNUSED GInputStream * stream,
+               G_GNUC_UNUSED GAsyncResult * result,
+               G_GNUC_UNUSED GError ** error)
 {
 	g_error ("Not implemented");
 	return FALSE;

@@ -26,13 +26,13 @@
 #define DMAP_IMAGE_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_IMAGE_CONNECTION, DmapImageConnectionPrivate))
 
 static DmapContentCode
-_get_protocol_version_cc (DmapConnection * connection)
+_get_protocol_version_cc (G_GNUC_UNUSED DmapConnection * connection)
 {
 	return DMAP_CC_PPRO;
 }
 
 static gchar *
-_get_query_metadata (DmapConnection * connection)
+_get_query_metadata (G_GNUC_UNUSED DmapConnection * connection)
 {
 	return g_strdup ("all");
 }
@@ -179,7 +179,7 @@ dmap_image_connection_new (const char *name,
 }
 
 static void
-dmap_image_connection_init (DmapImageConnection * connection)
+dmap_image_connection_init (G_GNUC_UNUSED DmapImageConnection * connection)
 {
 }
 

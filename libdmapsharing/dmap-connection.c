@@ -32,6 +32,7 @@
 
 #include "dmap-md5.h"
 #include "dmap-connection.h"
+#include "dmap-connection-private.h"
 #include "dmap-error.h"
 #include "dmap-record-factory.h"
 #include "dmap-marshal.h"
@@ -144,8 +145,7 @@ _dispose (GObject * object)
 			DmapPlaylist *playlist = l->data;
 
 			/* FIXME: refstring: */
-			g_list_foreach (playlist->uris, (GFunc) g_free, NULL);
-			g_list_free (playlist->uris);
+			g_list_free_full (playlist->uris, g_free);
 			g_free (playlist->name);
 			g_free (playlist);
 			l->data = NULL;
@@ -523,10 +523,7 @@ _connection_operation_done (DmapConnection * connection)
 
 static SoupMessage *
 _build_message (DmapConnection * connection,
-                const char *path,
-                gboolean need_hash,
-                gdouble version,
-                gint req_id, gboolean send_close)
+                const char *path)
 {
 	SoupMessage *message = NULL;
 	SoupURI *base_uri = NULL;
@@ -566,7 +563,7 @@ done:
 
 #ifdef HAVE_LIBZ
 static void *
-_zalloc_wrapper (voidpf opaque, uInt items, uInt size)
+_zalloc_wrapper (G_GNUC_UNUSED voidpf opaque, uInt items, uInt size)
 {
 	void *fnval = Z_NULL;
 
@@ -584,7 +581,7 @@ done:
 }
 
 static void
-_zfree_wrapper (voidpf opaque, voidpf address)
+_zfree_wrapper (G_GNUC_UNUSED voidpf opaque, voidpf address)
 {
 	g_free (address);
 }
@@ -625,7 +622,7 @@ _emit_progress_idle (DmapConnection * connection)
 	return FALSE;
 }
 
-static void
+static gpointer
 _actual_http_response_handler (DmapResponseData * data)
 {
 	DmapConnectionPrivate *priv;
@@ -819,13 +816,15 @@ _actual_http_response_handler (DmapResponseData * data)
 	g_object_unref (G_OBJECT (data->connection));
 	g_object_unref (G_OBJECT (data->message));
 	g_free (data);
+
+	return NULL;
 }
 
 static void
-_http_response_handler (SoupSession * session,
+_http_response_handler (G_GNUC_UNUSED SoupSession * session,
                         SoupMessage * message, DmapResponseData * data)
 {
-	int response_length;
+	goffset response_length;
 
 	if (message->status_code == SOUP_STATUS_CANCELLED) {
 		g_debug ("Message cancelled");
@@ -862,10 +861,6 @@ _http_response_handler (SoupSession * session,
 static gboolean
 _http_get (DmapConnection * connection,
            const char *path,
-           gboolean need_hash,
-           gdouble version,
-           gint req_id,
-           gboolean send_close,
            DmapResponseHandler handler,
            gpointer user_data, gboolean use_thread)
 {
@@ -874,8 +869,7 @@ _http_get (DmapConnection * connection,
 	DmapResponseData *data;
 	SoupMessage *message;
 
-	message = _build_message (connection, path, need_hash,
-	                          version, req_id, send_close);
+	message = _build_message (connection, path);
 	if (message == NULL) {
 		g_debug ("Error building message for http://%s:%d/%s",
 			 priv->base_uri->host, priv->base_uri->port, path);
@@ -906,12 +900,10 @@ done:
 gboolean
 dmap_connection_get (DmapConnection * self,
 		     const gchar * path,
-		     gboolean need_hash,
 		     DmapResponseHandler handler, gpointer user_data)
 {
-	return _http_get (self, path, need_hash,
-			 self->priv->dmap_version, 0, FALSE,
-			 (DmapResponseHandler) handler, user_data, FALSE);
+	return _http_get (self, path, (DmapResponseHandler) handler, user_data,
+	                  FALSE);
 }
 
 static void
@@ -977,8 +969,8 @@ _state_done (DmapConnection * connection, gboolean result)
 }
 
 static void
-_handle_server_info (DmapConnection * connection,
-                     guint status, GNode * structure, gpointer user_data)
+_handle_server_info (DmapConnection * connection, guint status,
+                     GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1006,8 +998,8 @@ done:
 }
 
 static void
-_handle_login (DmapConnection * connection,
-               guint status, GNode * structure, gpointer user_data)
+_handle_login (DmapConnection * connection, guint status, GNode * structure,
+               G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1047,8 +1039,8 @@ done:
 }
 
 static void
-_handle_update (DmapConnection * connection,
-                guint status, GNode * structure, gpointer user_data)
+_handle_update (DmapConnection * connection, guint status, GNode * structure,
+                G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1075,8 +1067,8 @@ done:
 }
 
 static void
-_handle_database_info (DmapConnection * connection,
-                       guint status, GNode * structure, gpointer user_data)
+_handle_database_info (DmapConnection * connection, guint status,
+                       GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1124,8 +1116,8 @@ done:
 }
 
 static void
-_handle_song_listing (DmapConnection * connection,
-                      guint status, GNode * structure, gpointer user_data)
+_handle_song_listing (DmapConnection * connection, guint status,
+                      GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1269,8 +1261,8 @@ _compare_playlists_by_name (gconstpointer a, gconstpointer b)
  */
 
 static void
-_handle_playlists (DmapConnection * connection,
-                   guint status, GNode * structure, gpointer user_data)
+_handle_playlists (DmapConnection * connection, guint status,
+                   GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1335,8 +1327,8 @@ done:
 }
 
 static void
-_handle_playlist_entries (DmapConnection * connection,
-                          guint status, GNode * structure, gpointer user_data)
+_handle_playlist_entries (DmapConnection * connection, guint status,
+                          GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
@@ -1399,8 +1391,8 @@ done:
 }
 
 static void
-_handle_logout (DmapConnection * connection,
-                guint status, GNode * structure, gpointer user_data)
+_handle_logout (DmapConnection * connection, G_GNUC_UNUSED guint status,
+                G_GNUC_UNUSED GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	_connection_disconnected (connection);
 
@@ -1437,7 +1429,7 @@ _do_something (DmapConnection * connection)
 	case DMAP_GET_INFO:
 		g_debug ("Getting DMAP server info");
 		if (!_http_get
-		    (connection, "/server-info", FALSE, 0.0, 0, FALSE,
+		    (connection, "/server-info",
 		     (DmapResponseHandler) _handle_server_info, NULL, FALSE)) {
 			g_debug ("Could not get DMAP connection info");
 			_state_done (connection, FALSE);
@@ -1447,7 +1439,7 @@ _do_something (DmapConnection * connection)
 	case DMAP_LOGIN:
 		// NOTE: libsoup will signal if password required and not present.
 		g_debug ("Logging into DMAP server");
-		if (!_http_get (connection, "/login", FALSE, 0.0, 0, FALSE,
+		if (!_http_get (connection, "/login",
 			       (DmapResponseHandler) _handle_login, NULL,
 			       FALSE)) {
 			g_debug ("Could not login to DMAP server");
@@ -1462,7 +1454,7 @@ _do_something (DmapConnection * connection)
 			("/update?session-id=%u&revision-number=1",
 			 priv->session_id);
 		if (!_http_get
-		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
+		    (connection, path,
 		     (DmapResponseHandler) _handle_update, NULL, FALSE)) {
 			g_debug ("Could not get server database revision number");
 			_state_done (connection, FALSE);
@@ -1476,7 +1468,7 @@ _do_something (DmapConnection * connection)
 			("/databases?session-id=%u&revision-number=%d",
 			 priv->session_id, priv->revision_number);
 		if (!_http_get
-		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
+		    (connection, path,
 		     (DmapResponseHandler) _handle_database_info, NULL,
 		     FALSE)) {
 			g_debug ("Could not get DMAP database info");
@@ -1494,7 +1486,7 @@ _do_something (DmapConnection * connection)
 			 "&meta=%s", priv->database_id, priv->session_id,
 			 priv->revision_number, meta);
 		if (!_http_get
-		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
+		    (connection, path,
 		     (DmapResponseHandler) _handle_song_listing, NULL, TRUE)) {
 			g_debug ("Could not get DMAP song listing");
 			_state_done (connection, FALSE);
@@ -1510,7 +1502,7 @@ _do_something (DmapConnection * connection)
 			 priv->database_id, priv->session_id,
 			 priv->revision_number);
 		if (!_http_get
-		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
+		    (connection, path,
 		     (DmapResponseHandler) _handle_playlists, NULL, TRUE)) {
 			g_debug ("Could not get DMAP playlists");
 			_state_done (connection, FALSE);
@@ -1533,8 +1525,7 @@ _do_something (DmapConnection * connection)
 				 priv->database_id, playlist->id,
 				 priv->session_id, priv->revision_number);
 			if (!_http_get
-			    (connection, path, TRUE, priv->dmap_version, 0,
-			     FALSE,
+			    (connection, path,
 			     (DmapResponseHandler) _handle_playlist_entries,
 			     NULL, TRUE)) {
 				g_debug ("Could not get entries for DMAP playlist %d", priv->reading_playlist);
@@ -1550,7 +1541,7 @@ _do_something (DmapConnection * connection)
 		path = g_strdup_printf ("/logout?session-id=%u",
 					priv->session_id);
 		if (!_http_get
-		    (connection, path, TRUE, priv->dmap_version, 0, FALSE,
+		    (connection, path,
 		     (DmapResponseHandler) _handle_logout, NULL, FALSE)) {
 			g_debug ("Could not log out of DMAP server");
 			_state_done (connection, FALSE);
@@ -1856,7 +1847,8 @@ dmap_connection_emit_error(DmapConnection *connection, gint code,
 static int _status = DMAP_STATUS_OK;
 
 static void
-_error_cb(DmapConnection *share, GError *error, gpointer user_data)
+_error_cb(G_GNUC_UNUSED DmapConnection *connection, GError *error,
+          G_GNUC_UNUSED gpointer user_data)
 {
 	_status = error->code;
 }

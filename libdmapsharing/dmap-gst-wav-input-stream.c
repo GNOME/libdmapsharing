@@ -40,7 +40,7 @@ struct DmapGstWavInputStreamPrivate
 };
 
 static void
-_pad_added_cb (GstElement * element,
+_pad_added_cb (G_GNUC_UNUSED GstElement * element,
                GstPad * pad,
                GstElement *convert)
 {
