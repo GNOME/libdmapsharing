@@ -111,7 +111,7 @@ typedef struct {
 	void (*message_add_standard_headers) (DmapShare * share,
 					      SoupMessage * msg);
 	struct DmapMetaDataMap *(*get_meta_data_map) (DmapShare * share);
-	void (*add_entry_to_mlcl) (gpointer id, DmapRecord * record, gpointer mb);
+	void (*add_entry_to_mlcl) (guint id, DmapRecord * record, gpointer mb);
 	void (*databases_browse_xxx) (DmapShare * share,
 				      SoupMessage * msg,
 				      const char *path,

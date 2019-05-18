@@ -157,7 +157,7 @@ done:
 }
 
 static void
-_add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
+_add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	struct DmapMlclBits *mb = (struct DmapMlclBits *) _mb;
@@ -170,7 +170,7 @@ _add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT(id));
+		dmap_structure_add (mlit, DMAP_CC_MIID, id);
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
@@ -186,7 +186,7 @@ _add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT(id));
+		dmap_structure_add (mlit, DMAP_CC_MPER, id);
 	}
 
 	if (TRUE) {

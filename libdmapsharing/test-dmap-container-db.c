@@ -40,7 +40,7 @@ test_dmap_container_db_foreach (G_GNUC_UNUSED DmapContainerDb *db,
 				gpointer data)
 {
 	/* In reality, pull each record from the db and execute func on it. */
-        func (GUINT_TO_POINTER(1), _record, data);
+        func (1, _record, data);
 }
 
 static gint64

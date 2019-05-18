@@ -170,7 +170,7 @@ done:
 }
 
 static void
-_apply_filter (gpointer id, DmapRecord * record, gpointer data)
+_apply_filter (guint id, DmapRecord * record, gpointer data)
 {
 	g_assert(IS_DMAP_RECORD (record));
 
@@ -182,7 +182,7 @@ _apply_filter (gpointer id, DmapRecord * record, gpointer data)
 
 	fd = data;
 	if (fd->filter_def == NULL) {
-		g_hash_table_insert (fd->ht, id, g_object_ref (record));
+		g_hash_table_insert (fd->ht, GUINT_TO_POINTER(id), g_object_ref (record));
 		goto done;
 	}
 
@@ -198,8 +198,7 @@ _apply_filter (gpointer id, DmapRecord * record, gpointer data)
 			query_value = def->value;
 
 			if (g_strcmp0 (query_key, "dmap.itemid") == 0) {
-				if (GPOINTER_TO_UINT (id) ==
-				    strtoul (query_value, NULL, 10)) {
+				if (id == strtoul (query_value, NULL, 10)) {
 					accept = TRUE;
 					break;
 				}
@@ -236,7 +235,7 @@ _apply_filter (gpointer id, DmapRecord * record, gpointer data)
 		}
 	}
 	if (accept) {
-		g_hash_table_insert (fd->ht, id,
+		g_hash_table_insert (fd->ht, GUINT_TO_POINTER(id),
 				     g_object_ref (record));
 	}
 

@@ -83,7 +83,7 @@ typedef struct _DmapDbInterface DmapDbInterface;
  *
  * The type of function passed to dmap_db_foreach().
  */
-typedef void (*DmapIdRecordFunc) (gpointer id, DmapRecord *record, gpointer user_data);
+typedef void (*DmapIdRecordFunc) (guint id, DmapRecord *record, gpointer user_data);
 
 struct _DmapDbInterface
 {

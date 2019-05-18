@@ -72,7 +72,9 @@ typedef struct _DmapContainerDbInterface DmapContainerDbInterface;
  *
  * The type of function passed to dmap_container_db_foreach().
  */
-typedef void (*DmapIdContainerRecordFunc) (gpointer id, DmapContainerRecord *record, gpointer user_data);
+typedef void (*DmapIdContainerRecordFunc) (guint id,
+                                           DmapContainerRecord *record,
+                                           gpointer user_data);
 
 struct _DmapContainerDbInterface
 {

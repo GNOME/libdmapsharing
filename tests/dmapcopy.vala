@@ -26,7 +26,7 @@ private class DPAPCopy {
 	private ValaDmapDb db;
 	private ValaImageRecordFactory factory;
 
-	private bool connected_cb (Dmap.Connection connection, bool result, string? reason) {
+	private void connected_cb (Dmap.Connection connection, bool result, string? reason) {
 		GLib.debug ("%" + int64.FORMAT + " entries\n", db.count ());
 
 		db.foreach ((k, v) => {
@@ -53,8 +53,6 @@ private class DPAPCopy {
 			data_stream.write (message.response_body.data, (size_t) message.response_body.length, null);
 			*/
 		});
-
-		return true;
 	}
 
 	public DPAPCopy () throws GLib.Error {

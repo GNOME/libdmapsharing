@@ -60,7 +60,7 @@ static void _databases_items_xxx (DmapShare * share,
                                   SoupMessage * msg,
                                   const char *path);
 static struct DmapMetaDataMap *_get_meta_data_map (DmapShare * share);
-static void _add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer mb);
+static void _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer mb);
 
 #define DAAP_TYPE_OF_SERVICE "_daap._tcp"
 #define DAAP_PORT 3689
@@ -501,7 +501,7 @@ done:
 }
 
 static void
-_add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
+_add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 {
 	GNode *mlit;
 	gboolean has_video = 0;
@@ -516,7 +516,7 @@ _add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MIID, GPOINTER_TO_UINT(id));
+		dmap_structure_add (mlit, DMAP_CC_MIID, id);
 	}
 
 	if (dmap_share_client_requested (mb->bits, ITEM_NAME)) {
@@ -532,11 +532,11 @@ _add_entry_to_mlcl (gpointer id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, PERSISTENT_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MPER, GPOINTER_TO_UINT(id));
+		dmap_structure_add (mlit, DMAP_CC_MPER, id);
 	}
 
 	if (dmap_share_client_requested (mb->bits, CONTAINER_ITEM_ID)) {
-		dmap_structure_add (mlit, DMAP_CC_MCTI, GPOINTER_TO_UINT(id));
+		dmap_structure_add (mlit, DMAP_CC_MCTI, id);
 	}
 
 	if (dmap_share_client_requested (mb->bits, SONG_DATA_KIND)) {

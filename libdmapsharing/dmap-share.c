@@ -1182,7 +1182,7 @@ done:
 }
 
 void
-dmap_share_add_playlist_to_mlcl (G_GNUC_UNUSED gpointer id,
+dmap_share_add_playlist_to_mlcl (G_GNUC_UNUSED guint id,
                                  DmapContainerRecord * record,
                                  gpointer _mb)
 {
@@ -1535,11 +1535,11 @@ dmap_share_ctrl_int (G_GNUC_UNUSED DmapShare * share,
 }
 
 static void
-_accumulate_mlcl_size_and_ids (gpointer id,
+_accumulate_mlcl_size_and_ids (guint id,
                                DmapRecord * record,
                                struct share_bitwise_t *share_bitwise)
 {
-	share_bitwise->id_list = g_slist_append (share_bitwise->id_list, id);
+	share_bitwise->id_list = g_slist_append (share_bitwise->id_list, GUINT_TO_POINTER(id));
 
 	/* Make copy and set mlcl to NULL so real MLCL does not get changed */
 	struct DmapMlclBits mb_copy = share_bitwise->mb;
@@ -1558,6 +1558,16 @@ _accumulate_mlcl_size_and_ids (gpointer id,
 
 	/* Destroy created structures as we go. */
 	dmap_structure_destroy (mb_copy.mlcl);
+}
+
+static void
+_accumulate_mlcl_size_and_ids_adapter (gpointer id,
+                                       DmapRecord * record,
+                                       struct share_bitwise_t *share_bitwise)
+{
+	_accumulate_mlcl_size_and_ids(GPOINTER_TO_UINT(id),
+	                              record,
+	                              share_bitwise);
 }
 
 static void
@@ -1593,7 +1603,7 @@ _write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		mb.share = share_bitwise->mb.share;
 
 		DMAP_SHARE_GET_CLASS (share_bitwise->mb.share)->
-			add_entry_to_mlcl (share_bitwise->id_list->data, record, &mb);
+			add_entry_to_mlcl (GPOINTER_TO_UINT(share_bitwise->id_list->data), record, &mb);
 		data = dmap_structure_serialize (g_node_first_child (mb.mlcl),
 						 &length);
 
@@ -1852,7 +1862,7 @@ dmap_share_databases (DmapShare * share,
 				_lookup_adapter;
 			share_bitwise->destroy = (ShareBitwiseDestroyFunc) g_hash_table_destroy;
 			g_hash_table_foreach (records,
-					     (GHFunc) _accumulate_mlcl_size_and_ids,
+					     (GHFunc) _accumulate_mlcl_size_and_ids_adapter,
 					      share_bitwise);
 		} else {
 			share_bitwise->db = share->priv->db;
@@ -2040,7 +2050,7 @@ dmap_share_databases (DmapShare * share,
 			for (id = keys; id; id = id->next) {
 				(*
 				 (DMAP_SHARE_GET_CLASS (share)->
-				  add_entry_to_mlcl)) (id->data,
+				  add_entry_to_mlcl)) (GPOINTER_TO_UINT(id->data),
 						       g_hash_table_lookup
 						       (records, id->data),
 						       &mb);

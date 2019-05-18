@@ -117,10 +117,10 @@ gpointer value_get_dpap_copy (const GValue* value);
 GType dpap_copy_get_type (void) G_GNUC_CONST;
 GType vala_dmap_db_get_type (void) G_GNUC_CONST;
 GType vala_image_record_factory_get_type (void) G_GNUC_CONST;
-static gboolean dpap_copy_connected_cb (DPAPCopy* self,
-                                 DmapConnection* connection,
-                                 gboolean _result_,
-                                 const gchar* reason);
+static void dpap_copy_connected_cb (DPAPCopy* self,
+                             DmapConnection* connection,
+                             gboolean _result_,
+                             const gchar* reason);
 static void __lambda4_ (DPAPCopy* self,
                  guint k,
                  DmapRecord* v);
@@ -139,10 +139,10 @@ ValaImageRecordFactory* vala_image_record_factory_construct (GType object_type);
 static void __lambda5_ (DPAPCopy* self,
                  DmapMdnsBrowser* browser,
                  DmapMdnsService* service);
-static gboolean _dpap_copy_connected_cb_dmap_connection_func (DmapConnection* connection,
-                                                       gboolean _result_,
-                                                       const gchar* reason,
-                                                       gpointer self);
+static void _dpap_copy_connected_cb_dmap_connection_func (DmapConnection* connection,
+                                                   gboolean _result_,
+                                                   const gchar* reason,
+                                                   gpointer self);
 static void ___lambda5__dmap_mdns_browser_service_added (DmapMdnsBrowser* _sender,
                                                   DmapMdnsService* service,
                                                   gpointer self);
@@ -189,34 +189,29 @@ ___lambda4__dmap_id_record_func (guint id,
 	__lambda4_ ((DPAPCopy*) self, id, record);
 }
 
-static gboolean
+static void
 dpap_copy_connected_cb (DPAPCopy* self,
                         DmapConnection* connection,
                         gboolean _result_,
                         const gchar* reason)
 {
-	gboolean result = FALSE;
 	ValaDmapDb* _tmp0_;
 	ValaDmapDb* _tmp1_;
-	g_return_val_if_fail (self != NULL, FALSE);
-	g_return_val_if_fail (connection != NULL, FALSE);
+	g_return_if_fail (self != NULL);
+	g_return_if_fail (connection != NULL);
 	_tmp0_ = self->priv->db;
 	g_debug ("%" G_GINT64_FORMAT " entries\n", dmap_db_count ((DmapDb*) _tmp0_));
 	_tmp1_ = self->priv->db;
 	dmap_db_foreach ((DmapDb*) _tmp1_, ___lambda4__dmap_id_record_func, self);
-	result = TRUE;
-	return result;
 }
 
-static gboolean
+static void
 _dpap_copy_connected_cb_dmap_connection_func (DmapConnection* connection,
                                               gboolean _result_,
                                               const gchar* reason,
                                               gpointer self)
 {
-	gboolean result;
-	result = dpap_copy_connected_cb ((DPAPCopy*) self, connection, _result_, reason);
-	return result;
+	dpap_copy_connected_cb ((DPAPCopy*) self, connection, _result_, reason);
 }
 
 static void

@@ -70,9 +70,9 @@ DmapBits dmap_share_parse_meta (GHashTable * query,
 DmapBits dmap_share_parse_meta_str (const char *attrs,
 				    struct DmapMetaDataMap *mdm);
 
-void dmap_share_add_playlist_to_mlcl (gpointer id,
-				       DmapContainerRecord * record,
-				       gpointer mb);
+void dmap_share_add_playlist_to_mlcl (guint id,
+                                      DmapContainerRecord * record,
+                                      gpointer mb);
 
 GSList *dmap_share_build_filter (gchar * filterstr);
 

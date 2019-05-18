@@ -35,12 +35,26 @@ test_dmap_db_lookup_by_id (const DmapDb *db, guint id)
 	return g_object_ref(record);
 }
 
+struct package {
+	DmapIdRecordFunc func;
+	gpointer data;
+};
+
 static void
-test_dmap_db_foreach	     (const DmapDb *db,
-			      DmapIdRecordFunc func,
-			      gpointer data)
+_adapter(gpointer id, DmapRecord *record, gpointer user_data)
 {
-	g_hash_table_foreach (TEST_DMAP_DB (db)->priv->db, (GHFunc) func, data);
+	struct package *p = user_data;
+	return p->func(GPOINTER_TO_UINT(id), record, p->data);
+}
+
+static void
+test_dmap_db_foreach(const DmapDb *db,
+                     DmapIdRecordFunc func,
+                     gpointer data)
+{
+	g_hash_table_foreach (TEST_DMAP_DB (db)->priv->db,
+                             (GHFunc) _adapter,
+	                      &(struct package) { func, data });
 }
 
 static gint64

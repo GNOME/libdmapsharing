@@ -27,7 +27,7 @@ private class DpapViewer {
 	private ValaDmapDb db;
 	private ValaImageRecordFactory factory;
 
-	private bool connected_cb (Dmap.Connection connection, bool result, string? reason) {
+	private void connected_cb (Dmap.Connection connection, bool result, string? reason) {
 		GLib.debug ("%" + int64.FORMAT + " entries\n", db.count ());
 
 		db.foreach ((k, v) => {
@@ -45,8 +45,6 @@ private class DpapViewer {
 			liststore.append (out iter);
 			liststore.set (iter, 0, pixbuf, 1, ((ValaImageRecord) v).filename);
 		});
-
-		return true;
 	}
 
 	public DpapViewer (Gtk.Builder builder) throws GLib.Error {
