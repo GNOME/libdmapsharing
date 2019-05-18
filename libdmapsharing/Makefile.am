@@ -204,11 +204,6 @@ CLEANFILES += $(gir_DATA) $(typelib_DATA)
 endif
 
 check:
-	../tests/unit-test
-	set -e; for i in $(libdmapsharing_4_0_la_SOURCES); do \
-		gcov -r -o $(patsubst %.c,%.o,.libs/libdmapsharing_4_0_la-$$i) $$i > /dev/null; \
-	done
-	../tests/summarize-coverage $(patsubst %,%.gcov,$(libdmapsharing_4_0_la_SOURCES))
 if HAVE_PEDANSEE
 	echo    "[flags]" > pedansee.conf
 	echo    "	skip-unit-test-present = true" >> pedansee.conf
@@ -222,9 +217,9 @@ if HAVE_PEDANSEE
 	echo -n "g_string_ascii_up;" >> pedansee.conf
 	echo -n "g_string_append_len;" >> pedansee.conf
 	echo >> pedansee.conf
-	echo    "[ignore-entirely]" >> pedansee.conf
-	echo    "	# Ignore CPP-generated GObject code." >> pedansee.conf
-	echo -n "	name = " >> pedansee.conf
+	echo    "[ignore-entirely]" >>pedansee.conf
+	echo    "       # Ignore CPP-generated GObject code." >>pedansee.conf
+	echo -n "       name = " >>pedansee.conf
 	echo -n  	      "dmap_mdns_browser_new;" >> pedansee.conf
 	echo -n  	      "dmap_mdns_browser_start;" >> pedansee.conf
 	echo -n  	      "dmap_mdns_browser_stop;" >> pedansee.conf
@@ -237,37 +232,78 @@ if HAVE_PEDANSEE
 	echo -n		      "dmap_mdns_publisher_publish;" >> pedansee.conf
 	echo -n		      "dmap_mdns_publisher_withdraw;" >> pedansee.conf
 	echo -n		      "dmap_connection_get;" >> pedansee.conf
-	for i in $$(grep G_DEFINE_INTERFACE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
-		echo -n $${i}_default_init\;; \
-		echo -n $${i}_get_type\;; \
-	done >> pedansee.conf
-	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
-		echo -n $${i}_class_init\;; \
-		echo -n $${i}_class_intern_init\;; \
-		echo -n $${i}_get_instance_private\;; \
-		echo -n $${i}_get_type\;; \
-		echo -n $${i}_init\;; \
-		echo -n $${i}_parent_class\;; \
-	done >> pedansee.conf
-	for i in $$(grep G_DEFINE_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
-		echo -n $${i}_private_offset\;; \
-	done >> pedansee.conf
-	for i in $$(grep G_DEFINE_ABSTRACT_TYPE *.c | sed 's/[^,]*, \([^,]*\),.*/\1/g'); do \
-		echo -n $${i}_class_init\;; \
-		echo -n $${i}_class_intern_init\;; \
-		echo -n $${i}_get_instance_private\;; \
-		echo -n $${i}_init\;; \
-		echo -n $${i}_parent_class\;; \
-	done >> pedansee.conf
-	for i in $$(grep G_DEFINE_ABSTRACT_TYPE *.c | sed 's/.*(\([^,]*\),.*/\1/g'); do \
-		echo -n $${i}_private_offset\;; \
-	done >> pedansee.conf
+	for i in $$(grep -l G_DEFINE_INTERFACE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_INTERFACE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
+		echo -n $${j}_default_init\;; \
+		echo -n $${j}_get_type\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_TYPE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_TYPE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
+		echo -n $${j}_class_init\;; \
+		echo -n $${j}_class_intern_init\;; \
+		echo -n $${j}_get_instance_private\;; \
+		echo -n $${j}_get_type\;; \
+		echo -n $${j}_get_type_once\;; \
+		echo -n $${j}_init\;; \
+		echo -n $${j}_parent_class\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_TYPE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_TYPE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
+		echo -n $${j}_private_offset\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_DYNAMIC_TYPE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_DYNAMIC_TYPE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
+		echo -n $${j}_class_init\;; \
+		echo -n $${j}_class_finalize\;; \
+		echo -n $${j}_init\;; \
+		echo -n $${j}_parent_class\;; \
+		echo -n $${j}_type_id\;; \
+		echo -n $${j}_register_type\;; \
+		echo -n $${j}_class_intern_init\;; \
+		echo -n $${j}_get_instance_private\;; \
+		echo -n $${j}_register_type\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_DYNAMIC_TYPE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_DYNAMIC_TYPE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
+		echo -n $${j}_private_offset\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_DYNAMIC_TYPE_EXTENDED *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_DYNAMIC_TYPE_EXTENDED/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
+		echo -n $${j}_class_finalize\;; \
+		echo -n $${j}_register_type\;; \
+		echo -n $${j}_init\;; \
+		echo -n $${j}_parent_class\;; \
+		echo -n $${j}_type_id\;; \
+		echo -n $${j}_intern_init\;; \
+		echo -n $${j}_get_instance_private\;; \
+		echo -n $${j}_register_type\;; \
+		echo -n $${j}_class_intern_init\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_DYNAMIC_TYPE_EXTENDED *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_DYNAMIC_TYPE_EXTENDED/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
+		echo -n $${j}_private_offset\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_ABSTRACT_TYPE_WITH_CODE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_ABSTRACT_TYPE_WITH_CODE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
+		echo -n $${j}_init\;; \
+		echo -n $${j}_class_init\;; \
+		echo -n $${j}_get_type_once\;; \
+		echo -n $${j}_parent_class\;; \
+		echo -n $${j}_get_instance_private\;; \
+		echo -n $${j}_class_intern_init\;; \
+	done >>pedansee.conf
+	for i in $$(grep -l G_DEFINE_ABSTRACT_TYPE_WITH_CODE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_ABSTRACT_TYPE_WITH_CODE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
+		echo -n $${j}_private_offset\;; \
+	done >>pedansee.conf
+
 	set -e; for i in $(libdmapsharing_4_0_la_SOURCES); do \
 		if [ $$i = dmap-enums.c ]; then # Skip this generated code. \
 			continue; \
 		fi; \
 		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_4_0_la_CFLAGS); \
 	done
+
 	set -e; for i in $(libdmapsharinginclude_HEADERS) \
 	                 $(noinst_HEADERS); do \
 		if [ $$i = dmap-enums.h ]; then # Skip this generated code. \
@@ -276,11 +312,19 @@ if HAVE_PEDANSEE
 		if [ $$i = dmap-marshal.h ]; then # Skip this generated code. \
 			continue; \
 		fi; \
-		if [ $$i = dmap-share-private.h ]; then # Skip this generated code. \
+		if [ $$i = dmap-share-private.h ]; then # Skip this code. \
+			continue; \
+		fi; \
+		if [ $$i = dmap-connection-private.h ]; then # Skip this code. \
 			continue; \
 		fi; \
 		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_4_0_la_CFLAGS); \
 	done
 endif
+	../tests/unit-test
+	set -e; for i in $(libdmapsharing_4_0_la_SOURCES); do \
+		gcov -r -o $(patsubst %.c,%.o,.libs/libdmapsharing_4_0_la-$$i) $$i > /dev/null; \
+	done
+	../tests/summarize-coverage $(patsubst %,%.gcov,$(libdmapsharing_4_0_la_SOURCES))
 
 EXTRA_DIST = dmap-marshal.list generate-test-suites
