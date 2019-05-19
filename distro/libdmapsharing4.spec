@@ -1,5 +1,5 @@
 Name: libdmapsharing4
-Version: 3.9.4
+Version: 3.9.7
 Release: 1%{?dist}
 Summary: A DMAP client and server library
 
@@ -71,6 +71,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %changelog
+* Sun May 19 2018 W. Michael Petullo <mike[@]flyn.org> - 3.9.7-1
+- new upstream version
+
 * Sun Mar 18 2018 W. Michael Petullo <mike[@]flyn.org> - 3.9.1-1
 - new upstream version with new API
 
