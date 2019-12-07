@@ -44,13 +44,13 @@
 #include <libdmapsharing/dmap-gst-input-stream.h>
 #endif /* HAVE_GSTREAMERAPP */
 
-guint dmap_av_share_get_desired_port (DmapShare * share);
-const char *dmap_av_share_get_type_of_service (DmapShare * share);
-void dmap_av_share_server_info (DmapShare * share,
-			     SoupMessage * message,
-			     const char *path);
-void dmap_av_share_message_add_standard_headers (DmapShare * share,
-					      SoupMessage * message);
+static guint _get_desired_port (DmapShare * share);
+static const char *_get_type_of_service (DmapShare * share);
+static void _server_info (DmapShare * share,
+                          SoupMessage * message,
+                          const char *path);
+static void _message_add_standard_headers (DmapShare * share,
+                                           SoupMessage * message);
 static void _databases_browse_xxx (DmapShare * share,
                                    SoupMessage * msg,
                                    const char *path,
@@ -73,15 +73,14 @@ dmap_av_share_class_init (DmapAvShareClass * klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DmapShareClass *parent_class = DMAP_SHARE_CLASS (object_class);
 
-	parent_class->get_desired_port = dmap_av_share_get_desired_port;
-	parent_class->get_type_of_service = dmap_av_share_get_type_of_service;
-	parent_class->message_add_standard_headers =
-		dmap_av_share_message_add_standard_headers;
+	parent_class->get_desired_port = _get_desired_port;
+	parent_class->get_type_of_service = _get_type_of_service;
+	parent_class->message_add_standard_headers = _message_add_standard_headers;
 	parent_class->get_meta_data_map = _get_meta_data_map;
 	parent_class->add_entry_to_mlcl = _add_entry_to_mlcl;
 	parent_class->databases_browse_xxx = _databases_browse_xxx;
 	parent_class->databases_items_xxx = _databases_items_xxx;
-	parent_class->server_info = dmap_av_share_server_info;
+	parent_class->server_info = _server_info;
 }
 
 static void
@@ -105,9 +104,9 @@ dmap_av_share_new (const char *name,
 	                                    transcode_mimetype, NULL));
 }
 
-void
-dmap_av_share_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
-					 SoupMessage * message)
+static void
+_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
+                               SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DMAP-Server",
 				     "libdmapsharing" VERSION);
@@ -117,22 +116,22 @@ dmap_av_share_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
 #define DAAP_VERSION 3.0
 #define DAAP_TIMEOUT 1800
 
-guint
-dmap_av_share_get_desired_port (G_GNUC_UNUSED DmapShare * share)
+static guint
+_get_desired_port (G_GNUC_UNUSED DmapShare * share)
 {
 	return DAAP_PORT;
 }
 
-const char *
-dmap_av_share_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
+static const char *
+_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DAAP_TYPE_OF_SERVICE;
 }
 
-void
-dmap_av_share_server_info (DmapShare * share,
-                           SoupMessage * message,
-                           const char *path)
+static void
+_server_info (DmapShare * share,
+              SoupMessage * message,
+              const char *path)
 {
 /* MSRV	server info response
  * 	MSTT status
@@ -1350,25 +1349,25 @@ START_TEST(_should_transcode_test_yes_trancode_mimetype_to_mp4)
 }
 END_TEST
 
-START_TEST(dmap_av_share_get_desired_port_test)
+START_TEST(_get_desired_port_test)
 {
-	DmapShare *share = _build_share_test("dmap_av_share_get_desired_port_test");
-	ck_assert_int_eq(DAAP_PORT, dmap_av_share_get_desired_port(share));
+	DmapShare *share = _build_share_test("_get_desired_port_test");
+	ck_assert_int_eq(DAAP_PORT, _get_desired_port(share));
 	g_object_unref(share);
 }
 END_TEST
 
-START_TEST(dmap_av_share_get_type_of_service_test)
+START_TEST(_get_type_of_service_test)
 {
-	DmapShare *share = _build_share_test("dmap_av_share_get_type_of_service_test");
-	ck_assert_str_eq(DAAP_TYPE_OF_SERVICE, dmap_av_share_get_type_of_service(share));
+	DmapShare *share = _build_share_test("_get_type_of_service_test");
+	ck_assert_str_eq(DAAP_TYPE_OF_SERVICE, _get_type_of_service(share));
 	g_object_unref(share);
 }
 END_TEST
 
-START_TEST(dmap_av_share_server_info_test)
+START_TEST(_server_info_test)
 {
-	char *nameprop = "dmap_av_share_server_info_test";
+	char *nameprop = "_server_info_test";
 	DmapShare *share;
 	SoupMessage *message;
 	SoupMessageBody *body;
@@ -1384,7 +1383,7 @@ START_TEST(dmap_av_share_server_info_test)
 	/* Causes auth. method to be set to DMAP_SHARE_AUTH_METHOD_PASSWORD. */
 	g_object_set(share, "password", "password", NULL);
 
-	dmap_av_share_server_info(share, message, "/");
+	_server_info(share, message, "/");
 
 	g_object_get(message, "response-body", &body, NULL);
 	buffer = soup_message_body_flatten(body);
@@ -1444,14 +1443,14 @@ START_TEST(dmap_av_share_server_info_test)
 }
 END_TEST
 
-START_TEST(dmap_av_share_message_add_standard_headers_test)
+START_TEST(_message_add_standard_headers_test)
 {
 	const char *header;
 	DmapShare *share;
 	SoupMessage *message;
 	SoupMessageHeaders *headers;
 
-	share = _build_share_test("dmap_av_share_message_add_standard_headers_test");
+	share = _build_share_test("_message_add_standard_headers_test");
 	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
 
 	soup_message_headers_append(message->response_headers,

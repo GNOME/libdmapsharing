@@ -45,13 +45,10 @@
 #include <libdmapsharing/dmap-private-utils.h>
 #include <libdmapsharing/dmap-structure.h>
 
-guint dmap_image_share_get_desired_port (DmapShare * share);
-const char *dmap_image_share_get_type_of_service (DmapShare * share);
-void dmap_image_share_server_info (DmapShare * share,
-                                   SoupMessage * message,
-                                   const char *path);
-void dmap_image_share_message_add_standard_headers (DmapShare * share,
-					      SoupMessage * message);
+static guint _get_desired_port (DmapShare * share);
+static const char *_get_type_of_service (DmapShare * share);
+static void _server_info (DmapShare * share, SoupMessage * message, const char *path);
+static void _message_add_standard_headers (DmapShare * share, SoupMessage * message);
 
 #define DPAP_TYPE_OF_SERVICE "_dpap._tcp"
 #define DPAP_PORT 8770
@@ -429,15 +426,14 @@ dmap_image_share_class_init (DmapImageShareClass * klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	DmapShareClass *parent_class = DMAP_SHARE_CLASS (object_class);
 
-	parent_class->get_desired_port = dmap_image_share_get_desired_port;
-	parent_class->get_type_of_service = dmap_image_share_get_type_of_service;
-	parent_class->message_add_standard_headers =
-		dmap_image_share_message_add_standard_headers;
+	parent_class->get_desired_port = _get_desired_port;
+	parent_class->get_type_of_service = _get_type_of_service;
+	parent_class->message_add_standard_headers = _message_add_standard_headers;
 	parent_class->get_meta_data_map = _get_meta_data_map;
 	parent_class->add_entry_to_mlcl = _add_entry_to_mlcl;
 	parent_class->databases_browse_xxx = _databases_browse_xxx;
 	parent_class->databases_items_xxx = _databases_items_xxx;
-	parent_class->server_info = dmap_image_share_server_info;
+	parent_class->server_info = _server_info;
 }
 
 static void
@@ -468,9 +464,8 @@ dmap_image_share_new (const char *name,
 	                                       NULL));
 }
 
-void
-dmap_image_share_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
-                                               SoupMessage * message)
+static void
+_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share, SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DPAP-Server",
 				     "libdmapsharing" VERSION);
@@ -480,22 +475,20 @@ dmap_image_share_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
 #define DPAP_VERSION 1.1
 #define DPAP_TIMEOUT 1800
 
-guint
-dmap_image_share_get_desired_port (G_GNUC_UNUSED DmapShare * share)
+static guint
+_get_desired_port (G_GNUC_UNUSED DmapShare * share)
 {
 	return DPAP_PORT;
 }
 
-const char *
-dmap_image_share_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
+static const char *
+_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DPAP_TYPE_OF_SERVICE;
 }
 
-void
-dmap_image_share_server_info (DmapShare * share,
-                              SoupMessage * message,
-                              const char *path)
+static void
+_server_info (DmapShare * share, SoupMessage * message, const char *path)
 {
 /* MSRV	server info response
  * 	MSTT status
