@@ -23,16 +23,16 @@
 private class ValaDmapContainerDb : GLib.Object, Dmap.ContainerDb {
 	// A dumb database that stores everything in an array
 
-	private Gee.ArrayList<Dmap.Record> db = new Gee.ArrayList<Dmap.Record> ();
+	private Gee.ArrayList<Dmap.ContainerRecord> db = new Gee.ArrayList<Dmap.ContainerRecord> ();
 
 	public int64 count () {
 		return db.size;
 	}
 
-	public void @foreach (GLib.HFunc func) {
+	public void @foreach (Dmap.IdContainerRecordFunc func) {
 		int i;
 		for (i = 0; i < db.size; i++) {
-			func (i.to_pointer (), db[i]);
+			func (i, db[i]);
 		}
 	}
 

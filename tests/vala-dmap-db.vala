@@ -43,12 +43,12 @@ private class ValaDmapDb : GLib.Object, Dmap.Db {
 		return db.size;
 	}
 
-	public void @foreach (GLib.HFunc func) {
+	public void @foreach (Dmap.IdRecordFunc func) {
 		int i;
 		for (i = 0; i < db.size; i++) {
 			// NOTE: iPhoto does not like a record ID of 0,
 			// so we pretend to start with 1
-			func ((i + 1).to_pointer (), db[i]);
+			func (i + 1, db[i]);
 		}
 	}
 
