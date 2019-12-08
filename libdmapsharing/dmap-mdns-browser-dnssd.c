@@ -582,7 +582,7 @@ dmap_mdns_browser_error_quark (void)
 	return quark;
 }
 
-G_CONST_RETURN GSList *
+const GSList *
 dmap_mdns_browser_get_services (DmapMdnsBrowser * browser)
 {
 	g_assert(NULL != browser);

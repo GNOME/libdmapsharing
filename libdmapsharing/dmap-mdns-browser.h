@@ -141,7 +141,7 @@ gboolean dmap_mdns_browser_stop (DmapMdnsBrowser * browser, GError ** error);
  *
  * Returns: (element-type DmapMdnsService) (transfer none): services available to @browser.
  */
-G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DmapMdnsBrowser *
+const GSList *dmap_mdns_browser_get_services (DmapMdnsBrowser *
 						       browser);
 DmapMdnsServiceType dmap_mdns_browser_get_service_type (DmapMdnsBrowser
 							       * browser);

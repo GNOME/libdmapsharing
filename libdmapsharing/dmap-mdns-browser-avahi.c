@@ -285,7 +285,7 @@ dmap_mdns_browser_stop (DmapMdnsBrowser * browser, GError ** error)
 	return TRUE;
 }
 
-G_CONST_RETURN GSList *
+const GSList *
 dmap_mdns_browser_get_services (DmapMdnsBrowser * browser)
 {
 	g_return_val_if_fail (browser != NULL, NULL);
