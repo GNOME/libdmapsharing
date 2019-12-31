@@ -60,28 +60,28 @@ test_dmap_container_record_get_property (GObject *object,
 }
 
 
-guint
-test_dmap_container_record_get_id (G_GNUC_UNUSED DmapContainerRecord *record)
+static guint
+_get_id (G_GNUC_UNUSED DmapContainerRecord *record)
 {
 	return 2;
 }
 
-void
-test_dmap_container_record_add_entry (G_GNUC_UNUSED DmapContainerRecord *container_record,
-                                      G_GNUC_UNUSED DmapRecord *record,
-                                      G_GNUC_UNUSED gint id,
-                                      G_GNUC_UNUSED GError **error)
+static void
+_add_entry (G_GNUC_UNUSED DmapContainerRecord *container_record,
+            G_GNUC_UNUSED DmapRecord *record,
+            G_GNUC_UNUSED gint id,
+            G_GNUC_UNUSED GError **error)
 {
 }
 
-guint64 
-test_dmap_container_record_get_entry_count (G_GNUC_UNUSED DmapContainerRecord *record)
+static guint64
+_get_entry_count (G_GNUC_UNUSED DmapContainerRecord *record)
 {
         return 1;
 }
 
-DmapDb *
-test_dmap_container_record_get_entries (G_GNUC_UNUSED DmapContainerRecord *record)
+static DmapDb *
+_get_entries (G_GNUC_UNUSED DmapContainerRecord *record)
 {
 	return g_object_ref (_entries);
 }
@@ -110,10 +110,10 @@ _dmap_container_record_iface_init (gpointer iface)
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_container_record) == DMAP_TYPE_CONTAINER_RECORD);
 
-	dmap_container_record->get_id = test_dmap_container_record_get_id;
-	dmap_container_record->add_entry = test_dmap_container_record_add_entry;
-	dmap_container_record->get_entry_count = test_dmap_container_record_get_entry_count;
-	dmap_container_record->get_entries = test_dmap_container_record_get_entries;
+	dmap_container_record->get_id = _get_id;
+	dmap_container_record->add_entry = _add_entry;
+	dmap_container_record->get_entry_count = _get_entry_count;
+	dmap_container_record->get_entries = _get_entries;
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDmapContainerRecord, test_dmap_container_record, G_TYPE_OBJECT, 

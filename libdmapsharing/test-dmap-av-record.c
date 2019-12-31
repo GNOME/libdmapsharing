@@ -244,7 +244,7 @@ test_dmap_av_record_get_property (GObject *object,
         }
 }
 
-gboolean test_dmap_av_record_itunes_compat (DmapAvRecord *record)
+static gboolean _itunes_compat (DmapAvRecord *record)
 {
 	const gchar *format = TEST_DMAP_AV_RECORD (record)->priv->format;
 
@@ -255,7 +255,7 @@ gboolean test_dmap_av_record_itunes_compat (DmapAvRecord *record)
 	}
 }
 
-GInputStream *test_dmap_av_record_read (DmapAvRecord *record, GError **error)
+static GInputStream *_read (DmapAvRecord *record, GError **error)
 {
 	GFile *file;
 	GInputStream *stream;
@@ -324,8 +324,8 @@ _dmap_av_record_iface_init (gpointer iface)
 
 	g_assert (G_TYPE_FROM_INTERFACE (dmap_av_record) == DMAP_TYPE_AV_RECORD);
 
-	dmap_av_record->itunes_compat = test_dmap_av_record_itunes_compat;
-	dmap_av_record->read = test_dmap_av_record_read;
+	dmap_av_record->itunes_compat = _itunes_compat;
+	dmap_av_record->read = _read;
 }
 
 static void
