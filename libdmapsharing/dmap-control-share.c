@@ -85,8 +85,6 @@ typedef struct {
 	DmapConnection *connection;
 } DACPRemoteInfo;
 
-#define DMAP_CONTROL_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONTROL_SHARE, DmapControlSharePrivate))
-
 enum {
 	PROP_0,
 	PROP_LIBRARY_NAME,
@@ -106,10 +104,9 @@ enum {
 
 static guint _signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE_WITH_CODE (DmapControlShare,
-                         dmap_control_share,
-                         DMAP_TYPE_SHARE,
-                         G_ADD_PRIVATE (DmapControlShare));
+G_DEFINE_TYPE_WITH_PRIVATE (DmapControlShare,
+                            dmap_control_share,
+                            DMAP_TYPE_SHARE);
 
 static gchar *
 _get_dbid (void)
@@ -372,8 +369,6 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 static void
 dmap_control_share_init (DmapControlShare * share)
 {
-	share->priv = DMAP_CONTROL_SHARE_GET_PRIVATE (share);
-
 	share->priv->current_revision = 2;
 
 	share->priv->remotes = g_hash_table_new_full ((GHashFunc) g_str_hash,

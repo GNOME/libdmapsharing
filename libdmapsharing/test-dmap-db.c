@@ -74,18 +74,6 @@ test_dmap_db_add (DmapDb *db, DmapRecord *record, G_GNUC_UNUSED GError **error)
 }
 
 static void
-test_dmap_db_init (TestDmapDb *db)
-{
-	db->priv = TEST_DMAP_DB_GET_PRIVATE (db);
-	db->priv->db = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
-
-	/* Media ID's start at max and go down.
-	 * Container ID's start at 1 and go up.
-	 */
-	db->priv->nextid = G_MAXINT;
-}
-
-static void
 _dmap_db_iface_init (gpointer iface)
 {
 	DmapDbInterface *dmap_db = iface;
@@ -102,6 +90,19 @@ G_DEFINE_TYPE_WITH_CODE (TestDmapDb, test_dmap_db, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (DMAP_TYPE_DB,
                                                 _dmap_db_iface_init)
                          G_ADD_PRIVATE (TestDmapDb))
+
+static void
+test_dmap_db_init (TestDmapDb *db)
+{
+	db->priv = test_dmap_db_get_instance_private(db);
+
+	db->priv->db = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
+
+	/* Media ID's start at max and go down.
+	 * Container ID's start at 1 and go up.
+	 */
+	db->priv->nextid = G_MAXINT;
+}
 
 static void
 _finalize(GObject *object)

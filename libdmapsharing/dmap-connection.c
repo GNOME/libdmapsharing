@@ -84,12 +84,15 @@ struct DmapConnectionPrivate
 	char *last_error_message;
 };
 
-G_DEFINE_TYPE_WITH_CODE (DmapConnection,
-                         dmap_connection,
-                         G_TYPE_OBJECT,
-                         G_ADD_PRIVATE (DmapConnection));
+G_DEFINE_TYPE_WITH_PRIVATE (DmapConnection,
+                            dmap_connection,
+                            G_TYPE_OBJECT);
 
-#define DMAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONNECTION, DmapConnectionPrivate))
+static void
+dmap_connection_init (DmapConnection * connection)
+{
+	connection->priv = dmap_connection_get_instance_private(connection);
+}
 
 enum
 {
@@ -479,12 +482,6 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 		              0, NULL, NULL,
 		              g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1,
 		              G_TYPE_POINTER);
-}
-
-static void
-dmap_connection_init (DmapConnection * connection)
-{
-	connection->priv = DMAP_CONNECTION_GET_PRIVATE (connection);
 }
 
 static void

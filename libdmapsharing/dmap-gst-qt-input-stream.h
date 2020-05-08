@@ -42,9 +42,6 @@ G_BEGIN_DECLS
 #define DMAP_GST_QT_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_QT_INPUT_STREAM, \
 					       DmapGstQtInputStreamClass))
-#define DMAP_GST_QT_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-					   DMAP_TYPE_GST_QT_INPUT_STREAM, \
-					   DmapGstQtInputStreamPrivate))
 typedef struct DmapGstQtInputStreamPrivate DmapGstQtInputStreamPrivate;
 
 typedef struct {

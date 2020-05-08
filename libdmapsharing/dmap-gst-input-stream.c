@@ -47,10 +47,6 @@ struct DmapGstInputStreamPrivate
 	gboolean buffer_closed;	/* May close before decoding complete */
 };
 
-#define DMAP_GST_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-					   DMAP_TYPE_GST_INPUT_STREAM, \
-					   DmapGstInputStreamPrivate))
-
 static goffset
 _tell (G_GNUC_UNUSED GSeekable * seekable)
 {
@@ -445,8 +441,6 @@ dmap_gst_input_stream_class_init (DmapGstInputStreamClass * klass)
 static void
 dmap_gst_input_stream_init (DmapGstInputStream * stream)
 {
-	stream->priv = DMAP_GST_INPUT_STREAM_GET_PRIVATE (stream);
-
 	stream->priv->buffer = g_queue_new ();
 	stream->priv->read_request = 0;
 	stream->priv->write_request = 0;

@@ -108,12 +108,9 @@ static struct DmapMetaDataMap _meta_data_map[] = {
  */
 static GMappedFile *_mapped_file = NULL;
 
-#define DMAP_IMAGE_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_IMAGE_SHARE, DmapImageSharePrivate))
-
-G_DEFINE_TYPE_WITH_CODE (DmapImageShare,
-                         dmap_image_share,
-                         DMAP_TYPE_SHARE,
-                         G_ADD_PRIVATE (DmapImageShare));
+G_DEFINE_TYPE_WITH_PRIVATE (DmapImageShare,
+                            dmap_image_share,
+                            DMAP_TYPE_SHARE);
 
 static struct DmapMetaDataMap *
 _get_meta_data_map (G_GNUC_UNUSED DmapShare * share)
@@ -439,8 +436,8 @@ dmap_image_share_class_init (DmapImageShareClass * klass)
 static void
 dmap_image_share_init (DmapImageShare * share)
 {
-	share->priv = DMAP_IMAGE_SHARE_GET_PRIVATE (share);
 	/* FIXME: do I need to manually call parent _init? */
+	share->priv = dmap_image_share_get_instance_private(share);
 }
 
 /* FIXME: trancode_mimetype currently not used for DPAP, only DAAP. 

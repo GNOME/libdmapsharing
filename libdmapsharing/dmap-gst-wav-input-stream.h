@@ -42,9 +42,6 @@ G_BEGIN_DECLS
 #define DMAP_GST_WAV_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_WAV_INPUT_STREAM, \
 					       DmapGstWavInputStreamClass))
-#define DMAP_GST_WAV_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-					   DMAP_TYPE_GST_WAV_INPUT_STREAM, \
-					   DmapGstWavInputStreamPrivate))
 typedef struct DmapGstWavInputStreamPrivate DmapGstWavInputStreamPrivate;
 
 typedef struct {

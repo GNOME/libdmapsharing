@@ -23,8 +23,6 @@
 #include <libdmapsharing/dmap-image-connection.h>
 #include <libdmapsharing/dmap-structure.h>
 
-#define DMAP_IMAGE_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_IMAGE_CONNECTION, DmapImageConnectionPrivate))
-
 static DmapContentCode
 _get_protocol_version_cc (G_GNUC_UNUSED DmapConnection * connection)
 {

@@ -24,8 +24,6 @@
 #include <libdmapsharing/dmap-structure.h>
 #include <libdmapsharing/test-dmap-db.h>
 
-#define DMAP_AV_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_AV_CONNECTION, DmapAvConnectionPrivate))
-
 static DmapContentCode
 _get_protocol_version_cc (G_GNUC_UNUSED DmapConnection * connection)
 {

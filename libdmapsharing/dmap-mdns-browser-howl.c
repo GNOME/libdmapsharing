@@ -77,14 +77,11 @@ static void dmap_mdns_browser_init (DmapMdnsBrowser * browser);
 static void dmap_mdns_browser_dispose (GObject * object);
 static void dmap_mdns_browser_finalize (GObject * object);
 
-#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserPrivate))
-
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE_WITH_CODE (DmapMdnsBrowser,
-                         dmap_mdns_browser,
-                         G_TYPE_OBJECT,
-                         G_ADD_PRIVATE (DmapMdnsBrowser));
+G_DEFINE_TYPE_WITH_PRIVATE (DmapMdnsBrowser,
+                            dmap_mdns_browser,
+                            G_TYPE_OBJECT);
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -460,8 +457,9 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 static void
 dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 {
-	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
 	memset (browser->priv, 0, sizeof (DmapMdnsBrowserPrivate));
+
+	browser->priv = dmap_mdns_browser_get_instance_private(browser);
 
 	set_local_address (browser);
 

@@ -182,14 +182,6 @@ GInputStream *test_dmap_image_record_read (DmapImageRecord *record, GError **err
 	return stream;
 }
 
-
-
-static void
-test_dmap_image_record_init (TestDmapImageRecord *record)
-{
-	record->priv = TEST_DMAP_IMAGE_RECORD_GET_PRIVATE (record);
-}
-
 static void test_dmap_image_record_finalize (GObject *object);
 
 static void
@@ -237,6 +229,12 @@ G_DEFINE_TYPE_WITH_CODE (TestDmapImageRecord, test_dmap_image_record, G_TYPE_OBJ
                          G_IMPLEMENT_INTERFACE (DMAP_TYPE_IMAGE_RECORD, _dmap_image_record_iface_init)
                          G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, _dmap_record_iface_init)
                          G_ADD_PRIVATE (TestDmapImageRecord))
+
+static void
+test_dmap_image_record_init (TestDmapImageRecord *record)
+{
+	record->priv = test_dmap_image_record_get_instance_private(record);
+}
 
 static void
 test_dmap_image_record_finalize (GObject *object)

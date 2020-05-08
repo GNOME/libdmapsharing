@@ -23,8 +23,6 @@
 #include <libdmapsharing/dmap-control-connection.h>
 #include <libdmapsharing/dmap-structure.h>
 
-#define DMAP_CONTROL_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DACP_TYPE_CONNECTION, DmapControlConnectionPrivate))
-
 static DmapContentCode
 _get_protocol_version_cc (G_GNUC_UNUSED DmapConnection * connection)
 {
@@ -81,10 +79,10 @@ dmap_control_connection_new (const char *name,
 	return connection;
 }
 
+G_DEFINE_TYPE (DmapControlConnection, dmap_control_connection, DMAP_TYPE_CONNECTION);
+
 static void
 dmap_control_connection_init (DmapControlConnection * connection)
 {
-	 connection->priv = DMAP_CONTROL_CONNECTION_GET_PRIVATE (connection);
+	connection->priv = dmap_control_connection_get_instance_private(connection);
 }
-
-G_DEFINE_TYPE (DmapControlConnection, dmap_control_connection, DMAP_TYPE_CONNECTION);

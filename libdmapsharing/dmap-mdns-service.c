@@ -134,12 +134,9 @@ _get_property (GObject *object,
 static void _dispose (GObject * object);
 static void _finalize (GObject * object);
 
-#define DMAP_MDNS_SERVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_SERVICE, DmapMdnsServicePrivate))
-
-G_DEFINE_TYPE_WITH_CODE (DmapMdnsService,
-                         dmap_mdns_service,
-                         G_TYPE_OBJECT,
-                         G_ADD_PRIVATE (DmapMdnsService));
+G_DEFINE_TYPE_WITH_PRIVATE (DmapMdnsService,
+                            dmap_mdns_service,
+                            G_TYPE_OBJECT);
 
 static void
 dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
@@ -217,7 +214,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
 static void
 dmap_mdns_service_init (DmapMdnsService * service)
 {
-	service->priv = DMAP_MDNS_SERVICE_GET_PRIVATE (service);
+	service->priv = dmap_mdns_service_get_instance_private(service);
 }
 
 static void

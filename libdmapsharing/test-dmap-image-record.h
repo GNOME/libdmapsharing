@@ -38,9 +38,6 @@ G_BEGIN_DECLS
 #define TEST_DMAP_IMAGE_RECORD_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), \
 				         TYPE_TEST_DMAP_IMAGE_RECORD, \
 				         TestDmapImageRecordClass))
-#define TEST_DMAP_IMAGE_RECORD_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-					 TYPE_TEST_DMAP_IMAGE_RECORD, \
-					 TestDmapImageRecordPrivate))
 
 typedef struct TestDmapImageRecordPrivate TestDmapImageRecordPrivate;
 

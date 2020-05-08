@@ -123,12 +123,9 @@ struct share_bitwise_t
 static void dmap_share_init (DmapShare * share);
 static void dmap_share_class_init (DmapShareClass * klass);
 
-G_DEFINE_ABSTRACT_TYPE_WITH_CODE (DmapShare,
-                                  dmap_share,
-                                  G_TYPE_OBJECT,
-                                  G_ADD_PRIVATE (DmapShare))
-#define DMAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-				   DMAP_TYPE_SHARE, DmapSharePrivate));
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (DmapShare,
+                                     dmap_share,
+                                     G_TYPE_OBJECT);
 
 static gboolean
 _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
@@ -1686,7 +1683,7 @@ dmap_share_class_init (DmapShareClass * klass)
 static void
 dmap_share_init (DmapShare * share)
 {
-	share->priv = DMAP_SHARE_GET_PRIVATE (share);
+	share->priv = dmap_share_get_instance_private(share);
 
 	share->priv->revision_number = 5;
 	share->priv->auth_method = DMAP_SHARE_AUTH_METHOD_NONE;
@@ -1854,12 +1851,6 @@ gboolean
 dmap_share_client_requested (DmapBits bits, gint field)
 {
 	return 0 != (bits & (((DmapBits) 1) << field));
-}
-
-static gboolean
-_uri_is_local (const char *text_uri)
-{
-	return g_str_has_prefix (text_uri, "file://");
 }
 
 void

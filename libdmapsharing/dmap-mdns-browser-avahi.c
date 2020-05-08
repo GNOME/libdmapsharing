@@ -102,14 +102,11 @@ static void _browse_cb (AvahiServiceBrowser * service_browser,
 #endif
                         DmapMdnsBrowser * browser);
 
-#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DmapMdnsBrowserPrivate))
-
 static guint _signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE_WITH_CODE (DmapMdnsBrowser,
-                         dmap_mdns_browser,
-                         G_TYPE_OBJECT,
-                         G_ADD_PRIVATE (DmapMdnsBrowser));
+G_DEFINE_TYPE_WITH_PRIVATE (DmapMdnsBrowser,
+                            dmap_mdns_browser,
+                            G_TYPE_OBJECT);
 
 GQuark
 dmap_mdns_browser_error_quark (void)
@@ -154,7 +151,8 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 static void
 dmap_mdns_browser_init (DmapMdnsBrowser * browser)
 {
-	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
+	browser->priv = dmap_mdns_browser_get_instance_private(browser);
+
 	_client_init (browser);
 }
 

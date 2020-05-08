@@ -268,12 +268,6 @@ static GInputStream *_read (DmapAvRecord *record, GError **error)
 	return stream;
 }
 
-static void
-test_dmap_av_record_init (TestDmapAvRecord *record)
-{
-	record->priv = TEST_DMAP_AV_RECORD_GET_PRIVATE (record);
-}
-
 static void test_dmap_av_record_dispose  (GObject *object);
 static void test_dmap_av_record_finalize (GObject *object);
 
@@ -340,6 +334,12 @@ G_DEFINE_TYPE_WITH_CODE (TestDmapAvRecord, test_dmap_av_record, G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (DMAP_TYPE_AV_RECORD, _dmap_av_record_iface_init)
                          G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, _dmap_record_iface_init)
                          G_ADD_PRIVATE (TestDmapAvRecord))
+
+static void
+test_dmap_av_record_init (TestDmapAvRecord *record)
+{
+	record->priv = test_dmap_av_record_get_instance_private(record);
+}
 
 static void
 test_dmap_av_record_dispose (GObject *object)

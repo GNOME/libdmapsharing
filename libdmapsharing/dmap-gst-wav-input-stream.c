@@ -220,10 +220,9 @@ _kill_pipeline (DmapGstInputStream * stream)
 	gst_object_unref (GST_OBJECT (wav_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE_WITH_CODE (DmapGstWavInputStream,
-                         dmap_gst_wav_input_stream,
-                         DMAP_TYPE_GST_INPUT_STREAM,
-                         G_ADD_PRIVATE (DmapGstWavInputStream))
+G_DEFINE_TYPE_WITH_PRIVATE (DmapGstWavInputStream,
+                            dmap_gst_wav_input_stream,
+                            DMAP_TYPE_GST_INPUT_STREAM);
 
      static void
 	     dmap_gst_wav_input_stream_class_init (DmapGstWavInputStreamClass
@@ -238,6 +237,5 @@ G_DEFINE_TYPE_WITH_CODE (DmapGstWavInputStream,
 static void
 dmap_gst_wav_input_stream_init (DmapGstWavInputStream * stream)
 {
-	stream->priv = DMAP_GST_WAV_INPUT_STREAM_GET_PRIVATE (stream);
-
+	stream->priv = dmap_gst_wav_input_stream_get_instance_private(stream);
 }

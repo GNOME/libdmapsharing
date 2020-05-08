@@ -36,9 +36,6 @@ G_BEGIN_DECLS
 				     TYPE_TEST_DMAP_DB_CLASS))
 #define TEST_DMAP_DB_GET_CLASS(o)   (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				     TYPE_TEST_DMAP_DB, TestDmapDbClass))
-#define TEST_DMAP_DB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-				     TYPE_TEST_DMAP_DB, \
-				     TestDmapDbPrivate))
 
 typedef struct TestDmapDbPrivate TestDmapDbPrivate;
 
