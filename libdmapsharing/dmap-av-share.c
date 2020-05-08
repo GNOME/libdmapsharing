@@ -1075,7 +1075,7 @@ START_TEST(_get_meta_data_map_test)
 }
 END_TEST
 
-START_TEST(dmap_av_share_new_test)
+START_TEST(_new_test)
 {
 	DmapDb *db;
 	DmapContainerRecord *container_record;
@@ -1121,7 +1121,7 @@ START_TEST(dmap_av_share_new_test)
 }
 END_TEST
 
-START_TEST(dmap_av_share_serve_publish_test)
+START_TEST(_serve_publish_test)
 {
 	DmapDb *db;
 	gboolean ok;
@@ -1161,7 +1161,7 @@ START_TEST(dmap_av_share_serve_publish_test)
 }
 END_TEST
 
-START_TEST(dmap_av_share_serve_publish_collision_test)
+START_TEST(_serve_publish_collision_test)
 {
 	DmapDb *db;
 	gboolean ok;

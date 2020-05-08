@@ -263,7 +263,7 @@ dmap_av_record_cmp_by_album (gpointer a, gpointer b, DmapDb * db)
 
 #define TMP "/tmp/libdmapsharing-test-XXXXXX"
 
-START_TEST(dmap_av_record_read_test)
+START_TEST(_read_test)
 {
 	DmapAvRecord *record;
 	GInputStream *stream;
@@ -314,7 +314,7 @@ START_TEST(dmap_av_record_read_test)
 }
 END_TEST
 
-START_TEST(dmap_av_record_read_bad_path_test)
+START_TEST(_read_bad_path_test)
 {
 	DmapAvRecord *record;
 	GError *error = NULL;
@@ -331,7 +331,7 @@ START_TEST(dmap_av_record_read_bad_path_test)
 }
 END_TEST
 
-START_TEST(dmap_av_record_itunes_compat_test)
+START_TEST(_itunes_compat_test)
 {
 	DmapAvRecord *record;
 	gboolean ok;
@@ -346,7 +346,7 @@ START_TEST(dmap_av_record_itunes_compat_test)
 }
 END_TEST
 
-START_TEST(dmap_av_record_itunes_compat_no_test)
+START_TEST(_itunes_compat_no_test)
 {
 	DmapAvRecord *record;
 	gboolean ok;
@@ -361,7 +361,7 @@ START_TEST(dmap_av_record_itunes_compat_no_test)
 }
 END_TEST
 
-START_TEST(dmap_av_record_cmp_by_album_test)
+START_TEST(_cmp_by_album_test)
 {
 	gint id;
 	gchar *album;

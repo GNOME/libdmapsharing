@@ -226,7 +226,7 @@ START_TEST(_get_query_metadata_test)
 }
 END_TEST
 
-START_TEST(dmap_av_connection_new_test)
+START_TEST(_new_test)
 {
 	char *str;
 	int   port;

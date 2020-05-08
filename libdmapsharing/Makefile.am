@@ -290,8 +290,8 @@ if HAVE_PEDANSEE
 		j=$$(cat $$i | awk '/^G_DEFINE_DYNAMIC_TYPE_EXTENDED/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
 		echo -n $${j}_private_offset\;; \
 	done >>pedansee.conf
-	for i in $$(grep -l G_DEFINE_ABSTRACT_TYPE_WITH_CODE *.c); do \
-		j=$$(cat $$i | awk '/^G_DEFINE_ABSTRACT_TYPE_WITH_CODE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
+	for i in $$(grep -l G_DEFINE_ABSTRACT_TYPE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_ABSTRACT_TYPE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^,]*, \([^,]*\),.*/\1/g'); \
 		echo -n $${j}_init\;; \
 		echo -n $${j}_class_init\;; \
 		echo -n $${j}_get_type_once\;; \
@@ -299,8 +299,8 @@ if HAVE_PEDANSEE
 		echo -n $${j}_get_instance_private\;; \
 		echo -n $${j}_class_intern_init\;; \
 	done >>pedansee.conf
-	for i in $$(grep -l G_DEFINE_ABSTRACT_TYPE_WITH_CODE *.c); do \
-		j=$$(cat $$i | awk '/^G_DEFINE_ABSTRACT_TYPE_WITH_CODE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
+	for i in $$(grep -l G_DEFINE_ABSTRACT_TYPE *.c); do \
+		j=$$(cat $$i | awk '/^G_DEFINE_ABSTRACT_TYPE/ { x = 1 } { if (x == 1) printf("%s ", $$0) }' | sed 's/[^(]*(\([^,]*\),.*/\1/g'); \
 		echo -n $${j}_private_offset\;; \
 	done >>pedansee.conf
 

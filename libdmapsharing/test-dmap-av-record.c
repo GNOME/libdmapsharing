@@ -244,18 +244,16 @@ test_dmap_av_record_get_property (GObject *object,
         }
 }
 
-static gboolean _itunes_compat (DmapAvRecord *record)
+static gboolean
+_itunes_compat (DmapAvRecord *record)
 {
 	const gchar *format = TEST_DMAP_AV_RECORD (record)->priv->format;
 
-	if (! strcmp (format, "mp3")) {
-		return TRUE;
-	} else {
-		return FALSE;
-	}
+	return ! strcmp (format, "mp3");
 }
 
-static GInputStream *_read (DmapAvRecord *record, GError **error)
+static GInputStream *
+_read (DmapAvRecord *record, GError **error)
 {
 	GFile *file;
 	GInputStream *stream;

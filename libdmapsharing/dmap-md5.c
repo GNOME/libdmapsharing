@@ -548,7 +548,7 @@ dmap_md5_progressive_final (DmapHashContext *context,
 
 #include <check.h>
 
-START_TEST(test_dmap_md5_generate_v3_h2)
+START_TEST(_test_generate_v3_h2)
 {
 	guchar hash[33] = { 0 };
 	guchar *url = (guchar *) "test://foo";
@@ -557,7 +557,7 @@ START_TEST(test_dmap_md5_generate_v3_h2)
 }
 END_TEST
 
-START_TEST(test_dmap_md5_progressive)
+START_TEST(_test_progressive)
 {
 	guchar buf[16] = { 0 };
 	guchar hash1[33] = { 0 };
