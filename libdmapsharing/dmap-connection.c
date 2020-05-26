@@ -759,7 +759,7 @@ _actual_http_response_handler (DmapResponseData * data)
 					    data->connection);
 		}
 		structure = dmap_structure_parse (response, response_length, &error);
-		if (structure == NULL) {
+		if (error != NULL) {
 			dmap_connection_emit_error(data->connection, error->code,
 			                          "Error parsing %s response: %s\n", message_path,
 			                           error->message);
