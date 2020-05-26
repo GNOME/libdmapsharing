@@ -369,6 +369,8 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 static void
 dmap_control_share_init (DmapControlShare * share)
 {
+	share->priv = dmap_control_share_get_instance_private(share);
+
 	share->priv->current_revision = 2;
 
 	share->priv->remotes = g_hash_table_new_full ((GHashFunc) g_str_hash,
