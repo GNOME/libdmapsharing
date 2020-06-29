@@ -36,7 +36,7 @@ dmap_private_utils_write_next_chunk (SoupMessage * message, ChunkData * cd)
 	if (read_size > 0) {
 		soup_message_body_append (message->response_body,
 					  SOUP_MEMORY_TAKE, chunk, read_size);
-		g_debug ("Read/wrote %ld bytes.", read_size);
+		g_debug ("Read/wrote %zd bytes.", read_size);
 	} else {
 		if (error != NULL) {
 			g_warning ("Error reading from input stream: %s",
