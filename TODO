@@ -1,5 +1,7 @@
 = Short term ===================================================================
 
+See notes about test-* in libdmapsharing/Makefile.am.
+
 GNOME Bugs:
 	344616: support database updates
 	686220: play nicely with firewalld

@@ -26,7 +26,11 @@ libdmapsharing_4_0_la_SOURCES = \
 	dmap-image-record.c \
 	dmap-image-share.c
 
-if HAVE_CHECK
+# These used to be guarded by HAVE_CHECK. However, test-dmap-client.c
+# and test-dmap-server.c require them. Thus we now build them into
+# libdmapsharing unconditionally. Perhaps the name should involve
+# "reference" rather than "test," and perhaps these could be made
+# a little more useful in the general case.
 libdmapsharing_4_0_la_SOURCES += \
 	test-dmap-av-record.c \
 	test-dmap-av-record-factory.c \
@@ -35,7 +39,6 @@ libdmapsharing_4_0_la_SOURCES += \
 	test-dmap-db.c \
 	test-dmap-image-record.c \
 	test-dmap-image-record-factory.c
-endif
 
 if USE_HOWL
 libdmapsharing_4_0_la_SOURCES += \
