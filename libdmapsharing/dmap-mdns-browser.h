@@ -176,8 +176,7 @@ gboolean dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error);
  */
 gboolean dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error);
 
-G_CONST_RETURN GSList *dmap_mdns_browser_get_services (DMAPMdnsBrowser *
-						       browser);
+const GSList *dmap_mdns_browser_get_services (DMAPMdnsBrowser * browser);
 DMAPMdnsBrowserServiceType dmap_mdns_browser_get_service_type (DMAPMdnsBrowser
 							       * browser);
 
