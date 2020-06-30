@@ -83,7 +83,8 @@ create_share (guint conn_type, GMainLoop *loop)
 	switch (conn_type) {
 	default:
 		g_idle_add(_quit, loop);
-		G_GNUC_FALLTHROUGH;
+		factory = DMAP_RECORD_FACTORY (test_dmap_av_record_factory_new ());
+		break;
 	case DAAP:
 		factory = DMAP_RECORD_FACTORY (test_dmap_av_record_factory_new ());
 		break;
