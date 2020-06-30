@@ -69,10 +69,19 @@ AC_CONFIG_MACRO_DIR(m4)
 dnl Test if --disable-tests given
 AC_ARG_ENABLE(tests, [AC_HELP_STRING([--disable-tests],[do not build tests])], tests=$enableval, tests=yes)
 if test x$tests = xyes; then
-	AC_DEFINE(WITH_TESTS,1,[Defined when tests are to be built])
-	AM_CONDITIONAL(WITH_TESTS, true)
+	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
+	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
+	if test "x$have_check" = "xyes"; then
+		AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
+	else
+		AC_MSG_ERROR([Must have check library present when tests enabled])
+	fi
+
+	AC_DEFINE(TESTS_ENABLED,1,[Defined when tests are to be built])
+	AM_CONDITIONAL(TESTS_ENABLED, true)
 else
-	AM_CONDITIONAL(WITH_TESTS, false)
+	AM_CONDITIONAL(TESTS_ENABLED, false)
+	AM_CONDITIONAL(HAVE_CHECK, false)
 fi
                   
 dnl Now check required packages
@@ -361,17 +370,6 @@ AC_SUBST(GEE_LIBS)
 AM_CONDITIONAL(BUILD_DPAPVIEW, test "x$HAVE_VALA" = "xyes" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes")
 if test -n "$BUILD_DPAPVIEW" ; then
 	AC_WARN([will not build dpapview])
-fi
-
-AC_ARG_ENABLE(check, [  --disable-check         do not build check support], enable_check=$enableval, enable_check=yes)
-if test x$enable_check = xyes; then
-	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
-	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
-	if test "x$have_check" = "xyes"; then
-		AC_DEFINE(HAVE_CHECK, 1, [Define if check support is enabled])
-	fi
-else
-	AM_CONDITIONAL(HAVE_CHECK, false)
 fi
 
 AC_CHECK_LIB(z, uncompress)

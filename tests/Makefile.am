@@ -1,4 +1,4 @@
-if WITH_TESTS
+if TESTS_ENABLED
 noinst_PROGRAMS = test-dmap-client test-dmap-server
 
 if HAVE_GEE
@@ -41,7 +41,7 @@ test_dmap_server_LDADD = \
 	$(MDNS_LIBS)
 
 if HAVE_VALAC
-if WITH_TESTS
+if TESTS_ENABLED
 BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
 endif
 
