@@ -43,13 +43,13 @@ G_BEGIN_DECLS
 #define DMAP_RECORD_FACTORY(o)	 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				  DMAP_TYPE_RECORD_FACTORY, DmapRecordFactory))
 /**
- * IS_DMAP_RECORD_FACTORY:
+ * DMAP_IS_RECORD_FACTORY:
  * @o: Instance to check for being a %DMAP_TYPE_RECORD_FACTORY.
  *
  * Checks whether a valid #GTypeInstance pointer is of type
  * %DMAP_TYPE_RECORD_FACTORY.
  */
-#define IS_DMAP_RECORD_FACTORY(o)(G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+#define DMAP_IS_RECORD_FACTORY(o)(G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				  DMAP_TYPE_RECORD_FACTORY))
 /**
  * DMAP_RECORD_FACTORY_GET_INTERFACE:

@@ -47,20 +47,20 @@ G_BEGIN_DECLS
  */
 #define DMAP_CONTROL_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DACP_TYPE_CONNECTION, DmapControlConnectionClass))
 /**
- * IS_DMAP_CONTROL_CONNECTION:
+ * DMAP_IS_CONTROL_CONNECTION:
  * @o: Instance to check for being a %DACP_TYPE_CONNECTION.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DACP_TYPE_CONNECTION.
  */
-#define IS_DMAP_CONTROL_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DACP_TYPE_CONNECTION))
+#define DMAP_IS_CONTROL_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DACP_TYPE_CONNECTION))
 /**
- * IS_DMAP_CONTROL_CONNECTION_CLASS:
+ * DMAP_IS_CONTROL_CONNECTION_CLASS:
  * @k: a #DmapControlConnectionClass
  *
  * Checks whether @k "is a" valid #DmapControlConnectionClass structure of type
  * %DMAP_CONTROL_CONNECTION or derived.
  */
-#define IS_DMAP_CONTROL_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DACP_TYPE_CONNECTION))
+#define DMAP_IS_CONTROL_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DACP_TYPE_CONNECTION))
 /**
  * DMAP_CONTROL_CONNECTION_GET_CLASS:
  * @o: a #DmapControlConnection instance.

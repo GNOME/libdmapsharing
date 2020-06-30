@@ -38,7 +38,7 @@ static guint conn_type = DAAP;
 static void
 print_record (gpointer id, DmapRecord *record, G_GNUC_UNUSED gpointer user_data)
 {
-	if (IS_DMAP_AV_RECORD(record)) {
+	if (DMAP_IS_AV_RECORD(record)) {
 		gboolean has_video;
 		gchar   *artist, *title;
 
@@ -52,7 +52,7 @@ print_record (gpointer id, DmapRecord *record, G_GNUC_UNUSED gpointer user_data)
 
 		g_free (artist);
 		g_free (title);
-	} else if (IS_DMAP_IMAGE_RECORD(record)) {
+	} else if (DMAP_IS_IMAGE_RECORD(record)) {
 		gchar   *format, *location;
 
 		g_object_get (record,

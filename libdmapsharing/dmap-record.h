@@ -41,12 +41,12 @@ G_BEGIN_DECLS
 #define DMAP_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				      DMAP_TYPE_RECORD, DmapRecord))
 /**
- * IS_DMAP_RECORD:
+ * DMAP_IS_RECORD:
  * @o: Instance to check for being a %DMAP_TYPE_RECORD.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_RECORD.
  */
-#define IS_DMAP_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+#define DMAP_IS_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      DMAP_TYPE_RECORD))
 /**
  * DMAP_RECORD_GET_INTERFACE:

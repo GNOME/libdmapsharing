@@ -201,7 +201,7 @@ _finalize (GObject *object)
         DmapMdnsPublisher *publisher;
 
 	g_assert(NULL != object);
-	g_assert(IS_DMAP_MDNS_PUBLISHER(object));
+	g_assert(DMAP_IS_MDNS_PUBLISHER(object));
 
         publisher = DMAP_MDNS_PUBLISHER (object);
 

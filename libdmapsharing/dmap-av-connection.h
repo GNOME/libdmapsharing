@@ -47,20 +47,20 @@ G_BEGIN_DECLS
  */
 #define DMAP_AV_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_AV_CONNECTION, DmapAvConnectionClass))
 /**
- * IS_DMAP_AV_CONNECTION:
+ * DMAP_IS_AV_CONNECTION:
  * @o: Instance to check for being a %DMAP_TYPE_AV_CONNECTION.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_AV_CONNECTION.
  */
-#define IS_DMAP_AV_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_AV_CONNECTION))
+#define DMAP_IS_AV_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_AV_CONNECTION))
 /**
- * IS_DMAP_AV_CONNECTION_CLASS:
+ * DMAP_IS_AV_CONNECTION_CLASS:
  * @k: a #DmapAvConnectionClass
  *
  * Checks whether @k "is a" valid #DmapAvConnectionClass structure of type
  * %DMAP_AV_CONNECTION or derived.
  */
-#define IS_DMAP_AV_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_AV_CONNECTION))
+#define DMAP_IS_AV_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_AV_CONNECTION))
 /**
  * DMAP_AV_CONNECTION_GET_CLASS:
  * @o: a #DmapAvConnection instance.

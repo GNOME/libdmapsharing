@@ -195,7 +195,7 @@ _finalize (GObject * object)
 {
 	g_debug ("Finalize");
 
-	g_assert(IS_DMAP_CONNECTION (object));
+	g_assert(DMAP_IS_CONNECTION (object));
 
 	DmapConnection *connection = DMAP_CONNECTION (object);
 	if (NULL == connection->priv) {
@@ -1400,7 +1400,7 @@ _handle_logout (DmapConnection * connection, G_GNUC_UNUSED guint status,
 static void
 _finish (DmapConnection * connection)
 {
-	g_assert(IS_DMAP_CONNECTION (connection));
+	g_assert(DMAP_IS_CONNECTION (connection));
 
 	g_debug ("DMAP finish");
 	connection->priv->state = DMAP_DONE;
@@ -1561,7 +1561,7 @@ _do_something (DmapConnection * connection)
 gboolean
 dmap_connection_is_connected (DmapConnection * connection)
 {
-	g_assert(IS_DMAP_CONNECTION (connection));
+	g_assert(DMAP_IS_CONNECTION (connection));
 
 	return connection->priv->is_connected;
 }
@@ -1674,7 +1674,7 @@ dmap_connection_start (DmapConnection * connection,
 {
 	ConnectionResponseData *rdata;
 
-	g_assert(IS_DMAP_CONNECTION (connection));
+	g_assert(DMAP_IS_CONNECTION (connection));
 	g_assert(connection->priv->state == DMAP_GET_INFO);
 
 	g_debug ("Creating new DMAP connection to %s:%d",
@@ -1737,7 +1737,7 @@ dmap_connection_stop(DmapConnection * connection,
 	DmapConnectionPrivate *priv = connection->priv;
 	ConnectionResponseData *rdata;
 
-	g_assert(IS_DMAP_CONNECTION (connection));
+	g_assert(DMAP_IS_CONNECTION (connection));
 
 	g_debug ("Disconnecting");
 

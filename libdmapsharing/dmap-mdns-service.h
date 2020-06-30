@@ -46,20 +46,20 @@ G_BEGIN_DECLS
  */
 #define DMAP_MDNS_SERVICE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_MDNS_SERVICE, DmapMdnsServiceClass))
 /**
- * IS_DMAP_MDNS_SERVICE:
+ * DMAP_IS_MDNS_SERVICE:
  * @o: Instance to check for being a %DMAP_TYPE_MDNS_SERVICE.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DAAP_TYPE_MDNS_SERVICE.
  */
-#define IS_DMAP_MDNS_SERVICE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_MDNS_SERVICE))
+#define DMAP_IS_MDNS_SERVICE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_MDNS_SERVICE))
 /**
- * IS_DMAP_MDNS_SERVICE_CLASS:
+ * DMAP_IS_MDNS_SERVICE_CLASS:
  * @k: a #DmapMdnsServiceClass
  *
  * Checks whether @k "is a" valid #DmapMdnsServiceClass structure of type
  * %DMAP_MDNS_SERVICE or derived.
  */
-#define IS_DMAP_MDNS_SERVICE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_MDNS_SERVICE))
+#define DMAP_IS_MDNS_SERVICE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_MDNS_SERVICE))
 /**
  * DMAP_MDNS_SERVICE_GET_CLASS:
  * @o: a #DmapMdnsService instance.

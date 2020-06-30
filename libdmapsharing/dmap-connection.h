@@ -61,20 +61,20 @@ typedef struct {
  */
 #define DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_CONNECTION, DmapConnectionClass))
 /**
- * IS_DMAP_CONNECTION:
+ * DMAP_IS_CONNECTION:
  * @o: Instance to check for being a %DMAP_TYPE_CONNECTION.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_CONNECTION.
  */
-#define IS_DMAP_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONNECTION))
+#define DMAP_IS_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONNECTION))
 /**
- * IS_DMAP_CONNECTION_CLASS:
+ * DMAP_IS_CONNECTION_CLASS:
  * @k: a #DmapConnectionClass
  *
  * Checks whether @k "is a" valid #DmapConnectionClass structure of type
  * %DMAP_CONNECTION or derived.
  */
-#define IS_DMAP_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_CONNECTION))
+#define DMAP_IS_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_CONNECTION))
 /**
  * DMAP_CONNECTION_GET_CLASS:
  * @o: a #DmapConnection instance.

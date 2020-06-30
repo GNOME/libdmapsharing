@@ -56,21 +56,21 @@ G_BEGIN_DECLS
 #define DMAP_CONTROL_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				 DMAP_TYPE_CONTROL_SHARE, DmapControlShareClass))
 /**
- * IS_DMAP_CONTROL_SHARE:
+ * DMAP_IS_CONTROL_SHARE:
  * @o: Instance to check for being a %DMAP_TYPE_CONTROL_SHARE.
  * 
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_CONTROL_SHARE.
  */
-#define IS_DMAP_CONTROL_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+#define DMAP_IS_CONTROL_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				 DMAP_TYPE_CONTROL_SHARE))
 /**
- * IS_DMAP_CONTROL_SHARE_CLASS:
+ * DMAP_IS_CONTROL_SHARE_CLASS:
  * @k: a #DmapControlShareClass
  * 
  * Checks whether @k "is a" valid #DmapControlShareClass structure of type
  * %DMAP_CONTROL_SHARE or derived.
  */
-#define IS_DMAP_CONTROL_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
+#define DMAP_IS_CONTROL_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				 DMAP_TYPE_CONTROL_SHARE))
 /**
  * DMAP_CONTROL_SHARE_GET_CLASS:

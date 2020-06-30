@@ -56,21 +56,21 @@ G_BEGIN_DECLS
 #define DMAP_AV_SHARE_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				 DMAP_TYPE_AV_SHARE, DmapAvShareClass))
 /**
- * IS_DMAP_AV_SHARE:
+ * DMAP_IS_AV_SHARE:
  * @o: Instance to check for being a %DMAP_TYPE_AV_SHARE.
  * 
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_AV_SHARE.
  */
-#define IS_DMAP_AV_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+#define DMAP_IS_AV_SHARE(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				 DMAP_TYPE_AV_SHARE))
 /**
- * IS_DMAP_AV_SHARE_CLASS:
+ * DMAP_IS_AV_SHARE_CLASS:
  * @k: a #DmapAvShareClass
  * 
  * Checks whether @k "is a" valid #DmapAvShareClass structure of type
  * %DMAP_AV_SHARE or derived.
  */
-#define IS_DMAP_AV_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
+#define DMAP_IS_AV_SHARE_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				 DMAP_TYPE_AV_SHARE))
 /**
  * DMAP_AV_SHARE_GET_CLASS:

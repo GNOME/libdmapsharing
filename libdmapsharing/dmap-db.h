@@ -43,12 +43,12 @@ G_BEGIN_DECLS
 #define DMAP_DB(o)		 (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				  DMAP_TYPE_DB, DmapDb))
 /**
- * IS_DMAP_DB:
+ * DMAP_IS_DB:
  * @o: Instance to check for being a %DMAP_TYPE_DB.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_DB.
  */
-#define IS_DMAP_DB(o)		 (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+#define DMAP_IS_DB(o)		 (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				  DMAP_TYPE_DB))
 /**
  * DMAP_DB_GET_INTERFACE:

@@ -42,13 +42,13 @@ G_BEGIN_DECLS
 #define DMAP_CONTAINER_RECORD(o)		     (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				      DMAP_TYPE_CONTAINER_RECORD, DmapContainerRecord))
 /**
- * IS_DMAP_CONTAINER_RECORD:
+ * DMAP_IS_CONTAINER_RECORD:
  * @o: Instance to check for being a %DMAP_TYPE_CONTAINER_RECORD.
  *
  * Checks whether a valid #GTypeInstance pointer is of type
  * %DMAP_TYPE_CONTAINER_RECORD.
  */
-#define IS_DMAP_CONTAINER_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
+#define DMAP_IS_CONTAINER_RECORD(o)	     (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				      DMAP_TYPE_CONTAINER_RECORD))
 /**
  * DMAP_CONTAINER_RECORD_GET_INTERFACE:

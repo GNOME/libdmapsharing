@@ -172,7 +172,7 @@ done:
 static void
 _apply_filter (guint id, DmapRecord * record, gpointer data)
 {
-	g_assert(IS_DMAP_RECORD (record));
+	g_assert(DMAP_IS_RECORD (record));
 
 	FilterData *fd;
 	gboolean accept = FALSE;

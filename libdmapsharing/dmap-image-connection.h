@@ -47,20 +47,20 @@ G_BEGIN_DECLS
  */
 #define DMAP_IMAGE_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), DMAP_TYPE_IMAGE_CONNECTION, DmapImageConnectionClass))
 /**
- * IS_DMAP_IMAGE_CONNECTION:
+ * DMAP_IS_IMAGE_CONNECTION:
  * @o: Instance to check for being a %DMAP_TYPE_IMAGE_CONNECTION.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_IMAGE_CONNECTION.
  */
-#define IS_DMAP_IMAGE_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_IMAGE_CONNECTION))
+#define DMAP_IS_IMAGE_CONNECTION(o)	(G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_IMAGE_CONNECTION))
 /**
- * IS_DMAP_IMAGE_CONNECTION_CLASS:
+ * DMAP_IS_IMAGE_CONNECTION_CLASS:
  * @k: a #DmapImageConnectionClass
  *
  * Checks whether @k "is a" valid #DmapImageConnectionClass structure of type
  * %DMAP_IMAGE_CONNECTION or derived.
  */
-#define IS_DMAP_IMAGE_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_IMAGE_CONNECTION))
+#define DMAP_IS_IMAGE_CONNECTION_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), DMAP_TYPE_IMAGE_CONNECTION))
 /**
  * DMAP_IMAGE_CONNECTION_GET_CLASS:
  * @o: a #DmapImageConnection instance.

@@ -39,12 +39,12 @@ G_BEGIN_DECLS
  */
 #define DMAP_CONTROL_PLAYER(o)               (G_TYPE_CHECK_INSTANCE_CAST ((o), DMAP_TYPE_CONTROL_PLAYER, DmapControlPlayer))
 /**
- * IS_DMAP_CONTROL_PLAYER:
+ * DMAP_IS_CONTROL_PLAYER:
  * @o: Instance to check for being a %DMAP_TYPE_CONTROL_PLAYER.
  *
  * Checks whether a valid #GTypeInstance pointer is of type %DMAP_TYPE_CONTROL_PLAYER.
  */
-#define IS_DMAP_CONTROL_PLAYER(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONTROL_PLAYER))
+#define DMAP_IS_CONTROL_PLAYER(o)            (G_TYPE_CHECK_INSTANCE_TYPE ((o), DMAP_TYPE_CONTROL_PLAYER))
 /**
  * DMAP_CONTROL_PLAYER_GET_INTERFACE:
  * @o: a #DmapControlPlayer instance.
