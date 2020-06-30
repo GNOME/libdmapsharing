@@ -7,7 +7,7 @@ endif
 
 # Automake documentation mentions LDADD, but it does not work;
 # LIBS does.
-LIBS = $(top_builddir)/libdmapsharing/libdmapsharing-4.0.la
+LIBS += $(top_builddir)/libdmapsharing/libdmapsharing-4.0.la
 
 if HAVE_CHECK
 noinst_PROGRAMS += unit-test
@@ -125,18 +125,16 @@ unit_test_LDADD = \
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
-	$(GLIB_CFLAGS) \
-	$(GTHREAD_CFLAGS) \
-	$(GSTREAMERAPP_CFLAGS) \
-	$(GOBJECT_CFLAGS) \
 	$(GDKPIXBUF_CFLAGS) \
-	$(SOUP_CFLAGS) \
-	$(MDNS_CFLAGS)
-
-INCLUDES = \
-	$(IMAGEMAGICK_CFLAGS) \
+	$(GEE_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GOBJECT_CFLAGS) \
+	$(GSTREAMERAPP_CFLAGS) \
+	$(GTHREAD_CFLAGS) \
 	$(GTK_CFLAGS) \
-	$(GEE_CFLAGS)
+	$(IMAGEMAGICK_CFLAGS) \
+	$(MDNS_CFLAGS) \
+	$(SOUP_CFLAGS)
 
 EXTRA_DIST = \
 	$(dacplisten_VALASOURCES) \

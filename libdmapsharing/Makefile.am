@@ -173,7 +173,7 @@ dmap-enums.h: $(libdmapsharinginclude_HEADERS) Makefile
 	&& sed -e "s/d_map/dmap/" -e "s/D_MAP/DMAP/" -e "s/d_acp/dacp/" -e "s/D_ACP/DACP/" $@.tmp >$@ \
 	&& rm -f $@.tmp
 
-unit-test.stamp: $(grep -l START_TEST *.c)
+unit-test.stamp: *.c
 	./generate-test-suites
 	mv unit-test.c ../tests
 	touch unit-test.stamp
