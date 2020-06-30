@@ -1,5 +1,8 @@
 build-ubuntu:
-  image: ubuntu:rolling
+  image: i386/ubuntu:rolling
+
+  variables:
+    DEBIAN_FRONTEND: noninteractive
 
   before_script:
     - apt-get update
