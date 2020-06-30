@@ -90,7 +90,7 @@ dnl Check for pkgconfig
 AC_CHECK_PROG(HAVE_PKGCONFIG, pkg-config, yes, no)
 dnl Give error and exit if we don't have pkgconfig
 if test "x$HAVE_PKGCONFIG" = "xno"; then
-  AC_MSG_ERROR(you need to have pkgconfig installed !)
+  AC_MSG_ERROR([Must have pkgconfig installed])
 fi
 
 dnl Check for Glib2.0
@@ -98,7 +98,7 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.40, HAVE_GLIB=yes,HAVE_GLIB=no)
 
 dnl Give error and exit if we don't have glib
 if test "x$HAVE_GLIB" = "xno"; then
-  AC_MSG_ERROR(you need glib-2.0 installed)
+  AC_MSG_ERROR([Must have glib-2.0 installed])
 fi
 
 dnl make GLIB_CFLAGS and GLIB_LIBS available
@@ -114,7 +114,7 @@ PKG_CHECK_MODULES(GTHREAD,
 
 dnl Give error and exit if we don't have gthread
 if test "x$HAVE_GTHREAD" = "xno"; then
-  AC_MSG_ERROR(you need gthread-2.0 installed)
+  AC_MSG_ERROR([Must have gthread-2.0 installed])
 fi
 
 dnl make GOBJECT_CFLAGS and GOBJECT_LIBS available
@@ -128,7 +128,7 @@ PKG_CHECK_MODULES(GOBJECT,
 
 dnl Give error and exit if we don't have gobject
 if test "x$HAVE_GOBJECT" = "xno"; then
-  AC_MSG_ERROR(you need gobject-2.0 installed)
+  AC_MSG_ERROR([Must have gobject-2.0 installed])
 fi
 
 dnl make GOBJECT_CFLAGS and GOBJECT_LIBS available
@@ -143,7 +143,7 @@ PKG_CHECK_MODULES(GDKPIXBUF, gdk-pixbuf-2.0,
 if test x"$HAVE_GDKPIXBUF" = "xyes"; then
   AC_DEFINE(HAVE_GDKPIXBUF, 1, [Define if gdk-pixbuf support is enabled])
 else
-  AC_WARN(Gdk-pixbuf library not present, Now Playing artwork might be affected.)
+  AC_MSG_WARN([Gdk-pixbuf library not present; now-playing artwork might be affected])
 fi
 
 AM_CONDITIONAL(USE_GDKPIXBUF, test x"$HAVE_GDKPIXBUF" = "xyes")
@@ -199,14 +199,14 @@ if test x"$WITH_MDNS" = xauto; then
     MDNS_LIBS=$DNS_SD_LIBS
     AC_DEFINE(WITH_DNS_SD, 1, [Define if mDNS/DNS-SD implementation uses Apple's DNSSD])
     USE_DNS_SD=yes
-    AC_MSG_NOTICE([Detected Apple's DNSSD, using it for mDNS/DNS-SD])
+    AC_MSG_NOTICE([Detected Apple's DNSSD; using it for mDNS/DNS-SD])
     HAVE_MDNS=yes
   elif test x"$HAVE_AVAHI" = xyes; then
     MDNS_CFLAGS=$AVAHI_CFLAGS
     MDNS_LIBS=$AVAHI_LIBS
     AC_DEFINE(WITH_AVAHI, 1, [Define if mDNS/DNS-SD implementation uses Avahi])
     USE_AVAHI=yes
-    AC_MSG_NOTICE([Detected Avahi, using it for mDNS/DNS-SD])
+    AC_MSG_NOTICE([Detected Avahi; using it for mDNS/DNS-SD])
     if test x$HAVE_AVAHI_06 = xyes; then
       AC_DEFINE(HAVE_AVAHI_0_6, 1, [Define if mDNS/DNS-SD implementation uses Avahi 0.6])
     else
@@ -222,24 +222,24 @@ if test x"$WITH_MDNS" = xauto; then
       HAVE_GNOME_VFS=no)
 
     if test x"$HAVE_GNOME_VFS" = xno; then
-      AC_MSG_ERROR([You need gnome-vfs to compile libdmapsharing with howl support. Install it or try --with-mdns=avahi])
+      AC_MSG_ERROR([Howl support requires gnome-vfs; install it or try --with-mdns=avahi])
     fi
 
     MDNS_CFLAGS="$HOWL_CFLAGS $GNOME_VFS_CFLAGS"
     MDNS_LIBS="$HOWL_LIBS $GNOME_VFS_LIBS"
     AC_DEFINE(WITH_HOWL, 1, [Define if mDNS/DNS-SD implementation uses Howl])
     USE_HOWL=yes
-    AC_MSG_NOTICE([Detected Howl, using it for mDNS/DNS-SD])
+    AC_MSG_NOTICE([Detected Howl; using it for mDNS/DNS-SD])
 
     HAVE_MDNS=yes
   else
-    AC_MSG_ERROR([You need avahi, howl or dns_sd.h development files installed.])
+    AC_MSG_ERROR([Must have avahi, howl or dns_sd.h development files installed])
   fi
 fi
 
 if test x"$WITH_MDNS" = xhowl; then
   if test x"$HAVE_HOWL" = xno; then
-    AC_MSG_ERROR([Howl explicitly requested but not found.  Install Howl or try --with-mdns=avahi])
+    AC_MSG_ERROR([Howl support requires gnome-vfs; install it or try --with-mdns=avahi])
   fi
 
   GNOME_VFS_REQS=2.7.4
@@ -249,7 +249,7 @@ if test x"$WITH_MDNS" = xhowl; then
     HAVE_GNOME_VFS=no)
 
   if test x"$HAVE_GNOME_VFS" = xno; then
-    AC_MSG_ERROR([You need gnome-vfs to compile libdmapsharing with howl support. Install it or try --with-mdns=avahi])
+    AC_MSG_ERROR([Howl support requires gnome-vfs; install it or try --with-mdns=avahi])
   fi
 
   MDNS_CFLAGS="$HOWL_CFLAGS $GNOME_VFS_CFLAGS"
@@ -262,7 +262,7 @@ fi
 
 if test x"$WITH_MDNS" = xavahi; then
   if test x"$HAVE_AVAHI" = xno; then
-    AC_MSG_ERROR([Avahi explicitly requested but not found.  Install Avahi or try --with-mdns=howl])
+    AC_MSG_ERROR([Avahi explicitly requested but not found. Install Avahi, or try --with-mdns=howl])
   fi
 
   MDNS_CFLAGS=$AVAHI_CFLAGS
@@ -282,7 +282,7 @@ fi
 
 if test x"$WITH_MDNS" = xdns_sd; then
   if test x"$HAVE_DNS_SD" = xno; then
-    AC_MSG_ERROR([Apple DNSSD explicitly requested but not found.  Install Apple DNSSD or try --with-mdns=avahi])
+    AC_MSG_ERROR([Apple DNSSD explicitly requested but not found. Install Apple DNSSD, or try --with-mdns=avahi])
   fi
 
   MDNS_CFLAGS=$DNS_SD_CFLAGS
@@ -315,7 +315,7 @@ AM_CONDITIONAL(USE_LIBSOUP, test x"$HAVE_LIBSOUP" = "xyes")
 
 dnl daap support
 if test x"$HAVE_LIBSOUP" = "xno"; then
-  AC_MSG_ERROR([libsoup not found.  Install libsoup])
+  AC_MSG_ERROR([Must have libsoup installed])
 fi
 
 AC_SUBST(SOUP_CFLAGS)
@@ -334,7 +334,7 @@ if test x"$HAVE_GSTREAMERAPP" = "xyes"; then
   GSTLIB=gstreamer-1.0
   AC_SUBST(GSTLIB) # For libdmapsharing-4.0.pc.in.
 else
-  AC_WARN(GStreamer app element not present, transcoding will not be supported.)
+  AC_MSG_WARN([GStreamer app element not present; transcoding will not be supported])
 fi
 
 AM_CONDITIONAL(USE_GSTREAMERAPP, test x"$HAVE_GSTREAMERAPP" = "xyes")
@@ -350,7 +350,7 @@ AC_PATH_PROG(VAPIGEN, vapigen)
 dnl GOBJECT_INTROSPECTION_CHECK sets found_introspection.
 AM_CONDITIONAL(BUILD_VAPI, test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspection")
 if ! test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspection"; then
-	AC_WARN([will not build vapi])
+	AC_MSG_WARN([Will not build vapi])
 fi
 
 AC_PATH_PROG(PEDANSEE, pedansee)
@@ -369,7 +369,7 @@ AC_SUBST(GEE_LIBS)
 
 AM_CONDITIONAL(BUILD_DPAPVIEW, test "x$HAVE_VALA" = "xyes" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes")
 if test -n "$BUILD_DPAPVIEW" ; then
-	AC_WARN([will not build dpapview])
+	AC_MSG_WARN([Will not build dpapview])
 fi
 
 AC_CHECK_LIB(z, uncompress)
