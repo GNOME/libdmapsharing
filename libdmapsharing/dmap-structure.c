@@ -911,10 +911,11 @@ dmap_content_code_string_as_int32 (const gchar * str)
 	union
 	{
 		gint32 i;
-		gchar str[4];
+		gchar str[5];
 	} u;
 
 	strncpy (u.str, str, 4);
+	u.str[4] = 0x00;
 
 	return g_htonl (u.i);
 }
