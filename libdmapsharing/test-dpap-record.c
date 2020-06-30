@@ -157,39 +157,6 @@ GInputStream *test_dpap_record_read (DPAPRecord *record, GError **error)
 	return stream;
 }
 
-
-
-static void
-test_dpap_record_init (TestDPAPRecord *record)
-{
-	record->priv = TEST_DPAP_RECORD_GET_PRIVATE (record);
-}
-
-static void test_dpap_record_finalize (GObject *object);
-
-static void
-test_dpap_record_class_init (TestDPAPRecordClass *klass)
-{
-	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-	g_type_class_add_private (klass, sizeof (TestDPAPRecordPrivate));
-
-	gobject_class->set_property = test_dpap_record_set_property;
-        gobject_class->get_property = test_dpap_record_get_property;
-        gobject_class->finalize     = test_dpap_record_finalize;
-
-        g_object_class_override_property (gobject_class, PROP_LARGE_FILESIZE, "large-filesize");
-        g_object_class_override_property (gobject_class, PROP_CREATION_DATE, "creation-date");
-        g_object_class_override_property (gobject_class, PROP_RATING, "rating");
-        g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
-        g_object_class_override_property (gobject_class, PROP_FILENAME, "filename");
-        g_object_class_override_property (gobject_class, PROP_ASPECT_RATIO, "aspect-ratio");
-        g_object_class_override_property (gobject_class, PROP_PIXEL_HEIGHT, "pixel-height");
-        g_object_class_override_property (gobject_class, PROP_PIXEL_WIDTH, "pixel-width");
-        g_object_class_override_property (gobject_class, PROP_FORMAT, "format");
-        g_object_class_override_property (gobject_class, PROP_COMMENTS, "comments");
-}
-
 static void
 test_dpap_record_dpap_iface_init (gpointer iface, gpointer data)
 {
@@ -209,8 +176,38 @@ test_dpap_record_dmap_iface_init (gpointer iface, gpointer data)
 }
 
 G_DEFINE_TYPE_WITH_CODE (TestDPAPRecord, test_dpap_record, G_TYPE_OBJECT, 
-			 G_IMPLEMENT_INTERFACE (DPAP_TYPE_RECORD, test_dpap_record_dpap_iface_init)
-			 G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, test_dpap_record_dmap_iface_init))
+                         G_IMPLEMENT_INTERFACE (DPAP_TYPE_RECORD, test_dpap_record_dpap_iface_init)
+                         G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, test_dpap_record_dmap_iface_init)
+                         G_ADD_PRIVATE (TestDPAPRecord))
+
+static void
+test_dpap_record_init (TestDPAPRecord *record)
+{
+	record->priv = test_dpap_record_get_instance_private (record);
+}
+
+static void test_dpap_record_finalize (GObject *object);
+
+static void
+test_dpap_record_class_init (TestDPAPRecordClass *klass)
+{
+	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
+
+	gobject_class->set_property = test_dpap_record_set_property;
+        gobject_class->get_property = test_dpap_record_get_property;
+        gobject_class->finalize     = test_dpap_record_finalize;
+
+        g_object_class_override_property (gobject_class, PROP_LARGE_FILESIZE, "large-filesize");
+        g_object_class_override_property (gobject_class, PROP_CREATION_DATE, "creation-date");
+        g_object_class_override_property (gobject_class, PROP_RATING, "rating");
+        g_object_class_override_property (gobject_class, PROP_LOCATION, "location");
+        g_object_class_override_property (gobject_class, PROP_FILENAME, "filename");
+        g_object_class_override_property (gobject_class, PROP_ASPECT_RATIO, "aspect-ratio");
+        g_object_class_override_property (gobject_class, PROP_PIXEL_HEIGHT, "pixel-height");
+        g_object_class_override_property (gobject_class, PROP_PIXEL_WIDTH, "pixel-width");
+        g_object_class_override_property (gobject_class, PROP_FORMAT, "format");
+        g_object_class_override_property (gobject_class, PROP_COMMENTS, "comments");
+}
 
 static void
 test_dpap_record_finalize (GObject *object)

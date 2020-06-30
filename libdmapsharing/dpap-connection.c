@@ -23,13 +23,6 @@
 #include <libdmapsharing/dpap-connection.h>
 #include <libdmapsharing/dmap-structure.h>
 
-#define DPAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DPAP_TYPE_CONNECTION, DPAPConnectionPrivate))
-
-/* FIXME:
-struct DPAPConnectionPrivate {
-};
-*/
-
 static DMAPContentCode
 get_protocol_version_cc (DMAPConnection * connection)
 {
@@ -153,10 +146,6 @@ dpap_connection_class_init (DPAPConnectionClass * klass)
 	parent_class->get_protocol_version_cc = get_protocol_version_cc;
 	parent_class->get_query_metadata = get_query_metadata;
 	parent_class->handle_mlcl = handle_mlcl;
-
-	/* FIXME:
-	 * g_type_class_add_private (klass, sizeof (DPAPConnectionPrivate));
-	 */
 }
 
 DPAPConnection *
@@ -179,9 +168,6 @@ dpap_connection_new (const char *name,
 static void
 dpap_connection_init (DPAPConnection * connection)
 {
-	/* FIXME: 
-	 * connection->priv = DPAP_CONNECTION_GET_PRIVATE (connection);
-	 */
 }
 
 G_DEFINE_TYPE (DPAPConnection, dpap_connection, DMAP_TYPE_CONNECTION);

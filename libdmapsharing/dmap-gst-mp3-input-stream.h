@@ -42,9 +42,6 @@ G_BEGIN_DECLS
 #define DMAP_GST_MP3_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM, \
 					       DMAPGstMP3InputStreamClass))
-#define DMAP_GST_MP3_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-					   DMAP_TYPE_GST_MP3_INPUT_STREAM, \
-					   DMAPGstMP3InputStreamPrivate))
 typedef struct DMAPGstMP3InputStreamPrivate DMAPGstMP3InputStreamPrivate;
 
 typedef struct

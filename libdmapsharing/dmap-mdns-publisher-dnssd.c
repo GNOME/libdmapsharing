@@ -26,8 +26,6 @@
 
 #include "dmap-mdns-publisher.h"
 
-#define DMAP_MDNS_PUBLISHER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_PUBLISHER, DMAPMdnsPublisherPrivate))
-
 struct DMAPMdnsPublisherPrivate
 {
 	DNSServiceRef	 sdref;
@@ -42,7 +40,7 @@ enum {
 
 static guint signals [LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE (DMAPMdnsPublisher, dmap_mdns_publisher, G_TYPE_OBJECT)
 
 static gpointer publisher_object = NULL;
 
@@ -241,14 +239,12 @@ dmap_mdns_publisher_class_init (DMAPMdnsPublisherClass *klass)
                               g_cclosure_marshal_VOID__STRING,
                               G_TYPE_NONE,
                               1, G_TYPE_STRING);
-
-        g_type_class_add_private (klass, sizeof (DMAPMdnsPublisherPrivate));
 }
 
 static void
 dmap_mdns_publisher_init (DMAPMdnsPublisher *publisher)
 {
-        publisher->priv = DMAP_MDNS_PUBLISHER_GET_PRIVATE (publisher);
+	publisher->priv = dmap_mdns_publisher_get_instance_private(publisher);
 }
 
 DMAPMdnsPublisher *

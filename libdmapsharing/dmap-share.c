@@ -114,16 +114,14 @@ struct share_bitwise_t
 static void dmap_share_init (DMAPShare * share);
 static void dmap_share_class_init (DMAPShareClass * klass);
 
-G_DEFINE_ABSTRACT_TYPE (DMAPShare, dmap_share, G_TYPE_OBJECT)
-#define DMAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-				   DMAP_TYPE_SHARE, DMAPSharePrivate));
+G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (DMAPShare, dmap_share, G_TYPE_OBJECT)
 
-     static gboolean
-	     _dmap_share_soup_auth_callback (SoupAuthDomain * auth_domain,
-					     SoupMessage * msg,
-					     const char *username,
-					     gpointer password,
-					     DMAPShare * share)
+static gboolean
+_dmap_share_soup_auth_callback (SoupAuthDomain * auth_domain,
+                                SoupMessage * msg,
+                                const char *username,
+                                gpointer password,
+                                DMAPShare * share)
 {
 	gboolean allowed;
 	const char *path;
@@ -687,8 +685,6 @@ dmap_share_class_init (DMAPShareClass * klass)
 							     "Set TXT-Records used for MDNS publishing",
 							     G_TYPE_STRV,
 							     G_PARAM_READWRITE));
-
-	g_type_class_add_private (klass, sizeof (DMAPSharePrivate));
 }
 
 static void
@@ -708,7 +704,7 @@ name_collision_adapter (DMAPMdnsPublisher * publisher,
 static void
 dmap_share_init (DMAPShare * share)
 {
-	share->priv = DMAP_SHARE_GET_PRIVATE (share);
+	share->priv = dmap_share_get_instance_private(share);
 
 	share->priv->revision_number = 5;
 	share->priv->auth_method = DMAP_SHARE_AUTH_METHOD_NONE;

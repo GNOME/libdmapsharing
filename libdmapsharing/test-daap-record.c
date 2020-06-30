@@ -231,9 +231,32 @@ GInputStream *test_daap_record_read (DAAPRecord *record, GError **error)
 }
 
 static void
+test_daap_record_daap_iface_init (gpointer iface, gpointer data)
+{
+	DAAPRecordIface *daap_record = iface;
+
+	g_assert (G_TYPE_FROM_INTERFACE (daap_record) == DAAP_TYPE_RECORD);
+
+	daap_record->read = test_daap_record_read;
+}
+
+static void
+test_daap_record_dmap_iface_init (gpointer iface, gpointer data)
+{
+	DMAPRecordIface *dmap_record = iface;
+
+	g_assert (G_TYPE_FROM_INTERFACE (dmap_record) == DMAP_TYPE_RECORD);
+}
+
+G_DEFINE_TYPE_WITH_CODE (TestDAAPRecord, test_daap_record, G_TYPE_OBJECT, 
+                         G_IMPLEMENT_INTERFACE (DAAP_TYPE_RECORD, test_daap_record_daap_iface_init)
+                         G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, test_daap_record_dmap_iface_init)
+                         G_ADD_PRIVATE (TestDAAPRecord))
+
+static void
 test_daap_record_init (TestDAAPRecord *record)
 {
-	record->priv = TEST_DAAP_RECORD_GET_PRIVATE (record);
+	record->priv = test_daap_record_get_instance_private (record);
 }
 
 static void test_daap_record_finalize (GObject *object);
@@ -242,8 +265,6 @@ static void
 test_daap_record_class_init (TestDAAPRecordClass *klass)
 {
 	GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
-
-	g_type_class_add_private (klass, sizeof (TestDAAPRecordPrivate));
 
 	gobject_class->set_property = test_daap_record_set_property;
         gobject_class->get_property = test_daap_record_get_property;
@@ -275,28 +296,6 @@ test_daap_record_class_init (TestDAAPRecordClass *klass)
                                NULL,
                             G_PARAM_READWRITE));
 }
-
-static void
-test_daap_record_daap_iface_init (gpointer iface, gpointer data)
-{
-	DAAPRecordIface *daap_record = iface;
-
-	g_assert (G_TYPE_FROM_INTERFACE (daap_record) == DAAP_TYPE_RECORD);
-
-	daap_record->read = test_daap_record_read;
-}
-
-static void
-test_daap_record_dmap_iface_init (gpointer iface, gpointer data)
-{
-	DMAPRecordIface *dmap_record = iface;
-
-	g_assert (G_TYPE_FROM_INTERFACE (dmap_record) == DMAP_TYPE_RECORD);
-}
-
-G_DEFINE_TYPE_WITH_CODE (TestDAAPRecord, test_daap_record, G_TYPE_OBJECT, 
-			G_IMPLEMENT_INTERFACE (DAAP_TYPE_RECORD, test_daap_record_daap_iface_init)
-			G_IMPLEMENT_INTERFACE (DMAP_TYPE_RECORD, test_daap_record_dmap_iface_init))
 
 static void
 test_daap_record_finalize (GObject *object)

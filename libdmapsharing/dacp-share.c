@@ -100,8 +100,6 @@ typedef struct
 	DMAPConnection *connection;
 } DACPRemoteInfo;
 
-#define DACP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DACP_TYPE_SHARE, DACPSharePrivate))
-
 enum
 {
 	PROP_0,
@@ -123,7 +121,7 @@ enum
 
 static guint signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DACPShare, dacp_share, DAAP_TYPE_SHARE);
+G_DEFINE_TYPE_WITH_PRIVATE (DACPShare, dacp_share, DAAP_TYPE_SHARE);
 
 static void
 dacp_share_class_init (DACPShareClass * klass)
@@ -251,14 +249,12 @@ dacp_share_class_init (DACPShareClass * klass)
 			      NULL,
 			      g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
-
-	g_type_class_add_private (klass, sizeof (DACPSharePrivate));
 }
 
 static void
 dacp_share_init (DACPShare * share)
 {
-	share->priv = DACP_SHARE_GET_PRIVATE (share);
+	share->priv = dacp_share_get_instance_private(share);
 
 	share->priv->current_revision = 2;
 

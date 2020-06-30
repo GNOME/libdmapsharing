@@ -63,10 +63,6 @@ struct DMAPGstInputStreamPrivate
 	gboolean buffer_closed;	/* May close before decoding complete */
 };
 
-#define DMAP_GST_INPUT_STREAM_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), \
-					   DMAP_TYPE_GST_INPUT_STREAM, \
-					   DMAPGstInputStreamPrivate))
-
 static goffset
 dmap_gst_input_stream_tell (GSeekable * seekable)
 {
@@ -437,8 +433,6 @@ dmap_gst_input_stream_class_init (DMAPGstInputStreamClass * klass)
 {
 	GInputStreamClass *istream_class;
 
-	g_type_class_add_private (klass, sizeof (DMAPGstInputStreamPrivate));
-
 	istream_class = G_INPUT_STREAM_CLASS (klass);
 	istream_class->read_fn = dmap_gst_input_stream_read;
 	istream_class->skip = dmap_gst_input_stream_skip;
@@ -454,8 +448,6 @@ dmap_gst_input_stream_class_init (DMAPGstInputStreamClass * klass)
 static void
 dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 {
-	stream->priv = DMAP_GST_INPUT_STREAM_GET_PRIVATE (stream);
-
 	stream->priv->buffer = g_queue_new ();
 	stream->priv->read_request = 0;
 	stream->priv->write_request = 0;
@@ -472,4 +464,5 @@ dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 G_DEFINE_TYPE_WITH_CODE (DMAPGstInputStream, dmap_gst_input_stream,
 			 G_TYPE_INPUT_STREAM,
 			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
-						dmap_gst_input_stream_seekable_iface_init));
+						dmap_gst_input_stream_seekable_iface_init)
+                         G_ADD_PRIVATE (DMAPGstInputStream));

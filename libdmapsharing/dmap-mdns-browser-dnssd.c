@@ -56,18 +56,16 @@ enum
 	LAST_SIGNAL
 };
 
-#define DMAP_MDNS_BROWSER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_MDNS_BROWSER, DMAPMdnsBrowserPrivate))
-
 static guint dmap_mdns_browser_signals[LAST_SIGNAL] = { 0, };
 
-G_DEFINE_TYPE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
+G_DEFINE_TYPE_WITH_PRIVATE (DMAPMdnsBrowser, dmap_mdns_browser, G_TYPE_OBJECT);
 
 static void
 dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 {
 	g_assert (NULL != browser);
 
-	browser->priv = DMAP_MDNS_BROWSER_GET_PRIVATE (browser);
+	browser->priv = dmap_mdns_browser_get_instance_private(browser);
 }
 
 static void
@@ -471,8 +469,6 @@ dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass)
 
 	object_class->dispose = dmap_mdns_browser_dispose;
 	object_class->finalize = dmap_mdns_browser_finalize;
-
-	g_type_class_add_private (klass, sizeof (DMAPMdnsBrowserPrivate));
 
 	// Signal makeup
 	dmap_mdns_browser_signals[SERVICE_ADDED] =

@@ -54,9 +54,6 @@ static void dmap_connection_state_done (DMAPConnection * connection,
 
 static gboolean emit_progress_idle (DMAPConnection * connection);
 
-G_DEFINE_TYPE (DMAPConnection, dmap_connection, G_TYPE_OBJECT);
-#define DMAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DMAP_TYPE_CONNECTION, DMAPConnectionPrivate))
-
 struct DMAPConnectionPrivate
 {
 	char *name;
@@ -96,6 +93,8 @@ struct DMAPConnectionPrivate
 	gboolean result;
 	char *last_error_message;
 };
+
+G_DEFINE_TYPE_WITH_PRIVATE (DMAPConnection, dmap_connection, G_TYPE_OBJECT);
 
 enum
 {
@@ -157,8 +156,6 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 	object_class->dispose = dmap_connection_dispose;
 	object_class->set_property = dmap_connection_set_property;
 	object_class->get_property = dmap_connection_get_property;
-
-	g_type_class_add_private (klass, sizeof (DMAPConnectionPrivate));
 
 	g_object_class_install_property (object_class,
 					 PROP_DB,
@@ -301,7 +298,7 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 static void
 dmap_connection_init (DMAPConnection * connection)
 {
-	connection->priv = DMAP_CONNECTION_GET_PRIVATE (connection);
+	connection->priv = dmap_connection_get_instance_private(connection);
 }
 
 static void

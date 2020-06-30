@@ -23,8 +23,6 @@
 #include <libdmapsharing/daap-connection.h>
 #include <libdmapsharing/dmap-structure.h>
 
-#define DAAP_CONNECTION_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DAAP_TYPE_CONNECTION, DAAPConnectionPrivate))
-
 static DMAPContentCode
 _get_protocol_version_cc (DMAPConnection * connection)
 {

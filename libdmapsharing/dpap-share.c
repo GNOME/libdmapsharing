@@ -89,14 +89,12 @@ struct DPAPSharePrivate
  */
 static GMappedFile *mapped_file = NULL;
 
-#define DPAP_SHARE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), DPAP_TYPE_SHARE, DPAPSharePrivate))
-
 enum
 {
 	PROP_0,
 };
 
-G_DEFINE_TYPE (DPAPShare, dpap_share, DMAP_TYPE_SHARE);
+G_DEFINE_TYPE_WITH_PRIVATE (DPAPShare, dpap_share, DMAP_TYPE_SHARE);
 
 static void
 dpap_share_class_init (DPAPShareClass * klass)
@@ -117,15 +115,13 @@ dpap_share_class_init (DPAPShareClass * klass)
 	parent_class->databases_browse_xxx = databases_browse_xxx;
 	parent_class->databases_items_xxx = databases_items_xxx;
 	parent_class->server_info = dpap_share_server_info;
-
-	g_type_class_add_private (klass, sizeof (DPAPSharePrivate));
 }
 
 static void
 dpap_share_init (DPAPShare * share)
 {
-	share->priv = DPAP_SHARE_GET_PRIVATE (share);
 	/* FIXME: do I need to manually call parent _init? */
+	share->priv = dpap_share_get_instance_private(share);
 }
 
 static void
