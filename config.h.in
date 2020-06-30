@@ -93,6 +93,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Defined when tests are to be built */
+#undef TESTS_ENABLED
+
 /* Version number of package */
 #undef VERSION
 
@@ -104,6 +107,3 @@
 
 /* Define if mDNS/DNS-SD implementation uses Howl */
 #undef WITH_HOWL
-
-/* Defined when tests are to be built */
-#undef WITH_TESTS

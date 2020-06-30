@@ -24,7 +24,7 @@ libdmapsharing_3_0_la_SOURCES = \
 	dpap-record.c \
 	dpap-share.c
 
-if HAVE_CHECK
+if TESTS_ENABLED
 libdmapsharing_3_0_la_SOURCES += \
 	test-daap-record.c \
 	test-daap-record-factory.c \
