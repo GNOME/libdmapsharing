@@ -247,18 +247,6 @@ namespace DAAP {
 		public Share (string name, string password, DMAP.Db db, DMAP.ContainerDb container_db, string transcode_mimetype);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public class TestDAAPRecord : GLib.Object, DAAP.Record, DAAP.DMAPRecord {
-		[CCode (cname = "test_daap_record_new", has_construct_function = false, type = "TestDAAPRecord*")]
-		public TestDAAPRecord ();
-		[NoAccessorMethod]
-		public string real_format { owned get; set; }
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public class TestDAAPRecordFactory : GLib.Object, DMAP.RecordFactory {
-		[CCode (cname = "test_daap_record_factory_new", has_construct_function = false, type = "TestDAAPRecordFactory*")]
-		public TestDAAPRecordFactory ();
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class bitwise {
 	}
@@ -900,18 +888,6 @@ namespace DACP {
 		public virtual signal void remote_found (string service_name, string remote_name);
 		public virtual signal void remote_lost (string service_name);
 		public virtual signal void remote_paired (string service_name, bool connected);
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public class TestDAAPRecord : GLib.Object, DAAP.Record, DACP.DMAPRecord {
-		[CCode (cname = "test_daap_record_new", has_construct_function = false, type = "TestDAAPRecord*")]
-		public TestDAAPRecord ();
-		[NoAccessorMethod]
-		public string real_format { owned get; set; }
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public class TestDAAPRecordFactory : GLib.Object, DACP.DMAPRecordFactory {
-		[CCode (cname = "test_daap_record_factory_new", has_construct_function = false, type = "TestDAAPRecordFactory*")]
-		public TestDAAPRecordFactory ();
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -2122,16 +2098,6 @@ namespace DPAP {
 	public class Share : DPAP.DMAPShare {
 		[CCode (has_construct_function = false)]
 		public Share (string name, string password, void* db, void* container_db, string transcode_mimetype);
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public class TestDPAPRecord : GLib.Object, DPAP.Record, DPAP.DMAPRecord {
-		[CCode (cname = "test_dpap_record_new", has_construct_function = false, type = "TestDPAPRecord*")]
-		public TestDPAPRecord ();
-	}
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public class TestDPAPRecordFactory : GLib.Object, DMAP.RecordFactory {
-		[CCode (cname = "test_dpap_record_factory_new", has_construct_function = false, type = "TestDPAPRecordFactory*")]
-		public TestDPAPRecordFactory ();
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
