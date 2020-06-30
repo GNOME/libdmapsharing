@@ -625,8 +625,10 @@ _parse_container_buffer (GNode * parent, const guint8 * buf,
 		 * then get out before we start processing it
 		 */
 		if (codesize > buf_length - l - 4) {
-			g_set_error(error, DMAP_ERROR, DMAP_STATUS_INVALID_CONTENT_CODE_SIZE,
-				   "Invalid codesize %zd received in buffer of length %zd",
+			g_set_error(error, DMAP_ERROR,
+			            DMAP_STATUS_INVALID_CONTENT_CODE_SIZE,
+				   "Invalid codesize %"G_GSIZE_FORMAT" "
+			           "received in buffer of length %"G_GSIZE_FORMAT,
 			            codesize, buf_length);
 			goto done;
 		}
