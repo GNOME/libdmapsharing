@@ -57,9 +57,6 @@ GType           test_dpap_record_get_type          (void);
 
 TestDPAPRecord *test_dpap_record_new               (void);
 
-GInputStream   *test_dpap_record_read              (DPAPRecord *record,
-						    GError **err);
-
 #endif /* __TEST_DPAP_RECORD */
 
 G_END_DECLS

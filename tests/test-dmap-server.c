@@ -24,12 +24,12 @@
 #include <glib.h>
 
 #include <libdmapsharing/dmap.h>
+#include <libdmapsharing/test-daap-record.h>
+#include <libdmapsharing/test-daap-record-factory.h>
+#include <libdmapsharing/test-dpap-record.h>
+#include <libdmapsharing/test-dpap-record-factory.h>
 
 #include "test-dmap-container-record.h"
-#include "test-daap-record.h"
-#include "test-daap-record-factory.h"
-#include "test-dpap-record.h"
-#include "test-dpap-record-factory.h"
 #include "test-dmap-container-db.h"
 #include "test-dmap-db.h"
 

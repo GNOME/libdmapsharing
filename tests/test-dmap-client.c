@@ -23,10 +23,10 @@
 #include <string.h>
 
 #include <libdmapsharing/dmap.h>
+#include <libdmapsharing/test-daap-record-factory.h>
+#include <libdmapsharing/test-dpap-record-factory.h>
 
 #include "test-dmap-db.h"
-#include "test-daap-record-factory.h"
-#include "test-dpap-record-factory.h"
 
 enum {
     DAAP,

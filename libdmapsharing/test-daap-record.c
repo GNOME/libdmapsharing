@@ -217,7 +217,8 @@ test_daap_record_get_property (GObject *object,
         }
 }
 
-GInputStream *test_daap_record_read (DAAPRecord *record, GError **error)
+static GInputStream *
+test_daap_record_read (DAAPRecord *record, GError **error)
 {
 	GFile *file;
 	GInputStream *stream;

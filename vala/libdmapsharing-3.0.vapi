@@ -247,6 +247,18 @@ namespace DAAP {
 		public Share (string name, string password, DMAP.Db db, DMAP.ContainerDb container_db, string transcode_mimetype);
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class TestDAAPRecord : GLib.Object, DAAP.Record, DAAP.DMAPRecord {
+		[CCode (cname = "test_daap_record_new", has_construct_function = false, type = "TestDAAPRecord*")]
+		public TestDAAPRecord ();
+		[NoAccessorMethod]
+		public string real_format { owned get; set; }
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class TestDAAPRecordFactory : GLib.Object, DMAP.RecordFactory {
+		[CCode (cname = "test_daap_record_factory_new", has_construct_function = false, type = "TestDAAPRecordFactory*")]
+		public TestDAAPRecordFactory ();
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
 	public class bitwise {
 	}
@@ -571,28 +583,26 @@ namespace DAAP {
 	public static void dmap_hash_progressive_to_string (uint digest, string str);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_update")]
 	public static void dmap_hash_progressive_update (DAAP.DMAPHashContext context, uint buffer, uint length);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_BOOLEAN__STRING")]
-	public static void dmap_marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__STRING")]
-	public static void dmap_marshal_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__ULONG_ULONG")]
-	public static void dmap_marshal_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_ULONG__VOID")]
-	public static void dmap_marshal_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_BOOLEAN")]
-	public static void dmap_marshal_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN")]
-	public static void dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_STRING")]
-	public static void dmap_marshal_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__ULONG_FLOAT")]
-	public static void dmap_marshal_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_BOOLEAN__STRING")]
+	public static void dmap_marshal_generated_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_STRING__STRING")]
+	public static void dmap_marshal_generated_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_STRING__ULONG_ULONG")]
+	public static void dmap_marshal_generated_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_ULONG__VOID")]
+	public static void dmap_marshal_generated_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_BOOLEAN")]
+	public static void dmap_marshal_generated_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN")]
+	public static void dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_STRING")]
+	public static void dmap_marshal_generated_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__ULONG_FLOAT")]
+	public static void dmap_marshal_generated_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_get_client")]
 	public static unowned Avahi.Client dmap_mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_set_entry_group")]
 	public static void dmap_mdns_avahi_set_entry_group (Avahi.EntryGroup group);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mime_to_format")]
-	public static unowned string dmap_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_add")]
 	public static unowned GLib.Node dmap_structure_add (GLib.Node parent, DAAP.DMAPContentCode cc);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_destroy")]
@@ -611,6 +621,8 @@ namespace DAAP {
 	public static void dmap_structure_print (GLib.Node structure);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_serialize")]
 	public static unowned string dmap_structure_serialize (GLib.Node structure, uint length);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_utils_mime_to_format")]
+	public static unowned string dmap_utils_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_write_next_chunk")]
 	public static void dmap_write_next_chunk (Soup.Message message, DAAP.ChunkData cd);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmapd_input_stream_strdup_format_extension")]
@@ -888,6 +900,18 @@ namespace DACP {
 		public virtual signal void remote_found (string service_name, string remote_name);
 		public virtual signal void remote_lost (string service_name);
 		public virtual signal void remote_paired (string service_name, bool connected);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class TestDAAPRecord : GLib.Object, DAAP.Record, DACP.DMAPRecord {
+		[CCode (cname = "test_daap_record_new", has_construct_function = false, type = "TestDAAPRecord*")]
+		public TestDAAPRecord ();
+		[NoAccessorMethod]
+		public string real_format { owned get; set; }
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class TestDAAPRecordFactory : GLib.Object, DACP.DMAPRecordFactory {
+		[CCode (cname = "test_daap_record_factory_new", has_construct_function = false, type = "TestDAAPRecordFactory*")]
+		public TestDAAPRecordFactory ();
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -1238,28 +1262,26 @@ namespace DACP {
 	public static void dmap_hash_progressive_to_string (uint digest, string str);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_update")]
 	public static void dmap_hash_progressive_update (DACP.DMAPHashContext context, uint buffer, uint length);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_BOOLEAN__STRING")]
-	public static void dmap_marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__STRING")]
-	public static void dmap_marshal_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__ULONG_ULONG")]
-	public static void dmap_marshal_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_ULONG__VOID")]
-	public static void dmap_marshal_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_BOOLEAN")]
-	public static void dmap_marshal_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN")]
-	public static void dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_STRING")]
-	public static void dmap_marshal_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__ULONG_FLOAT")]
-	public static void dmap_marshal_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_BOOLEAN__STRING")]
+	public static void dmap_marshal_generated_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_STRING__STRING")]
+	public static void dmap_marshal_generated_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_STRING__ULONG_ULONG")]
+	public static void dmap_marshal_generated_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_ULONG__VOID")]
+	public static void dmap_marshal_generated_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_BOOLEAN")]
+	public static void dmap_marshal_generated_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN")]
+	public static void dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_STRING")]
+	public static void dmap_marshal_generated_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__ULONG_FLOAT")]
+	public static void dmap_marshal_generated_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_get_client")]
 	public static unowned Avahi.Client dmap_mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_set_entry_group")]
 	public static void dmap_mdns_avahi_set_entry_group (Avahi.EntryGroup group);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mime_to_format")]
-	public static unowned string dmap_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_add")]
 	public static unowned GLib.Node dmap_structure_add (GLib.Node parent, DACP.DMAPContentCode cc);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_destroy")]
@@ -1278,6 +1300,8 @@ namespace DACP {
 	public static void dmap_structure_print (GLib.Node structure);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_serialize")]
 	public static unowned string dmap_structure_serialize (GLib.Node structure, uint length);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_utils_mime_to_format")]
+	public static unowned string dmap_utils_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_write_next_chunk")]
 	public static void dmap_write_next_chunk (Soup.Message message, DACP.ChunkData cd);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmapd_input_stream_strdup_format_extension")]
@@ -1807,27 +1831,25 @@ namespace DMAP {
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void hash_progressive_update (DMAP.HashContext context, uint buffer, uint length);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static void marshal_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	public static void marshal_generated_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static unowned Avahi.Client mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void mdns_avahi_set_entry_group (Avahi.EntryGroup group);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
-	public static unowned string mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "pads_compatible")]
 	public static bool pads_compatible (Gst.Pad pad1, Gst.Pad pad2);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
@@ -1848,6 +1870,8 @@ namespace DMAP {
 	public static void structure_print (GLib.Node structure);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static unowned string structure_serialize (GLib.Node structure, uint length);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public static unowned string utils_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	public static void write_next_chunk (Soup.Message message, DMAP.ChunkData cd);
 }
@@ -2098,6 +2122,16 @@ namespace DPAP {
 	public class Share : DPAP.DMAPShare {
 		[CCode (has_construct_function = false)]
 		public Share (string name, string password, void* db, void* container_db, string transcode_mimetype);
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class TestDPAPRecord : GLib.Object, DPAP.Record, DPAP.DMAPRecord {
+		[CCode (cname = "test_dpap_record_new", has_construct_function = false, type = "TestDPAPRecord*")]
+		public TestDPAPRecord ();
+	}
+	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
+	public class TestDPAPRecordFactory : GLib.Object, DMAP.RecordFactory {
+		[CCode (cname = "test_dpap_record_factory_new", has_construct_function = false, type = "TestDPAPRecordFactory*")]
+		public TestDPAPRecordFactory ();
 	}
 	[CCode (cheader_filename = "libdmapsharing/dmap.h")]
 	[Compact]
@@ -2422,28 +2456,26 @@ namespace DPAP {
 	public static void dmap_hash_progressive_to_string (uint digest, string str);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_hash_progressive_update")]
 	public static void dmap_hash_progressive_update (DPAP.DMAPHashContext context, uint buffer, uint length);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_BOOLEAN__STRING")]
-	public static void dmap_marshal_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__STRING")]
-	public static void dmap_marshal_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_STRING__ULONG_ULONG")]
-	public static void dmap_marshal_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_ULONG__VOID")]
-	public static void dmap_marshal_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_BOOLEAN")]
-	public static void dmap_marshal_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN")]
-	public static void dmap_marshal_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__STRING_STRING")]
-	public static void dmap_marshal_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_VOID__ULONG_FLOAT")]
-	public static void dmap_marshal_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_BOOLEAN__STRING")]
+	public static void dmap_marshal_generated_BOOLEAN__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_STRING__STRING")]
+	public static void dmap_marshal_generated_STRING__STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_STRING__ULONG_ULONG")]
+	public static void dmap_marshal_generated_STRING__ULONG_ULONG (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_ULONG__VOID")]
+	public static void dmap_marshal_generated_ULONG__VOID (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_BOOLEAN")]
+	public static void dmap_marshal_generated_VOID__STRING_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN")]
+	public static void dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__STRING_STRING")]
+	public static void dmap_marshal_generated_VOID__STRING_STRING (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_marshal_generated_VOID__ULONG_FLOAT")]
+	public static void dmap_marshal_generated_VOID__ULONG_FLOAT (GLib.Closure closure, GLib.Value return_value, uint n_param_values, GLib.Value param_values, void* invocation_hint, void* marshal_data);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_get_client")]
 	public static unowned Avahi.Client dmap_mdns_avahi_get_client ();
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mdns_avahi_set_entry_group")]
 	public static void dmap_mdns_avahi_set_entry_group (Avahi.EntryGroup group);
-	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_mime_to_format")]
-	public static unowned string dmap_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_add")]
 	public static unowned GLib.Node dmap_structure_add (GLib.Node parent, DPAP.DMAPContentCode cc);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_destroy")]
@@ -2462,6 +2494,8 @@ namespace DPAP {
 	public static void dmap_structure_print (GLib.Node structure);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_structure_serialize")]
 	public static unowned string dmap_structure_serialize (GLib.Node structure, uint length);
+	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_utils_mime_to_format")]
+	public static unowned string dmap_utils_mime_to_format (string transcode_mimetype);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmap_write_next_chunk")]
 	public static void dmap_write_next_chunk (Soup.Message message, DPAP.ChunkData cd);
 	[CCode (cheader_filename = "libdmapsharing/dmap.h", cname = "dmapd_input_stream_strdup_format_extension")]

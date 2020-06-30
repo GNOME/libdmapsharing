@@ -24,7 +24,7 @@ private class ValaDMAPDb : GLib.Object, DMAP.Db {
 	// A dumb database that stores everything in an array
 
 	/* FIXME: What is with this unowned? */
-	private Gee.ArrayList<unowned DMAP.Record> db = new Gee.ArrayList<DMAP.Record> ();
+	private Gee.ArrayList<unowned DMAP.Record> db = new Gee.ArrayList<unowned DMAP.Record> ();
 
 	public uint add (DMAP.Record record) {
 		db.add (((DMAP.Record) record));

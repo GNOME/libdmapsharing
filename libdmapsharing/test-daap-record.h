@@ -57,8 +57,6 @@ GType test_daap_record_get_type (void);
 
 TestDAAPRecord *test_daap_record_new           (void);
 
-GInputStream   *test_daap_record_read          (DAAPRecord *record, GError **err);
-
 #endif /* __TEST_DAAP_RECORD */
 
 G_END_DECLS
