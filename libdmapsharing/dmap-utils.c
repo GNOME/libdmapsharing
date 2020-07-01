@@ -71,13 +71,13 @@ END_TEST
 
 START_TEST(dmap_utils_mime_to_format_test_null)
 {
-	ck_assert_ptr_null(dmap_utils_mime_to_format(NULL));
+	ck_assert_ptr_eq(dmap_utils_mime_to_format(NULL), NULL);
 }
 END_TEST
 
 START_TEST(dmap_utils_mime_to_format_test_bad)
 {
-	ck_assert_ptr_null(dmap_utils_mime_to_format("bad/mime"));
+	ck_assert_ptr_eq(dmap_utils_mime_to_format("bad/mime"), NULL);
 }
 END_TEST
 
