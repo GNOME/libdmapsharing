@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/ubuntu:rolling
+  image: i386/ubuntu:groovy
 
   variables:
     DEBIAN_FRONTEND: noninteractive
