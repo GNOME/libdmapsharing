@@ -74,10 +74,15 @@ authenticate_cb (DMAPConnection *connection,
 		 gboolean retrying,
 		 gpointer user_data)
 {
-	char *username, password[BUFSIZ + 1];
+	char *username, password[BUFSIZ + 1], *rc;
 	g_object_get (connection, "username", &username, NULL);
 	g_print ("Password required (username is %s): ", username);
-	fgets (password, BUFSIZ, stdin);
+
+	rc = fgets (password, BUFSIZ, stdin);
+	if (rc != password) {
+		g_error ("failed to read password");
+	}
+
 	password[strlen(password) - 1] = 0x00; // Remove newline.
 	g_object_set (connection, "password", password, NULL);
 	soup_auth_authenticate (auth, username, password);
