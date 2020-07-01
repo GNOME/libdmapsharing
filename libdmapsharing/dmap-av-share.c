@@ -1643,7 +1643,7 @@ START_TEST(_databases_items_xxx_test)
 	char path[PATH_MAX + 1];
 	DmapDb *db = NULL;
 	DmapRecord *record = NULL;
-	guint64 size1 = 0, size2 = 0;
+	gsize size1 = 0, size2 = 0;
 	const guint8 *contents1;
 	char *location, *contents2, *etag_out;
 	GFile *file;
