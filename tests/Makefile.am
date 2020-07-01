@@ -1,8 +1,10 @@
 if TESTS_ENABLED
 noinst_PROGRAMS = test-dmap-client test-dmap-server
 
+if BUILD_VAPI
 if HAVE_GEE
 noinst_PROGRAMS += dacplisten dpapview dmapcopy dmapserve
+endif
 endif
 
 # Automake documentation mentions LDADD, but it does not work;
@@ -11,7 +13,6 @@ LIBS += $(top_builddir)/libdmapsharing/libdmapsharing-4.0.la
 
 if HAVE_CHECK
 noinst_PROGRAMS += unit-test
-endif
 endif
 
 test_dmap_client_SOURCES = \
@@ -41,7 +42,6 @@ test_dmap_server_LDADD = \
 	$(MDNS_LIBS)
 
 if HAVE_VALAC
-if TESTS_ENABLED
 BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
 endif
 
@@ -60,7 +60,6 @@ dmapcopy.stamp: $(dmapcopy_VALASOURCES)
 dmapserve.stamp: $(dmapserve_VALASOURCES)
 	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 	touch $@
-endif
 
 dacplisten_VALASOURCES = \
 	dacplisten.vala \
@@ -151,4 +150,5 @@ if HAVE_VALAC
 CLEANFILES = \
 	$(BUILT_SOURCES) \
 	$(dpapview_VALABUILTSOURCES)
+endif
 endif

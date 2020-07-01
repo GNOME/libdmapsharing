@@ -7,7 +7,6 @@ libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@.gi libdmapsharin
 	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-1.0 --library libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@.gi
 
 all: libdmapsharing-@API_VERSION@.vapi
-endif
 
 vapidir = $(datadir)/vala/vapi
 
@@ -28,7 +27,6 @@ CLEANFILES = \
 DISTCLEANFILES = \
 	libdmapsharing-@API_VERSION@-uninstalled.files
 
-if BUILD_VAPI
 CLEANFILES += \
 	libdmapsharing-@API_VERSION@.vapi
 endif
