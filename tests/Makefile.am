@@ -119,6 +119,7 @@ unit_test_SOURCES = \
 	unit-test.c
 
 unit_test_LDADD = \
+	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
 	$(GOBJECT_LIBS)
 
