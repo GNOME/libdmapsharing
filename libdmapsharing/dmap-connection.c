@@ -1881,7 +1881,7 @@ _error_cb(G_GNUC_UNUSED DmapConnection *connection, GError *error,
 } \
 
 START_TEST(_actual_http_response_handler_test) \
-_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x0dHello, world!",
+_ACTUAL_HTTP_RESPONSE_HANDLER_TEST("minm\x00\x00\x00\x0eHello, world!",
                                     sizeof bytes, DMAP_STATUS_OK);
 END_TEST
 
