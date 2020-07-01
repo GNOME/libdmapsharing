@@ -96,10 +96,15 @@ authenticate_cb (DmapConnection *connection,
 		 G_GNUC_UNUSED gboolean retrying,
 		 G_GNUC_UNUSED gpointer user_data)
 {
-	char *username, password[BUFSIZ + 1];
+	char *username, password[BUFSIZ + 1], *rc;
 	g_object_get (connection, "username", &username, NULL);
 	g_print ("Password required (username is %s): ", username);
-	fgets (password, BUFSIZ, stdin);
+
+	rc = fgets (password, BUFSIZ, stdin);
+	if (rc != password) {
+		g_error ("failed to read password");
+	}
+
 	password[strlen(password) - 1] = 0x00; // Remove newline.
 
 	dmap_connection_authenticate_message(connection, session, msg, auth, password);
