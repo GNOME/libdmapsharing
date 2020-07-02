@@ -6,9 +6,13 @@ build-ubuntu:
 
   before_script:
     - apt-get update
-    - apt-get install -q -y --no-install-recommends autoconf automake avahi-daemon check gcc gtk-doc-tools libavahi-client-dev libavahi-glib-dev libgdk-pixbuf2.0-dev libgee-0.8-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libsoup2.4-dev libtool pkg-config
+    - apt-get install -q -y --no-install-recommends autoconf automake avahi-daemon check gcc gtk-doc-tools libavahi-client-dev libavahi-compat-libdnssd-dev libavahi-glib-dev libgdk-pixbuf2.0-dev libgee-0.8-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libsoup2.4-dev libtool pkg-config
 
   script:
-    - ./autogen.sh
-    - make
+    - ./autogen.sh --with-mdns=avahi
+    - make CFLAGS="-Wall -Wextra -Werror"
+    - make clean
+    - ./configure --with-mdns=dns_sd
+    - make CFLAGS="-Wall -Wextra -Werror"
     - make check
+    - make clean
