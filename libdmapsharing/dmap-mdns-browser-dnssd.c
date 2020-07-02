@@ -169,12 +169,12 @@ done:
 }
 
 static void
-_dns_service_browse_reply (DNSServiceRef sd_ref,
+_dns_service_browse_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
                            DNSServiceFlags flags,
                            uint32_t interface_index,
                            DNSServiceErrorType error_code,
                            const char *service_name,
-                           const char *regtype,
+                           G_GNUC_UNUSED const char *regtype,
                            const char *domain, void *udata)
 {
 	if (error_code != kDNSServiceErr_NoError) {
@@ -202,14 +202,15 @@ done:
 	return;
 }
 
+/*
 static void
-_dns_host_resolve_reply (DNSServiceRef sd_ref,
-                         DNSServiceFlags flags,
-                         uint32_t interface_index,
+_dns_host_resolve_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
+                         G_GNUC_UNUSED DNSServiceFlags flags,
+                         G_GNUC_UNUSED uint32_t interface_index,
                          DNSServiceErrorType error_code,
-                         const char *hostname,
+                         G_GNUC_UNUSED const char *hostname,
                          const struct sockaddr *address,
-                         uint32_t ttl,
+                         G_GNUC_UNUSED uint32_t ttl,
                          void *udata)
 {
 	ServiceContext *ctx = (ServiceContext *) udata;
@@ -239,9 +240,11 @@ _dns_host_resolve_reply (DNSServiceRef sd_ref,
 		break;
 	}
 }
+*/
 
 static gboolean
-_lookup_result_available_cb (GIOChannel * gio, GIOCondition condition,
+_lookup_result_available_cb (G_GNUC_UNUSED GIOChannel * gio,
+                             GIOCondition condition,
                              ServiceContext *context)
 {
 	gboolean fnval = FALSE;
@@ -289,15 +292,15 @@ _add_host_lookup_to_event_loop (ServiceContext *context)
 }
 
 static void
-_dns_service_resolve_reply (DNSServiceRef sd_ref,
+_dns_service_resolve_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
                             DNSServiceFlags flags,
                             uint32_t interface_index,
                             DNSServiceErrorType error_code,
                             const char *name,
-                            const char *host,
+                            G_GNUC_UNUSED const char *host,
                             uint16_t port,
-                            uint16_t txt_len,
-                            const char *txt_record,
+                            G_GNUC_UNUSED uint16_t txt_len,
+                            G_GNUC_UNUSED const char *txt_record,
                             void *udata)
 {
 	DNSServiceRef ref;
@@ -338,7 +341,8 @@ _dns_service_resolve_reply (DNSServiceRef sd_ref,
 }
 
 static gboolean
-_service_result_available_cb (GIOChannel * gio, GIOCondition condition,
+_service_result_available_cb (G_GNUC_UNUSED GIOChannel * gio,
+                              GIOCondition condition,
                               ServiceContext *context)
 {
 	gboolean fnval = FALSE;
@@ -380,8 +384,9 @@ _add_service_discovery_to_event_loop (ServiceContext *context)
 }
 
 static gboolean
-_browse_result_available_cb (GIOChannel * gio,
-                             GIOCondition condition, DmapMdnsBrowser * browser)
+_browse_result_available_cb (G_GNUC_UNUSED GIOChannel * gio,
+                             GIOCondition condition,
+                             DmapMdnsBrowser * browser)
 {
 	gboolean fnval = FALSE;
 
@@ -556,7 +561,8 @@ dmap_mdns_browser_start (DmapMdnsBrowser * browser, GError ** error)
 }
 
 gboolean
-dmap_mdns_browser_stop (DmapMdnsBrowser * browser, GError ** error)
+dmap_mdns_browser_stop (DmapMdnsBrowser * browser,
+                        G_GNUC_UNUSED GError ** error)
 {
 	if (NULL != browser->priv->sd_browse_ref) {
 		DNSServiceRefDeallocate (browser->priv->sd_browse_ref);

@@ -56,10 +56,10 @@ dmap_mdns_publisher_error_quark (void)
 }
 
 gboolean
-dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher *publisher,
-				    guint	       port,
-                                    const char        *name,
-                                    GError           **error)
+dmap_mdns_publisher_rename_at_port (G_GNUC_UNUSED DmapMdnsPublisher *publisher,
+				    G_GNUC_UNUSED guint	       port,
+                                    G_GNUC_UNUSED const char        *name,
+                                    G_GNUC_UNUSED GError           **error)
 {
 	g_error ("Not implemented");
 
@@ -91,7 +91,7 @@ _build_txt_record(gboolean password_required, gchar **txt_records, uint16_t *txt
 	for (; txt_records && *txt_records; txt_records++) {
 		size_t len = strlen(*txt_records);
 
-		g_assert(len <= ~(char)0);
+		g_assert(len <= 255);
 
 		txt_record[i++] = (char)len;
 
@@ -160,9 +160,9 @@ done:
 }
 
 gboolean
-dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
-			      guint port,
-                              GError             **error)
+dmap_mdns_publisher_withdraw (G_GNUC_UNUSED DmapMdnsPublisher *publisher,
+			      G_GNUC_UNUSED guint port,
+                              G_GNUC_UNUSED GError             **error)
 {
 	g_error ("Not implemented");
 
@@ -172,7 +172,7 @@ dmap_mdns_publisher_withdraw (DmapMdnsPublisher *publisher,
 static void
 _set_property (GObject      *object,
                guint         prop_id,
-               const GValue *value,
+               G_GNUC_UNUSED const GValue *value,
                GParamSpec   *pspec)
 {
         switch (prop_id) {
@@ -185,7 +185,7 @@ _set_property (GObject      *object,
 static void
 _get_property (GObject    *object,
                guint       prop_id,
-               GValue     *value,
+               G_GNUC_UNUSED GValue *value,
                GParamSpec *pspec)
 {
         switch (prop_id) {
