@@ -41,25 +41,17 @@ test_dmap_server_LDADD = \
 	$(IMAGEMAGICK_LIBS) \
 	$(MDNS_LIBS)
 
-if HAVE_VALAC
-BUILT_SOURCES = dacplisten.stamp dpapview.stamp dmapcopy.stamp dmapserve.stamp
-endif
-
-dacplisten.stamp: $(dacplisten_VALASOURCES)
+dacplisten.c: $(dacplisten_VALASOURCES)
 	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject  $^ -C
-	touch $@
 
-dpapview.stamp: $(dpapview_VALASOURCES)
+dpapview.c: $(dpapview_VALASOURCES)
 	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gtk+-3.0 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
-	touch $@
 
-dmapcopy.stamp: $(dmapcopy_VALASOURCES)
+dmapcopy.c: $(dmapcopy_VALASOURCES)
 	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
-	touch $@
 
-dmapserve.stamp: $(dmapserve_VALASOURCES)
+dmapserve.c: $(dmapserve_VALASOURCES)
 	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
-	touch $@
 
 dacplisten_VALASOURCES = \
 	dacplisten.vala \
@@ -137,19 +129,22 @@ AM_CPPFLAGS = \
 	$(SOUP_CFLAGS)
 
 EXTRA_DIST = \
-	$(dacplisten_VALASOURCES) \
 	$(dacplisten_VALABUILTSOURCES) \
-	$(dpapview_VALASOURCES) \
-	$(dpapview_VALABUILTSOURCES) \
-	$(dmapcopy_VALASOURCES) \
+	$(dacplisten_VALASOURCES) \
 	$(dmapcopy_VALABUILTSOURCES) \
-	$(dmapserve_VALASOURCES) \
+	$(dmapcopy_VALASOURCES) \
 	$(dmapserve_VALABUILTSOURCES) \
+	$(dmapserve_VALASOURCES) \
+	$(dpapview_VALABUILTSOURCES) \
+	$(dpapview_VALASOURCES) \
 	dpapview.ui
 
 if HAVE_VALAC
 CLEANFILES = \
-	$(BUILT_SOURCES) \
+	$(dacplisten_VALABUILTSOURCES) \
+	$(dmapcopy_VALABUILTSOURCES) \
+	$(dmapserve_VALABUILTSOURCES) \
+	$(dpapview_VALABUILTSOURCES) \
 	$(dpapview_VALABUILTSOURCES)
 endif
 endif
