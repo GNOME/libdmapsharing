@@ -160,13 +160,13 @@ done:
 }
 
 static void
-dns_service_browse_reply (DNSServiceRef sd_ref,
-			  DNSServiceFlags flags,
-			  uint32_t interface_index,
-			  DNSServiceErrorType error_code,
-			  const char *service_name,
-			  const char *regtype,
-			  const char *domain, void *udata)
+dns_service_browse_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
+                          DNSServiceFlags flags,
+                          uint32_t interface_index,
+                          DNSServiceErrorType error_code,
+                          const char *service_name,
+                          G_GNUC_UNUSED const char *regtype,
+                          const char *domain, void *udata)
 {
 	if (error_code != kDNSServiceErr_NoError) {
 		g_warning ("dnsServiceBrowserReply ():  fail");
@@ -192,14 +192,15 @@ done:
 	return;
 }
 
+/*
 static void
-dns_host_resolve_reply (DNSServiceRef sd_ref,
-                        DNSServiceFlags flags,
-                        uint32_t interface_index,
+dns_host_resolve_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
+                        G_GNUC_UNUSED DNSServiceFlags flags,
+                        G_GNUC_UNUSED uint32_t interface_index,
                         DNSServiceErrorType error_code,
-                        const char *hostname,
+                        G_GNUC_UNUSED const char *hostname,
                         const struct sockaddr *address,
-                        uint32_t ttl,
+                        G_GNUC_UNUSED uint32_t ttl,
                         void *udata)
 {
 	ServiceContext *ctx = (ServiceContext *) udata;
@@ -227,10 +228,12 @@ dns_host_resolve_reply (DNSServiceRef sd_ref,
 		break;
 	}
 }
+*/
 
 static gboolean
-lookup_result_available_cb (GIOChannel * gio, GIOCondition condition,
-                             ServiceContext *context)
+lookup_result_available_cb (G_GNUC_UNUSED GIOChannel * gio,
+                            GIOCondition condition,
+                            ServiceContext *context)
 {
 	gboolean fnval = FALSE;
 
@@ -277,15 +280,15 @@ add_host_lookup_to_event_loop (ServiceContext *context)
 }
 
 static void
-dns_service_resolve_reply (DNSServiceRef sd_ref,
-			   DNSServiceFlags flags,
-			   uint32_t interface_index,
-			   DNSServiceErrorType error_code,
-			   const char *name,
-			   const char *host,
-			   uint16_t port,
-			   uint16_t txt_len,
-			   const char *txt_record,
+dns_service_resolve_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
+                           DNSServiceFlags flags,
+                           uint32_t interface_index,
+                           DNSServiceErrorType error_code,
+                           const char *name,
+                           G_GNUC_UNUSED const char *host,
+                           uint16_t port,
+                           G_GNUC_UNUSED uint16_t txt_len,
+                           G_GNUC_UNUSED const char *txt_record,
                            void *udata)
 {
 	DNSServiceRef ref;
@@ -303,6 +306,8 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 	ctx->service.pair = NULL;
 	ctx->service.password_protected = FALSE;
 
+	g_error("FIXME: Not implemented");
+/*
 	DNSServiceErrorType err = DNSServiceGetAddrInfo (&ref,
 	                              0,
 	                              ctx->interface_index,
@@ -314,6 +319,7 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 		g_warning ("Error setting up DNS-SD address info handler");
 		service_context_free (ctx);
 	}
+*/
 
 	ctx->host_lookup_ref = ref;
 
@@ -321,7 +327,8 @@ dns_service_resolve_reply (DNSServiceRef sd_ref,
 }
 
 static gboolean
-service_result_available_cb (GIOChannel * gio, GIOCondition condition,
+service_result_available_cb (G_GNUC_UNUSED GIOChannel * gio,
+                             GIOCondition condition,
                              ServiceContext *context)
 {
 	gboolean fnval = FALSE;
@@ -363,8 +370,9 @@ add_service_discovery_to_event_loop (ServiceContext *context)
 }
 
 static gboolean
-browse_result_available_cb (GIOChannel * gio,
-			    GIOCondition condition, DMAPMdnsBrowser * browser)
+browse_result_available_cb (G_GNUC_UNUSED GIOChannel * gio,
+                            GIOCondition condition,
+                            DMAPMdnsBrowser * browser)
 {
 	gboolean fnval = FALSE;
 
@@ -538,7 +546,8 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 }
 
 gboolean
-dmap_mdns_browser_stop (DMAPMdnsBrowser * browser, GError ** error)
+dmap_mdns_browser_stop (DMAPMdnsBrowser * browser,
+                        G_GNUC_UNUSED GError ** error)
 {
 	if (NULL != browser->priv->sd_browse_ref) {
 		DNSServiceRefDeallocate (browser->priv->sd_browse_ref);
