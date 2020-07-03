@@ -1,10 +1,12 @@
 if TESTS_ENABLED
 noinst_PROGRAMS = test-dmap-client test-dmap-server
 
-if BUILD_VAPI
-if HAVE_GEE
-noinst_PROGRAMS += dacplisten dpapview dmapcopy dmapserve
+if BUILD_VALATESTS
+noinst_PROGRAMS += dacplisten dmapcopy dmapserve
 endif
+
+if BUILD_DPAPVIEW
+noinst_PROGRAMS += dpapview
 endif
 
 # Automake documentation mentions LDADD, but it does not work;

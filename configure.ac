@@ -362,12 +362,16 @@ AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
 PKG_CHECK_MODULES(GEE, gee-0.8, HAVE_GEE=yes, HAVE_GEE=no)
-AM_CONDITIONAL(HAVE_GEE, test "x$HAVE_GEE" = "xyes")
 
 AC_SUBST(GEE_CFLAGS)
 AC_SUBST(GEE_LIBS)
 
-AM_CONDITIONAL(BUILD_DPAPVIEW, test "x$HAVE_VALA" = "xyes" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes")
+AM_CONDITIONAL(BUILD_VALATESTS, test -x "$VALAC" -a "x$HAVE_GEE" = "xyes")
+if test -n "$BUILD_VALATESTS" ; then
+	AC_MSG_WARN([Will not build Vala tests])
+fi
+
+AM_CONDITIONAL(BUILD_DPAPVIEW, test -x "$VALAC" -a "x$HAVE_GEE" = "xyes" -a "x$HAVE_GTK" = "xyes")
 if test -n "$BUILD_DPAPVIEW" ; then
 	AC_MSG_WARN([Will not build dpapview])
 fi
