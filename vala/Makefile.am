@@ -49,7 +49,6 @@ libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@-daap.vapi libdma
 	rm -f libdmapsharing-@API_VERSION@-daap.vapi libdmapsharing-@API_VERSION@-dacp.vapi libdmapsharing-@API_VERSION@-dmap.vapi libdmapsharing-@API_VERSION@-dpap.vapi
 	
 all: libdmapsharing-@API_VERSION@.vapi
-endif
 
 vapidir = $(datadir)/vala/vapi
 
@@ -91,7 +90,6 @@ DISTCLEANFILES = \
 	libdmapsharing-@API_VERSION@-dmap/libdmapsharing-@API_VERSION@-uninstalled.files \
 	libdmapsharing-@API_VERSION@-dpap/libdmapsharing-@API_VERSION@-uninstalled.files
 
-if BUILD_VAPI
 CLEANFILES += \
 	libdmapsharing-@API_VERSION@.vapi
 endif
