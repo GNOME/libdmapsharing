@@ -328,6 +328,5 @@ if HAVE_PEDANSEE
 		$(PEDANSEE) -c pedansee.conf $$i -- -x c $(DEFS) $(libdmapsharing_4_0_la_CFLAGS); \
 	done
 endif
-	make clean
 
 EXTRA_DIST = dmap-marshal.list generate-test-suites
