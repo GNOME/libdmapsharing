@@ -2,6 +2,7 @@ aclocal.m4
 autom4te.cache/
 autoregen.sh
 ChangeLog
+compile
 config.*
 configure
 depcomp
