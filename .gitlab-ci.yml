@@ -17,7 +17,13 @@ build-ubuntu:
     - make clean
 
 build-alpine:
-  image: arm32v7/alpine:latest
+  image: arm64v8/alpine:latest
+
+  tags:
+    - aarach64
+
+  variables:
+    ARCH: aarch64
 
   before_script:
     - apk update
