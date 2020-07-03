@@ -20,7 +20,7 @@ build-alpine:
   image: arm64v8/alpine:latest
 
   tags:
-    - aarach64
+    - aarch64
 
   variables:
     ARCH: aarch64
