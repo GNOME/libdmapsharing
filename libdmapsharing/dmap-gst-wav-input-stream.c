@@ -23,8 +23,8 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 
-#include "gst-util.h"
 #include "dmap-gst-wav-input-stream.h"
+#include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
 
@@ -38,10 +38,6 @@ struct DMAPGstWAVInputStreamPrivate
 	GstElement *audio_encode;
 	GstElement *sink;
 };
-
-/* FIXME: See note in dmap-gst-input-stream.h */
-void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
-					  DMAPGstInputStream * stream);
 
 static void
 pad_added_cb (G_GNUC_UNUSED GstElement * element,

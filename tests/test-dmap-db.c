@@ -50,7 +50,7 @@ test_dmap_db_count (const DMAPDb *db)
 	return g_hash_table_size (TEST_DMAP_DB (db)->priv->db);
 }
 
-guint
+static guint
 test_dmap_db_add (DMAPDb *db, DMAPRecord *record)
 {
         guint id;

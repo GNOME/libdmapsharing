@@ -378,7 +378,7 @@ dacp_share_dispose (GObject * object)
 	g_hash_table_destroy (share->priv->remotes);
 }
 
-void
+static void
 mdns_remote_added (G_GNUC_UNUSED DMAPMdnsBrowser * browser,
 		   DMAPMdnsBrowserService * service, DACPShare * share)
 {
@@ -403,7 +403,7 @@ mdns_remote_added (G_GNUC_UNUSED DMAPMdnsBrowser * browser,
 		       0, service->service_name, service->name);
 }
 
-void
+static void
 mdns_remote_removed (G_GNUC_UNUSED DMAPMdnsBrowser * browser,
 		     const char *service_name, DACPShare * share)
 {
@@ -998,7 +998,7 @@ dacp_share_pairing_code (G_GNUC_UNUSED DACPShare * share,
 	return ret;
 }
 
-void
+static void
 connection_handler_cb (DMAPConnection * connection, guint status,
 		       GNode * structure, gpointer user_data)
 {

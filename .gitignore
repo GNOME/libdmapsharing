@@ -52,6 +52,7 @@ libdmapsharing/Makefile
 libdmapsharing/Makefile.in
 libdmapsharing/*.[oa]
 libdmapsharing/*-suite.c
+libdmapsharing/*-suite.h
 libdmapsharing/DMAP-3.0.gir
 libdmapsharing/DMAP-3.0.typelib
 libdmapsharing/unit-test.stamp

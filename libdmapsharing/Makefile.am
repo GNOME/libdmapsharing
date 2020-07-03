@@ -64,7 +64,8 @@ libdmapsharing_3_0_la_CFLAGS = \
 	$(GDKPIXBUF_CFLAGS) \
 	$(SOUP_CFLAGS) \
 	$(GSTREAMERAPP_CFLAGS) \
-	$(MDNS_CFLAGS)
+	$(MDNS_CFLAGS) \
+	$(WARN_CFLAGS)
 
 libdmapsharing_3_0_la_LDFLAGS = \
 	-version-info @SO_VERSION@ \
@@ -125,10 +126,10 @@ BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-tes
 CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c pedansee.conf
 
 dmap-marshal.c: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --body > dmap-marshal.c
+	@glib-genmarshal --prefix=dmap_marshal_generated --include-header dmap-marshal.h $(srcdir)/dmap-marshal.list --body > dmap-marshal.c
 
 dmap-marshal.h: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --header > dmap-marshal.h
+	@glib-genmarshal --prefix=dmap_marshal_generated --include-header dmap-marshal.h $(srcdir)/dmap-marshal.list --header > dmap-marshal.h
 
 dmap-enums.c: $(libdmapsharinginclude_headers) Makefile dmap-enums.h
 	@glib-mkenums \

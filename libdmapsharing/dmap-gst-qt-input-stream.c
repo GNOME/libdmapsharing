@@ -39,10 +39,6 @@ struct DMAPGstQtInputStreamPrivate
 	GstElement *sink;
 };
 
-/* FIXME: See note in dmap-gst-input-stream.h */
-void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
-					  DMAPGstInputStream * stream);
-
 static void
 pad_added_cb (G_GNUC_UNUSED GstElement * element,
               GstPad * pad,

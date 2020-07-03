@@ -1573,7 +1573,7 @@ chunked_message_finished (G_GNUC_UNUSED SoupMessage * message,
 	g_free (share_bitwise);
 }
 
-DMAPRecord *
+static DMAPRecord *
 g_hash_table_lookup_adapter (GHashTable * ht, guint id)
 {
 	/* NOTE: each time this is called by write_next_mlit(), the

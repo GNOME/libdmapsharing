@@ -25,6 +25,9 @@
 
 gboolean pads_compatible (GstPad * pad1, GstPad * pad2);
 
+void dmap_gst_input_stream_new_buffer_cb (GstElement * element,
+                                          DMAPGstInputStream * stream);
+
 #endif /* __GST_UTIL */
 
 G_END_DECLS

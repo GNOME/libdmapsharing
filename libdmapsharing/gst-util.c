@@ -22,6 +22,7 @@
 #include <gst/gst.h>
 
 #include "dmap-gst-input-stream.h"
+#include "gst-util.h"
 
 gboolean
 pads_compatible (GstPad * pad1, GstPad * pad2)
