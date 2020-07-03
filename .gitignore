@@ -16,14 +16,28 @@ missing
 stamp-h1
 stamp-h.in
 
-docs/.hierarchy
-docs/html/
-docs/libdmapsharing-overrides.txt
-docs/libdmapsharing-sections.txt
-docs/libdmapsharing.types
-docs/Makefile
-docs/Makefile.in
-docs/tmpl/
+doc/.libs/
+doc/html-build.stamp
+doc/html.stamp
+doc/html/
+doc/libdmapsharing-3.0-decl-list.txt
+doc/libdmapsharing-3.0-decl.txt
+doc/libdmapsharing-3.0-overrides.txt
+doc/libdmapsharing-3.0-sections.txt
+doc/libdmapsharing-3.0-undeclared.txt
+doc/libdmapsharing-3.0-undocumented.txt
+doc/libdmapsharing-3.0-unused.txt
+doc/libdmapsharing-3.0.args
+doc/libdmapsharing-3.0.hierarchy
+doc/libdmapsharing-3.0.interfaces
+doc/libdmapsharing-3.0.prerequisites
+doc/libdmapsharing-3.0.signals
+doc/libdmapsharing-3.0.types
+doc/scan-build.stamp
+doc/setup-build.stamp
+doc/sgml-build.stamp
+doc/sgml.stamp
+doc/xml/
 
 libdmapsharing/.deps/
 libdmapsharing/dmap-config.h
