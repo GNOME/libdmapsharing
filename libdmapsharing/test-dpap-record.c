@@ -159,7 +159,7 @@ test_dpap_record_read (DPAPRecord *record, GError **error)
 }
 
 static void
-test_dpap_record_dpap_iface_init (gpointer iface, gpointer data)
+test_dpap_record_dpap_iface_init (gpointer iface, G_GNUC_UNUSED gpointer data)
 {
 	DPAPRecordIface *dpap_record = iface;
 
@@ -169,7 +169,7 @@ test_dpap_record_dpap_iface_init (gpointer iface, gpointer data)
 }
 
 static void
-test_dpap_record_dmap_iface_init (gpointer iface, gpointer data)
+test_dpap_record_dmap_iface_init (gpointer iface, G_GNUC_UNUSED gpointer data)
 {
         DMAPRecordIface *dmap_record = iface;
 

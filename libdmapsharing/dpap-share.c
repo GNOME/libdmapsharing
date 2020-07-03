@@ -127,7 +127,8 @@ dpap_share_init (DPAPShare * share)
 static void
 dpap_share_set_property (GObject * object,
 			 guint prop_id,
-			 const GValue * value, GParamSpec * pspec)
+			 G_GNUC_UNUSED const GValue * value,
+                         GParamSpec * pspec)
 {
 	// DPAPShare *share = DPAP_SHARE (object);
 
@@ -140,8 +141,8 @@ dpap_share_set_property (GObject * object,
 }
 
 static void
-dpap_share_get_property (GObject * object,
-			 guint prop_id, GValue * value, GParamSpec * pspec)
+dpap_share_get_property (GObject * object, guint prop_id,
+                         G_GNUC_UNUSED GValue * value, GParamSpec * pspec)
 {
 	// DPAPShare *share = DPAP_SHARE (object);
 
@@ -153,7 +154,7 @@ dpap_share_get_property (GObject * object,
 }
 
 static void
-dpap_share_dispose (GObject * object)
+dpap_share_dispose (G_GNUC_UNUSED GObject * object)
 {
 	/* FIXME: implement in parent */
 }
@@ -165,7 +166,8 @@ DPAPShare *
 dpap_share_new (const char *name,
 		const char *password,
 		gpointer db,
-		gpointer container_db, gchar * transcode_mimetype)
+		gpointer container_db,
+                G_GNUC_UNUSED gchar * transcode_mimetype)
 {
 	DPAPShare *share;
 
@@ -183,7 +185,7 @@ dpap_share_new (const char *name,
 }
 
 void
-dpap_share_message_add_standard_headers (DMAPShare * share,
+dpap_share_message_add_standard_headers (G_GNUC_UNUSED DMAPShare * share,
 					 SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DPAP-Server",
@@ -195,23 +197,24 @@ dpap_share_message_add_standard_headers (DMAPShare * share,
 #define DPAP_TIMEOUT 1800
 
 guint
-dpap_share_get_desired_port (DMAPShare * share)
+dpap_share_get_desired_port (G_GNUC_UNUSED DMAPShare * share)
 {
 	return DPAP_PORT;
 }
 
 const char *
-dpap_share_get_type_of_service (DMAPShare * share)
+dpap_share_get_type_of_service (G_GNUC_UNUSED DMAPShare * share)
 {
 	return DPAP_TYPE_OF_SERVICE;
 }
 
 void
 dpap_share_server_info (DMAPShare * share,
-			SoupServer * server,
+			G_GNUC_UNUSED SoupServer * server,
 			SoupMessage * message,
 			const char *path,
-			GHashTable * query, SoupClientContext * context)
+			G_GNUC_UNUSED GHashTable * query,
+                        G_GNUC_UNUSED SoupClientContext * context)
 {
 /* MSRV	server info response
  * 	MSTT status
@@ -494,11 +497,12 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 }
 
 static void
-databases_browse_xxx (DMAPShare * share,
-		      SoupServer * server,
-		      SoupMessage * msg,
+databases_browse_xxx (G_GNUC_UNUSED DMAPShare * share,
+		      G_GNUC_UNUSED SoupServer * server,
+		      G_GNUC_UNUSED SoupMessage * msg,
 		      const char *path,
-		      GHashTable * query, SoupClientContext * context)
+		      G_GNUC_UNUSED GHashTable * query,
+                      G_GNUC_UNUSED SoupClientContext * context)
 {
 	g_warning ("Unhandled: %s\n", path);
 }
@@ -560,7 +564,8 @@ databases_items_xxx (DMAPShare * share,
 		     SoupServer * server,
 		     SoupMessage * msg,
 		     const char *path,
-		     GHashTable * query, SoupClientContext * context)
+		     G_GNUC_UNUSED GHashTable * query,
+                     G_GNUC_UNUSED SoupClientContext * context)
 {
 	DMAPDb *db;
 	const gchar *rest_of_path;
@@ -587,7 +592,7 @@ databases_items_xxx (DMAPShare * share,
 }
 
 static struct DMAPMetaDataMap *
-get_meta_data_map (DMAPShare * share)
+get_meta_data_map (G_GNUC_UNUSED DMAPShare * share)
 {
 	return meta_data_map;
 }

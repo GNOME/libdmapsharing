@@ -69,7 +69,7 @@ dacp_player_init (DACPPlayerIface * iface)
 }
 
 static void
-dacp_player_finalize (DACPPlayerIface * iface)
+dacp_player_finalize (G_GNUC_UNUSED DACPPlayerIface * iface)
 {
 }
 
@@ -80,9 +80,9 @@ dacp_player_get_type (void)
 
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof (DACPPlayerIface),
-			(GBaseInitFunc) dacp_player_init,
-			(GBaseFinalizeFunc) dacp_player_finalize
+			class_size:     sizeof (DACPPlayerIface),
+			base_init:     (GBaseInitFunc) dacp_player_init,
+			base_finalize: (GBaseFinalizeFunc) dacp_player_finalize
 		};
 		object_type = g_type_register_static (G_TYPE_INTERFACE,
 						      "DACPPlayer",

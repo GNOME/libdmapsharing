@@ -23,13 +23,13 @@
 static gint dmap_record_init_count = 0;
 
 static void
-dmap_record_init (DMAPRecordIface * iface)
+dmap_record_init (G_GNUC_UNUSED DMAPRecordIface * iface)
 {
 	dmap_record_init_count++;
 }
 
 static void
-dmap_record_finalize (DMAPRecordIface * iface)
+dmap_record_finalize (G_GNUC_UNUSED DMAPRecordIface * iface)
 {
 	dmap_record_init_count--;
 }
@@ -42,9 +42,9 @@ dmap_record_get_type (void)
 
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof (DMAPRecordIface),
-			(GBaseInitFunc) dmap_record_init,
-			(GBaseFinalizeFunc) dmap_record_finalize
+			class_size:     sizeof (DMAPRecordIface),
+			base_init:     (GBaseInitFunc) dmap_record_init,
+			base_finalize: (GBaseFinalizeFunc) dmap_record_finalize
 		};
 		object_type =
 			g_type_register_static (G_TYPE_INTERFACE,

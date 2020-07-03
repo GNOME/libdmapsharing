@@ -90,7 +90,7 @@ daap_share_class_init (DAAPShareClass * klass)
 }
 
 static void
-daap_share_init (DAAPShare * share)
+daap_share_init (G_GNUC_UNUSED DAAPShare * share)
 {
 }
 
@@ -120,7 +120,7 @@ daap_share_new (const char *name,
 }
 
 void
-daap_share_message_add_standard_headers (DMAPShare * share,
+daap_share_message_add_standard_headers (G_GNUC_UNUSED DMAPShare * share,
 					 SoupMessage * message)
 {
 	soup_message_headers_append (message->response_headers, "DMAP-Server",
@@ -132,23 +132,24 @@ daap_share_message_add_standard_headers (DMAPShare * share,
 #define DAAP_TIMEOUT 1800
 
 guint
-daap_share_get_desired_port (DMAPShare * share)
+daap_share_get_desired_port (G_GNUC_UNUSED DMAPShare * share)
 {
 	return DAAP_PORT;
 }
 
 const char *
-daap_share_get_type_of_service (DMAPShare * share)
+daap_share_get_type_of_service (G_GNUC_UNUSED DMAPShare * share)
 {
 	return DAAP_TYPE_OF_SERVICE;
 }
 
 void
 daap_share_server_info (DMAPShare * share,
-			SoupServer * server,
+			G_GNUC_UNUSED SoupServer * server,
 			SoupMessage * message,
 			const char *path,
-			GHashTable * query, SoupClientContext * context)
+			G_GNUC_UNUSED GHashTable * query,
+                        G_GNUC_UNUSED SoupClientContext * context)
 {
 /* MSRV	server info response
  * 	MSTT status
@@ -686,7 +687,7 @@ add_entry_to_mlcl (gpointer id, DMAPRecord * record, gpointer _mb)
 }
 
 static void
-genre_tabulator (gpointer id, DMAPRecord * record, GHashTable * ht)
+genre_tabulator (G_GNUC_UNUSED gpointer id, DMAPRecord * record, GHashTable * ht)
 {
 	const gchar *genre;
 
@@ -698,7 +699,7 @@ genre_tabulator (gpointer id, DMAPRecord * record, GHashTable * ht)
 }
 
 static void
-artist_tabulator (gpointer id, DMAPRecord * record, GHashTable * ht)
+artist_tabulator (G_GNUC_UNUSED gpointer id, DMAPRecord * record, GHashTable * ht)
 {
 	const gchar *artist;
 
@@ -710,7 +711,7 @@ artist_tabulator (gpointer id, DMAPRecord * record, GHashTable * ht)
 }
 
 static void
-album_tabulator (gpointer id, DMAPRecord * record, GHashTable * ht)
+album_tabulator (G_GNUC_UNUSED gpointer id, DMAPRecord * record, GHashTable * ht)
 {
 	const gchar *album;
 
@@ -733,10 +734,11 @@ add_to_category_listing (gpointer key, gpointer user_data)
 
 static void
 databases_browse_xxx (DMAPShare * share,
-		      SoupServer * server,
+		      G_GNUC_UNUSED SoupServer * server,
 		      SoupMessage * msg,
 		      const char *path,
-		      GHashTable * query, SoupClientContext * context)
+		      GHashTable * query,
+                      G_GNUC_UNUSED SoupClientContext * context)
 {
 	/* ABRO database browse
 	 *      MSTT status
@@ -821,7 +823,8 @@ databases_items_xxx (DMAPShare * share,
 		     SoupServer * server,
 		     SoupMessage * msg,
 		     const char *path,
-		     GHashTable * query, SoupClientContext * context)
+		     G_GNUC_UNUSED GHashTable * query,
+                     G_GNUC_UNUSED SoupClientContext * context)
 {
 	DMAPDb *db;
 	const gchar *transcode_mimetype;
@@ -881,7 +884,7 @@ databases_items_xxx (DMAPShare * share,
 }
 
 static struct DMAPMetaDataMap *
-get_meta_data_map (DMAPShare * share)
+get_meta_data_map (G_GNUC_UNUSED DMAPShare * share)
 {
 	return meta_data_map;
 }

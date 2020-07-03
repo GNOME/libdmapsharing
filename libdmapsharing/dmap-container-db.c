@@ -23,13 +23,13 @@
 static gint dmap_container_db_init_count = 0;
 
 static void
-dmap_container_db_init (DMAPContainerDbIface * iface)
+dmap_container_db_init (G_GNUC_UNUSED DMAPContainerDbIface * iface)
 {
 	dmap_container_db_init_count++;
 }
 
 static void
-dmap_container_db_finalize (DMAPContainerDbIface * iface)
+dmap_container_db_finalize (G_GNUC_UNUSED DMAPContainerDbIface * iface)
 {
 	dmap_container_db_init_count--;
 }
@@ -42,9 +42,9 @@ dmap_container_db_get_type (void)
 
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof (DMAPContainerDbIface),
-			(GBaseInitFunc) dmap_container_db_init,
-			(GBaseFinalizeFunc) dmap_container_db_finalize
+			class_size:     sizeof (DMAPContainerDbIface),
+			base_init:     (GBaseInitFunc) dmap_container_db_init,
+			base_finalize: (GBaseFinalizeFunc) dmap_container_db_finalize
 		};
 		object_type =
 			g_type_register_static (G_TYPE_INTERFACE,

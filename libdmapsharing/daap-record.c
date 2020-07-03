@@ -199,7 +199,7 @@ daap_record_init (DAAPRecordIface * iface)
 }
 
 static void
-daap_record_finalize (DAAPRecordIface * iface)
+daap_record_finalize (G_GNUC_UNUSED DAAPRecordIface * iface)
 {
 	daap_record_init_count--;
 }
@@ -212,9 +212,9 @@ daap_record_get_type (void)
 
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof (DAAPRecordIface),
-			(GBaseInitFunc) daap_record_init,
-			(GBaseFinalizeFunc) daap_record_finalize
+			class_size:     sizeof (DAAPRecordIface),
+			base_init:     (GBaseInitFunc) daap_record_init,
+			base_finalize: (GBaseFinalizeFunc) daap_record_finalize
 		};
 		object_type =
 			g_type_register_static (G_TYPE_INTERFACE,

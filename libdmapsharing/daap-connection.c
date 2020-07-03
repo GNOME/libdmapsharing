@@ -24,13 +24,13 @@
 #include <libdmapsharing/dmap-structure.h>
 
 static DMAPContentCode
-_get_protocol_version_cc (DMAPConnection * connection)
+_get_protocol_version_cc (G_GNUC_UNUSED DMAPConnection * connection)
 {
 	return DMAP_CC_APRO;
 }
 
 static gchar *
-_get_query_metadata (DMAPConnection * connection)
+_get_query_metadata (G_GNUC_UNUSED DMAPConnection * connection)
 {
 	return g_strdup ("dmap.itemid,dmap.itemname,daap.songalbum,"
 			 "daap.songartist,daap.songgenre,daap.songsize,"
@@ -41,8 +41,8 @@ _get_query_metadata (DMAPConnection * connection)
 }
 
 static DMAPRecord *
-_handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
-	      GNode * n, int *item_id)
+_handle_mlcl (G_GNUC_UNUSED DMAPConnection * connection,
+              DMAPRecordFactory * factory, GNode * n, int *item_id)
 {
 	GNode *n2;
 	DMAPRecord *record = NULL;
@@ -178,7 +178,7 @@ daap_connection_new (const char *name,
 }
 
 static void
-daap_connection_init (DAAPConnection * connection)
+daap_connection_init (G_GNUC_UNUSED DAAPConnection * connection)
 {
 }
 

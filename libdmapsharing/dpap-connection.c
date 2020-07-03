@@ -24,19 +24,19 @@
 #include <libdmapsharing/dmap-structure.h>
 
 static DMAPContentCode
-get_protocol_version_cc (DMAPConnection * connection)
+get_protocol_version_cc (G_GNUC_UNUSED DMAPConnection * connection)
 {
 	return DMAP_CC_PPRO;
 }
 
 static gchar *
-get_query_metadata (DMAPConnection * connection)
+get_query_metadata (G_GNUC_UNUSED DMAPConnection * connection)
 {
 	return g_strdup ("all");
 }
 
 static DMAPRecord *
-handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
+handle_mlcl (G_GNUC_UNUSED DMAPConnection * connection, DMAPRecordFactory * factory,
 	     GNode * n, int *item_id)
 {
 	GNode *n2;
@@ -166,7 +166,7 @@ dpap_connection_new (const char *name,
 }
 
 static void
-dpap_connection_init (DPAPConnection * connection)
+dpap_connection_init (G_GNUC_UNUSED DPAPConnection * connection)
 {
 }
 

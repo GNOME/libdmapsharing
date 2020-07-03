@@ -877,7 +877,7 @@ dmap_item_free (DMAPStructureItem * item)
 }
 
 static gboolean
-gnode_free_dmap_item (GNode * node, gpointer data)
+gnode_free_dmap_item (GNode * node, G_GNUC_UNUSED gpointer data)
 {
 	dmap_item_free ((DMAPStructureItem *) node->data);
 
@@ -921,12 +921,12 @@ dmap_content_code_string_as_int32 (const gchar * str)
 }
 
 static gboolean
-print_dmap_item (GNode * node, gpointer data)
+print_dmap_item (GNode * node, G_GNUC_UNUSED gpointer data)
 {
 	DMAPStructureItem *item;
 	const gchar *name;
 	gchar *value;
-	gint i;
+	guint i;
 
 	for (i = 1; i < g_node_depth (node); i++) {
 		g_print ("\t");

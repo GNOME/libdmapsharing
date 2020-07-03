@@ -22,23 +22,25 @@
 #include "test-daap-record.h"
 
 static DMAPRecord *
-test_daap_record_factory_create  (DMAPRecordFactory *factory, gpointer user_data)
+test_daap_record_factory_create  (G_GNUC_UNUSED DMAPRecordFactory *factory,
+                                  G_GNUC_UNUSED gpointer user_data)
 {
 	return DMAP_RECORD (test_daap_record_new ());
 }
 
 static void
-test_daap_record_factory_init (TestDAAPRecordFactory *factory)
+test_daap_record_factory_init (G_GNUC_UNUSED TestDAAPRecordFactory *factory)
 {
 }
 
 static void
-test_daap_record_factory_class_init (TestDAAPRecordFactoryClass *klass)
+test_daap_record_factory_class_init (G_GNUC_UNUSED TestDAAPRecordFactoryClass *klass)
 {
 }
 
 static void
-test_daap_record_factory_interface_init (gpointer iface, gpointer data)
+test_daap_record_factory_interface_init (gpointer iface,
+                                         G_GNUC_UNUSED gpointer data)
 {
 	DMAPRecordFactoryIface *factory = iface;
 

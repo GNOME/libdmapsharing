@@ -24,7 +24,7 @@
 #include <libdmapsharing/dmap-structure.h>
 
 static DMAPContentCode
-get_protocol_version_cc (DMAPConnection * connection)
+get_protocol_version_cc (G_GNUC_UNUSED DMAPConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -32,7 +32,7 @@ get_protocol_version_cc (DMAPConnection * connection)
 }
 
 static gchar *
-get_query_metadata (DMAPConnection * connection)
+get_query_metadata (G_GNUC_UNUSED DMAPConnection * connection)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -40,8 +40,10 @@ get_query_metadata (DMAPConnection * connection)
 }
 
 static DMAPRecord *
-handle_mlcl (DMAPConnection * connection, DMAPRecordFactory * factory,
-	     GNode * n, int *item_id)
+handle_mlcl (G_GNUC_UNUSED DMAPConnection * connection,
+             G_GNUC_UNUSED DMAPRecordFactory * factory,
+	     G_GNUC_UNUSED GNode * n,
+             G_GNUC_UNUSED int *item_id)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -78,7 +80,7 @@ dacp_connection_new (const char *name,
 }
 
 static void
-dacp_connection_init (DACPConnection * connection)
+dacp_connection_init (G_GNUC_UNUSED DACPConnection * connection)
 {
 }
 

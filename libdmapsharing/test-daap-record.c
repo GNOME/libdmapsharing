@@ -232,7 +232,8 @@ test_daap_record_read (DAAPRecord *record, GError **error)
 }
 
 static void
-test_daap_record_daap_iface_init (gpointer iface, gpointer data)
+test_daap_record_daap_iface_init (gpointer iface,
+                                  G_GNUC_UNUSED gpointer data)
 {
 	DAAPRecordIface *daap_record = iface;
 
@@ -242,7 +243,8 @@ test_daap_record_daap_iface_init (gpointer iface, gpointer data)
 }
 
 static void
-test_daap_record_dmap_iface_init (gpointer iface, gpointer data)
+test_daap_record_dmap_iface_init (gpointer iface,
+                                  G_GNUC_UNUSED gpointer data)
 {
 	DMAPRecordIface *dmap_record = iface;
 

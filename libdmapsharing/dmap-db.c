@@ -32,13 +32,13 @@ typedef struct FilterData
 static gint dmap_db_init_count = 0;
 
 static void
-dmap_db_init (DMAPDbIface * iface)
+dmap_db_init (G_GNUC_UNUSED DMAPDbIface * iface)
 {
 	dmap_db_init_count++;
 }
 
 static void
-dmap_db_finalize (DMAPDbIface * iface)
+dmap_db_finalize (G_GNUC_UNUSED DMAPDbIface * iface)
 {
 	dmap_db_init_count--;
 }
@@ -51,9 +51,9 @@ dmap_db_get_type (void)
 
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof (DMAPDbIface),
-			(GBaseInitFunc) dmap_db_init,
-			(GBaseFinalizeFunc) dmap_db_finalize
+			class_size:     sizeof (DMAPDbIface),
+			base_init:     (GBaseInitFunc) dmap_db_init,
+			base_finalize: (GBaseFinalizeFunc) dmap_db_finalize
 		};
 		object_type =
 			g_type_register_static (G_TYPE_INTERFACE,

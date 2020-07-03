@@ -379,7 +379,7 @@ dacp_share_dispose (GObject * object)
 }
 
 void
-mdns_remote_added (DMAPMdnsBrowser * browser,
+mdns_remote_added (G_GNUC_UNUSED DMAPMdnsBrowser * browser,
 		   DMAPMdnsBrowserService * service, DACPShare * share)
 {
 	DACPRemoteInfo *remote_info;
@@ -404,7 +404,7 @@ mdns_remote_added (DMAPMdnsBrowser * browser,
 }
 
 void
-mdns_remote_removed (DMAPMdnsBrowser * browser,
+mdns_remote_removed (G_GNUC_UNUSED DMAPMdnsBrowser * browser,
 		     const char *service_name, DACPShare * share)
 {
 	g_signal_emit (share, signals[REMOTE_LOST], 0, service_name);
@@ -468,7 +468,7 @@ dacp_share_start_lookup (DACPShare * share)
 }
 
 static gboolean
-remove_remotes_cb (gpointer service_name, gpointer remote_info,
+remove_remotes_cb (gpointer service_name, G_GNUC_UNUSED gpointer remote_info,
 		   gpointer share)
 {
 	g_signal_emit ((DACPShare *) share,
@@ -501,7 +501,7 @@ dacp_share_stop_lookup (DACPShare * share)
 }
 
 const char *
-dacp_share_get_type_of_service (DMAPShare * share)
+dacp_share_get_type_of_service (G_GNUC_UNUSED DMAPShare * share)
 {
 	return DACP_TYPE_OF_SERVICE;
 }
@@ -612,7 +612,7 @@ dacp_share_fill_playstatusupdate (DACPShare * share, SoupMessage * message)
 }
 
 static void
-debug_param (gpointer key, gpointer val, gpointer user_data)
+debug_param (gpointer key, gpointer val, G_GNUC_UNUSED gpointer user_data)
 {
 	g_debug ("%s %s", (char *) key, (char *) val);
 }
@@ -968,7 +968,8 @@ dacp_share_ctrl_int (DMAPShare * share,
 #define PASSCODE_LENGTH 4
 
 static gchar *
-dacp_share_pairing_code (DACPShare * share, gchar * pair_txt,
+dacp_share_pairing_code (G_GNUC_UNUSED DACPShare * share,
+                         gchar * pair_txt,
 			 gchar passcode[4])
 {
 	int i;

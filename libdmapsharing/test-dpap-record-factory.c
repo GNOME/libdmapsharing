@@ -22,23 +22,25 @@
 #include "test-dpap-record.h"
 
 static DMAPRecord *
-test_dpap_record_factory_create  (DMAPRecordFactory *factory, gpointer user_data)
+test_dpap_record_factory_create  (G_GNUC_UNUSED DMAPRecordFactory *factory,
+                                  G_GNUC_UNUSED gpointer user_data)
 {
 	return DMAP_RECORD (test_dpap_record_new ());
 }
 
 static void
-test_dpap_record_factory_init (TestDPAPRecordFactory *factory)
+test_dpap_record_factory_init (G_GNUC_UNUSED TestDPAPRecordFactory *factory)
 {
 }
 
 static void
-test_dpap_record_factory_class_init (TestDPAPRecordFactoryClass *klass)
+test_dpap_record_factory_class_init (G_GNUC_UNUSED TestDPAPRecordFactoryClass *klass)
 {
 }
 
 static void
-test_dpap_record_factory_interface_init (gpointer iface, gpointer data)
+test_dpap_record_factory_interface_init (gpointer iface,
+                                         G_GNUC_UNUSED gpointer data)
 {
 	DMAPRecordFactoryIface *factory = iface;
 

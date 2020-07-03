@@ -132,7 +132,7 @@ dpap_record_init (DPAPRecordIface * iface)
 }
 
 static void
-dpap_record_finalize (DPAPRecordIface * iface)
+dpap_record_finalize (G_GNUC_UNUSED DPAPRecordIface * iface)
 {
 	dpap_record_init_count--;
 }
@@ -145,9 +145,9 @@ dpap_record_get_type (void)
 
 	if (!object_type) {
 		static const GTypeInfo object_info = {
-			sizeof (DPAPRecordIface),
-			(GBaseInitFunc) dpap_record_init,
-			(GBaseFinalizeFunc) dpap_record_finalize
+			class_size:     sizeof (DPAPRecordIface),
+			base_init:     (GBaseInitFunc) dpap_record_init,
+			base_finalize: (GBaseFinalizeFunc) dpap_record_finalize
 		};
 		object_type =
 			g_type_register_static (G_TYPE_INTERFACE,

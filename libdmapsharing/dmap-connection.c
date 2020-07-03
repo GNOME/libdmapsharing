@@ -338,9 +338,10 @@ connection_operation_done (DMAPConnection * connection)
 SoupMessage *
 dmap_connection_build_message (DMAPConnection * connection,
 			       const char *path,
-			       gboolean need_hash,
-			       gdouble version,
-			       gint req_id, gboolean send_close)
+			       G_GNUC_UNUSED gboolean need_hash,
+			       G_GNUC_UNUSED gdouble version,
+			       G_GNUC_UNUSED gint req_id,
+                               G_GNUC_UNUSED gboolean send_close)
 {
 	SoupMessage *message = NULL;
 	SoupURI *base_uri = NULL;
@@ -378,7 +379,7 @@ dmap_connection_build_message (DMAPConnection * connection,
 
 #ifdef HAVE_LIBZ
 static void *
-g_zalloc_wrapper (voidpf opaque, uInt items, uInt size)
+g_zalloc_wrapper (G_GNUC_UNUSED voidpf opaque, uInt items, uInt size)
 {
 	if ((items != 0) && (size >= G_MAXUINT / items)) {
 		return Z_NULL;
@@ -390,7 +391,7 @@ g_zalloc_wrapper (voidpf opaque, uInt items, uInt size)
 }
 
 static void
-g_zfree_wrapper (voidpf opaque, voidpf address)
+g_zfree_wrapper (G_GNUC_UNUSED voidpf opaque, voidpf address)
 {
 	g_free (address);
 }
@@ -419,7 +420,7 @@ typedef struct
 	gpointer user_data;
 } DAAPResponseData;
 
-static void
+static gpointer
 actual_http_response_handler (DAAPResponseData * data)
 {
 	DMAPConnectionPrivate *priv;
@@ -606,13 +607,15 @@ actual_http_response_handler (DAAPResponseData * data)
 	g_object_unref (G_OBJECT (data->connection));
 	g_object_unref (G_OBJECT (data->message));
 	g_free (data);
+
+	return NULL;
 }
 
 static void
-http_response_handler (SoupSession * session,
+http_response_handler (G_GNUC_UNUSED SoupSession * session,
 		       SoupMessage * message, DAAPResponseData * data)
 {
-	int response_length;
+	goffset response_length;
 
 	if (message->status_code == SOUP_STATUS_CANCELLED) {
 		g_debug ("Message cancelled");
@@ -712,7 +715,7 @@ emit_progress_idle (DMAPConnection * connection)
 
 static void
 handle_server_info (DMAPConnection * connection,
-		    guint status, GNode * structure, gpointer user_data)
+		    guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -738,7 +741,7 @@ handle_server_info (DMAPConnection * connection,
 
 static void
 handle_login (DMAPConnection * connection,
-	      guint status, GNode * structure, gpointer user_data)
+	      guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -777,7 +780,7 @@ handle_login (DMAPConnection * connection,
 
 static void
 handle_update (DMAPConnection * connection,
-	       guint status, GNode * structure, gpointer user_data)
+	       guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item;
@@ -801,7 +804,7 @@ handle_update (DMAPConnection * connection,
 
 static void
 handle_database_info (DMAPConnection * connection,
-		      guint status, GNode * structure, gpointer user_data)
+		      guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -848,7 +851,7 @@ handle_database_info (DMAPConnection * connection,
 
 static void
 handle_song_listing (DMAPConnection * connection,
-		     guint status, GNode * structure, gpointer user_data)
+		     guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPStructureItem *item = NULL;
@@ -989,7 +992,7 @@ compare_playlists_by_name (gconstpointer a, gconstpointer b)
 
 static void
 handle_playlists (DMAPConnection * connection,
-		  guint status, GNode * structure, gpointer user_data)
+		  guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	GNode *listing_node;
@@ -1052,7 +1055,7 @@ handle_playlists (DMAPConnection * connection,
 
 static void
 handle_playlist_entries (DMAPConnection * connection,
-			 guint status, GNode * structure, gpointer user_data)
+			 guint status, GNode * structure, G_GNUC_UNUSED gpointer user_data)
 {
 	DMAPConnectionPrivate *priv = connection->priv;
 	DMAPPlaylist *playlist;
@@ -1112,7 +1115,9 @@ handle_playlist_entries (DMAPConnection * connection,
 
 static void
 handle_logout (DMAPConnection * connection,
-	       guint status, GNode * structure, gpointer user_data)
+	       G_GNUC_UNUSED guint status,
+               G_GNUC_UNUSED GNode * structure,
+               G_GNUC_UNUSED gpointer user_data)
 {
 	connection_disconnected (connection);
 
@@ -1655,8 +1660,7 @@ dmap_connection_dispose (GObject * object)
 			DMAPPlaylist *playlist = l->data;
 
 			/* FIXME: refstring: */
-			g_list_foreach (playlist->uris, (GFunc) g_free, NULL);
-			g_list_free (playlist->uris);
+			g_list_free_full (playlist->uris, g_free);
 			g_free (playlist->name);
 			g_free (playlist);
 			l->data = NULL;

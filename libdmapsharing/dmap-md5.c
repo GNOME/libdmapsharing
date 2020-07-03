@@ -443,7 +443,7 @@ dmap_hash_generate (short version_major,
 {
 	unsigned char buf[16];
 	DMAPHashContext ctx;
-	gint i;
+	size_t i;
 
 	unsigned char *hashTable = (version_major == 3) ?
 		staticHash_45 : staticHash_42;
@@ -507,7 +507,7 @@ void dmap_hash_progressive_final (DMAPHashContext *context,
 	/* FIXME: This is only equivalent to dmap_hash_generate()
          *        when it is called with (3, x, 2, y, 0).
          */
-	int i;
+	size_t i;
 
 	/* FIXME: Share this stuff with dmap_hash_generate() */
 	if (ac_unfudged == FALSE) {
