@@ -25,6 +25,7 @@
 #include <gst/app/gstappsink.h>
 
 #include "dmap-transcode-stream.h"
+#include "dmap-transcode-stream-private.h"
 #include "dmap-transcode-mp3-stream.h"
 #include "dmap-transcode-wav-stream.h"
 #include "dmap-transcode-qt-stream.h"
@@ -155,7 +156,7 @@ _seekable_iface_init (GSeekableIface * iface)
 
 void
 dmap_transcode_stream_new_buffer_cb (GstElement * element,
-				     DmapTranscodeStream * stream)
+                                     DmapTranscodeStream * stream)
 {
 	gsize i;
 	guint8 *ptr;

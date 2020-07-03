@@ -40,6 +40,7 @@ libdmapsharing/Makefile
 libdmapsharing/Makefile.in
 libdmapsharing/*.[oa]
 libdmapsharing/*-suite.c
+libdmapsharing/*-suite.h
 libdmapsharing/unit-test.stamp
 
 m4/gtk-doc.m4

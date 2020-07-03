@@ -71,7 +71,8 @@ libdmapsharing_4_0_la_CFLAGS = \
 	$(GDKPIXBUF_CFLAGS) \
 	$(SOUP_CFLAGS) \
 	$(GSTREAMERAPP_CFLAGS) \
-	$(MDNS_CFLAGS)
+	$(MDNS_CFLAGS) \
+	$(WARN_CFLAGS)
 
 libdmapsharing_4_0_la_LDFLAGS = \
 	-version-info @SO_VERSION@ \
@@ -146,10 +147,11 @@ BUILT_SOURCES = \
 CLEANFILES = $(BUILT_SOURCES) \
 	../tests/unit-test.c \
 	*-suite.c \
+	*-suite.h \
 	pedansee.conf
 
 dmap-marshal.c: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --body >dmap-marshal.c
+	@glib-genmarshal --prefix=dmap_marshal_generated --include-header dmap-marshal.h $(srcdir)/dmap-marshal.list --body >dmap-marshal.c
 
 dmap-marshal.h: dmap-marshal.list
 	@glib-genmarshal --prefix=dmap_marshal_generated $(srcdir)/dmap-marshal.list --header >dmap-marshal.h

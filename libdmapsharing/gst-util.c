@@ -18,9 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <string.h>
-#include <gst/gst.h>
-
+#include "gst-util.h"
 #include "dmap-transcode-stream.h"
 
 gboolean

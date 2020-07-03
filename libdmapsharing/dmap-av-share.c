@@ -1649,6 +1649,7 @@ START_TEST(_databases_items_xxx_test)
 	GFile *file;
 	GError *error = NULL;
 	gboolean ok;
+	guint64 i;
 
 	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
@@ -1670,7 +1671,7 @@ START_TEST(_databases_items_xxx_test)
 
 	g_signal_emit_by_name(message, "wrote_headers", NULL);
 
-	for (guint64 i = 0; i < size1 / DMAP_SHARE_CHUNK_SIZE + 1; i++) {
+	for (i = 0; i < size1 / DMAP_SHARE_CHUNK_SIZE + 1; i++) {
 		g_signal_emit_by_name(message, "wrote_chunk", NULL);
 	}
 

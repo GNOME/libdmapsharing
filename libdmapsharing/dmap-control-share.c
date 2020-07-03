@@ -231,8 +231,8 @@ _finalize (GObject * object)
 	G_OBJECT_CLASS (dmap_control_share_parent_class)->finalize (object);
 }
 
-const char *
-dmap_control_share_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
+static const char *
+_get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DACP_TYPE_OF_SERVICE;
 }
@@ -248,7 +248,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 	object_class->dispose = _dispose;
 	object_class->finalize = _finalize;
 
-	dmap_class->get_type_of_service = dmap_control_share_get_type_of_service;
+	dmap_class->get_type_of_service = _get_type_of_service;
 	dmap_class->ctrl_int = dmap_control_share_ctrl_int;
 	dmap_class->login = dmap_control_share_login;
 

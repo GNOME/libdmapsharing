@@ -52,6 +52,59 @@ if test "x$LIBDMAPSHARING_WALL" = "xyes"; then
     fi
 fi
 
+AC_ARG_ENABLE(more-warnings, [  --enable-more-warnings  Maximum compiler warnings], set_more_warnings="$enableval",[
+	if test -d "$srcdir/.git"; then
+		set_more_warnings=yes
+	else
+		set_more_warnings=no
+	fi
+])
+AC_MSG_CHECKING(for more warnings, including -Werror)
+if test "$GCC" = "yes" -a "$set_more_warnings" != "no"; then
+	AC_MSG_RESULT(yes)
+	WARN_CFLAGS="\
+		-Wcomment -Wformat -Wnonnull -Wimplicit-int -Wimplicit \
+		-Wmain -Wmissing-braces -Wparentheses -Wsequence-point \
+		-Wreturn-type -Wswitch -Wtrigraphs -Wunused-function \
+		-Wunused-label -Wunused-value \
+		-Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes \
+		-Wnested-externs -Wpointer-arith \
+		-Wformat-security -Wall \
+		-Werror -Wno-deprecated-declarations -std=gnu89"
+
+	if echo "$CFLAGS" | grep -q -- '-O' && echo "$CFLAGS" | grep -q -v -- '-O0'; then
+		WARN_CFLAGS="-Wuninitialized $WARN_CFLAGS"
+	fi
+
+	for option in $WARN_CFLAGS; do
+		SAVE_CFLAGS="$CFLAGS"
+		CFLAGS="$CFLAGS $option"
+		AC_MSG_CHECKING([whether gcc understands $option])
+		AC_TRY_COMPILE([], [], has_option=yes, has_option=no,)
+		if test x$has_option = xyes; then
+			LIBDMAPSHARING_CFLAGS="$LIBDMAPSHARING_CFLAGS $option"
+		fi
+		AC_MSG_RESULT($has_option)
+		CFLAGS="$SAVE_CFLAGS"
+		unset has_option
+		unset SAVE_CFLAGS
+	done
+	unset option
+	AC_SUBST(WARN_CFLAGS)
+
+	SAVE_CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS -Wno-error"
+	AC_TRY_COMPILE([], [], WNOERROR_CFLAGS="-Wno-error", WNOERROR_CFLAGS="")
+	AC_SUBST(WNOERROR_CFLAGS)
+	CFLAGS="$SAVE_CFLAGS"
+	unset SAVE_CFLAGS
+	unset has_wnoerror
+else
+	AC_MSG_RESULT(no)
+fi
+
+AC_SUBST(WARN_CFLAGS)
+
 dnl check for tools
 dnl Make sure CFLAGS is defined to stop AC_PROC_CC adding -g
 CFLAGS="$CFLAGS "

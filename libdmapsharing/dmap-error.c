@@ -21,7 +21,7 @@
 #include <libdmapsharing/dmap-error.h>
 
 GQuark
-dmap_error_quark ()
+dmap_error_quark (void)
 {
 	static GQuark quark = 0;
 

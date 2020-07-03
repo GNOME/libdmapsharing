@@ -26,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-GQuark dmap_error_quark ();
+GQuark dmap_error_quark (void);
 
 /**
  * DMAP_ERROR:
