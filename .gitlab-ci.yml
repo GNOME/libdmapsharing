@@ -15,3 +15,18 @@ build-ubuntu:
     - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
     - make CFLAGS="-Wall -Wextra -Werror"
     - make clean
+
+build-alpine:
+  image: alpine:arm32v7/latest
+
+  before_script:
+    - apk update
+    - apk add --no-cache autoconf automake avahi-compat-libdns_sd avahi-glib avahi-dev check gcc gtk-doc gdk-pixbuf-dev libgee-dev glib-dev gst-plugins-base-dev gtk+3.0-dev libsoup-dev libtool pkgconf
+
+  script:
+    - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
+    - make CFLAGS="-Wall -Wextra -Werror"
+    - make clean
+    - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
+    - make CFLAGS="-Wall -Wextra -Werror"
+    - make clean
