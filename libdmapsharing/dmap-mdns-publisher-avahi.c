@@ -95,7 +95,7 @@ emit_published (char *name, DMAPMdnsPublisher * publisher)
 }
 
 static void
-entry_group_cb (AvahiEntryGroup * group,
+entry_group_cb (G_GNUC_UNUSED AvahiEntryGroup * group,
 		AvahiEntryGroupState state, DMAPMdnsPublisher * publisher)
 {
 	if (state == AVAHI_ENTRY_GROUP_ESTABLISHED) {
@@ -297,7 +297,8 @@ dmap_mdns_publisher_publish (DMAPMdnsPublisher * publisher,
 }
 
 static void
-free_service (struct DMAPMdnsPublisherService *service, gpointer user_data)
+free_service (struct DMAPMdnsPublisherService *service,
+              G_GNUC_UNUSED gpointer user_data)
 {
 	g_free (service->name);
 	g_free (service->type_of_service);
@@ -349,7 +350,8 @@ dmap_mdns_publisher_withdraw (DMAPMdnsPublisher * publisher,
 static void
 dmap_mdns_publisher_set_property (GObject * object,
 				  guint prop_id,
-				  const GValue * value, GParamSpec * pspec)
+				  G_GNUC_UNUSED const GValue * value,
+                                  GParamSpec * pspec)
 {
 	switch (prop_id) {
 	default:
@@ -361,7 +363,8 @@ dmap_mdns_publisher_set_property (GObject * object,
 static void
 dmap_mdns_publisher_get_property (GObject * object,
 				  guint prop_id,
-				  GValue * value, GParamSpec * pspec)
+				  G_GNUC_UNUSED GValue * value,
+                                  GParamSpec * pspec)
 {
 	switch (prop_id) {
 	default:

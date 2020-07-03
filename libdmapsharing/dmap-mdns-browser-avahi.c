@@ -154,6 +154,12 @@ dmap_mdns_browser_init (DMAPMdnsBrowser * browser)
 }
 
 static void
+_wrapper(void *p)
+{
+	avahi_service_resolver_free(p);
+}
+
+static void
 dmap_mdns_browser_dispose (GObject * object)
 {
 	DMAPMdnsBrowser *browser = DMAP_MDNS_BROWSER (object);
@@ -167,9 +173,7 @@ dmap_mdns_browser_dispose (GObject * object)
 	g_slist_free (browser->priv->services);
 
 	if (browser->priv->resolvers) {
-		g_slist_foreach (browser->priv->resolvers,
-				 (GFunc) avahi_service_resolver_free, NULL);
-		g_slist_free (browser->priv->resolvers);
+		g_slist_free_full (browser->priv->resolvers, _wrapper);
 	}
 
 	if (browser->priv->service_browser) {
@@ -291,7 +295,8 @@ dmap_mdns_browser_get_service_type (DMAPMdnsBrowser * browser)
 
 static void
 client_cb (AvahiClient * client,
-	   AvahiClientState state, DMAPMdnsBrowser * browser)
+	   AvahiClientState state,
+           G_GNUC_UNUSED DMAPMdnsBrowser * browser)
 {
 	/* Called whenever the client or server state changes */
 
@@ -340,17 +345,17 @@ avahi_client_init (DMAPMdnsBrowser * browser)
 
 static void
 resolve_cb (AvahiServiceResolver * service_resolver,
-	    AvahiIfIndex interface,
-	    AvahiProtocol protocol,
+	    G_GNUC_UNUSED AvahiIfIndex interface,
+	    G_GNUC_UNUSED AvahiProtocol protocol,
 	    AvahiResolverEvent event,
 	    const gchar * service_name,
 	    const gchar * type,
 	    const gchar * domain,
-	    const gchar * host_name,
+	    G_GNUC_UNUSED const gchar * host_name,
 	    const AvahiAddress * address,
 	    uint16_t port, AvahiStringList * text,
 #ifdef HAVE_AVAHI_0_6
-	    AvahiLookupResultFlags flags,
+	    G_GNUC_UNUSED AvahiLookupResultFlags flags,
 #endif
 	    DMAPMdnsBrowser * browser)
 {
@@ -497,11 +502,13 @@ browser_remove_service (DMAPMdnsBrowser * browser, const gchar * service_name)
 }
 
 static void
-browse_cb (AvahiServiceBrowser * service_browser,
-	   AvahiIfIndex interface,
-	   AvahiProtocol protocol,
+browse_cb (G_GNUC_UNUSED AvahiServiceBrowser * service_browser,
+	   G_GNUC_UNUSED AvahiIfIndex interface,
+	   G_GNUC_UNUSED AvahiProtocol protocol,
 	   AvahiBrowserEvent event,
-	   const gchar * name, const gchar * type, const gchar * domain,
+	   const gchar * name,
+           G_GNUC_UNUSED const gchar * type,
+           const gchar * domain,
 #ifdef HAVE_AVAHI_0_6
 	   AvahiLookupResultFlags flags,
 #endif
