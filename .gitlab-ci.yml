@@ -17,7 +17,7 @@ build-ubuntu:
     - make clean
 
 build-alpine:
-  image: alpine:arm32v7/latest
+  image: arm32v7/alpine:latest
 
   before_script:
     - apk update
