@@ -25,7 +25,10 @@ docs/Makefile
 docs/Makefile.in
 docs/tmpl/
 
+libdmapsharing/*.c.gcov
 libdmapsharing/.deps/
+libdmapsharing/Dmap-4.0.gir
+libdmapsharing/Dmap-4.0.typelib
 libdmapsharing/dmap-config.h
 libdmapsharing/dmap-enums.c
 libdmapsharing/dmap-enums.h
@@ -37,8 +40,6 @@ libdmapsharing/Makefile
 libdmapsharing/Makefile.in
 libdmapsharing/*.[oa]
 libdmapsharing/*-suite.c
-libdmapsharing/Dmap-4.0.gir
-libdmapsharing/Dmap-4.0.typelib
 libdmapsharing/unit-test.stamp
 
 m4/gtk-doc.m4
