@@ -1,5 +1,5 @@
 /*
- * DmapGstQtInputStream class: Open a URI using dmap_gst_qt_input_stream_new ().
+ * DmapTranscodeQtStream class: Open a URI using dmap_transcode_qt_stream_new ().
  * Data is decoded using GStreamer and is then reencoded as a QuickTime video
  * stream by the class's read operations.
  *
@@ -23,12 +23,13 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 
-#include "dmap-gst-qt-input-stream.h"
+#include "dmap-transcode-qt-stream.h"
+#include "dmap-transcode-stream-private.h"
 #include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
 
-struct DmapGstQtInputStreamPrivate
+struct DmapTranscodeQtStreamPrivate
 {
 	GstElement *pipeline;
 	GstElement *src;
@@ -62,11 +63,11 @@ _pad_added_cb (G_GNUC_UNUSED GstElement * element,
 }
 
 GInputStream *
-dmap_gst_qt_input_stream_new (GInputStream * src_stream)
+dmap_transcode_qt_stream_new (GInputStream * src_stream)
 {
 	GstStateChangeReturn sret;
 	GstState state;
-	DmapGstQtInputStream *stream = NULL;
+	DmapTranscodeQtStream *stream = NULL;
 
 	GstElement *pipeline = NULL;
         GstElement *src = NULL;
@@ -153,13 +154,13 @@ dmap_gst_qt_input_stream_new (GInputStream * src_stream)
 		goto done;
 	}
 
-	stream = DMAP_GST_QT_INPUT_STREAM (g_object_new (DMAP_TYPE_GST_QT_INPUT_STREAM, NULL));
+	stream = DMAP_TRANSCODE_QT_STREAM (g_object_new (DMAP_TYPE_GST_QT_INPUT_STREAM, NULL));
 	if (NULL == stream) {
                 goto done;
         }
         g_assert (G_IS_SEEKABLE (stream));
 
-	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_gst_input_stream_new_buffer_cb), stream);
+	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_transcode_stream_new_buffer_cb), stream);
 
 	stream->priv->pipeline = gst_object_ref (pipeline);
         stream->priv->src = gst_object_ref (src);
@@ -202,10 +203,10 @@ done:
 }
 
 static void
-_kill_pipeline (DmapGstInputStream * stream)
+_kill_pipeline (DmapTranscodeStream * stream)
 {
-	DmapGstQtInputStream *qt_stream =
-		DMAP_GST_QT_INPUT_STREAM (stream);
+	DmapTranscodeQtStream *qt_stream =
+		DMAP_TRANSCODE_QT_STREAM (stream);
 
 	// FIXME: It seems that I need to send an EOS, because QuickTime writes
 	// its headers after encoding the streams, but this does not yet work.
@@ -215,21 +216,21 @@ _kill_pipeline (DmapGstInputStream * stream)
 	gst_object_unref (GST_OBJECT (qt_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE_WITH_PRIVATE (DmapGstQtInputStream,
-                            dmap_gst_qt_input_stream,
-                            DMAP_TYPE_GST_INPUT_STREAM);
+G_DEFINE_TYPE_WITH_PRIVATE (DmapTranscodeQtStream,
+                            dmap_transcode_qt_stream,
+                            DMAP_TYPE_TRANSCODE_STREAM);
 
 static void
-dmap_gst_qt_input_stream_class_init (DmapGstQtInputStreamClass * klass)
+dmap_transcode_qt_stream_class_init (DmapTranscodeQtStreamClass * klass)
 {
-	DmapGstInputStreamClass *parent_class =
-		DMAP_GST_INPUT_STREAM_CLASS (klass);
+	DmapTranscodeStreamClass *parent_class =
+		DMAP_TRANSCODE_STREAM_CLASS (klass);
 
 	parent_class->kill_pipeline = _kill_pipeline;
 }
 
 static void
-dmap_gst_qt_input_stream_init (DmapGstQtInputStream * stream)
+dmap_transcode_qt_stream_init (DmapTranscodeQtStream * stream)
 {
-	stream->priv = dmap_gst_qt_input_stream_get_instance_private(stream);
+	stream->priv = dmap_transcode_qt_stream_get_instance_private(stream);
 }

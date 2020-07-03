@@ -1,7 +1,5 @@
 /*
- * Utility functions implemented using GStreamer
- *
- * Copyright (C) 2009 W. Michael Petullo <mike@flyn.org>
+ * Copyright (C) 2020 W. Michael Petullo <mike@flyn.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,25 +16,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <string.h>
-#include <gst/gst.h>
+#ifndef _DMAP_TRANSCODE_STREAM_PRIVATE_H
+#define _DMAP_TRANSCODE_STREAM_PRIVATE_H
 
-#include "dmap-transcode-stream.h"
+void dmap_transcode_stream_new_buffer_cb(GstElement *element,
+                                         DmapTranscodeStream *stream);
 
-gboolean
-gst_util_pads_compatible (GstPad * pad1, GstPad * pad2)
-{
-	gboolean fnval;
-	GstCaps *res, *caps1, *caps2;
-
-	caps1 = gst_pad_query_caps (pad1, NULL);
-	caps2 = gst_pad_query_caps (pad2, NULL);
-	res = gst_caps_intersect (caps1, caps2);
-	fnval = res && !gst_caps_is_empty (res);
-
-	gst_caps_unref (res);
-	gst_caps_unref (caps2);
-	gst_caps_unref (caps1);
-
-	return fnval;
-}
+#endif

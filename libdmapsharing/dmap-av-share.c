@@ -41,7 +41,7 @@
 #include <libdmapsharing/dmap-utils.h>
 
 #ifdef HAVE_GSTREAMERAPP
-#include <libdmapsharing/dmap-gst-input-stream.h>
+#include <libdmapsharing/dmap-transcode-stream.h>
 #endif /* HAVE_GSTREAMERAPP */
 
 static guint _get_desired_port (DmapShare * share);
@@ -372,7 +372,7 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 	if (_should_transcode (share, format, has_video, transcode_mimetype)) {
 #ifdef HAVE_GSTREAMERAPP
 		cd->original_stream = stream;
-		cd->stream = dmap_gst_input_stream_new (transcode_mimetype, stream);
+		cd->stream = dmap_transcode_stream_new (transcode_mimetype, stream);
 #else
 		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_BAD_FORMAT,
 		                     "Transcode format %s not supported",

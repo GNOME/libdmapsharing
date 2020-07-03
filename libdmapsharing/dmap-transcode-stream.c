@@ -1,5 +1,5 @@
 /*
- * DmapGstInputStream class: Open a URI using dmap_gst_input_stream_new ().
+ * DmapTranscodeStream class: Open a URI using dmap_transcode_stream_new ().
  * Data is decoded using GStreamer and is then made available by the class's
  * read operations.
  *
@@ -24,10 +24,10 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 
-#include "dmap-gst-input-stream.h"
-#include "dmap-gst-mp3-input-stream.h"
-#include "dmap-gst-wav-input-stream.h"
-#include "dmap-gst-qt-input-stream.h"
+#include "dmap-transcode-stream.h"
+#include "dmap-transcode-mp3-stream.h"
+#include "dmap-transcode-wav-stream.h"
+#include "dmap-transcode-qt-stream.h"
 #include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
@@ -35,7 +35,7 @@
 #define QUEUE_PUSH_WAIT_SECONDS 10
 #define QUEUE_POP_WAIT_SECONDS 1
 
-struct DmapGstInputStreamPrivate
+struct DmapTranscodeStreamPrivate
 {
 	GQueue *buffer;
 	gsize read_request;	/* Size of data asked for */
@@ -69,10 +69,10 @@ _seek (G_GNUC_UNUSED GSeekable * seekable,
        GError ** error)
 {
 	gboolean ok = FALSE;
-	// FIXME: implement: DmapGstInputStream *stream;
+	// FIXME: implement: DmapTranscodeStream *stream;
 	// FIXME: implement: goffset absolute;
 
-	// FIXME: implement: stream = DMAP_GST_INPUT_STREAM (seekable);
+	// FIXME: implement: stream = DMAP_TRANSCODE_STREAM (seekable);
 
 	switch (type) {
 		/* FIXME: implement:
@@ -108,7 +108,7 @@ _seek (G_GNUC_UNUSED GSeekable * seekable,
 	 */
 
 	/* FIXME:
-	 * if (! gst_element_seek_simple (DMAP_GST_INPUT_STREAM (seekable)->priv->pipeline,
+	 * if (! gst_element_seek_simple (DMAP_TRANSCODE_STREAM (seekable)->priv->pipeline,
 	 * GST_FORMAT_BYTES,
 	 * GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT,
 	 * absolute)) {
@@ -139,7 +139,7 @@ _truncate (G_GNUC_UNUSED GSeekable * seekable,
            GError ** error)
 {
 	g_set_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
-		     "Cannot truncate DmapGstInputStream");
+		     "Cannot truncate DmapTranscodeStream");
 	return FALSE;
 }
 
@@ -154,8 +154,8 @@ _seekable_iface_init (GSeekableIface * iface)
 }
 
 void
-dmap_gst_input_stream_new_buffer_cb (GstElement * element,
-				     DmapGstInputStream * stream)
+dmap_transcode_stream_new_buffer_cb (GstElement * element,
+				     DmapTranscodeStream * stream)
 {
 	gsize i;
 	guint8 *ptr;
@@ -167,7 +167,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 
 	/* FIXME: Is this necessary? I am trying to protect against this
 	 * thread manipulating data after the pipeline has been destroyed.
-	 * see also dmap_gst_input_stream_close ().
+	 * see also dmap_transcode_stream_close ().
 	 */
 	g_mutex_lock (&stream->priv->buffer_mutex);
 
@@ -245,7 +245,7 @@ dmap_gst_input_stream_new_buffer_cb (GstElement * element,
 }
 
 GInputStream *
-dmap_gst_input_stream_new (const gchar * transcode_mimetype,
+dmap_transcode_stream_new (const gchar * transcode_mimetype,
 			   GInputStream * src_stream)
 {
 	GInputStream *stream;
@@ -253,13 +253,13 @@ dmap_gst_input_stream_new (const gchar * transcode_mimetype,
 	if (!transcode_mimetype) {
 		stream = src_stream;
 	} else if (!strcmp (transcode_mimetype, "audio/mp3")) {
-		stream = G_INPUT_STREAM (dmap_gst_mp3_input_stream_new
+		stream = G_INPUT_STREAM (dmap_transcode_mp3_stream_new
 					 (src_stream));
 	} else if (!strcmp (transcode_mimetype, "audio/wav")) {
-		stream = G_INPUT_STREAM (dmap_gst_wav_input_stream_new
+		stream = G_INPUT_STREAM (dmap_transcode_wav_stream_new
 					 (src_stream));
 	} else if (!strcmp (transcode_mimetype, "video/quicktime")) {
-		stream = G_INPUT_STREAM (dmap_gst_qt_input_stream_new
+		stream = G_INPUT_STREAM (dmap_transcode_qt_stream_new
 					 (src_stream));
 	} else {
 		g_warning ("Transcode format %s not supported",
@@ -284,7 +284,7 @@ _read (GInputStream * stream,
        G_GNUC_UNUSED GError ** error)
 {
 	gsize i;
-	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
+	DmapTranscodeStream *gst_stream = DMAP_TRANSCODE_STREAM (stream);
 	gint64 end_time;
 
 	end_time = g_get_monotonic_time () + QUEUE_POP_WAIT_SECONDS * G_TIME_SPAN_SECOND;
@@ -337,9 +337,9 @@ _skip (G_GNUC_UNUSED GInputStream * stream,
 }
 
 static void
-_kill_pipeline (DmapGstInputStream * stream)
+_kill_pipeline (DmapTranscodeStream * stream)
 {
-	DMAP_GST_INPUT_STREAM_GET_CLASS (stream)->kill_pipeline (stream);
+	DMAP_TRANSCODE_STREAM_GET_CLASS (stream)->kill_pipeline (stream);
 }
 
 static gboolean
@@ -347,7 +347,7 @@ _close (GInputStream * stream,
         G_GNUC_UNUSED GCancellable * cancellable,
         G_GNUC_UNUSED GError ** error)
 {
-	DmapGstInputStream *gst_stream = DMAP_GST_INPUT_STREAM (stream);
+	DmapTranscodeStream *gst_stream = DMAP_TRANSCODE_STREAM (stream);
 
 	_kill_pipeline (gst_stream);
 
@@ -422,7 +422,7 @@ _close_finish (G_GNUC_UNUSED GInputStream * stream,
 }
 
 static void
-dmap_gst_input_stream_class_init (DmapGstInputStreamClass * klass)
+dmap_transcode_stream_class_init (DmapTranscodeStreamClass * klass)
 {
 	GInputStreamClass *istream_class;
 
@@ -439,7 +439,7 @@ dmap_gst_input_stream_class_init (DmapGstInputStreamClass * klass)
 }
 
 static void
-dmap_gst_input_stream_init (DmapGstInputStream * stream)
+dmap_transcode_stream_init (DmapTranscodeStream * stream)
 {
 	stream->priv->buffer = g_queue_new ();
 	stream->priv->read_request = 0;
@@ -454,8 +454,8 @@ dmap_gst_input_stream_init (DmapGstInputStream * stream)
 	g_cond_init (&stream->priv->buffer_write_ready);
 }
 
-G_DEFINE_TYPE_WITH_CODE (DmapGstInputStream, dmap_gst_input_stream,
+G_DEFINE_TYPE_WITH_CODE (DmapTranscodeStream, dmap_transcode_stream,
 			 G_TYPE_INPUT_STREAM,
 			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
 						_seekable_iface_init)
-                         G_ADD_PRIVATE (DmapGstInputStream));
+                         G_ADD_PRIVATE (DmapTranscodeStream));

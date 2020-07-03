@@ -1,5 +1,5 @@
 /*
- * DmapGstMP3InputStream class: Open a URI using dmap_gst_mp3_input_stream_new ().
+ * DmapTranscodeMp3Stream class: Open a URI using dmap_transcode_mp3_stream_new ().
  * Data is decoded using GStreamer and is then reencoded as an MP3
  * stream by the class's read operations.
  *
@@ -20,42 +20,42 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_GST_MP3_INPUT_STREAM_H
-#define _DMAP_GST_MP3_INPUT_STREAM_H
+#ifndef _DMAP_TRANSCODE_MP3_STREAM_H
+#define _DMAP_TRANSCODE_MP3_STREAM_H
 
 #include <gio/gio.h>
 
-#include "dmap-gst-input-stream.h"
+#include "dmap-transcode-stream.h"
 
 G_BEGIN_DECLS
-#define DMAP_TYPE_GST_MP3_INPUT_STREAM         (dmap_gst_mp3_input_stream_get_type ())
-#define DMAP_GST_MP3_INPUT_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
+#define DMAP_TYPE_GST_MP3_INPUT_STREAM         (dmap_transcode_mp3_stream_get_type ())
+#define DMAP_TRANSCODE_MP3_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM, \
-					       DmapGstMP3InputStream))
-#define DMAP_GST_MP3_INPUT_STREAM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
+					       DmapTranscodeMp3Stream))
+#define DMAP_TRANSCODE_MP3_STREAM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM, \
-					       DmapGstMP3InputStreamClass))
+					       DmapTranscodeMp3StreamClass))
 #define DMAP_IS_GST_MP3_INPUT_STREAM(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM))
 #define DMAP_IS_GST_MP3_INPUT_STREAM_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM_CLASS))
-#define DMAP_GST_MP3_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
+#define DMAP_TRANSCODE_MP3_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_MP3_INPUT_STREAM, \
-					       DmapGstMP3InputStreamClass))
-typedef struct DmapGstMP3InputStreamPrivate DmapGstMP3InputStreamPrivate;
+					       DmapTranscodeMp3StreamClass))
+typedef struct DmapTranscodeMp3StreamPrivate DmapTranscodeMp3StreamPrivate;
 
 typedef struct {
-	DmapGstInputStream parent;
-	DmapGstMP3InputStreamPrivate *priv;
-} DmapGstMP3InputStream;
+	DmapTranscodeStream parent;
+	DmapTranscodeMp3StreamPrivate *priv;
+} DmapTranscodeMp3Stream;
 
 typedef struct {
-	DmapGstInputStreamClass parent;
-} DmapGstMP3InputStreamClass;
+	DmapTranscodeStreamClass parent;
+} DmapTranscodeMp3StreamClass;
 
-GType dmap_gst_mp3_input_stream_get_type (void);
+GType dmap_transcode_mp3_stream_get_type (void);
 
-GInputStream *dmap_gst_mp3_input_stream_new (GInputStream * stream);
+GInputStream *dmap_transcode_mp3_stream_new (GInputStream * stream);
 
 G_END_DECLS
 #endif

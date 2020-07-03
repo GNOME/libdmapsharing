@@ -1,5 +1,5 @@
 /*
- * DmapGstMP3InputStream class: Open a URI using dmap_gst_mp3_input_stream_new ().
+ * DmapTranscodeMp3Stream class: Open a URI using dmap_transcode_mp3_stream_new ().
  * Data is decoded using GStreamer and is then reencoded as an MP3
  * stream by the class's read operations.
  *
@@ -23,12 +23,13 @@
 #include <gst/gst.h>
 #include <gst/app/gstappsink.h>
 
-#include "dmap-gst-mp3-input-stream.h"
+#include "dmap-transcode-mp3-stream.h"
+#include "dmap-transcode-stream-private.h"
 #include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
 
-struct DmapGstMP3InputStreamPrivate
+struct DmapTranscodeMp3StreamPrivate
 {
 	GstElement *pipeline;
 	GstElement *src;
@@ -61,11 +62,11 @@ _pad_added_cb (G_GNUC_UNUSED GstElement * element,
 }
 
 GInputStream *
-dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
+dmap_transcode_mp3_stream_new (GInputStream * src_stream)
 {
 	GstStateChangeReturn sret;
 	GstState state;
-	DmapGstMP3InputStream *stream = NULL;
+	DmapTranscodeMp3Stream *stream = NULL;
 
 	GstElement *pipeline = NULL;
 	GstElement *src = NULL;
@@ -151,13 +152,13 @@ dmap_gst_mp3_input_stream_new (GInputStream * src_stream)
 		goto done;
 	}
 
-	stream = DMAP_GST_MP3_INPUT_STREAM (g_object_new (DMAP_TYPE_GST_MP3_INPUT_STREAM, NULL));
+	stream = DMAP_TRANSCODE_MP3_STREAM (g_object_new (DMAP_TYPE_GST_MP3_INPUT_STREAM, NULL));
 	if (NULL == stream) {
 		goto done;
 	}
 	g_assert (G_IS_SEEKABLE (stream));
 
-	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_gst_input_stream_new_buffer_cb), stream);
+	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_transcode_stream_new_buffer_cb), stream);
 
 	stream->priv->pipeline = gst_object_ref (pipeline);
 	stream->priv->src = gst_object_ref (src);
@@ -195,30 +196,30 @@ done:
 }
 
 static void
-_kill_pipeline (DmapGstInputStream * stream)
+_kill_pipeline (DmapTranscodeStream * stream)
 {
-	DmapGstMP3InputStream *mp3_stream =
-		DMAP_GST_MP3_INPUT_STREAM (stream);
+	DmapTranscodeMp3Stream *mp3_stream =
+		DMAP_TRANSCODE_MP3_STREAM (stream);
 
 	gst_element_set_state (mp3_stream->priv->pipeline, GST_STATE_NULL);
 	gst_object_unref (GST_OBJECT (mp3_stream->priv->pipeline));
 }
 
-G_DEFINE_TYPE_WITH_PRIVATE (DmapGstMP3InputStream,
-                            dmap_gst_mp3_input_stream,
-	                    DMAP_TYPE_GST_INPUT_STREAM);
+G_DEFINE_TYPE_WITH_PRIVATE (DmapTranscodeMp3Stream,
+                            dmap_transcode_mp3_stream,
+	                    DMAP_TYPE_TRANSCODE_STREAM);
 
 static void
-dmap_gst_mp3_input_stream_class_init (DmapGstMP3InputStreamClass * klass)
+dmap_transcode_mp3_stream_class_init (DmapTranscodeMp3StreamClass * klass)
 {
-	DmapGstInputStreamClass *parent_class =
-		DMAP_GST_INPUT_STREAM_CLASS (klass);
+	DmapTranscodeStreamClass *parent_class =
+		DMAP_TRANSCODE_STREAM_CLASS (klass);
 
 	parent_class->kill_pipeline = _kill_pipeline;
 }
 
 static void
-dmap_gst_mp3_input_stream_init (DmapGstMP3InputStream * stream)
+dmap_transcode_mp3_stream_init (DmapTranscodeMp3Stream * stream)
 {
-	stream->priv = dmap_gst_mp3_input_stream_get_instance_private(stream);
+	stream->priv = dmap_transcode_mp3_stream_get_instance_private(stream);
 }

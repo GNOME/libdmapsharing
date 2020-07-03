@@ -1,5 +1,5 @@
 /*
- * DmapGstQtInputStream class: Open a URI using dmap_gst_qt_input_stream_new ().
+ * DmapTranscodeQtStream class: Open a URI using dmap_transcode_qt_stream_new ().
  * Data is decoded using GStreamer and is then reencoded as a QuickTime video
  * stream by the class's read operations.
  *
@@ -20,42 +20,42 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_GST_QT_INPUT_STREAM_H
-#define _DMAP_GST_QT_INPUT_STREAM_H
+#ifndef _DMAP_TRANSCODE_QT_STREAM_H
+#define _DMAP_TRANSCODE_QT_STREAM_H
 
 #include <gio/gio.h>
 
-#include "dmap-gst-input-stream.h"
+#include "dmap-transcode-stream.h"
 
 G_BEGIN_DECLS
-#define DMAP_TYPE_GST_QT_INPUT_STREAM         (dmap_gst_qt_input_stream_get_type ())
-#define DMAP_GST_QT_INPUT_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
+#define DMAP_TYPE_GST_QT_INPUT_STREAM         (dmap_transcode_qt_stream_get_type ())
+#define DMAP_TRANSCODE_QT_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
 				               DMAP_TYPE_GST_QT_INPUT_STREAM, \
-					       DmapGstQtInputStream))
-#define DMAP_GST_QT_INPUT_STREAM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
+					       DmapTranscodeQtStream))
+#define DMAP_TRANSCODE_QT_STREAM_CLASS(k)     (G_TYPE_CHECK_CLASS_CAST((k), \
 				               DMAP_TYPE_GST_QT_INPUT_STREAM, \
-					       DmapGstQtInputStreamClass))
+					       DmapTranscodeQtStreamClass))
 #define DMAP_IS_GST_QT_INPUT_STREAM(o)        (G_TYPE_CHECK_INSTANCE_TYPE ((o), \
 				               DMAP_TYPE_GST_QT_INPUT_STREAM))
 #define DMAP_IS_GST_QT_INPUT_STREAM_CLASS(k)  (G_TYPE_CHECK_CLASS_TYPE ((k), \
 				               DMAP_TYPE_GST_QT_INPUT_STREAM_CLASS))
-#define DMAP_GST_QT_INPUT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
+#define DMAP_TRANSCODE_QT_STREAM_GET_CLASS(o) (G_TYPE_INSTANCE_GET_CLASS ((o), \
 				               DMAP_TYPE_GST_QT_INPUT_STREAM, \
-					       DmapGstQtInputStreamClass))
-typedef struct DmapGstQtInputStreamPrivate DmapGstQtInputStreamPrivate;
+					       DmapTranscodeQtStreamClass))
+typedef struct DmapTranscodeQtStreamPrivate DmapTranscodeQtStreamPrivate;
 
 typedef struct {
-	DmapGstInputStream parent;
-	DmapGstQtInputStreamPrivate *priv;
-} DmapGstQtInputStream;
+	DmapTranscodeStream parent;
+	DmapTranscodeQtStreamPrivate *priv;
+} DmapTranscodeQtStream;
 
 typedef struct {
-	DmapGstInputStreamClass parent;
-} DmapGstQtInputStreamClass;
+	DmapTranscodeStreamClass parent;
+} DmapTranscodeQtStreamClass;
 
-GType dmap_gst_qt_input_stream_get_type (void);
+GType dmap_transcode_qt_stream_get_type (void);
 
-GInputStream *dmap_gst_qt_input_stream_new (GInputStream * stream);
+GInputStream *dmap_transcode_qt_stream_new (GInputStream * stream);
 
 G_END_DECLS
 #endif
