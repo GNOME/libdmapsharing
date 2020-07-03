@@ -55,7 +55,7 @@
         <xi:include href="xml/dmap-control-share.xml"/>
         <xi:include href="xml/dmap-db.xml"/>
         <xi:include href="xml/dmap-enums.xml"/>
-        <xi:include href="xml/dmap-gst-input-stream.xml"/>
+        <xi:include href="xml/dmap-transcode-stream.xml"/>
         <xi:include href="xml/dmap-image-connection.xml"/>
         <xi:include href="xml/dmap-image-record.xml"/>
         <xi:include href="xml/dmap-image-share.xml"/>
