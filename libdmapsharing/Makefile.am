@@ -120,6 +120,7 @@ noinst_HEADERS = \
 	dmap-connection-private.h \
 	dmap-transcode-mp3-stream.h \
 	dmap-transcode-qt-stream.h \
+	dmap-transcode-stream-private.h \
 	dmap-transcode-wav-stream.h \
 	dmap-marshal.h \
 	dmap-mdns-avahi.h \
