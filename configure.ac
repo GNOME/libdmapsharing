@@ -2,7 +2,7 @@ AC_INIT(libdmapsharing, 3.9.9)
 
 dnl when going to/from release please set the nano (fourth number) right !
 dnl releases only do Wall, cvs and prerelease does Werror too
-AS_VERSION(libdmapsharing, LIBDMAPSHARING, 3, 9, 9, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
+AS_VERSION(libdmapsharing, LIBDMAPSHARING, 3, 9, 9, 0, LIBDMAPSHARING_CVS="no", LIBDMAPSHARING_CVS="yes")
 
 # Enable silent build when available (Automake 1.11)
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
