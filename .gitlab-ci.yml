@@ -38,6 +38,6 @@ build-fedora:
   artifacts:
     paths:
       - config.log
-      - ~/rpmbuild/RPMS/
-      - ~/rpmbuild/SRPMS/
+      - ~/rpmbuild/RPMS/*/*
+      - ~/rpmbuild/SRPMS/*
     expire_in: 1 week
