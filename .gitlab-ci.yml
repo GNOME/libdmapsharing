@@ -16,6 +16,11 @@ build-ubuntu:
     - make CFLAGS="-Wall -Wextra -Werror"
     - make clean
 
+  artifacts:
+    paths:
+      - config.log
+    expire_in: 1 week
+
 build-fedora:
   image: fedora:latest
 
@@ -33,6 +38,7 @@ build-fedora:
 
   artifacts:
     paths:
-       - ~/rpmbuild/RPMS/
-       - ~/rpmbuild/SRPMS/
+      - config.log
+      - ~/rpmbuild/RPMS/
+      - ~/rpmbuild/SRPMS/
     expire_in: 1 week
