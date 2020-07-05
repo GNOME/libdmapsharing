@@ -34,10 +34,11 @@ build-fedora:
     - mkdir -p ~/rpmbuild/SOURCES
     - cp libdmapsharing-*.*.*.tar.gz ~/rpmbuild/SOURCES
     - rpmbuild -ba distro/libdmapsharing4.spec
+    - cp ~/rpmbuild/RPMS/*/* .
+    - cp ~/rpmbuild/SRPMS/* .
 
   artifacts:
     paths:
       - config.log
-      - ~/rpmbuild/RPMS/*/*
-      - ~/rpmbuild/SRPMS/*
+      - *.rpm
     expire_in: 1 week
