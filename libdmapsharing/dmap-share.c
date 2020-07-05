@@ -1676,7 +1676,7 @@ dmap_share_class_init (DmapShareClass * klass)
 		               G_TYPE_FROM_CLASS (object_class),
 		               G_SIGNAL_RUN_FIRST,
 		               0, NULL, NULL,
-		               g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		               NULL, G_TYPE_NONE, 1,
 		               G_TYPE_POINTER);
 }
 

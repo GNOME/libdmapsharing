@@ -410,7 +410,7 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapMdnsPublisherClass,
 					       published), NULL, NULL,
-			      g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
+			      NULL, G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
 	_signals[NAME_COLLISION] =
 		g_signal_new ("name-collision",
@@ -418,7 +418,7 @@ dmap_mdns_publisher_class_init (DmapMdnsPublisherClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapMdnsPublisherClass,
 					       name_collision), NULL, NULL,
-			      g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
+			      NULL, G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
 }
 

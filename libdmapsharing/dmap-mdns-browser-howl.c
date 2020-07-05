@@ -442,7 +442,7 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapMdnsBrowserClass,
 					       service_added), NULL, NULL,
-			      g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE,
+			      NULL, G_TYPE_NONE,
 			      1, DMAP_TYPE_MDNS_SERVICE);
 	signals[SERVICE_REMOVED] =
 		g_signal_new ("service-removed",
@@ -450,7 +450,7 @@ dmap_mdns_browser_class_init (DmapMdnsBrowserClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapMdnsBrowserClass,
 					       service_removed), NULL, NULL,
-			      g_cclosure_marshal_VOID__STRING, G_TYPE_NONE, 1,
+			      NULL, G_TYPE_NONE, 1,
 			      G_TYPE_STRING);
 }
 

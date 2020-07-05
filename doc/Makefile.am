@@ -64,7 +64,6 @@ IGNORE_HFILES= \
 	dmap-gst-qt-input-stream.h \
 	dmap-gst-wav-input-stream.h \
 	dmap.h \
-	dmap-marshal.h \
 	dmap-mdns-avahi.h \
 	dmap-private-utils.h \
 	dmap-share-private.h \

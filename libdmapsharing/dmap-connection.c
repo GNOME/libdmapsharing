@@ -35,7 +35,6 @@
 #include "dmap-connection-private.h"
 #include "dmap-error.h"
 #include "dmap-record-factory.h"
-#include "dmap-marshal.h"
 #include "dmap-structure.h"
 
 #define DMAP_USER_AGENT "iTunes/4.6 (Windows; N)"
@@ -441,7 +440,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 					      G_STRUCT_OFFSET
 					      (DmapConnectionClass,
 					       authenticate), NULL, NULL,
-					      dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN,
+					      NULL,
 					      G_TYPE_NONE, 5,
 					      G_TYPE_STRING,
 					      SOUP_TYPE_SESSION,
@@ -453,34 +452,34 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapConnectionClass,
 					       connecting), NULL, NULL,
-			      dmap_marshal_generated_VOID__ULONG_FLOAT, G_TYPE_NONE, 2,
+			      NULL, G_TYPE_NONE, 2,
 			      G_TYPE_ULONG, G_TYPE_FLOAT);
 	_signals[CONNECTED] =
 		g_signal_new ("connected", G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapConnectionClass,
 					       connected), NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+			      NULL, G_TYPE_NONE, 0);
 	_signals[DISCONNECTED] =
 		g_signal_new ("disconnected",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DmapConnectionClass,
 					       disconnected), NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+			      NULL, G_TYPE_NONE, 0);
 	_signals[OPERATION_DONE] =
 		g_signal_new ("operation-done",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_FIRST,
 			      G_STRUCT_OFFSET (DmapConnectionClass,
 					       operation_done), NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+			      NULL, G_TYPE_NONE, 0);
 	_signals[ERROR] =
 		g_signal_new ("error",
 		              G_TYPE_FROM_CLASS (object_class),
 		              G_SIGNAL_RUN_FIRST,
 		              0, NULL, NULL,
-		              g_cclosure_marshal_VOID__POINTER, G_TYPE_NONE, 1,
+		              NULL, G_TYPE_NONE, 1,
 		              G_TYPE_POINTER);
 }
 
