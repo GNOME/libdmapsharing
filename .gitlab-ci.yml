@@ -15,3 +15,24 @@ build-ubuntu:
     - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
     - make CFLAGS="-Wall -Wextra -Werror"
     - make clean
+
+build-fedora:
+  image: fedora:latest
+
+  before_script:
+    - dnf -y update
+    - dnf -y install autoconf automake check-devel gcc gtk-doc avahi-glib-devel avahi-compat-libdns_sd-devel gdk-pixbuf2-devel libgee-devel glib2-devel gstreamer1-plugins-base-devel gtk3-devel libsoup-devel libtool pkgconf-pkg-config rpm-build
+
+  script:
+    - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
+    - make CFLAGS="-Wall -Wextra -Werror"
+    - make dist
+    - mkdir -p ~/rpmbuild/SOURCES
+    - cp libdmapsharing-*.*.*.tar.gz ~/rpmbuild/SOURCES
+    - rpmbuild -ba distro/libdmapsharing4.spec
+
+  artifacts:
+    paths:
+       - ~/rpmbuild/RPMS/
+       - ~/rpmbuild/SRPMS/
+    expire_in: 1 week
