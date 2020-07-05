@@ -438,6 +438,10 @@ else
 fi
 AC_SUBST(DMAP_HAVE_UNALIGNED_ACCESS_DEFINE)
 
+dnl Set required and maximum glib API versions.
+AC_DEFINE(GLIB_VERSION_MIN_REQUIRED, GLIB_VERSION_2_40, [minimum glib version])
+AC_DEFINE(GLIB_VERSION_MAX_ALLOWED, GLIB_VERSION_2_40, [maximum glib version])
+
 AC_OUTPUT([
 Makefile
 doc/Makefile
