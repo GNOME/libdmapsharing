@@ -205,16 +205,14 @@ AC_SUBST(GDKPIXBUF_CFLAGS)
 AC_SUBST(GDKPIXBUF_LIBS)
 
 AC_ARG_WITH(mdns,
-   AC_HELP_STRING([--with-mdns=auto|howl|avahi|dns_sd],
+   AC_HELP_STRING([--with-mdns=auto|avahi|dns_sd],
    [Select the mDNS/DNS-SD implementation to use (default auto)]),
    WITH_MDNS=$withval,
    WITH_MDNS=auto)
 
-HAVE_HOWL=no
 HAVE_AVAHI=no
 HAVE_DNS_SD=no # Apple's DNSSD library.
 HAVE_MDNS=no
-USE_HOWL=no
 USE_AVAHI=no
 USE_DNS_SD=no
 
@@ -235,11 +233,6 @@ if test x$HAVE_AVAHI_06 = xyes || test x$HAVE_AVAHI_05 = xyes; then
 else
    HAVE_AVAHI=no
 fi
-
-PKG_CHECK_MODULES(HOWL,
-   howl,
-   HAVE_HOWL=yes,
-   HAVE_HOWL=no)
 
 AC_CHECK_HEADERS(dns_sd.h, HAVE_DNS_SD=yes)
 if test x"$HAVE_DNS_SD" = xyes; then
@@ -267,55 +260,14 @@ if test x"$WITH_MDNS" = xauto; then
     fi
 
     HAVE_MDNS=yes
-  elif test x"$HAVE_HOWL" = xyes; then
-    GNOME_VFS_REQS=2.7.4
-    PKG_CHECK_MODULES(GNOME_VFS, 
-      gnome-vfs-2.0 >= $GNOME_VFS_REQS gnome-vfs-module-2.0,
-      HAVE_GNOME_VFS=yes,
-      HAVE_GNOME_VFS=no)
-
-    if test x"$HAVE_GNOME_VFS" = xno; then
-      AC_MSG_ERROR([Howl support requires gnome-vfs; install it or try --with-mdns=avahi])
-    fi
-
-    MDNS_CFLAGS="$HOWL_CFLAGS $GNOME_VFS_CFLAGS"
-    MDNS_LIBS="$HOWL_LIBS $GNOME_VFS_LIBS"
-    AC_DEFINE(WITH_HOWL, 1, [Define if mDNS/DNS-SD implementation uses Howl])
-    USE_HOWL=yes
-    AC_MSG_NOTICE([Detected Howl; using it for mDNS/DNS-SD])
-
-    HAVE_MDNS=yes
   else
-    AC_MSG_ERROR([Must have avahi, howl or dns_sd.h development files installed])
+    AC_MSG_ERROR([Must have avahi or dns_sd.h development files installed])
   fi
-fi
-
-if test x"$WITH_MDNS" = xhowl; then
-  if test x"$HAVE_HOWL" = xno; then
-    AC_MSG_ERROR([Howl support requires gnome-vfs; install it or try --with-mdns=avahi])
-  fi
-
-  GNOME_VFS_REQS=2.7.4
-  PKG_CHECK_MODULES(GNOME_VFS,
-    gnome-vfs-2.0 >= $GNOME_VFS_REQS gnome-vfs-module-2.0,
-    HAVE_GNOME_VFS=yes,
-    HAVE_GNOME_VFS=no)
-
-  if test x"$HAVE_GNOME_VFS" = xno; then
-    AC_MSG_ERROR([Howl support requires gnome-vfs; install it or try --with-mdns=avahi])
-  fi
-
-  MDNS_CFLAGS="$HOWL_CFLAGS $GNOME_VFS_CFLAGS"
-  MDNS_LIBS="$HOWL_LIBS $GNOME_VFS_LIBS"
-  AC_DEFINE(WITH_HOWL, 1, [Define if mDNS/DNS-SD implementation uses Howl])
-  USE_HOWL=yes
-  AC_MSG_NOTICE([Using Howl for mDNS/DNS-SD])
-  HAVE_MDNS=yes
 fi
 
 if test x"$WITH_MDNS" = xavahi; then
   if test x"$HAVE_AVAHI" = xno; then
-    AC_MSG_ERROR([Avahi explicitly requested but not found. Install Avahi, or try --with-mdns=howl])
+    AC_MSG_ERROR([Avahi explicitly requested but not found. Install Avahi, or try --with-mdns=dns_sd])
   fi
 
   MDNS_CFLAGS=$AVAHI_CFLAGS
@@ -347,7 +299,6 @@ if test x"$WITH_MDNS" = xdns_sd; then
   HAVE_MDNS=yes
 fi
 
-AM_CONDITIONAL(USE_HOWL, test "x$USE_HOWL" = "xyes")
 AM_CONDITIONAL(USE_AVAHI, test "x$USE_AVAHI" = "xyes")
 AM_CONDITIONAL(USE_DNS_SD, test "x$USE_DNS_SD" = "xyes")
 
