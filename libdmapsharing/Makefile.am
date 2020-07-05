@@ -97,7 +97,6 @@ libdmapsharinginclude_HEADERS = \
 	dmap-db.h \
 	dmap-enums.h \
 	dmap-error.h \
-	dmap-transcode-stream.h \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
 	dmap-mdns-publisher.h \
@@ -109,6 +108,11 @@ libdmapsharinginclude_HEADERS = \
 	dmap-image-connection.h \
 	dmap-image-record.h \
 	dmap-image-share.h
+
+if USE_GSTREAMERAPP
+libdmapsharinginclude_HEADERS += \
+	dmap-transcode-stream.h
+endif
 
 noinst_HEADERS = \
 	dmap-config.h \

@@ -1,1 +1,3 @@
 test-*
+gst-util.h
+dmap-transcode-*
