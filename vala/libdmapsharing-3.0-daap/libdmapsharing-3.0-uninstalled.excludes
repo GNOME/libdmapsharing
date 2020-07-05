@@ -1,3 +1,5 @@
 test-*
 dacp-*
 dpap-*
+dmap-gst-*
+gst-util.h

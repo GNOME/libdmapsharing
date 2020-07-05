@@ -93,7 +93,6 @@ libdmapsharinginclude_HEADERS = \
 	dmap-container-record.h \
 	dmap-db.h \
 	dmap-enums.h \
-	dmap-gst-input-stream.h \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
 	dmap-mdns-publisher.h \
@@ -105,6 +104,11 @@ libdmapsharinginclude_HEADERS = \
 	dpap-connection.h \
 	dpap-record.h \
 	dpap-share.h
+
+if USE_GSTREAMERAPP
+libdmapsharinginclude_HEADERS += \
+	dmap-gst-input-stream.h
+endif
 
 noinst_HEADERS = \
 	dmap-config.h \

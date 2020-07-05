@@ -1,2 +1,4 @@
 test-*
 dpap-*
+dmap-gst-*
+gst-util.h
