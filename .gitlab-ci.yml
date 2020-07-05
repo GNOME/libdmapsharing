@@ -40,5 +40,5 @@ build-fedora:
   artifacts:
     paths:
       - config.log
-      - *.rpm
+      - libdmapsharing4*.rpm
     expire_in: 1 week
