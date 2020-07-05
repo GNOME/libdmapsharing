@@ -33,7 +33,6 @@
 #include "dmap-md5.h"
 #include "dmap-connection.h"
 #include "dmap-record-factory.h"
-#include "dmap-marshal.h"
 
 #define DMAP_USER_AGENT "iTunes/4.6 (Windows; N)"
 
@@ -259,7 +258,7 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 					      G_STRUCT_OFFSET
 					      (DMAPConnectionClass,
 					       authenticate), NULL, NULL,
-					      dmap_marshal_generated_VOID__STRING_POINTER_POINTER_POINTER_BOOLEAN,
+					      NULL,
 					      G_TYPE_NONE, 5,
 					      G_TYPE_STRING,
 					      SOUP_TYPE_SESSION,
@@ -271,28 +270,28 @@ dmap_connection_class_init (DMAPConnectionClass * klass)
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DMAPConnectionClass,
 					       connecting), NULL, NULL,
-			      dmap_marshal_generated_VOID__ULONG_FLOAT, G_TYPE_NONE, 2,
+			      NULL, G_TYPE_NONE, 2,
 			      G_TYPE_ULONG, G_TYPE_FLOAT);
 	signals[CONNECTED] =
 		g_signal_new ("connected", G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DMAPConnectionClass,
 					       connected), NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+			      NULL, G_TYPE_NONE, 0);
 	signals[DISCONNECTED] =
 		g_signal_new ("disconnected",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (DMAPConnectionClass,
 					       disconnected), NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+			      NULL, G_TYPE_NONE, 0);
 	signals[OPERATION_DONE] =
 		g_signal_new ("operation-done",
 			      G_TYPE_FROM_CLASS (object_class),
 			      G_SIGNAL_RUN_FIRST,
 			      G_STRUCT_OFFSET (DMAPConnectionClass,
 					       operation_done), NULL, NULL,
-			      g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+			      NULL, G_TYPE_NONE, 0);
 }
 
 static void

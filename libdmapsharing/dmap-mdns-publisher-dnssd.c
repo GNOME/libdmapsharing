@@ -226,7 +226,7 @@ dmap_mdns_publisher_class_init (DMAPMdnsPublisherClass *klass)
 			      G_STRUCT_OFFSET (DMAPMdnsPublisherClass, published),
                               NULL,
                               NULL,
-                              g_cclosure_marshal_VOID__STRING,
+                              NULL,
                               G_TYPE_NONE,
                               1, G_TYPE_STRING);
         signals [NAME_COLLISION] =
@@ -236,7 +236,7 @@ dmap_mdns_publisher_class_init (DMAPMdnsPublisherClass *klass)
 			      G_STRUCT_OFFSET (DMAPMdnsPublisherClass, name_collision),
                               NULL,
                               NULL,
-                              g_cclosure_marshal_VOID__STRING,
+                              NULL,
                               G_TYPE_NONE,
                               1, G_TYPE_STRING);
 }

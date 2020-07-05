@@ -38,7 +38,6 @@
 #include <libsoup/soup-server.h>
 
 #include <libdmapsharing/dmap.h>
-#include <libdmapsharing/dmap-marshal.h>
 #include <libdmapsharing/dmap-structure.h>
 
 #include <libdmapsharing/dmap-share.h>
@@ -170,7 +169,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, remote_found),
 			      NULL,
 			      NULL,
-			      dmap_marshal_generated_VOID__STRING_STRING,
+			      NULL,
 			      G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 
 	/**
@@ -187,7 +186,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, remote_lost),
 			      NULL,
 			      NULL,
-			      g_cclosure_marshal_VOID__STRING,
+			      NULL,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	/**
@@ -205,7 +204,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, remote_paired),
 			      NULL,
 			      NULL,
-			      dmap_marshal_generated_VOID__STRING_BOOLEAN,
+			      NULL,
 			      G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	/**
@@ -224,7 +223,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, lookup_guid),
 			      NULL,
 			      NULL,
-			      dmap_marshal_generated_BOOLEAN__STRING,
+			      NULL,
 			      G_TYPE_BOOLEAN, 1, G_TYPE_STRING);
 
 	/**
@@ -247,7 +246,7 @@ dacp_share_class_init (DACPShareClass * klass)
 			      G_STRUCT_OFFSET (DACPShareClass, add_guid),
 			      NULL,
 			      NULL,
-			      g_cclosure_marshal_VOID__STRING,
+			      NULL,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 

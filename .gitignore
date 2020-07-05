@@ -44,8 +44,6 @@ libdmapsharing/.deps/
 libdmapsharing/dmap-config.h
 libdmapsharing/dmap-enums.c
 libdmapsharing/dmap-enums.h
-libdmapsharing/dmap-marshal.c
-libdmapsharing/dmap-marshal.h
 libdmapsharing/.libs/
 libdmapsharing/*.l[oa]
 libdmapsharing/Makefile

@@ -12,7 +12,6 @@ libdmapsharing_3_0_la_SOURCES = \
 	dmap-container-record.c \
 	dmap-db.c \
 	dmap-enums.c \
-	dmap-marshal.c \
 	dmap-md5.c \
 	dmap-private-utils.c \
 	dmap-record.c \
@@ -112,7 +111,6 @@ noinst_HEADERS = \
 	dmap-gst-mp3-input-stream.h \
 	dmap-gst-qt-input-stream.h \
 	dmap-gst-wav-input-stream.h \
-	dmap-marshal.h \
 	dmap-mdns-avahi.h \
 	dmap-private-utils.h \
 	gst-util.h \
@@ -121,15 +119,9 @@ noinst_HEADERS = \
 	test-dpap-record-factory.h \
 	test-dpap-record.h
 
-BUILT_SOURCES = dmap-marshal.c dmap-marshal.h dmap-enums.c dmap-enums.h unit-test.stamp
+BUILT_SOURCES = dmap-enums.c dmap-enums.h unit-test.stamp
 
 CLEANFILES = $(BUILT_SOURCES) ../tests/unit-test.c *-suite.c pedansee.conf
-
-dmap-marshal.c: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal_generated --include-header dmap-marshal.h $(srcdir)/dmap-marshal.list --body > dmap-marshal.c
-
-dmap-marshal.h: dmap-marshal.list
-	@glib-genmarshal --prefix=dmap_marshal_generated --include-header dmap-marshal.h $(srcdir)/dmap-marshal.list --header > dmap-marshal.h
 
 dmap-enums.c: $(libdmapsharinginclude_headers) Makefile dmap-enums.h
 	@glib-mkenums \
@@ -207,4 +199,4 @@ if HAVE_PEDANSEE
 	done
 endif
 
-EXTRA_DIST = dmap-marshal.list generate-test-suites
+EXTRA_DIST = generate-test-suites

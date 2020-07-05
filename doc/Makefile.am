@@ -58,7 +58,6 @@ EXTRA_HFILES=
 # Header files to ignore when scanning. Use base file name, no paths
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
 IGNORE_HFILES= \
-	dmap-marshal.h \
 	dmap-config.h \
 	dmap-md5.h \
 	dmap-mdns-avahi.h \
