@@ -1,5 +1,11 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* maximum glib version */
+#undef GLIB_VERSION_MAX_ALLOWED
+
+/* minimum glib version */
+#undef GLIB_VERSION_MIN_REQUIRED
+
 /* Define if mDNS/DNS-SD implementation uses Avahi 0.5 */
 #undef HAVE_AVAHI_0_5
 
