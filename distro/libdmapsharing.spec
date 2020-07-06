@@ -1,15 +1,14 @@
 Name: libdmapsharing
-Version: 2.9.36
-Release: 1%{?dist}
+Version: 2.9.40
+Release: 2%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
 URL: http://www.flyn.org/projects/libdmapsharing/
 Summary: A DMAP client and server library
-Group: Development/Libraries
 BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32
 BuildRequires: gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
 BuildRequires: pkgconfig(avahi-client) pkgconfig(avahi-glib)
-BuildRequires: vala-tools libgee-devel
+BuildRequires: vala libgee-devel
 
 %description 
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -21,8 +20,10 @@ DAAP and DPAP.
 
 %package devel
 Summary: Libraries/include files for libdmapsharing
-Group: Development/Libraries
 Requires: %{name} = %{version}-%{release}
+# -vala subpackage removed in F30
+Obsoletes: libdmapsharing-vala < 2.9.37-8
+Provides: libdmapsharing-vala = %{version}-%{release}
 
 %description devel
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -36,18 +37,8 @@ other resources needed for developing applications using libdmapsharing.
 %{_libdir}/girepository-1.0/DMAP-3.0.typelib
 %{_datadir}/gtk-doc/html/libdmapsharing-3.0
 %{_datadir}/gir-1.0/DMAP-3.0.gir
-
-%package vala
-Summary: Vala language bindings for libdmapsharing
-Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}
-
-%description vala
-libdmapsharing implements the DMAP protocols. This includes support for
-DAAP and DPAP.  This package provides the Vala language bindings for
-libdmapsharing.
-
-%files vala
+%dir %{_datadir}/vala
+%dir %{_datadir}/vala/vapi
 %{_datadir}/vala/vapi/libdmapsharing-3.0.vapi
 
 %prep
@@ -61,11 +52,45 @@ make %{?_smp_mflags}
 make install DESTDIR=$RPM_BUILD_ROOT INSTALL="install -p"
 rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-3.0.la
 
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%ldconfig_scriptlets
 
 %changelog
+* Sun Jul 05 2020 W. Michael Petullo <mike[@]flyn.org> - 2.9.40-1
+- New upstream version
+
+* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.39-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
+* Sun Oct 13 2019 W. Michael Petullo <mike[@]flyn.org> - 2.9.39-1
+- New upstream version
+
+* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+
+* Mon Feb 04 2019 Kalev Lember <klember@redhat.com> - 2.9.37-8
+- Use standard vala packaging pattern where vapi files are in -devel
+
+* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
+
+* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
+
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
+
+* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
+
+* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+
+* Fri Nov 11 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.37-1
+- new upstream version
+
 * Mon Aug 01 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.36-1
 - new upstream version to fix Bugzilla #1158652
 
