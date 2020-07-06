@@ -33,10 +33,8 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 
-#ifdef HAVE_AVAHI_0_6
 #include <avahi-client/lookup.h>
 #include <avahi-client/publish.h>
-#endif
 #include <avahi-client/client.h>
 #include <avahi-common/error.h>
 #include <avahi-glib/glib-malloc.h>
@@ -59,10 +57,6 @@ enum
 	LAST_SIGNAL
 };
 
-#ifdef HAVE_AVAHI_0_5
-#define AVAHI_ADDRESS_STR_MAX (40)	/* IPv6 Max = 4*8 + 7 + 1 for NUL */
-#endif
-
 static void dmap_mdns_browser_class_init (DMAPMdnsBrowserClass * klass);
 static void dmap_mdns_browser_init (DMAPMdnsBrowser * browser);
 static void dmap_mdns_browser_dispose (GObject * object);
@@ -78,9 +72,7 @@ static void resolve_cb (AvahiServiceResolver * service_resolver,
 			const gchar * host_name,
 			const AvahiAddress * address,
 			uint16_t port, AvahiStringList * text,
-#ifdef HAVE_AVAHI_0_6
 			AvahiLookupResultFlags flags,
-#endif
 			DMAPMdnsBrowser * browser);
 static gboolean dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 					   const gchar * name,
@@ -96,9 +88,7 @@ static void browse_cb (AvahiServiceBrowser * service_browser,
 		       AvahiBrowserEvent event,
 		       const gchar * name,
 		       const gchar * type, const gchar * domain,
-#ifdef HAVE_AVAHI_0_6
 		       AvahiLookupResultFlags flags,
-#endif
 		       DMAPMdnsBrowser * browser);
 static void free_service (DMAPMdnsBrowserService * service);
 
@@ -237,9 +227,7 @@ dmap_mdns_browser_start (DMAPMdnsBrowser * browser, GError ** error)
 					   service_type_name[browser->
 							     priv->service_type],
 					   NULL,
-#ifdef HAVE_AVAHI_0_6
 					   0,
-#endif
 					   (AvahiServiceBrowserCallback)
 					   browse_cb, browser);
 	if (browser->priv->service_browser == NULL) {
@@ -301,12 +289,10 @@ client_cb (AvahiClient * client,
 	/* Called whenever the client or server state changes */
 
 	switch (state) {
-#ifdef HAVE_AVAHI_0_6
 	case AVAHI_CLIENT_FAILURE:
 		g_warning ("Client failure: %s\n",
 			   avahi_strerror (avahi_client_errno (client)));
 		break;
-#endif
 	default:
 		break;
 	}
@@ -316,6 +302,7 @@ static void
 avahi_client_init (DMAPMdnsBrowser * browser)
 {
 	gint error = 0;
+	AvahiClientFlags flags = 0;
 
 	avahi_set_allocator (avahi_glib_allocator ());
 
@@ -324,23 +311,12 @@ avahi_client_init (DMAPMdnsBrowser * browser)
 	if (!browser->priv->poll) {
 		g_debug ("Unable to create AvahiGlibPoll object for mDNS");
 	}
-#ifdef HAVE_AVAHI_0_5
-	browser->priv->client =
-		avahi_client_new (avahi_glib_poll_get (browser->priv->poll),
-				  (AvahiClientCallback) client_cb, browser,
-				  &error);
-#endif
-#ifdef HAVE_AVAHI_0_6
-	{
-		AvahiClientFlags flags = 0;
 
-		browser->priv->client =
-			avahi_client_new (avahi_glib_poll_get
-					  (browser->priv->poll), flags,
-					  (AvahiClientCallback) client_cb,
-					  browser, &error);
-	}
-#endif
+	browser->priv->client =
+		avahi_client_new (avahi_glib_poll_get
+				  (browser->priv->poll), flags,
+				  (AvahiClientCallback) client_cb,
+				  browser, &error);
 }
 
 static void
@@ -354,9 +330,7 @@ resolve_cb (AvahiServiceResolver * service_resolver,
 	    G_GNUC_UNUSED const gchar * host_name,
 	    const AvahiAddress * address,
 	    uint16_t port, AvahiStringList * text,
-#ifdef HAVE_AVAHI_0_6
 	    G_GNUC_UNUSED AvahiLookupResultFlags flags,
-#endif
 	    DMAPMdnsBrowser * browser)
 {
 	gchar *name = NULL;
@@ -471,9 +445,7 @@ dmap_mdns_browser_resolve (DMAPMdnsBrowser * browser,
 							priv->service_type],
 						       domain,
 						       AVAHI_PROTO_UNSPEC,
-#ifdef HAVE_AVAHI_0_6
 						       0,
-#endif
 						       (AvahiServiceResolverCallback) resolve_cb, browser);
 	if (service_resolver == NULL) {
 		g_debug ("Error starting mDNS resolving using AvahiServiceResolver");
@@ -509,21 +481,13 @@ browse_cb (G_GNUC_UNUSED AvahiServiceBrowser * service_browser,
 	   const gchar * name,
            G_GNUC_UNUSED const gchar * type,
            const gchar * domain,
-#ifdef HAVE_AVAHI_0_6
 	   AvahiLookupResultFlags flags,
-#endif
 	   DMAPMdnsBrowser * browser)
 {
 	gboolean local;
 
-#ifdef HAVE_AVAHI_0_5
-	local = avahi_client_is_service_local (browser->priv->client,
-					       interface, protocol, name,
-					       type, domain);
-#endif
-#ifdef HAVE_AVAHI_0_6
 	local = ((flags & AVAHI_LOOKUP_RESULT_LOCAL) != 0);
-#endif
+
 	if (local && getenv ("LIBDMAPSHARING_ENABLE_LOCAL") == NULL) {
 		g_debug ("Ignoring local service %s", name);
 		return;
