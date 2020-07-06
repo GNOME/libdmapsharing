@@ -17,7 +17,7 @@ automake -a || exit 1
 
 cd "$olddir"
 
-test -n "$NOCONFIGURE" || "$srcdir/configure" --enable-maintainer-mode $@ || exit 1
+test -n "$NOCONFIGURE" || "$srcdir/configure" $@ || exit 1
 
 # Now populate ChangeLog.
 git log   >  "$srcdir/ChangeLog"
