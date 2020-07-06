@@ -213,89 +213,60 @@ AC_ARG_WITH(
 
 HAVE_AVAHI=no
 HAVE_DNS_SD=no # Apple's DNSSD library.
-HAVE_MDNS=no
 USE_AVAHI=no
 USE_DNS_SD=no
 
-PKG_CHECK_MODULES(
-	AVAHI,
-	avahi-client >= 0.6
-	avahi-glib >= 0.6,
-	HAVE_AVAHI=yes,
-	HAVE_AVAHI=no
-)
+if test x"$WITH_MDNS" = xauto || test x"$WITH_MDNS" = xavahi; then
+	PKG_CHECK_MODULES(
+		AVAHI,
+		avahi-client >= 0.6
+		avahi-glib >= 0.6,
+		HAVE_AVAHI=yes,
+		HAVE_AVAHI=no
+	)
+fi
 
-AC_CHECK_HEADERS(dns_sd.h, HAVE_DNS_SD=yes)
-if test x"$HAVE_DNS_SD" = xyes; then
-	AC_CHECK_LIB(dns_sd, DNSServiceRegister, DNS_SD_LIBS="-ldns_sd",)
+if test x"$HAVE_AVAHI" = xno; then
+	if test x"$WITH_MDNS" = xauto || test x"$WITH_MDNS" = xdns_sd; then
+		AC_CHECK_HEADERS(dns_sd.h, HAVE_DNS_SD=yes)
+		if test x"$HAVE_DNS_SD" = xyes; then
+			AC_CHECK_LIB(dns_sd, DNSServiceRegister, DNS_SD_LIBS="-ldns_sd",)
+		fi
+	fi
 fi
 
 if test x"$WITH_MDNS" = xauto; then
 	if test x"$HAVE_AVAHI" = xyes; then
 		MDNS_CFLAGS=$AVAHI_CFLAGS
 		MDNS_LIBS=$AVAHI_LIBS
-		AC_DEFINE(
-			WITH_AVAHI,
-			1,
-			[Define if mDNS/DNS-SD implementation uses Avahi]
-		)
 		USE_AVAHI=yes
 		AC_MSG_NOTICE([Detected Avahi; using it for mDNS/DNS-SD])
-		if test x$HAVE_AVAHI = xyes; then
-			AC_DEFINE(
-				HAVE_AVAHI,
-				1,
-				[Define if mDNS/DNS-SD implementation uses Avahi]
-			)
-		fi
-
-		HAVE_MDNS=yes
 	elif test x"$HAVE_DNS_SD" = xyes; then
 		MDNS_CFLAGS=$DNS_SD_CFLAGS
 		MDNS_LIBS=$DNS_SD_LIBS
-		AC_DEFINE(
-			WITH_DNS_SD,
-			1,
-			[Define if mDNS/DNS-SD implementation uses Apple's DNSSD]
-		)
 		USE_DNS_SD=yes
 		AC_MSG_NOTICE([Detected Apple's DNSSD; using it for mDNS/DNS-SD])
-		HAVE_MDNS=yes
 	else
 		AC_MSG_ERROR([Must have avahi or dns_sd.h development files installed])
 	fi
-fi
-
-if test x"$WITH_MDNS" = xavahi; then
+elif test x"$WITH_MDNS" = xavahi; then
 	if test x"$HAVE_AVAHI" = xno; then
 		AC_MSG_ERROR([Avahi explicitly requested but not found. Install Avahi, or try --with-mdns=dns_sd])
 	fi
 
 	MDNS_CFLAGS=$AVAHI_CFLAGS
 	MDNS_LIBS=$AVAHI_LIBS
-	AC_DEFINE(WITH_AVAHI, 1, [Define if mDNS/DNS-SD implementation uses Avahi])
 	USE_AVAHI=yes
 	AC_MSG_NOTICE([Using Avahi for mDNS/DNS-SD])
-
-	if test x$HAVE_AVAHI = xyes; then
-		AC_DEFINE(HAVE_AVAHI, 1, [Define if mDNS/DNS-SD implementation uses Avahi])
-	fi
-
-	HAVE_MDNS=yes
-fi
-
-if test x"$WITH_MDNS" = xdns_sd; then
+elif test x"$WITH_MDNS" = xdns_sd; then
 	if test x"$HAVE_DNS_SD" = xno; then
 		AC_MSG_ERROR([Apple DNSSD explicitly requested but not found. Install Apple DNSSD, or try --with-mdns=avahi])
 	fi
 
 	MDNS_CFLAGS=$DNS_SD_CFLAGS
 	MDNS_LIBS=$DNS_SD_LIBS
-	AC_DEFINE(WITH_DNS_SD, 1, [Define if mDNS/DNS-SD implementation uses Apple's DNSSD])
 	USE_DNS_SD=yes
 	AC_MSG_NOTICE([Using Apple's DNSSD for mDNS/DNS-SD])
-
-	HAVE_MDNS=yes
 fi
 
 AM_CONDITIONAL(USE_AVAHI, test "x$USE_AVAHI" = "xyes")
