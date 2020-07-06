@@ -326,6 +326,9 @@ AM_CONDITIONAL(USE_DNS_SD, test "x$USE_DNS_SD" = "xyes")
 AC_SUBST(MDNS_CFLAGS)
 AC_SUBST(MDNS_LIBS)
 
+# Enable silent build when available (Automake 1.11)
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_FILES([
