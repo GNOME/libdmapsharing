@@ -36,15 +36,15 @@ libdmapsharing_4_0_la_SOURCES += \
 	test-dmap-image-record-factory.c
 endif
 
-if USE_DNS_SD
-libdmapsharing_4_0_la_SOURCES += \
-	dmap-mdns-browser-dnssd.c \
-	dmap-mdns-publisher-dnssd.c
-else
+if USE_AVAHI
 libdmapsharing_4_0_la_SOURCES += \
 	dmap-mdns-avahi.c \
 	dmap-mdns-browser-avahi.c \
 	dmap-mdns-publisher-avahi.c
+else
+libdmapsharing_4_0_la_SOURCES += \
+	dmap-mdns-browser-dnssd.c \
+	dmap-mdns-publisher-dnssd.c
 endif
 
 if USE_GSTREAMERAPP
