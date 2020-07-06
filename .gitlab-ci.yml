@@ -6,12 +6,39 @@ build-ubuntu:
 
   before_script:
     - apt-get update
-    - apt-get install -q -y --no-install-recommends autoconf automake avahi-daemon check gcc gtk-doc-tools libavahi-client-dev libavahi-compat-libdnssd-dev libavahi-glib-dev libgdk-pixbuf2.0-dev libgee-0.8-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev libgtk2.0-dev libsoup2.4-dev libtool pkg-config
+    - apt-get install -q -y --no-install-recommends autoconf automake avahi-daemon check gcc gtk-doc-tools libavahi-client-dev libavahi-compat-libdnssd-dev libavahi-glib-dev libgdk-pixbuf2.0-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev libgtk2.0-dev libsoup2.4-dev libtool pkg-config
 
   script:
     - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
-    - make CFLAGS="-Wall -Wextra -Werror"
+    - make
     - make clean
     - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
-    - make CFLAGS="-Wall -Wextra -Werror"
+    - make
     - make clean
+
+  artifacts:
+    paths:
+      - config.log
+    expire_in: 1 week
+
+build-fedora:
+  image: fedora:latest
+
+  before_script:
+    - dnf -y update
+    - dnf -y install autoconf automake check-devel gcc gtk-doc avahi-glib-devel avahi-compat-libdns_sd-devel gdk-pixbuf2-devel libgee-devel glib2-devel gstreamer1-plugins-base-devel gtk2-devel libsoup-devel libtool make pkgconf-pkg-config rpm-build vala
+
+  script:
+    - ./autogen.sh --enable-more-warnings
+    - make all dist
+    - mkdir -p ~/rpmbuild/SOURCES
+    - cp libdmapsharing-*.*.*.tar.gz ~/rpmbuild/SOURCES
+    - rpmbuild -ba distro/libdmapsharing4.spec
+    - cp ~/rpmbuild/RPMS/*/* .
+    - cp ~/rpmbuild/SRPMS/* .
+
+  artifacts:
+    paths:
+      - config.log
+      - libdmapsharing4*.rpm
+    expire_in: 1 week
