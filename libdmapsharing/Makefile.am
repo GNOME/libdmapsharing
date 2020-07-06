@@ -31,15 +31,15 @@ libdmapsharing_3_0_la_SOURCES += \
 	test-dpap-record-factory.c
 endif
 
-if USE_DNS_SD
-libdmapsharing_3_0_la_SOURCES += \
-	dmap-mdns-browser-dnssd.c \
-	dmap-mdns-publisher-dnssd.c
-else
+if USE_AVAHI
 libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-avahi.c \
 	dmap-mdns-browser-avahi.c \
 	dmap-mdns-publisher-avahi.c
+else
+libdmapsharing_3_0_la_SOURCES += \
+	dmap-mdns-browser-dnssd.c \
+	dmap-mdns-publisher-dnssd.c
 endif
 
 if USE_GSTREAMERAPP
