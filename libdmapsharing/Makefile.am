@@ -31,10 +31,6 @@ libdmapsharing_3_0_la_SOURCES += \
 	test-dpap-record-factory.c
 endif
 
-if USE_HOWL
-libdmapsharing_3_0_la_SOURCES += \
-	dmap-mdns-browser-howl.c
-else
 if USE_DNS_SD
 libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-browser-dnssd.c \
@@ -44,7 +40,6 @@ libdmapsharing_3_0_la_SOURCES += \
 	dmap-mdns-avahi.c \
 	dmap-mdns-browser-avahi.c \
 	dmap-mdns-publisher-avahi.c
-endif
 endif
 
 if USE_GSTREAMERAPP
@@ -67,7 +62,6 @@ libdmapsharing_3_0_la_CFLAGS = \
 	$(WARN_CFLAGS)
 
 libdmapsharing_3_0_la_LDFLAGS = \
-	-version-info @SO_VERSION@ \
 	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
