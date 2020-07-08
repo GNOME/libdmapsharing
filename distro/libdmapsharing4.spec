@@ -1,5 +1,5 @@
 Name: libdmapsharing4
-Version: 3.9.9
+Version: 3.9.10
 Release: 1%{?dist}
 Summary: A DMAP client and server library
 
