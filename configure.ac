@@ -1,7 +1,15 @@
-AC_INIT(libdmapsharing, 3.9.9, [https://www.flyn.org/projects/libdmapsharing/])
+m4_define([libdmapsharing_major], [3])
+m4_define([libdmapsharing_minor], [9])
+m4_define([libdmapsharing_micro], [10])
+m4_define([libdmapsharing_version], [libdmapsharing_major.libdmapsharing_minor.libdmapsharing_micro])
+
+AC_INIT(libdmapsharing, [libdmapsharing_version], [https://www.flyn.org/projects/libdmapsharing/])
 
 API_VERSION=4.0
 AC_SUBST(API_VERSION)
+
+SO_VERSION=m4_eval(libdmapsharing_minor+libdmapsharing_major):m4_eval(libdmapsharing_micro):m4_eval(libdmapsharing_minor)
+AC_SUBST(SO_VERSION)
 
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_MACRO_DIRS([m4])

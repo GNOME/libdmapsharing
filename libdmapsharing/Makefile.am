@@ -69,6 +69,7 @@ libdmapsharing_4_0_la_CFLAGS = \
 	$(WARN_CFLAGS)
 
 libdmapsharing_4_0_la_LDFLAGS = \
+	-version-info @SO_VERSION@ \
 	$(CHECK_LIBS) \
 	$(GLIB_LIBS) \
 	$(GTHREAD_LIBS) \
