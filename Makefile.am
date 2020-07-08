@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+
 SUBDIRS = libdmapsharing vala tests doc
 DIST_SUBDIRS = $(SUBDIRS) m4 media
 
