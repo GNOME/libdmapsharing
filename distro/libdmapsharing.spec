@@ -1,5 +1,5 @@
 Name: libdmapsharing
-Version: 2.9.40
+Version: 2.9.41
 Release: 2%{?dist}
 License: LGPLv2+
 Source: http://www.flyn.org/projects/libdmapsharing/%{name}-%{version}.tar.gz
@@ -55,6 +55,9 @@ rm -f ${RPM_BUILD_ROOT}%{_libdir}/libdmapsharing-3.0.la
 %ldconfig_scriptlets
 
 %changelog
+* Wed Jul 07 2020 W. Michael Petullo <mike[@]flyn.org> - 2.9.41-1
+- New upstream version
+
 * Sun Jul 05 2020 W. Michael Petullo <mike[@]flyn.org> - 2.9.40-1
 - New upstream version
 
