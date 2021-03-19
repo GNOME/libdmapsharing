@@ -453,9 +453,17 @@ dmap_gst_input_stream_class_init (DMAPGstInputStreamClass * klass)
 	istream_class->close_finish = dmap_gst_input_stream_close_finish;
 }
 
+G_DEFINE_TYPE_WITH_CODE (DMAPGstInputStream, dmap_gst_input_stream,
+			 G_TYPE_INPUT_STREAM,
+			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
+						dmap_gst_input_stream_seekable_iface_init)
+                         G_ADD_PRIVATE (DMAPGstInputStream));
+
 static void
 dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 {
+	stream->priv = dmap_gst_input_stream_get_instance_private (stream);
+
 	stream->priv->buffer = g_queue_new ();
 	stream->priv->read_request = 0;
 	stream->priv->write_request = 0;
@@ -469,8 +477,3 @@ dmap_gst_input_stream_init (DMAPGstInputStream * stream)
 	g_cond_init (&stream->priv->buffer_write_ready);
 }
 
-G_DEFINE_TYPE_WITH_CODE (DMAPGstInputStream, dmap_gst_input_stream,
-			 G_TYPE_INPUT_STREAM,
-			 G_IMPLEMENT_INTERFACE (G_TYPE_SEEKABLE,
-						dmap_gst_input_stream_seekable_iface_init)
-                         G_ADD_PRIVATE (DMAPGstInputStream));
