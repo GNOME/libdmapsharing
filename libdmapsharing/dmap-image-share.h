@@ -95,10 +95,10 @@ GType dmap_image_share_get_type (void);
 /**
  * dmap_image_share_new:
  * @name: The name that will be published by mDNS.
- * @password: A share password or NULL.
+ * @password: (nullable): A share password or NULL.
  * @db: A media database.
  * @container_db: A container (album) database.
- * @transcode_mimetype: A transcode mimetype or NULL.
+ * @transcode_mimetype: (nullable): A transcode mimetype or NULL.
  *
  * Creates a new DPAP share and publishes it using mDNS.
  *
