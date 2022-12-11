@@ -1,5 +1,7 @@
 = Short term ===================================================================
 
+Port to libsoup3. See https://libsoup.org/libsoup-3.0/migrating-from-libsoup-2.html.
+
 See notes about test-* in libdmapsharing/Makefile.am.
 
 GNOME Bugs:
