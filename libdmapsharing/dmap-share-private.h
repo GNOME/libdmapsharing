@@ -26,10 +26,6 @@
 #include <glib-object.h>
 
 #include <libsoup/soup.h>
-#include <libsoup/soup-address.h>
-#include <libsoup/soup-message.h>
-#include <libsoup/soup-uri.h>
-#include <libsoup/soup-server.h>
 
 #include <libdmapsharing/dmap-share.h>
 #include <libdmapsharing/dmap-mdns-publisher.h>

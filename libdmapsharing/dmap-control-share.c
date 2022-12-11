@@ -32,10 +32,6 @@
 #endif /* HAVE_GDKPIXBUF */
 
 #include <libsoup/soup.h>
-#include <libsoup/soup-address.h>
-#include <libsoup/soup-message.h>
-#include <libsoup/soup-uri.h>
-#include <libsoup/soup-server.h>
 
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/dmap-structure.h>
