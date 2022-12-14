@@ -44,16 +44,16 @@ test_dmap_server_LDADD = \
 	$(MDNS_LIBS)
 
 dacplisten.c: $(dacplisten_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject  $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-3.0 --pkg gio-2.0 --pkg avahi-gobject  $^ -C
 
 dpapview.c: $(dpapview_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gtk+-3.0 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gtk+-3.0 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-3.0 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 
 dmapcopy.c: $(dmapcopy_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-3.0 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 
 dmapserve.c: $(dmapserve_VALASOURCES)
-	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-2.4 --pkg gio-2.0 --pkg avahi-gobject $^ -C
+	$(VALAC) --vapidir=../vala --pkg gee-0.8 --pkg gstreamer-1.0 --pkg libdmapsharing-4.0 --pkg libsoup-3.0 --pkg gio-2.0 --pkg avahi-gobject $^ -C
 
 dacplisten_VALASOURCES = \
 	dacplisten.vala \

@@ -44,14 +44,13 @@
 #include <libdmapsharing/dmap-control-player.h>
 
 void dmap_control_share_ctrl_int (DmapShare * share,
-			  SoupServer * server,
-			  SoupMessage * message,
+			  SoupServerMessage * message,
 			  const char *path,
-			  GHashTable * query, SoupClientContext * context);
+			  GHashTable * query);
 void dmap_control_share_login (DmapShare * share,
-		       SoupMessage * message,
+		       SoupServerMessage * message,
 		       const char *path,
-		       GHashTable * query, SoupClientContext * context);
+		       GHashTable * query);
 
 #define DACP_TYPE_OF_SERVICE "_touch-able._tcp"
 #define DACP_PORT 3689
@@ -495,7 +494,7 @@ done:
 }
 
 static void
-_fill_playstatusupdate (DmapControlShare * share, SoupMessage * message)
+_fill_playstatusupdate (DmapControlShare * share, SoupServerMessage * message)
 {
 	GNode *cmst;
 	DmapAvRecord *record;
@@ -577,9 +576,8 @@ _send_playstatusupdate (DmapControlShare * share)
 		for (list = share->priv->update_queue; list;
 		     list = list->next) {
 			_fill_playstatusupdate (share,
-			                       (SoupMessage*) list->data);
-			soup_server_unpause_message (server,
-			                             (SoupMessage*) list->data);
+			                       (SoupServerMessage*) list->data);
+			soup_server_message_unpause ((SoupServerMessage*) list->data);
 		}
 		g_object_unref (server);
 	}
@@ -595,7 +593,7 @@ dmap_control_share_player_updated (DmapControlShare * share)
 }
 
 static void
-_status_update_message_finished (SoupMessage * message, DmapControlShare * share)
+_status_update_message_finished (SoupServerMessage * message, DmapControlShare * share)
 {
 	share->priv->update_queue =
 		g_slist_remove (share->priv->update_queue, message);
@@ -610,9 +608,9 @@ _debug_param (gpointer key, gpointer val, G_GNUC_UNUSED gpointer user_data)
 
 void
 dmap_control_share_login (DmapShare * share,
-		  SoupMessage * message,
+		  SoupServerMessage * message,
 		  const char *path,
-		  GHashTable * query, SoupClientContext * context)
+		  GHashTable * query)
 {
 	gchar *pairing_guid;
 
@@ -631,22 +629,19 @@ dmap_control_share_login (DmapShare * share,
 
 		if (!allow_login) {
 			g_warning("Unknown remote trying to connect");
-			soup_message_set_status (message,
-						 SOUP_STATUS_FORBIDDEN);
+			soup_server_message_set_status (message, SOUP_STATUS_FORBIDDEN, NULL);
 			return;
 		}
 	}
 
-	dmap_share_login (share, message, path, query, context);
+	dmap_share_login (share, message, path, query);
 }
 
 void
 dmap_control_share_ctrl_int (DmapShare * share,
-                             SoupServer * server,
-                             SoupMessage * message,
+                             SoupServerMessage * message,
                              const char *path,
-                             GHashTable * query,
-                             SoupClientContext * context)
+                             GHashTable * query)
 {
 	const char *rest_of_path;
 
@@ -664,8 +659,8 @@ dmap_control_share_ctrl_int (DmapShare * share,
 	if ((rest_of_path != NULL)
 	    &&
 	    (!dmap_share_session_id_validate
-	     (share, context, query, NULL))) {
-		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
+	     (share, message, query, NULL))) {
+		soup_server_message_set_status (message, SOUP_STATUS_FORBIDDEN, NULL);
 		goto done;
 	}
 
@@ -771,7 +766,7 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_object_set (dmap_control_share->priv->player, "volume",
 				      (gulong) volume, NULL);
 		}
-		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+		soup_server_message_set_status (message, SOUP_STATUS_NO_CONTENT, NULL);
 	} else if (g_ascii_strcasecmp ("/1/getspeakers", rest_of_path) == 0) {
 		GNode *casp;
 		gulong volume;
@@ -808,22 +803,22 @@ dmap_control_share_ctrl_int (DmapShare * share,
 						 G_CALLBACK
 						 (_status_update_message_finished),
 						 dmap_control_share, 0);
-			soup_server_pause_message (server, message);
+			soup_server_message_pause (message);
 		} else {
 			_fill_playstatusupdate (dmap_control_share, message);
 		}
 	} else if (g_ascii_strcasecmp ("/1/playpause", rest_of_path) == 0) {
 		dmap_control_player_play_pause (dmap_control_share->priv->player);
-		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+		soup_server_message_set_status (message, SOUP_STATUS_NO_CONTENT, NULL);
 	} else if (g_ascii_strcasecmp ("/1/pause", rest_of_path) == 0) {
 		dmap_control_player_pause (dmap_control_share->priv->player);
-		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+		soup_server_message_set_status (message, SOUP_STATUS_NO_CONTENT, NULL);
 	} else if (g_ascii_strcasecmp ("/1/nextitem", rest_of_path) == 0) {
 		dmap_control_player_next_item (dmap_control_share->priv->player);
-		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+		soup_server_message_set_status (message, SOUP_STATUS_NO_CONTENT, NULL);
 	} else if (g_ascii_strcasecmp ("/1/previtem", rest_of_path) == 0) {
 		dmap_control_player_prev_item (dmap_control_share->priv->player);
-		soup_message_set_status (message, SOUP_STATUS_NO_CONTENT);
+		soup_server_message_set_status (message, SOUP_STATUS_NO_CONTENT, NULL);
 	} else if (g_ascii_strcasecmp ("/1/nowplayingartwork", rest_of_path)
 		   == 0) {
 		guint width = 320;
@@ -844,8 +839,9 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		                                                 height);
 		if (!artwork_filename) {
 			g_debug ("No artwork for currently playing song");
-			soup_message_set_status (message,
-						 SOUP_STATUS_NOT_FOUND);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_NOT_FOUND,
+			                                NULL);
 			goto done;
 		}
 #ifdef HAVE_GDKPIXBUF
@@ -857,8 +853,9 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		if (!artwork) {
 			g_debug ("Error loading image file");
 			g_free (artwork_filename);
-			soup_message_set_status (message,
-						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_INTERNAL_SERVER_ERROR,
+			                                NULL);
 			goto done;
 		}
 		if (!gdk_pixbuf_save_to_buffer
@@ -866,8 +863,9 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			g_debug ("Error saving artwork to PNG");
 			g_object_unref (artwork);
 			g_free (artwork_filename);
-			soup_message_set_status (message,
-						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_INTERNAL_SERVER_ERROR,
+			                                NULL);
 			goto done;
 		}
 		g_object_unref (artwork);
@@ -876,16 +874,17 @@ dmap_control_share_ctrl_int (DmapShare * share,
 		    (artwork_filename, &buffer, &buffer_len, NULL)) {
 			g_debug ("Error getting artwork data");
 			g_free (artwork_filename);
-			soup_message_set_status (message,
-						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_INTERNAL_SERVER_ERROR,
+			                                NULL);
 			goto done;
 		}
 #endif
 		g_free (artwork_filename);
-		soup_message_set_status (message, SOUP_STATUS_OK);
-		soup_message_set_response (message, "image/png",
-					   SOUP_MEMORY_TAKE, buffer,
-					   buffer_len);
+		soup_server_message_set_status (message, SOUP_STATUS_OK, NULL);
+		soup_server_message_set_response (message, "image/png",
+		                                  SOUP_MEMORY_TAKE, buffer,
+		                                  buffer_len);
 	} else if (g_ascii_strcasecmp ("/1/cue", rest_of_path) == 0) {
 		gchar *command;
 
@@ -893,13 +892,15 @@ dmap_control_share_ctrl_int (DmapShare * share,
 
 		if (!command) {
 			g_debug ("No CUE command specified");
-			soup_message_set_status (message,
-						 SOUP_STATUS_NO_CONTENT);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_NO_CONTENT,
+			                                NULL);
 			goto done;
 		} else if (g_ascii_strcasecmp ("clear", command) == 0) {
 			dmap_control_player_cue_clear (dmap_control_share->priv->player);
-			soup_message_set_status (message,
-						 SOUP_STATUS_NO_CONTENT);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_NO_CONTENT,
+			                                NULL);
 		} else if (g_ascii_strcasecmp ("play", command) == 0) {
 			GNode *cacr;
 			gchar *record_query;
@@ -947,13 +948,16 @@ dmap_control_share_ctrl_int (DmapShare * share,
 			dmap_structure_destroy (cacr);
 		} else {
 			g_warning ("Unhandled cue command: %s", command);
-			soup_message_set_status (message,
-						 SOUP_STATUS_NO_CONTENT);
+			soup_server_message_set_status (message,
+			                                SOUP_STATUS_NO_CONTENT,
+			                                NULL);
 			goto done;
 		}
 	} else {
 		g_warning ("Unhandled ctrl-int command: %s", rest_of_path);
-		soup_message_set_status (message, SOUP_STATUS_BAD_REQUEST);
+		soup_server_message_set_status (message,
+		                                SOUP_STATUS_BAD_REQUEST,
+		                                NULL);
 	}
 
 done:

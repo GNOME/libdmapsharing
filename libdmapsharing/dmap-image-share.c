@@ -43,8 +43,8 @@
 
 static guint _get_desired_port (DmapShare * share);
 static const char *_get_type_of_service (DmapShare * share);
-static void _server_info (DmapShare * share, SoupMessage * message, const char *path);
-static void _message_add_standard_headers (DmapShare * share, SoupMessage * message);
+static void _server_info (DmapShare * share, SoupServerMessage * message, const char *path);
+static void _message_add_standard_headers (DmapShare * share, SoupServerMessage * message);
 
 #define DPAP_TYPE_OF_SERVICE "_dpap._tcp"
 #define DPAP_PORT 8770
@@ -321,7 +321,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 
 static void
 _databases_browse_xxx (G_GNUC_UNUSED DmapShare * share,
-                       G_GNUC_UNUSED SoupMessage * msg,
+                       G_GNUC_UNUSED SoupServerMessage * msg,
                        const char *path,
                        G_GNUC_UNUSED GHashTable *query)
 {
@@ -329,13 +329,14 @@ _databases_browse_xxx (G_GNUC_UNUSED DmapShare * share,
 }
 
 static void
-_send_chunked_file (SoupServer * server, SoupMessage * message,
+_send_chunked_file (SoupServer * server, SoupServerMessage * message,
                     DmapImageRecord * record, guint64 filesize)
 {
 	GInputStream *stream;
 	char *location = NULL;
 	GError *error = NULL;
 	ChunkData *cd = g_new0 (ChunkData, 1);
+	SoupMessageHeaders *headers = NULL;
 
 	g_object_get (record, "location", &location, NULL);
 
@@ -346,8 +347,8 @@ _send_chunked_file (SoupServer * server, SoupMessage * message,
 	if (error != NULL) {
 		g_warning ("Couldn't open %s: %s.", location, error->message);
 		g_error_free (error);
-		soup_message_set_status (message,
-					 SOUP_STATUS_INTERNAL_SERVER_ERROR);
+		soup_server_message_set_status (message,
+					 SOUP_STATUS_INTERNAL_SERVER_ERROR, NULL);
 		g_free (cd);
 		goto done;
 	}
@@ -360,16 +361,13 @@ _send_chunked_file (SoupServer * server, SoupMessage * message,
 		goto done;
 	}
 
-	soup_message_headers_set_encoding (message->response_headers,
-					   SOUP_ENCODING_CONTENT_LENGTH);
-	soup_message_headers_set_content_length (message->response_headers,
-						 filesize);
+	headers = soup_server_message_get_response_headers(message);
 
-	soup_message_headers_append (message->response_headers, "Connection",
-				     "Close");
-	soup_message_headers_append (message->response_headers,
-				     "Content-Type",
-				     "application/x-dmap-tagged");
+	soup_message_headers_set_encoding (headers, SOUP_ENCODING_CONTENT_LENGTH);
+	soup_message_headers_set_content_length (headers, filesize);
+
+	soup_message_headers_append (headers, "Connection", "Close");
+	soup_message_headers_append (headers, "Content-Type", "application/x-dmap-tagged");
 
 	g_signal_connect (message, "wrote_headers",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd);
@@ -386,7 +384,7 @@ done:
 static void
 _databases_items_xxx (DmapShare * share,
                       SoupServer * server,
-                      SoupMessage * msg,
+                      SoupServerMessage * msg,
                       const char *path)
 {
 	DmapDb *db;
@@ -406,7 +404,7 @@ _databases_items_xxx (DmapShare * share,
 
 	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers
 		(share, msg);
-	soup_message_set_status (msg, SOUP_STATUS_OK);
+	soup_server_message_set_status (msg, SOUP_STATUS_OK, NULL);
 
 	_send_chunked_file (server, msg, record, filesize);
 
@@ -458,10 +456,13 @@ dmap_image_share_new (const char *name,
 }
 
 static void
-_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share, SoupMessage * message)
+_message_add_standard_headers (G_GNUC_UNUSED DmapShare * share, SoupServerMessage * message)
 {
-	soup_message_headers_append (message->response_headers, "DPAP-Server",
-				     "libdmapsharing" VERSION);
+	soup_message_headers_append (
+		soup_server_message_get_response_headers(message),
+		"DPAP-Server",
+		"libdmapsharing" VERSION
+	);
 }
 
 #define DMAP_VERSION 2.0
@@ -481,7 +482,7 @@ _get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 }
 
 static void
-_server_info (DmapShare * share, SoupMessage * message, const char *path)
+_server_info (DmapShare * share, SoupServerMessage * message, const char *path)
 {
 /* MSRV	server info response
  * 	MSTT status

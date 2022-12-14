@@ -129,7 +129,7 @@ G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (DmapShare,
 
 static gboolean
 _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
-                     SoupMessage * msg,
+                     SoupServerMessage * msg,
                      const char *username,
                      gpointer password,
                      DmapShare * share)
@@ -137,7 +137,7 @@ _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
 	gboolean allowed;
 	const char *path;
 
-	path = soup_message_get_uri (msg)->path;
+	path = g_uri_get_path(soup_server_message_get_uri (msg));
 	g_debug ("Auth request for %s, user %s", path, username);
 
 	allowed = !strcmp (password, share->priv->password);
@@ -148,10 +148,9 @@ _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
 
 static void
 _server_info_adapter (G_GNUC_UNUSED SoupServer * server,
-                      SoupMessage * message,
+                      SoupServerMessage * message,
                       const char *path,
                       G_GNUC_UNUSED GHashTable * query,
-                      G_GNUC_UNUSED SoupClientContext * context,
                       DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->server_info (share, message, path);
@@ -159,9 +158,8 @@ _server_info_adapter (G_GNUC_UNUSED SoupServer * server,
 
 static void
 _content_codes (DmapShare * share,
-                SoupMessage * message,
-                const char *path,
-                G_GNUC_UNUSED SoupClientContext * context)
+                SoupServerMessage * message,
+                const char *path)
 {
 /* MCCR content codes response
  * 	MSTT status
@@ -201,27 +199,24 @@ _content_codes (DmapShare * share,
 
 static void
 _content_codes_adapter (G_GNUC_UNUSED SoupServer * server,
-                        SoupMessage * message,
+                        SoupServerMessage * message,
                         const char *path,
                         G_GNUC_UNUSED GHashTable * query,
-                        G_GNUC_UNUSED SoupClientContext * context,
                         DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->content_codes (share,
 						     message,
-						     path,
-                                                     context);
+						     path);
 }
 
 static void
 _login_adapter (G_GNUC_UNUSED SoupServer * server,
-	       SoupMessage * message,
+	       SoupServerMessage * message,
 	       const char *path,
 	       GHashTable * query,
-	       SoupClientContext * context,
                DmapShare * share)
 {
-	DMAP_SHARE_GET_CLASS (share)->login (share, message, path, query, context);
+	DMAP_SHARE_GET_CLASS (share)->login (share, message, path, query);
 }
 
 static void
@@ -233,9 +228,9 @@ _session_id_remove (DmapShare * share,
 
 static void
 _logout (DmapShare * share,
-         SoupMessage * message,
+         SoupServerMessage * message,
          const char *path,
-         GHashTable * query, SoupClientContext * context)
+         GHashTable * query)
 {
 	int status;
 	guint32 id;
@@ -243,7 +238,7 @@ _logout (DmapShare * share,
 	g_debug ("Path is %s.", path);
 
 	if (dmap_share_session_id_validate
-	    (share, context, query, &id)) {
+	    (share, message, query, &id)) {
 		_session_id_remove (share, id);
 
 		status = SOUP_STATUS_NO_CONTENT;
@@ -251,18 +246,17 @@ _logout (DmapShare * share,
 		status = SOUP_STATUS_FORBIDDEN;
 	}
 
-	soup_message_set_status (message, status);
+	soup_server_message_set_status (message, status, NULL);
 }
 
 static void
 _logout_adapter (G_GNUC_UNUSED SoupServer * server,
-                 SoupMessage * message,
+                 SoupServerMessage * message,
                  const char *path,
                  GHashTable * query,
-                 SoupClientContext * context,
                  DmapShare * share)
 {
-	DMAP_SHARE_GET_CLASS (share)->logout (share, message, path, query, context);
+	DMAP_SHARE_GET_CLASS (share)->logout (share, message, path, query);
 }
 
 static guint
@@ -299,8 +293,7 @@ done:
 
 static void
 _update (DmapShare * share,
-         SoupServer * server,
-         SoupMessage * message,
+         SoupServerMessage * message,
          const char *path,
          GHashTable * query)
 {
@@ -333,20 +326,18 @@ _update (DmapShare * share,
 		 * message (and socket) without ever replying.
 		 */
 		g_object_ref (message);
-		soup_server_pause_message (server, message);
+		soup_server_message_pause (message);
 	}
 }
 
 static void
-_update_adapter (SoupServer * server,
-                 SoupMessage * message,
+_update_adapter (G_GNUC_UNUSED SoupServer * server,
+                 SoupServerMessage * message,
                  const char *path,
                  GHashTable * query,
-                 G_GNUC_UNUSED SoupClientContext * context,
                  DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->update (share,
-					      server,
 					      message, path, query);
 }
 
@@ -402,22 +393,22 @@ _add_playlist_to_mlcl (G_GNUC_UNUSED guint id,
 }
 
 static void
-_write_dmap_preamble (SoupMessage * message, GNode * node)
+_write_dmap_preamble (SoupServerMessage * message, GNode * node)
 {
 	guint length;
 	gchar *data = dmap_structure_serialize (node, &length);
 
-	soup_message_body_append (message->response_body,
+	soup_message_body_append (soup_server_message_get_response_body(message),
 				  SOUP_MEMORY_TAKE, data, length);
 	dmap_structure_destroy (node);
 }
 
 static void
-_write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
+_write_next_mlit (SoupServerMessage * message, struct share_bitwise_t *share_bitwise)
 {
 	if (share_bitwise->id_list == NULL) {
 		g_debug ("No more ID's, sending message complete.");
-		soup_message_body_complete (message->response_body);
+		soup_message_body_complete (soup_server_message_get_response_body(message));
 	} else {
 		gchar *data = NULL;
 		guint length;
@@ -438,7 +429,7 @@ _write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		data = dmap_structure_serialize (g_node_first_child (mb.mlcl),
 						 &length);
 
-		soup_message_body_append (message->response_body,
+		soup_message_body_append (soup_server_message_get_response_body(message),
 					  SOUP_MEMORY_TAKE, data, length);
 		g_debug ("Sending ID %u.",
 			 GPOINTER_TO_UINT (share_bitwise->id_list->data));
@@ -451,7 +442,7 @@ _write_next_mlit (SoupMessage * message, struct share_bitwise_t *share_bitwise)
 		g_object_unref (record);
 	}
 
-	soup_server_unpause_message (share_bitwise->share->priv->server, message);
+	soup_server_message_unpause (message);
 }
 
 static void
@@ -536,7 +527,7 @@ _accumulate_mlcl_size_and_ids_adapter (gpointer id,
 }
 
 static void
-_chunked_message_finished (G_GNUC_UNUSED SoupMessage * message,
+_chunked_message_finished (G_GNUC_UNUSED SoupServerMessage * message,
                            struct share_bitwise_t *share_bitwise)
 {
 	g_debug ("Finished sending chunked data.");
@@ -602,9 +593,9 @@ done:
 static void
 _databases (DmapShare * share,
             SoupServer * server,
-            SoupMessage * message,
+            SoupServerMessage * message,
             const char *path,
-            GHashTable * query, SoupClientContext * context)
+            GHashTable * query)
 {
 	const char *rest_of_path;
 
@@ -612,8 +603,8 @@ _databases (DmapShare * share,
 	g_hash_table_foreach (query, _debug_param, NULL);
 
 	if (!dmap_share_session_id_validate
-	    (share, context, query, NULL)) {
-		soup_message_set_status (message, SOUP_STATUS_FORBIDDEN);
+	    (share, message, query, NULL)) {
+		soup_server_message_set_status (message, SOUP_STATUS_FORBIDDEN, NULL);
 		goto done;
 	}
 
@@ -685,8 +676,8 @@ _databases (DmapShare * share,
 		    (g_hash_table_lookup (query, "group-type"),
 		     "albums") != 0) {
 			g_warning ("Unsupported grouping");
-			soup_message_set_status (message,
-						 SOUP_STATUS_INTERNAL_SERVER_ERROR);
+			soup_server_message_set_status (message,
+						 SOUP_STATUS_INTERNAL_SERVER_ERROR, NULL);
 			goto done;
 		}
 
@@ -845,18 +836,16 @@ _databases (DmapShare * share,
 
 		/* 3: */
 		/* Free memory after each chunk sent out over network. */
-		soup_message_body_set_accumulate (message->response_body,
+		soup_message_body_set_accumulate (soup_server_message_get_response_body(message),
 						  FALSE);
-		soup_message_headers_append (message->response_headers,
+		soup_message_headers_append (soup_server_message_get_response_headers(message),
 					     "Content-Type",
 					     "application/x-dmap-tagged");
 		DMAP_SHARE_GET_CLASS (share)->
 			message_add_standard_headers (share, message);
-		soup_message_headers_set_content_length (message->
-							 response_headers,
-							 dmap_structure_get_size
-							 (adbs));
-		soup_message_set_status (message, SOUP_STATUS_OK);
+		soup_message_headers_set_content_length (soup_server_message_get_response_headers(message),
+							 dmap_structure_get_size(adbs));
+		soup_server_message_set_status (message, SOUP_STATUS_OK, NULL);
 
 		/* 4: */
 		g_signal_connect (message, "wrote_headers",
@@ -1079,7 +1068,7 @@ _databases (DmapShare * share,
 		   g_str_has_suffix (rest_of_path, "/extra_data/artwork")) {
 		/* We don't yet implement cover requests here, say no cover */
 		g_debug ("Assuming no artwork for requested group/album");
-		soup_message_set_status (message, SOUP_STATUS_NOT_FOUND);
+		soup_server_message_set_status (message, SOUP_STATUS_NOT_FOUND, NULL);
 	} else {
 		g_warning ("Unhandled: %s", path);
 	}
@@ -1090,25 +1079,22 @@ done:
 
 static void
 _databases_adapter (SoupServer * server,
-                    SoupMessage * message,
+                    SoupServerMessage * message,
                     const char *path,
                     GHashTable * query,
-                    SoupClientContext * context,
                     DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->databases (share,
 						 server,
 						 message,
-						 path, query, context);
+						 path, query);
 }
 
 static void
 _ctrl_int (G_GNUC_UNUSED DmapShare * share,
-           G_GNUC_UNUSED SoupServer * server,
-           G_GNUC_UNUSED SoupMessage * message,
+           G_GNUC_UNUSED SoupServerMessage * message,
            const char *path,
-           GHashTable * query,
-           G_GNUC_UNUSED SoupClientContext * context)
+           GHashTable * query)
 {
 	g_debug ("Path is %s.", path);
 	if (query) {
@@ -1119,17 +1105,15 @@ _ctrl_int (G_GNUC_UNUSED DmapShare * share,
 }
 
 static void
-_ctrl_int_adapter (SoupServer * server,
-                   SoupMessage * message,
+_ctrl_int_adapter (G_GNUC_UNUSED SoupServer * server,
+                   SoupServerMessage * message,
                    const char *path,
                    GHashTable * query,
-                   SoupClientContext * context,
                    DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->ctrl_int (share,
-						server,
 						message,
-						path, query, context);
+						path, query);
 }
 
 static void
@@ -1204,12 +1188,12 @@ _name_collision_adapter (DmapMdnsPublisher * publisher,
 
 static gboolean
 _soup_auth_filter (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
-                   SoupMessage * msg, G_GNUC_UNUSED gpointer user_data)
+                   SoupServerMessage * msg, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
 	const char *path;
 
-	path = soup_message_get_uri (msg)->path;
+	path = g_uri_get_path(soup_server_message_get_uri (msg));
 	if (g_str_has_prefix (path, "/databases/")) {
 		/* Subdirectories of /databases don't actually require
 		 * authentication
@@ -1232,7 +1216,7 @@ dmap_share_serve (DmapShare *share, GError **error)
 	guint desired_port = DMAP_SHARE_GET_CLASS (share)->get_desired_port (share);
 	gboolean password_required, ok = FALSE;
 	GSList *listening_uri_list;
-	SoupURI *listening_uri;
+	GUri *listening_uri;
 	gboolean ret;
 	GError *error2 = NULL;
 
@@ -1241,24 +1225,26 @@ dmap_share_serve (DmapShare *share, GError **error)
 	if (password_required) {
 		SoupAuthDomain *auth_domain;
 
-		auth_domain =
-			soup_auth_domain_basic_new (SOUP_AUTH_DOMAIN_REALM,
-						    "Music Sharing",
-						    SOUP_AUTH_DOMAIN_ADD_PATH,
-						    "/login",
-						    SOUP_AUTH_DOMAIN_ADD_PATH,
-						    "/update",
-						    SOUP_AUTH_DOMAIN_ADD_PATH,
-						    "/database",
-						    SOUP_AUTH_DOMAIN_FILTER,
-						    _soup_auth_filter,
-						    NULL);
+		auth_domain = soup_auth_domain_basic_new (
+			"realm", "Music Sharing",
+			"add-path", "/login",
+			"add-path", "/update",
+			"add-path", "/database",
+			NULL
+		);
+
 		soup_auth_domain_basic_set_auth_callback (auth_domain,
 							  (SoupAuthDomainBasicAuthCallback)
 							  _soup_auth_callback,
 							  g_object_ref
 							  (share),
 							  g_object_unref);
+		soup_auth_domain_set_filter(
+			auth_domain,
+			_soup_auth_filter,
+			NULL,
+			NULL
+		);
 		soup_server_add_auth_domain (share->priv->server, auth_domain);
 	}
 
@@ -1290,8 +1276,7 @@ dmap_share_serve (DmapShare *share, GError **error)
 			 "Trying any open IPv6 port", desired_port, error2->message);
 		g_error_free(error2);
 
-		ret = soup_server_listen_all (share->priv->server, SOUP_ADDRESS_ANY_PORT,
-					      0, error);
+		ret = soup_server_listen_all (share->priv->server, 0, 0, error);
 	}
 
 	listening_uri_list = soup_server_get_uris (share->priv->server);
@@ -1304,8 +1289,8 @@ dmap_share_serve (DmapShare *share, GError **error)
 	 * IPv6, but there's not much we can do.
 	 */
 	listening_uri = listening_uri_list->data;
-	share->priv->port = soup_uri_get_port (listening_uri);
-	g_slist_free_full (listening_uri_list, (GDestroyNotify) soup_uri_free);
+	share->priv->port = g_uri_get_port (listening_uri);
+	g_slist_free_full (listening_uri_list, (GDestroyNotify) g_uri_unref);
 
 	g_debug ("Started DMAP server on port %u", share->priv->port);
 
@@ -1736,7 +1721,7 @@ done:
 
 gboolean
 dmap_share_session_id_validate (DmapShare * share,
-                                SoupClientContext * context,
+                                SoupServerMessage *message,
                                 GHashTable * query, guint32 * id)
 {
 	gboolean ok = FALSE;
@@ -1765,7 +1750,7 @@ dmap_share_session_id_validate (DmapShare * share,
 		goto done;
 	}
 
-	remote_address = soup_client_context_get_host (context);
+	remote_address = soup_server_message_get_remote_host (message);
 	g_debug ("Validating session id %u from %s matches %s",
 		 session_id, remote_address, addr);
 	if (remote_address == NULL || strcmp (addr, remote_address) != 0) {
@@ -1795,7 +1780,7 @@ _session_id_generate (void)
 }
 
 static guint32
-_session_id_create (DmapShare * share, SoupClientContext * context)
+_session_id_create (DmapShare *share, SoupServerMessage *message)
 {
 	guint32 id;
 	const char *addr;
@@ -1816,7 +1801,7 @@ _session_id_create (DmapShare * share, SoupClientContext * context)
 	 * (dmapd:12917): libsoup-CRITICAL **: soup_address_get_physical: assertion `SOUP_IS_ADDRESS (addr)' failed
 	 * Is this a bug in libsoup or libdmapsharing?
 	 */
-	remote_address = g_strdup (soup_client_context_get_host (context));
+	remote_address = g_strdup (soup_server_message_get_remote_host (message));
 	g_hash_table_insert (share->priv->session_ids, GUINT_TO_POINTER (id),
 			     remote_address);
 
@@ -1825,7 +1810,7 @@ _session_id_create (DmapShare * share, SoupClientContext * context)
 
 void
 dmap_share_message_set_from_dmap_structure (DmapShare * share,
-					     SoupMessage * message,
+					     SoupServerMessage * message,
 					     GNode * structure)
 {
 	gchar *resp;
@@ -1838,13 +1823,18 @@ dmap_share_message_set_from_dmap_structure (DmapShare * share,
 		return;
 	}
 
-	soup_message_set_response (message, "application/x-dmap-tagged",
-				   SOUP_MEMORY_TAKE, resp, length);
+	soup_server_message_set_response (
+		message,
+		"application/x-dmap-tagged",
+		SOUP_MEMORY_TAKE,
+		resp,
+		length
+	);
 
 	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers (share,
 								    message);
 
-	soup_message_set_status (message, SOUP_STATUS_OK);
+	soup_server_message_set_status (message, SOUP_STATUS_OK, NULL);
 }
 
 gboolean
@@ -1855,10 +1845,9 @@ dmap_share_client_requested (DmapBits bits, gint field)
 
 void
 dmap_share_login (DmapShare * share,
-                  SoupMessage * message,
+                  SoupServerMessage * message,
                   const char *path,
-                  G_GNUC_UNUSED GHashTable * query,
-                  SoupClientContext * context)
+                  G_GNUC_UNUSED GHashTable * query)
 {
 /* MLOG login response
  * 	MSTT status
@@ -1869,7 +1858,7 @@ dmap_share_login (DmapShare * share,
 
 	g_debug ("Path is %s.", path);
 
-	session_id = _session_id_create (share, context);
+	session_id = _session_id_create (share, message);
 
 	mlog = dmap_structure_add (NULL, DMAP_CC_MLOG);
 	dmap_structure_add (mlog, DMAP_CC_MSTT, (gint32) SOUP_STATUS_OK);

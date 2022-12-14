@@ -4,7 +4,7 @@ libdmapsharing-@API_VERSION@.gi: libdmapsharing-@API_VERSION@-uninstalled.files 
 	@mv libdmapsharing-@API_VERSION@-uninstalled.gi libdmapsharing-@API_VERSION@.gi
 
 libdmapsharing-@API_VERSION@.vapi: libdmapsharing-@API_VERSION@.gi libdmapsharing-@API_VERSION@.metadata
-	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-2.4 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-1.0 --library libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@.gi
+	$(VAPIGEN) --pkg=avahi-gobject --pkg=libsoup-3.0 --pkg=glib-2.0 --pkg=gio-2.0 --pkg=gstreamer-1.0 --library libdmapsharing-@API_VERSION@ libdmapsharing-@API_VERSION@.gi
 
 all: libdmapsharing-@API_VERSION@.vapi
 

@@ -55,7 +55,7 @@ struct DmapConnectionPrivate
 	gboolean is_connecting;
 
 	SoupSession *session;
-	SoupURI *base_uri;
+	GUri *base_uri;
 	gchar *daap_base_uri;
 
 	gdouble dmap_version;
@@ -169,7 +169,7 @@ _dispose (GObject * object)
 	}
 
 	if (priv->base_uri) {
-		soup_uri_free (priv->base_uri);
+		g_uri_unref (priv->base_uri);
 		priv->base_uri = NULL;
 	}
 
@@ -245,7 +245,7 @@ _set_property (GObject * object, guint prop_id,
 		break;
 	case PROP_BASE_URI:
 		if (priv->base_uri) {
-			soup_uri_free (priv->base_uri);
+			g_uri_unref (priv->base_uri);
 		}
 		priv->base_uri = g_value_get_boxed (value);
 		break;
@@ -382,7 +382,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 					 g_param_spec_boxed ("base-uri",
 	                                                     "base URI",
 	                                                     "base URI",
-	                                                      SOUP_TYPE_URI,
+	                                                      G_TYPE_URI,
 	                                                      G_PARAM_READWRITE));
 
 	g_object_class_install_property (object_class,
@@ -517,13 +517,96 @@ _connection_operation_done (DmapConnection * connection)
 	// FIXME: GDK_THREADS_LEAVE ();
 }
 
+static void
+_message_add_headers (SoupMessage *message, DmapConnection * connection, const gchar * uri)
+{
+	DmapConnectionPrivate *priv = connection->priv;
+	SoupMessageHeaders *headers;
+	char hash[33] = { 0 };
+	char *norb_daap_uri = (char *) uri;
+	char *request_id;
+
+	headers = soup_message_get_request_headers(message);
+
+	priv->request_id++;
+
+	if (g_ascii_strncasecmp (uri, "daap://", 7) == 0) {
+		norb_daap_uri = strstr (uri, "/data");
+	}
+
+	dmap_md5_generate ((short) floorf (priv->dmap_version),
+			    (const guchar *) norb_daap_uri, 2,
+			    (guchar *) hash, priv->request_id);
+
+	soup_message_headers_append (headers, "Accept", "*/*");
+	soup_message_headers_append (headers, "Cache-Control", "no-cache");
+	soup_message_headers_append (headers, "Accept-Language",
+				     "en-us, en;q=5.0");
+	soup_message_headers_append (headers, "Client-DAAP-Access-Index",
+				     "2");
+	soup_message_headers_append (headers, "Client-DAAP-Version", "3.0");
+	soup_message_headers_append (headers, "Client-DAAP-Validation", hash);
+
+	request_id = g_strdup_printf ("%d", priv->request_id);
+	soup_message_headers_append (headers, "Client-DAAP-Request-ID",
+				     request_id);
+	soup_message_headers_append(headers, "User-Agent", DMAP_USER_AGENT);
+	soup_message_headers_append(headers, "Connection", "close");
+	g_free (request_id);
+}
+
+static void
+_authenticate_cb (SoupMessage *msg, SoupAuth *auth, gboolean retrying,
+                  DmapConnection *connection)
+{
+	if (retrying || ! connection->priv->password) {
+		g_debug ("Requesting password from application");
+		// FIXME: GDK_THREADS_ENTER ();
+		g_signal_emit (connection,
+			       _signals[AUTHENTICATE],
+			       0,
+			       connection->priv->name,
+			       connection->priv->session,
+			       msg,
+			       auth,
+			       retrying);
+		// FIXME: GDK_THREADS_LEAVE ();
+	} else {
+		g_debug ("Using cached credentials");
+		soup_auth_authenticate (auth, connection->priv->username, connection->priv->password);
+	}
+}
+
+/*
+ * FIXME: Assuming pause/unpause is really not needed, then session and message
+ * parameters are not required. Drop them and prompt API change?
+ */
+void
+dmap_connection_authenticate_message (DmapConnection * connection,
+                                      G_GNUC_UNUSED SoupSession *session,
+                                      G_GNUC_UNUSED SoupMessage *message,
+                                      SoupAuth *auth,
+                                      const char *password)
+{
+	char *username = NULL;
+
+	g_object_set (connection, "password", password, NULL);
+
+	g_object_get (connection, "username", &username, NULL);
+	g_assert (username);
+
+	soup_auth_authenticate (auth, username, password);
+
+	g_free(username);
+}
+
 static SoupMessage *
 _build_message (DmapConnection * connection,
                 const char *path)
 {
 	SoupMessage *message = NULL;
-	SoupURI *base_uri = NULL;
-	SoupURI *uri = NULL;
+	GUri *base_uri = NULL;
+	GUri *uri = NULL;
 	char *uri_str = NULL;
 
 	g_object_get (connection, "base-uri", &base_uri, NULL);
@@ -531,27 +614,24 @@ _build_message (DmapConnection * connection,
 		goto done;
 	}
 
-	uri = soup_uri_new_with_base (base_uri, path);
+	uri = g_uri_parse_relative(base_uri, path, G_URI_FLAGS_NONE, NULL);
 	if (uri == NULL) {
 		goto done;
 	}
 
 	message = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
 
+	g_signal_connect (message, "authenticate", G_CALLBACK(_authenticate_cb), connection);
+
 	/* FIXME: only set Client-DAAP-Validation if need_hash? */
 	/* FIXME: only set Connection if send_close? */
-	uri_str = soup_uri_to_string (uri, FALSE);
-	message->request_headers =
-		dmap_connection_get_headers (connection, uri_str);
+	uri_str = g_uri_to_string (uri);
 
-	soup_message_headers_append (message->request_headers,
-				     "User-Agent", DMAP_USER_AGENT);
-	soup_message_headers_append (message->request_headers,
-				     "Connection", "close");
+	_message_add_headers(message, connection, uri_str);
 
 done:
-	soup_uri_free (base_uri);
-	soup_uri_free (uri);
+	g_uri_unref (base_uri);
+	g_uri_unref (uri);
 	g_free (uri_str);
 
 	return message;
@@ -597,13 +677,32 @@ _connection_set_error_message (DmapConnection * connection,
 }
 
 typedef struct {
-	SoupMessage *message;
+	GBytes *body;
 	int status;
 	DmapConnection *connection;
+
+	char *message_path;
+	char *reason_phrase;
+	SoupMessageHeaders *headers;
 
 	DmapResponseHandler response_handler;
 	gpointer user_data;
 } DmapResponseData;
+
+static void
+_dmap_response_data_free(DmapResponseData *data)
+{
+	if (NULL == data) {
+		return;
+	}
+
+	g_bytes_unref(data->body);
+	g_object_unref (G_OBJECT (data->connection));
+	g_free(data->message_path);
+	g_free(data->reason_phrase);
+	soup_message_headers_unref(data->headers);
+	g_free (data);
+}
 
 static gboolean
 _emit_progress_idle (DmapConnection * connection)
@@ -616,290 +715,6 @@ _emit_progress_idle (DmapConnection * connection)
 	connection->priv->emit_progress_id = 0;
 	// FIXME: GDK_THREADS_LEAVE ();
 	return FALSE;
-}
-
-static gpointer
-_actual_http_response_handler (DmapResponseData * data)
-{
-	DmapConnectionPrivate *priv;
-	GNode *structure;
-	guint8 *new_response = NULL;
-	const guint8 *response;
-	const char *encoding_header;
-	char *message_path;
-	gsize response_length;
-	gboolean compatible_server = TRUE;
-	SoupMessageBody *body;
-	SoupBuffer *buffer;
-
-	priv = data->connection->priv;
-	structure = NULL;
-	encoding_header = NULL;
-
-	g_object_get(data->message, "response-body", &body, NULL);
-	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &response, &response_length);
-
-	message_path =
-		soup_uri_to_string (soup_message_get_uri (data->message),
-				    FALSE);
-
-	g_debug ("Received response from %s: %d, %s",
-		 message_path,
-		 data->message->status_code, data->message->reason_phrase);
-
-	if (data->message->response_headers) {
-		const char *server;
-
-		encoding_header =
-			soup_message_headers_get_one (data->
-						      message->response_headers,
-						     "Content-Encoding");
-
-		server = soup_message_headers_get_one (data->
-						       message->response_headers,
-						      "DAAP-Server");
-		if (server != NULL
-		    && strstr (server, ITUNES_7_SERVER) != NULL) {
-			g_debug ("giving up.  we can't talk to %s", server);
-			compatible_server = FALSE;
-		}
-	}
-
-	if (SOUP_STATUS_IS_SUCCESSFUL (data->status) && encoding_header
-	    && strcmp (encoding_header, "gzip") == 0) {
-#ifdef HAVE_LIBZ
-		z_stream stream;
-		unsigned int factor = 4;
-		unsigned int unc_size = response_length * factor;
-
-		stream.next_in = (unsigned char *) response;
-		stream.avail_in = response_length;
-		stream.total_in = 0;
-
-		new_response = g_malloc (unc_size + 1);
-		stream.next_out = (unsigned char *) new_response;
-		stream.avail_out = unc_size;
-		stream.total_out = 0;
-		stream.zalloc = _zalloc_wrapper;
-		stream.zfree = _zfree_wrapper;
-		stream.opaque = NULL;
-
-		if (inflateInit2
-		    (&stream,
-		     32 /* auto-detect */  + 15 /* max */ ) != Z_OK) {
-			inflateEnd (&stream);
-			g_free (new_response);
-			new_response = NULL;
-			g_debug ("Unable to decompress response from %s",
-				 message_path);
-			data->status = SOUP_STATUS_MALFORMED;
-		} else {
-			do {
-				int z_res;
-
-				z_res = inflate (&stream, Z_FINISH);
-				if (z_res == Z_STREAM_END) {
-					break;
-				}
-				if ((z_res != Z_OK && z_res != Z_BUF_ERROR)
-				    || stream.avail_out != 0
-				    || unc_size > 40 * 1000 * 1000) {
-					inflateEnd (&stream);
-					g_free (new_response);
-					new_response = NULL;
-					break;
-				}
-
-				factor *= 4;
-				unc_size = (response_length * factor);
-				/* unc_size can't grow bigger than 40MB, so
-				 * unc_size can't overflow, and this realloc
-				 * call is safe
-				 */
-				new_response =
-					g_realloc (new_response,
-						   unc_size + 1);
-				stream.next_out =
-					(unsigned char *) (new_response +
-							   stream.total_out);
-				stream.avail_out =
-					unc_size - stream.total_out;
-			} while (1);
-		}
-
-		if (new_response) {
-			response = new_response;
-			response_length = stream.total_out;
-		}
-#else
-		g_debug ("Received compressed response from %s but can't handle it", message_path);
-		data->status = SOUP_STATUS_MALFORMED;
-#endif
-	}
-
-	if (compatible_server == FALSE) {
-		/* leaving structure == NULL here causes the connection process
-		 * to fail at the first step.
-		 */
-		_connection_set_error_message (data->connection,
-					      ("libdmapsharing is not able to connect to iTunes 7 shares"));
-	} else if (SOUP_STATUS_IS_SUCCESSFUL (data->status)) {
-		GError *error = NULL;
-		DmapStructureItem *item;
-
-		if ( /* FIXME: !rb_is_main_thread () */ TRUE) {
-			priv->progress = -1.0f;
-			if (priv->emit_progress_id != 0) {
-				g_source_remove (priv->emit_progress_id);
-			}
-			priv->emit_progress_id =
-				g_idle_add ((GSourceFunc) _emit_progress_idle,
-					    data->connection);
-		}
-		structure = dmap_structure_parse (response, response_length, &error);
-		if (error != NULL) {
-			dmap_connection_emit_error(data->connection, error->code,
-			                          "Error parsing %s response: %s\n", message_path,
-			                           error->message);
-			data->status = SOUP_STATUS_MALFORMED;
-			g_clear_error(&error);
-		} else {
-			int dmap_status = 0;
-
-			item = dmap_structure_find_item (structure,
-							 DMAP_CC_MSTT);
-			if (item) {
-				dmap_status =
-					g_value_get_int (&(item->content));
-
-				if (dmap_status != 200) {
-					g_debug ("Error, dmap.status is not 200 in response from %s", message_path);
-
-					data->status = SOUP_STATUS_MALFORMED;
-				}
-			}
-		}
-		if ( /* FIXME: ! rb_is_main_thread () */ TRUE) {
-			priv->progress = 1.0f;
-			if (priv->emit_progress_id != 0) {
-				g_source_remove (priv->emit_progress_id);
-			}
-			priv->emit_progress_id =
-				g_idle_add ((GSourceFunc) _emit_progress_idle,
-					    data->connection);
-		}
-	} else {
-		g_debug ("Error getting %s: %d, %s",
-			 message_path,
-			 data->message->status_code,
-			 data->message->reason_phrase);
-		_connection_set_error_message (data->connection,
-					      data->message->reason_phrase);
-	}
-
-	if (data->response_handler) {
-		(*(data->response_handler)) (data->connection, data->status,
-					     structure, data->user_data);
-	}
-
-	if (structure) {
-		dmap_structure_destroy (structure);
-	}
-
-	g_free (new_response);
-	g_free (message_path);
-	g_object_unref (G_OBJECT (data->connection));
-	g_object_unref (G_OBJECT (data->message));
-	g_free (data);
-
-	return NULL;
-}
-
-static void
-_http_response_handler (G_GNUC_UNUSED SoupSession * session,
-                        SoupMessage * message, DmapResponseData * data)
-{
-	goffset response_length;
-
-	if (message->status_code == SOUP_STATUS_CANCELLED) {
-		g_debug ("Message cancelled");
-		g_free (data);
-		return;
-	}
-
-	data->status = message->status_code;
-	response_length = message->response_body->length;
-
-	g_object_ref (G_OBJECT (message));
-	data->message = message;
-
-	if (response_length >= G_MAXUINT / 4 - 1) {
-		/* If response_length is too big,
-		 * the g_malloc (unc_size + 1) below would overflow
-		 */
-		data->status = SOUP_STATUS_MALFORMED;
-	}
-
-	/* to avoid blocking the UI, handle big responses in a separate thread */
-	if (SOUP_STATUS_IS_SUCCESSFUL (data->status)
-	    && data->connection->priv->use_response_handler_thread) {
-		g_debug ("creating thread to handle daap response");
-		GThread *thread = g_thread_new (NULL, (GThreadFunc) _actual_http_response_handler, data);
-		if (NULL == thread) {
-			g_warning ("failed to create new thread");
-		}
-	} else {
-		_actual_http_response_handler (data);
-	}
-}
-
-static gboolean
-_http_get (DmapConnection * connection,
-           const char *path,
-           DmapResponseHandler handler,
-           gpointer user_data, gboolean use_thread)
-{
-	gboolean ok = FALSE;
-	DmapConnectionPrivate *priv = connection->priv;
-	DmapResponseData *data;
-	SoupMessage *message;
-
-	message = _build_message (connection, path);
-	if (message == NULL) {
-		g_debug ("Error building message for http://%s:%d/%s",
-			 priv->base_uri->host, priv->base_uri->port, path);
-		goto done;
-	}
-
-	priv->use_response_handler_thread = use_thread;
-
-	data = g_new0 (DmapResponseData, 1);
-	data->response_handler = handler;
-	data->user_data = user_data;
-
-	g_object_ref (G_OBJECT (connection));
-	data->connection = connection;
-
-	soup_session_queue_message (priv->session, message,
-				   (SoupSessionCallback)
-				    _http_response_handler, data);
-	g_debug ("Queued message for http://%s:%d/%s", priv->base_uri->host,
-		 priv->base_uri->port, path);
-
-	ok = TRUE;
-
-done:
-	return ok;
-}
-
-gboolean
-dmap_connection_get (DmapConnection * self,
-		     const gchar * path,
-		     DmapResponseHandler handler, gpointer user_data)
-{
-	return _http_get (self, path, (DmapResponseHandler) handler, user_data,
-	                  FALSE);
 }
 
 static void
@@ -962,6 +777,325 @@ _state_done (DmapConnection * connection, gboolean result)
 	}
 	priv->do_something_id =
 		g_idle_add ((GSourceFunc) _do_something, connection);
+}
+
+static gpointer
+_actual_http_response_handler (DmapResponseData * data)
+{
+	DmapConnectionPrivate *priv;
+	GNode *structure;
+	guint8 *new_response = NULL;
+	const guint8 *response;
+	const char *encoding_header;
+	gsize response_length;
+	gboolean ok = FALSE;
+
+	priv = data->connection->priv;
+	structure = NULL;
+	encoding_header = NULL;
+
+	response = g_bytes_get_data(data->body, &response_length);
+
+	g_debug ("Received response from %s: %d, %s",
+		 data->message_path,
+	         data->status,
+		 data->reason_phrase);
+
+	if (data->headers) {
+		const char *server;
+
+		encoding_header = soup_message_headers_get_one (data->headers, "Content-Encoding");
+		server = soup_message_headers_get_one (data->headers, "DAAP-Server");
+
+		if (server != NULL && strstr (server, ITUNES_7_SERVER) != NULL) {
+			g_debug ("giving up. We can't talk to %s", server);
+			_connection_set_error_message (
+				data->connection,
+				"libdmapsharing is not able to connect to iTunes 7 shares"
+			);
+			goto done;
+		}
+	}
+
+	if (SOUP_STATUS_IS_SUCCESSFUL (data->status) && encoding_header
+	    && strcmp (encoding_header, "gzip") == 0) {
+#ifdef HAVE_LIBZ
+		z_stream stream;
+		unsigned int factor = 4;
+		unsigned int unc_size = response_length * factor;
+
+		stream.next_in = (unsigned char *) response;
+		stream.avail_in = response_length;
+		stream.total_in = 0;
+
+		new_response = g_malloc (unc_size + 1);
+		stream.next_out = (unsigned char *) new_response;
+		stream.avail_out = unc_size;
+		stream.total_out = 0;
+		stream.zalloc = _zalloc_wrapper;
+		stream.zfree = _zfree_wrapper;
+		stream.opaque = NULL;
+
+		if (inflateInit2
+		    (&stream,
+		     32 /* auto-detect */  + 15 /* max */ ) != Z_OK) {
+			inflateEnd (&stream);
+			g_free (new_response);
+			new_response = NULL;
+			g_debug ("Unable to decompress response from %s",
+				 data->message_path);
+			_connection_set_error_message (
+				data->connection,
+				"unable to decompress response"
+			);
+			goto done;
+		} else {
+			do {
+				int z_res;
+
+				z_res = inflate (&stream, Z_FINISH);
+				if (z_res == Z_STREAM_END) {
+					break;
+				}
+				if ((z_res != Z_OK && z_res != Z_BUF_ERROR)
+				    || stream.avail_out != 0
+				    || unc_size > 40 * 1000 * 1000) {
+					inflateEnd (&stream);
+					g_free (new_response);
+					new_response = NULL;
+					break;
+				}
+
+				factor *= 4;
+				unc_size = (response_length * factor);
+				/* unc_size can't grow bigger than 40MB, so
+				 * unc_size can't overflow, and this realloc
+				 * call is safe
+				 */
+				new_response =
+					g_realloc (new_response,
+						   unc_size + 1);
+				stream.next_out =
+					(unsigned char *) (new_response +
+							   stream.total_out);
+				stream.avail_out =
+					unc_size - stream.total_out;
+			} while (1);
+		}
+
+		if (new_response) {
+			response = new_response;
+			response_length = stream.total_out;
+		}
+#else
+		g_debug ("Received compressed response from %s but can't handle it", data->message_path);
+		_connection_set_error_message (
+			data->connection,
+			"cannot handle compressed response"
+		);
+		goto done;
+#endif
+	}
+
+	if (SOUP_STATUS_IS_SUCCESSFUL (data->status)) {
+		GError *error = NULL;
+		DmapStructureItem *item;
+
+		if ( /* FIXME: !rb_is_main_thread () */ TRUE) {
+			priv->progress = -1.0f;
+			if (priv->emit_progress_id != 0) {
+				g_source_remove (priv->emit_progress_id);
+			}
+			priv->emit_progress_id =
+				g_idle_add ((GSourceFunc) _emit_progress_idle,
+					    data->connection);
+		}
+		structure = dmap_structure_parse (response, response_length, &error);
+		if (error != NULL) {
+			dmap_connection_emit_error(data->connection, error->code,
+			                          "Error parsing %s response: %s\n", data->message_path,
+			                           error->message);
+			g_clear_error(&error);
+			goto done;
+		} else {
+			int dmap_status = 0;
+
+			item = dmap_structure_find_item (structure,
+							 DMAP_CC_MSTT);
+			if (item) {
+				dmap_status =
+					g_value_get_int (&(item->content));
+
+				if (dmap_status != 200) {
+					g_debug ("Error, dmap.status is not 200 in response from %s", data->message_path);
+					_connection_set_error_message (
+						data->connection,
+						"Bad response"
+					);
+					goto done;
+				}
+			}
+		}
+		if ( /* FIXME: ! rb_is_main_thread () */ TRUE) {
+			priv->progress = 1.0f;
+			if (priv->emit_progress_id != 0) {
+				g_source_remove (priv->emit_progress_id);
+			}
+			priv->emit_progress_id =
+				g_idle_add ((GSourceFunc) _emit_progress_idle,
+					    data->connection);
+		}
+	} else {
+		g_debug ("Error getting %s: %d, %s",
+			 data->message_path,
+		         data->status,
+			 data->reason_phrase);
+		_connection_set_error_message (data->connection,
+					       data->reason_phrase);
+	}
+
+	if (data->response_handler) {
+		(*(data->response_handler)) (data->connection, data->status,
+					     structure, data->user_data);
+	}
+
+	ok = TRUE;
+
+done:
+	if (!ok) {
+		_state_done (data->connection, FALSE);
+	}
+
+	if (structure) {
+		dmap_structure_destroy (structure);
+	}
+
+	g_free (new_response);
+
+	_dmap_response_data_free(data);
+
+	return NULL;
+}
+
+static void
+_http_response_handler (G_GNUC_UNUSED GObject *source,
+                        GAsyncResult *result,
+                        gpointer user_data)
+{
+	gboolean ok = FALSE;
+	SoupSession *session = SOUP_SESSION(source);
+	DmapResponseData *data = user_data;
+	SoupMessage *message = NULL;
+	goffset response_length;
+	GError *error = NULL;
+
+	data->body = soup_session_send_and_read_finish (session, result, &error);
+	if (NULL == data->body) {
+		g_debug("Failed to finish read: %s", error->message);
+		goto done;
+	}
+
+	message = soup_session_get_async_result_message (session, result);
+	if (NULL == message) {
+		g_debug ("Failed to get message result");
+		goto done;
+	}
+
+	data->status = soup_message_get_status(message);
+	data->reason_phrase = g_strdup(soup_message_get_reason_phrase(message));
+	data->headers = soup_message_headers_ref(soup_message_get_response_headers(message));
+	response_length = g_bytes_get_size(data->body);
+
+	if (response_length >= G_MAXUINT / 4 - 1) {
+		/* If response_length is too big,
+		 * the g_malloc (unc_size + 1) below would overflow
+		 */
+		g_debug ("Response length exceeded limit");
+		goto done;
+	}
+
+	/* to avoid blocking the UI, handle big responses in a separate thread */
+	if (SOUP_STATUS_IS_SUCCESSFUL (data->status)
+	    && data->connection->priv->use_response_handler_thread) {
+		g_debug ("creating thread to handle daap response");
+		g_thread_new (NULL, (GThreadFunc) _actual_http_response_handler, data);
+	} else {
+		_actual_http_response_handler (data);
+	}
+
+	/*
+	 * Ownership of data passed to _actual_http_response_handler; set to
+	 * NULL to avoid freeing.
+	 */
+	data = NULL;
+
+	ok = TRUE;
+
+done:
+	g_object_unref(message);
+
+	if (!ok) {
+		_state_done (data->connection, FALSE);
+	}
+
+	_dmap_response_data_free(data); /* Ownership possibly passed; see above. */
+
+	return;
+}
+
+static gboolean
+_http_get (DmapConnection * connection,
+           const char *path,
+           DmapResponseHandler handler,
+           gpointer user_data, gboolean use_thread)
+{
+	gboolean ok = FALSE;
+	DmapConnectionPrivate *priv = connection->priv;
+	DmapResponseData *data;
+	SoupMessage *message;
+
+	message = _build_message (connection, path);
+	if (message == NULL) {
+		g_debug ("Error building message for http://%s:%d/%s",
+			 g_uri_get_host(priv->base_uri), g_uri_get_port(priv->base_uri), path);
+		goto done;
+	}
+
+	priv->use_response_handler_thread = use_thread;
+
+	data = g_new0 (DmapResponseData, 1);
+	data->message_path = g_uri_to_string (soup_message_get_uri (message));
+	data->response_handler = handler;
+	data->user_data = user_data;
+
+	g_object_ref (G_OBJECT (connection));
+	data->connection = connection;
+
+	soup_session_send_and_read_async(
+		priv->session,
+		message,
+		G_PRIORITY_DEFAULT,
+		NULL,
+		_http_response_handler,
+		data
+	);
+
+	g_debug ("Queued message for http://%s:%d/%s", g_uri_get_host(priv->base_uri),
+		 g_uri_get_port(priv->base_uri), path);
+
+	ok = TRUE;
+
+done:
+	return ok;
+}
+
+gboolean
+dmap_connection_get (DmapConnection * self,
+		     const gchar * path,
+		     DmapResponseHandler handler, gpointer user_data)
+{
+	return _http_get (self, path, (DmapResponseHandler) handler, user_data,
+	                  FALSE);
 }
 
 static void
@@ -1609,60 +1743,20 @@ _connected_cb (DmapConnection * connection, ConnectionResponseData * rdata)
 	}
 }
 
-static void
-_authenticate_cb (SoupSession *session, SoupMessage *msg, SoupAuth *auth,
-                  gboolean retrying, DmapConnection *connection)
-{
-	if (retrying || ! connection->priv->password) {
-		g_debug ("Requesting password from application");
-		soup_session_pause_message (session, msg);
-		// FIXME: GDK_THREADS_ENTER ();
-		g_signal_emit (connection,
-			       _signals[AUTHENTICATE],
-			       0,
-			       connection->priv->name,
-			       session,
-			       msg,
-			       auth,
-			       retrying);
-		// FIXME: GDK_THREADS_LEAVE ();
-	} else {
-		g_debug ("Using cached credentials");
-		soup_auth_authenticate (auth, connection->priv->username, connection->priv->password);
-	}
-}
-
-void
-dmap_connection_authenticate_message (DmapConnection * connection, SoupSession *session, SoupMessage *message, SoupAuth *auth, const char *password)
-{
-	char *username = NULL;
-
-	g_object_set (connection, "password", password, NULL);
-
-	g_object_get (connection, "username", &username, NULL);
-	g_assert (username);
-
-	soup_auth_authenticate (auth, username, password);
-	soup_session_unpause_message (session, message);
-
-	g_free(username);
-}
-
 void
 dmap_connection_setup (DmapConnection * connection)
 {
 	connection->priv->session = soup_session_new ();
 
-	g_signal_connect (connection->priv->session, "authenticate", G_CALLBACK(_authenticate_cb), connection);
-
-	connection->priv->base_uri = soup_uri_new (NULL);
-	soup_uri_set_scheme (connection->priv->base_uri,
-			     SOUP_URI_SCHEME_HTTP);
-	soup_uri_set_host (connection->priv->base_uri,
-			   connection->priv->host);
-	soup_uri_set_port (connection->priv->base_uri,
-			   connection->priv->port);
-	soup_uri_set_path (connection->priv->base_uri, "");
+	connection->priv->base_uri = g_uri_build(
+		G_URI_FLAGS_NONE,
+		"http",
+		NULL,
+		connection->priv->host,
+		connection->priv->port,
+		"",
+		NULL,
+		NULL);
 }
 
 // FIXME: it would be nice if this mirrored the use of DmapMdnsBrowser. That is, connect callback handler to a signal.
@@ -1851,28 +1945,20 @@ _error_cb(G_GNUC_UNUSED DmapConnection *connection, GError *error,
 
 #define _ACTUAL_HTTP_RESPONSE_HANDLER_TEST(bytes, size, __status) \
 { \
-	SoupMessage      *message; \
-	DmapConnection   *connection; \
-	char              body[] = bytes; \
-	DmapResponseData *data; \
+	DmapConnection *connection; \
+	DmapResponseData  *data; \
 	\
 	_status = DMAP_STATUS_OK; \
-	\
-	message = soup_message_new(SOUP_METHOD_GET, "http://test/"); \
-	soup_message_set_response(message, \
-	                         "application/x-dmap-tagged", \
-	                          SOUP_MEMORY_STATIC, \
-	                          body, \
-	                          sizeof body); \
-	soup_message_set_status(message, SOUP_STATUS_OK); \
 	\
 	connection = g_object_new(DMAP_TYPE_AV_CONNECTION, NULL); \
 	g_signal_connect(connection, "error", G_CALLBACK(_error_cb), NULL); \
 	\
 	data = g_new0(DmapResponseData, 1); \
-	data->message    = message; \
+	data->body    = g_bytes_new(bytes, sizeof(bytes)); \
 	data->status     = SOUP_STATUS_OK; \
 	data->connection = connection; \
+	data->message_path = g_strdup("/"); \
+	data->headers = NULL; \
 	\
 	_actual_http_response_handler(data); \
 	\

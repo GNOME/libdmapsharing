@@ -23,7 +23,7 @@
 #include "dmap-private-utils.h"
 
 void
-dmap_private_utils_write_next_chunk (SoupMessage * message, ChunkData * cd)
+dmap_private_utils_write_next_chunk (SoupServerMessage * message, ChunkData * cd)
 {
 	gssize read_size;
 	GError *error = NULL;
@@ -34,7 +34,7 @@ dmap_private_utils_write_next_chunk (SoupMessage * message, ChunkData * cd)
 					 chunk,
 					 DMAP_SHARE_CHUNK_SIZE, NULL, &error);
 	if (read_size > 0) {
-		soup_message_body_append (message->response_body,
+		soup_message_body_append (soup_server_message_get_response_body(message),
 					  SOUP_MEMORY_TAKE, chunk, read_size);
 		g_debug ("Read/wrote %"G_GSSIZE_FORMAT" bytes.", read_size);
 	} else {
@@ -45,13 +45,13 @@ dmap_private_utils_write_next_chunk (SoupMessage * message, ChunkData * cd)
 		}
 		g_free (chunk);
 		g_debug ("Wrote 0 bytes, sending message complete.");
-		soup_message_body_complete (message->response_body);
+		soup_message_body_complete (soup_server_message_get_response_body(message));
 	}
-	soup_server_unpause_message (cd->server, message);
+	soup_server_message_unpause (message);
 }
 
 void
-dmap_private_utils_chunked_message_finished (G_GNUC_UNUSED SoupMessage * message, ChunkData * cd)
+dmap_private_utils_chunked_message_finished (G_GNUC_UNUSED SoupServerMessage * message, ChunkData * cd)
 {
 	g_debug ("Finished sending chunked file.");
 	g_input_stream_close (cd->stream, NULL, NULL);

@@ -96,13 +96,13 @@ if test "x$HAVE_PKGCONFIG" = "xno"; then
 fi
 
 # Have glib?
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.40, HAVE_GLIB=yes,HAVE_GLIB=no)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.66, HAVE_GLIB=yes,HAVE_GLIB=no)
 if test "x$HAVE_GLIB" = "xno"; then
 	AC_MSG_ERROR([Must have glib-2.0 installed])
 fi
 
-AC_DEFINE(GLIB_VERSION_MIN_REQUIRED, GLIB_VERSION_2_40, [minimum glib version])
-AC_DEFINE(GLIB_VERSION_MAX_ALLOWED, GLIB_VERSION_2_40, [maximum glib version])
+AC_DEFINE(GLIB_VERSION_MIN_REQUIRED, GLIB_VERSION_2_66, [minimum glib version])
+AC_DEFINE(GLIB_VERSION_MAX_ALLOWED, GLIB_VERSION_2_66, [maximum glib version])
 
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
@@ -139,7 +139,7 @@ AC_SUBST(GDKPIXBUF_CFLAGS)
 AC_SUBST(GDKPIXBUF_LIBS)
 
 # Have libsoup?
-PKG_CHECK_MODULES(SOUP, libsoup-2.4 >= 2.48.0, HAVE_LIBSOUP=yes, HAVE_LIBSOUP=no)
+PKG_CHECK_MODULES(SOUP, libsoup-3.0, HAVE_LIBSOUP=yes, HAVE_LIBSOUP=no)
 if test x"$HAVE_LIBSOUP" = "xno"; then
 	AC_MSG_ERROR([Must have libsoup installed])
 fi

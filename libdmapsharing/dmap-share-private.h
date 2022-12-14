@@ -37,23 +37,22 @@ G_BEGIN_DECLS
 guint dmap_share_get_auth_method (DmapShare * share);
 
 gboolean dmap_share_session_id_validate (DmapShare * share,
-                                         SoupClientContext * context,
+                                         SoupServerMessage * message,
                                          GHashTable * query,
                                          guint32 * id);
 
 gboolean dmap_share_client_requested (DmapBits bits, gint field);
 
 void dmap_share_message_set_from_dmap_structure (DmapShare * share,
-						  SoupMessage * message,
+						  SoupServerMessage * message,
 						  GNode * structure);
 
 GSList *dmap_share_build_filter (gchar * filterstr);
 
 void dmap_share_login (DmapShare * share,
-                       SoupMessage * message,
+                       SoupServerMessage * message,
                        const char *path,
-                       GHashTable * query,
-                       SoupClientContext * context);
+                       GHashTable * query);
 
 /* Virtual methods: MDNS callbacks */
 void dmap_share_name_collision (DmapShare * share,

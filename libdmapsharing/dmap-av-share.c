@@ -43,17 +43,17 @@
 static guint _get_desired_port (DmapShare * share);
 static const char *_get_type_of_service (DmapShare * share);
 static void _server_info (DmapShare * share,
-                          SoupMessage * message,
+                          SoupServerMessage * message,
                           const char *path);
 static void _message_add_standard_headers (DmapShare * share,
-                                           SoupMessage * message);
+                                           SoupServerMessage * message);
 static void _databases_browse_xxx (DmapShare * share,
-                                   SoupMessage * msg,
+                                   SoupServerMessage * msg,
                                    const char *path,
                                    GHashTable * query);
 static void _databases_items_xxx (DmapShare * share,
                                   SoupServer * server,
-                                  SoupMessage * msg,
+                                  SoupServerMessage * msg,
                                   const char *path);
 static struct DmapMetaDataMap *_get_meta_data_map (DmapShare * share);
 static void _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer mb);
@@ -102,9 +102,10 @@ dmap_av_share_new (const char *name,
 
 static void
 _message_add_standard_headers (G_GNUC_UNUSED DmapShare * share,
-                               SoupMessage * message)
+                               SoupServerMessage * message)
 {
-	soup_message_headers_append (message->response_headers, "DMAP-Server",
+	soup_message_headers_append (soup_server_message_get_response_headers(message),
+	                             "DMAP-Server",
 				     "libdmapsharing" VERSION);
 }
 
@@ -126,7 +127,7 @@ _get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 
 static void
 _server_info (DmapShare * share,
-              SoupMessage * message,
+              SoupServerMessage * message,
               const char *path)
 {
 /* MSRV	server info response
@@ -323,7 +324,7 @@ done:
 }
 
 static void
-_send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * message,
+_send_chunked_file (DmapAvShare *share, SoupServer * server, SoupServerMessage * message,
 		   DmapAvRecord * record, guint64 filesize, guint64 offset,
 		   const gchar * transcode_mimetype)
 {
@@ -398,7 +399,7 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 	}
 
 	/* Free memory after each chunk sent out over network. */
-	soup_message_body_set_accumulate (message->response_body, FALSE);
+	soup_message_body_set_accumulate (soup_server_message_get_response_body(message), FALSE);
 
 	if (! _should_transcode (share, format, has_video, transcode_mimetype)) {
 	        /* NOTE: iTunes seems to require this or it stops reading
@@ -406,28 +407,29 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupMessage * messa
 	         * knows how much data to buffer.
 	         */
 		g_debug ("Using HTTP 1.1 content length encoding.");
-		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_CONTENT_LENGTH);
+		soup_message_headers_set_encoding (soup_server_message_get_response_headers(message),
+		                                   SOUP_ENCODING_CONTENT_LENGTH);
 
 	        /* NOTE: iTunes 8 (and other versions?) will not seek
 	         * properly without a Content-Length header.
 	         */
 		g_debug ("Content length is %" G_GUINT64_FORMAT ".", filesize);
-		soup_message_headers_set_content_length (message->response_headers, filesize);
-	} else if (soup_message_get_http_version (message) == SOUP_HTTP_1_0) {
+		soup_message_headers_set_content_length (soup_server_message_get_response_headers(message), filesize);
+	} else if (soup_server_message_get_http_version (message) == SOUP_HTTP_1_0) {
 		/* NOTE: Roku clients support only HTTP 1.0. */
 		g_debug ("Using HTTP 1.0 encoding.");
-		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_EOF);
+		soup_message_headers_set_encoding (soup_server_message_get_response_headers(message), SOUP_ENCODING_EOF);
 	} else {
 		/* NOTE: Can not provide Content-Length when performing
 		 * real-time transcoding.
 		 */
 		g_debug ("Using HTTP 1.1 chunked encoding.");
-		soup_message_headers_set_encoding (message->response_headers, SOUP_ENCODING_CHUNKED);
+		soup_message_headers_set_encoding (soup_server_message_get_response_headers(message), SOUP_ENCODING_CHUNKED);
 	}
 
-	soup_message_headers_append (message->response_headers, "Connection",
+	soup_message_headers_append (soup_server_message_get_response_headers(message), "Connection",
 				     "Close");
-	soup_message_headers_append (message->response_headers,
+	soup_message_headers_append (soup_server_message_get_response_headers(message),
 				     "Content-Type",
 				     "application/x-dmap-tagged");
 
@@ -459,7 +461,7 @@ done:
 	if (teardown) {
 		gboolean ok;
 
-		soup_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR);
+		soup_server_message_set_status (message, SOUP_STATUS_INTERNAL_SERVER_ERROR, NULL);
 
 		if (NULL != cd && NULL != cd->stream) {
 			ok = g_input_stream_close (cd->stream, NULL, &error);
@@ -830,7 +832,7 @@ _add_to_category_listing (gpointer key, gpointer user_data)
 
 static void
 _databases_browse_xxx (DmapShare * share,
-                       SoupMessage * msg,
+                       SoupServerMessage * msg,
                        const char *path,
                        GHashTable * query)
 {
@@ -916,7 +918,7 @@ _databases_browse_xxx (DmapShare * share,
 static void
 _databases_items_xxx (DmapShare * share,
                       SoupServer * server,
-                      SoupMessage * msg,
+                      SoupServerMessage * msg,
                       const char *path)
 {
 	DmapDb *db = NULL;
@@ -941,7 +943,7 @@ _databases_items_xxx (DmapShare * share,
 			g_error_new(DMAP_ERROR,
 			            DMAP_STATUS_DB_BAD_ID,
 			           "Bad record identifier requested"));
-		soup_message_set_status (msg, SOUP_STATUS_NOT_FOUND);
+		soup_server_message_set_status (msg, SOUP_STATUS_NOT_FOUND, NULL);
 		goto done;
 	}
 
@@ -949,11 +951,11 @@ _databases_items_xxx (DmapShare * share,
 
 	DMAP_SHARE_GET_CLASS (share)->message_add_standard_headers
 		(share, msg);
-	soup_message_headers_append (msg->response_headers, "Accept-Ranges",
+	soup_message_headers_append (soup_server_message_get_response_headers(msg), "Accept-Ranges",
 				     "bytes");
 
 	range_header =
-		soup_message_headers_get_one (msg->request_headers, "Range");
+		soup_message_headers_get_one (soup_server_message_get_request_headers(msg), "Range");
 	if (range_header) {
 		const gchar *s;
 		gchar *content_range;
@@ -971,13 +973,13 @@ _databases_items_xxx (DmapShare * share,
 					 G_GUINT64_FORMAT "/%"
 					 G_GUINT64_FORMAT, offset, filesize,
 					 filesize);
-		soup_message_headers_append (msg->response_headers,
+		soup_message_headers_append (soup_server_message_get_response_headers(msg),
 					     "Content-Range", content_range);
 		g_debug ("Content range is %s.", content_range);
 		g_free (content_range);
-		soup_message_set_status (msg, SOUP_STATUS_PARTIAL_CONTENT);
+		soup_server_message_set_status (msg, SOUP_STATUS_PARTIAL_CONTENT, NULL);
 	} else {
-		soup_message_set_status (msg, SOUP_STATUS_OK);
+		soup_server_message_set_status (msg, SOUP_STATUS_OK, NULL);
 	}
 	g_object_get (share, "transcode-mimetype", &transcode_mimetype, NULL);
 	_send_chunked_file (DMAP_AV_SHARE(share), server, msg, record, filesize,
@@ -1365,25 +1367,25 @@ START_TEST(_server_info_test)
 {
 	char *nameprop = "_server_info_test";
 	DmapShare *share;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	SoupMessageBody *body;
-	SoupBuffer *buffer;
+	GBytes *buffer;
 	const guint8 *data;
 	gsize length;
 	GNode *root;
 	DmapStructureItem *item;
 
 	share   = _build_share_test(nameprop);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 
 	/* Causes auth. method to be set to DMAP_SHARE_AUTH_METHOD_PASSWORD. */
 	g_object_set(share, "password", "password", NULL);
 
 	_server_info(share, message, "/");
 
-	g_object_get(message, "response-body", &body, NULL);
+	body = soup_server_message_get_response_body(message);
 	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &data, &length);
+	data = g_bytes_get_data(buffer, &length);
 
 	root = dmap_structure_parse(data, length, NULL);
 
@@ -1449,12 +1451,11 @@ START_TEST(_message_add_standard_headers_test)
 	share = _build_share_test("_message_add_standard_headers_test");
 	message = soup_message_new(SOUP_METHOD_GET, "http://test/");
 
-	soup_message_headers_append(message->response_headers,
+	soup_message_headers_append(soup_message_get_response_headers(message),
 	                           "DMAP-Server",
 	                           "libdmapsharing" VERSION);
 
-	g_object_get(message, "response-headers", &headers, NULL);
-
+	headers = soup_message_get_response_headers(message);
 	header = soup_message_headers_get_one(headers, "DMAP-Server");
 
 	ck_assert_str_eq("libdmapsharing" VERSION, header);
@@ -1467,26 +1468,26 @@ START_TEST(_databases_browse_xxx_test)
 {
 	char *nameprop = "databases_browse_xxx_test";
 	DmapShare *share;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
-	SoupBuffer *buffer;
+	GBytes *buffer;
 	const guint8 *data;
 	gsize length;
 	GNode *root;
 	DmapStructureItem *item;
 
 	share   = _build_share_test(nameprop);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
 	_databases_browse_xxx(share, message, "/db/1/browse/genres", query);
 
-	g_object_get(message, "response-body", &body, NULL);
+	body = soup_server_message_get_response_body(message);
 	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &data, &length);
+	data = g_bytes_get_data(buffer, &length);
 
 	root = dmap_structure_parse(data, length, NULL);
 
@@ -1522,25 +1523,25 @@ START_TEST(_databases_browse_xxx_artists_test)
 {
 	char *nameprop = "databases_browse_xxx_artists_test";
 	DmapShare *share;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
-	SoupBuffer *buffer;
+	GBytes *buffer;
 	const guint8 *data;
 	gsize length;
 	GNode *root;
 
 	share   = _build_share_test(nameprop);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
 	_databases_browse_xxx(share, message, "/db/1/browse/artists", query);
 
-	g_object_get(message, "response-body", &body, NULL);
+	body = soup_server_message_get_response_body(message);
 	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &data, &length);
+	data = g_bytes_get_data(buffer, &length);
 
 	root = dmap_structure_parse(data, length, NULL);
 
@@ -1561,25 +1562,25 @@ START_TEST(_databases_browse_xxx_albums_test)
 {
 	char *nameprop = "databases_browse_xxx_albums_test";
 	DmapShare *share;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
-	SoupBuffer *buffer;
+	GBytes *buffer;
 	const guint8 *data;
 	gsize length;
 	GNode *root;
 
 	share   = _build_share_test(nameprop);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
 	_databases_browse_xxx(share, message, "/db/1/browse/albums", query);
 
-	g_object_get(message, "response-body", &body, NULL);
+	body = soup_server_message_get_response_body(message);
 	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &data, &length);
+	data = g_bytes_get_data(buffer, &length);
 
 	root = dmap_structure_parse(data, length, NULL);
 
@@ -1600,25 +1601,25 @@ START_TEST(_databases_browse_xxx_bad_category_test)
 {
 	char *nameprop = "databases_browse_xxx_bad_category_test";
 	DmapShare *share;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	GHashTable *query;
 	SoupMessageBody *body;
-	SoupBuffer *buffer;
+	GBytes *buffer;
 	const guint8 *data;
 	gsize length;
 	GNode *root;
 
 	share   = _build_share_test(nameprop);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 	query = g_hash_table_new(g_str_hash, g_str_equal);
 
 	g_hash_table_insert(query, "filter", "");
 
 	_databases_browse_xxx(share, message, "/db/1/browse/bad_category", query);
 
-	g_object_get(message, "response-body", &body, NULL);
+	body = soup_server_message_get_response_body(message);
 	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &data, &length);
+	data = g_bytes_get_data(buffer, &length);
 
 	root = dmap_structure_parse(data, length, NULL);
 	ck_assert(NULL == root);
@@ -1633,9 +1634,9 @@ START_TEST(_databases_items_xxx_test)
 	char *nameprop = "databases_items_xxx_test";
 	DmapShare *share;
 	SoupServer *server;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	SoupMessageBody *body = NULL;
-	SoupBuffer *buffer;
+	GBytes *buffer;
 	char path[PATH_MAX + 1];
 	DmapDb *db = NULL;
 	DmapRecord *record = NULL;
@@ -1649,7 +1650,7 @@ START_TEST(_databases_items_xxx_test)
 
 	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 
 	g_snprintf(path, sizeof path, "/db/1/items/%d", G_MAXINT);
 
@@ -1673,12 +1674,12 @@ START_TEST(_databases_items_xxx_test)
 
 	g_signal_emit_by_name(message, "finished", NULL);
 
-	g_object_get(message, "response-body", &body, NULL);
+	body = soup_server_message_get_response_body(message);
 	ck_assert(NULL != body);
 
-	soup_message_body_set_accumulate (message->response_body, TRUE);
+	soup_message_body_set_accumulate (body, TRUE);
 	buffer = soup_message_body_flatten(body);
-	soup_buffer_get_data(buffer, &contents1, &size1);
+	contents1 = g_bytes_get_data(buffer, &size1);
 
 	file = g_file_new_for_uri(location);
 	ck_assert(NULL != file);
@@ -1700,12 +1701,12 @@ START_TEST(_databases_items_xxx_test_bad_id)
 	char *nameprop = "databases_items_xxx_test";
 	DmapShare *share;
 	SoupServer *server;
-	SoupMessage *message;
+	SoupServerMessage *message;
 	char path[PATH_MAX + 1];
 
 	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);
-	message = soup_message_new(SOUP_METHOD_GET, "http://test");
+	message = g_object_new (SOUP_TYPE_SERVER_MESSAGE, NULL);
 
 	/* IDs go from G_MAXINT down, so 0 does not exist. */
 	g_snprintf(path, sizeof path, "/db/1/items/%d", 0);
