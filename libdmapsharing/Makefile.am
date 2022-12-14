@@ -181,7 +181,7 @@ Dmap_4_0_gir_NAMESPACE = Dmap
 Dmap_4_0_gir_SCANNERFLAGS = --symbol-prefix=dmap
 Dmap_4_0_gir_LIBS = libdmapsharing-4.0.la
 Dmap_4_0_gir_FILES = $(introspection_sources)
-Dmap_4_0_gir_INCLUDES = GObject-2.0 Soup-2.4 Gst-1.0
+Dmap_4_0_gir_INCLUDES = GObject-2.0 Soup-3.0 Gst-1.0
 Dmap_4_0_gir_CFLAGS = $(INCLUDES) $(libdmapsharing_4_0_la_CFLAGS)
 
 INTROSPECTION_GIRS = Dmap-4.0.gir
