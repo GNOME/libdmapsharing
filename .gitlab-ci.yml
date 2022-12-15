@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/ubuntu:fossa
+  image: i386/ubuntu:20.04
 
   variables:
     DEBIAN_FRONTEND: noninteractive
