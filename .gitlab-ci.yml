@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/ubuntu:eoan
+  image: i386/ubuntu:fossa
 
   variables:
     DEBIAN_FRONTEND: noninteractive
