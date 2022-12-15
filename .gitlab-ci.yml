@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/ubuntu:22.04
+  image: i386/ubuntu:latest
 
   variables:
     DEBIAN_FRONTEND: noninteractive
