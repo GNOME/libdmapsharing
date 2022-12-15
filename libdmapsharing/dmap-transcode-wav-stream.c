@@ -169,7 +169,7 @@ dmap_transcode_wav_stream_new (GInputStream * src_stream)
         }
         g_assert (G_IS_SEEKABLE (stream));
 
-	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_transcode_stream_new_buffer_cb), stream);
+	g_signal_connect (sink, "new-sample", G_CALLBACK (dmap_transcode_stream_private_new_buffer_cb), stream);
 
 	stream->priv->pipeline = gst_object_ref (pipeline);
         stream->priv->src = gst_object_ref (src);

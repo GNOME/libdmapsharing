@@ -155,8 +155,8 @@ _seekable_iface_init (GSeekableIface * iface)
 }
 
 void
-dmap_transcode_stream_new_buffer_cb (GstElement * element,
-                                     DmapTranscodeStream * stream)
+dmap_transcode_stream_private_new_buffer_cb (GstElement * element,
+                                             DmapTranscodeStream * stream)
 {
 	gsize i;
 	guint8 *ptr;
