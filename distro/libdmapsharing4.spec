@@ -1,16 +1,17 @@
 Name: libdmapsharing4
 Version: 3.9.10
-Release: 1%{?dist}
+Release: 7%{?dist}
 Summary: A DMAP client and server library
 
 License: LGPLv2+
 URL: https://www.flyn.org/projects/libdmapsharing/
 Source0: https://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
 
-BuildRequires: pkgconfig, glib2-devel, libsoup-devel >= 2.32
+BuildRequires: pkgconfig, glib2-devel, libsoup3-devel
 BuildRequires: gdk-pixbuf2-devel, gstreamer1-plugins-base-devel
 BuildRequires: pkgconfig(avahi-client) pkgconfig(avahi-glib)
 BuildRequires: vala libgee-devel
+BuildRequires: make
 
 %description 
 libdmapsharing implements the DMAP protocols. This includes support for
@@ -61,6 +62,27 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %changelog
+* Wed Dec 14 2022 W. Michael Petullo <mike@flyn.org> - 3.9.10-7
+- Depend on libsoup3
+
+* Thu Jul 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.10-6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
+
+* Thu Jan 20 2022 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.10-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
+
+* Thu Jul 22 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.10-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
+
+* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.10-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
+* Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.10-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
+* Wed Jul 08 2020 W. Michael Petullo <mike@flyn.org> - 3.9.10-1
+- new upstream version
+
 * Tue Jun 30 2020 W. Michael Petullo <mike@flyn.org> - 3.9.9-1
 - new upstream version (will be required for next grilo-plugins release)
 
