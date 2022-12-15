@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: riscv64/ubuntu:jammy
+  image: ubuntu:jammy
 
   variables:
     DEBIAN_FRONTEND: noninteractive
