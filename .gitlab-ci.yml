@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/ubuntu:latest
+  image: i386/ubuntu:jammy
 
   variables:
     DEBIAN_FRONTEND: noninteractive
