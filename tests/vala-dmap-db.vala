@@ -55,7 +55,9 @@ private class ValaDmapDb : GLib.Object, Dmap.Db {
 	public unowned Dmap.Record lookup_by_id (uint id) {
 		// NOTE: iPhoto does not like a record ID of 0,
 		// so we pretend to start with 1
-		return db.get ((int) id - 1);
+		unowned Dmap.Record record = db.get ((int) id - 1);
+		record.ref();
+		return record;
 	}
 
 
