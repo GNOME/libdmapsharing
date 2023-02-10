@@ -1,6 +1,6 @@
 m4_define([libdmapsharing_major], [3])
 m4_define([libdmapsharing_minor], [9])
-m4_define([libdmapsharing_micro], [10])
+m4_define([libdmapsharing_micro], [11])
 m4_define([libdmapsharing_version], [libdmapsharing_major.libdmapsharing_minor.libdmapsharing_micro])
 
 AC_INIT(libdmapsharing, [libdmapsharing_version], [https://www.flyn.org/projects/libdmapsharing/])
