@@ -9,10 +9,10 @@ build-ubuntu:
     - apt-get install -q -y --no-install-recommends autoconf automake avahi-daemon check gcc gtk-doc-tools libavahi-client-dev libavahi-compat-libdnssd-dev libavahi-glib-dev libgdk-pixbuf2.0-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libsoup-3.0-dev libtool pkg-config
 
   script:
-    - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
+    - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings --disable-dependency-tracking
     - make
     - make clean
-    - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
+    - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings --disable-dependency-tracking
     - make
     - make clean
 
