@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/debian:stable
+  image: i386/debian:unstable
 
   variables:
     DEBIAN_FRONTEND: noninteractive
