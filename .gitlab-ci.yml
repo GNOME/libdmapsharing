@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: ubuntu:jammy
+  image: i386/debian:stable
 
   variables:
     DEBIAN_FRONTEND: noninteractive
