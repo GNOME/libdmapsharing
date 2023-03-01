@@ -69,7 +69,13 @@ IGNORE_HFILES= \
 	dmap-share-private.h \
 	dmap-structure.h \
 	gst-util.h \
-	test-*.h
+	test-dmap-av-record-factory.h \
+	test-dmap-av-record.h \
+	test-dmap-container-db.h \
+	test-dmap-container-record.h \
+	test-dmap-db.h \
+	test-dmap-image-record-factory.h \
+	test-dmap-image-record.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
