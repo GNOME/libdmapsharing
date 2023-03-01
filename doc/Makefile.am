@@ -67,7 +67,11 @@ IGNORE_HFILES= \
 	g-gst-input-stream.h \
 	g-gst-mp3-input-stream.h \
 	g-gst-wav-input-stream.h \
-	gst-util.h
+	gst-util.h \
+	test-daap-record-factory.h \
+	test-daap-record.h \
+	test-dpap-record-factory.h \
+	test-dpap-record.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
