@@ -56,6 +56,7 @@ typedef enum {
 	DMAP_CC_MUDL,
 	DMAP_CC_MSMA,
 	DMAP_CC_FQUESCH,
+	DMAP_CC_MDBK,
 
 	DMAP_CC_APRO,
 	DMAP_CC_AVDB,
@@ -129,6 +130,7 @@ typedef enum {
 	DMAP_CC_AESG,
 	DMAP_CC_AEMK,
 	DMAP_CC_AEFP,
+	DMAP_CC_ATED,
 
 	/* DACP */
 	DMAP_CC_CMPA,

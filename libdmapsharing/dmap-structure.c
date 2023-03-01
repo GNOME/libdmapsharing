@@ -122,6 +122,8 @@ static const DmapContentCodeDefinition _cc_defs[] = {
 	 "dmap.speakermachineaddress", "msma", DMAP_TYPE_INT},
 	{DMAP_CC_FQUESCH, MAKE_CONTENT_CODE ('f', '?', 'c', 'h'),
 	 "dmap.haschildcontainers", "f?ch", DMAP_TYPE_BYTE},
+	{DMAP_CC_MDBK, MAKE_CONTENT_CODE ('m', 'd', 'b', 'k'),
+	 "dmap.databasekind", "mdbk", DMAP_TYPE_INT},
 
 	{DMAP_CC_APRO, MAKE_CONTENT_CODE ('a', 'p', 'r', 'o'),
 	 "daap.protocolversion", "apro", DMAP_TYPE_VERSION},
@@ -261,6 +263,8 @@ static const DmapContentCodeDefinition _cc_defs[] = {
 	 "com.apple.itunes.mediakind", "aeMK", DMAP_TYPE_BYTE},
 	{DMAP_CC_AEFP, MAKE_CONTENT_CODE ('a', 'e', 'F', 'P'),
 	 "com.apple.itunes.req-fplay", "aeFP", DMAP_TYPE_BYTE},
+	{DMAP_CC_ATED, MAKE_CONTENT_CODE ('a', 't', 'e', 'd'),
+	 "daap.supportsextradata", "ated", DMAP_TYPE_SHORT},
 
 	/* DACP */
 	{DMAP_CC_CMPA, MAKE_CONTENT_CODE ('c', 'm', 'p', 'a'),
