@@ -14,6 +14,7 @@ typedef enum {
 				 * DATA
 				 */
 	DMAP_CC_MDCL,
+	DMAP_CC_MEDS,
 	DMAP_CC_MSTT,
 	DMAP_CC_MIID,
 	DMAP_CC_MINM,
@@ -56,6 +57,7 @@ typedef enum {
 	DMAP_CC_MUDL,
 	DMAP_CC_MSMA,
 	DMAP_CC_FQUESCH,
+	DMAP_CC_MDBK,
 
 	DMAP_CC_APRO,
 	DMAP_CC_AVDB,
@@ -120,6 +122,7 @@ typedef enum {
 	DMAP_CC_PRET,
 
 	/* iTunes 6.02+ */
+	DMAP_CC_AECS,
 	DMAP_CC_AESV,
 	DMAP_CC_AEHV,
 
@@ -128,7 +131,15 @@ typedef enum {
 	DMAP_CC_AEPS,
 	DMAP_CC_AESG,
 	DMAP_CC_AEMK,
+	DMAP_CC_AEMK2,
 	DMAP_CC_AEFP,
+	DMAP_CC_ATED,
+	DMAP_CC_ASGR,
+	DMAP_CC_AEMQ,
+	DMAP_CC_AESL,
+	DMAP_CC_AESR,
+	DMAP_CC_AETR,
+	DMAP_CC_MSED,
 
 	/* DACP */
 	DMAP_CC_CMPA,
