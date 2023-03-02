@@ -10,10 +10,10 @@ build-ubuntu:
 
   script:
     - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
-    - make
+    - make all check
     - make clean
     - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
-    - make
+    - make all check
     - make clean
 
   artifacts:
@@ -30,7 +30,7 @@ build-fedora:
 
   script:
     - ./autogen.sh --enable-more-warnings
-    - make all dist
+    - make all check clean all dist
     - mkdir -p ~/rpmbuild/SOURCES
     - cp libdmapsharing-*.*.*.tar.gz ~/rpmbuild/SOURCES
     - rpmbuild -ba distro/libdmapsharing4.spec
