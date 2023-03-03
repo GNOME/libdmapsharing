@@ -3,7 +3,7 @@ m4_define([libdmapsharing_minor], [9])
 m4_define([libdmapsharing_micro], [11])
 m4_define([libdmapsharing_version], [libdmapsharing_major.libdmapsharing_minor.libdmapsharing_micro])
 
-AC_INIT(libdmapsharing, [libdmapsharing_version], [https://www.flyn.org/projects/libdmapsharing/])
+AC_INIT([libdmapsharing],[libdmapsharing_version],[https://www.flyn.org/projects/libdmapsharing/])
 
 API_VERSION=4.0
 AC_SUBST(API_VERSION)
@@ -11,14 +11,13 @@ AC_SUBST(API_VERSION)
 SO_VERSION=m4_eval(libdmapsharing_minor+libdmapsharing_major):m4_eval(libdmapsharing_micro):m4_eval(libdmapsharing_minor)
 AC_SUBST(SO_VERSION)
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_MACRO_DIRS([m4])
 
-AC_HEADER_STDC
 AC_PROG_CC
 AC_PROG_CPP
-AC_PROG_LIBTOOL
-AM_PROG_CC_STDC
+LT_INIT
+AC_PROG_CC
 
 GOBJECT_INTROSPECTION_CHECK([1.30.0])
 GTK_DOC_CHECK(1.0)
@@ -28,8 +27,8 @@ AC_PATH_PROG(PEDANSEE, pedansee)
 AM_CONDITIONAL(HAVE_PEDANSEE, test -n "$PEDANSEE")
 
 # Select debugging or measuring code coverage?
-AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],[enable debugging build])])
-AC_ARG_ENABLE(coverage, [AC_HELP_STRING([--enable-coverage],[enable code-coverage build])])
+AC_ARG_ENABLE(debug, [AS_HELP_STRING([--enable-debug],[enable debugging build])])
+AC_ARG_ENABLE(coverage, [AS_HELP_STRING([--enable-coverage],[enable code-coverage build])])
 if test "x$enable_debug" = "xyes"; then
 	CFLAGS="$CFLAGS -O0 -g"
 elif test "x$enable_coverage" = "xyes"; then
@@ -39,7 +38,7 @@ else
 fi
 
 # Select more compiler warnings?
-AC_ARG_ENABLE(more-warnings, [AC_HELP_STRING([--enable-more-warnings],[maximum compiler warnings])])
+AC_ARG_ENABLE(more-warnings, [AS_HELP_STRING([--enable-more-warnings],[maximum compiler warnings])])
 if test "$GCC" = "yes" -a x$enable_more_warnings = "xyes"; then
 	WARN_CFLAGS="\
 		-Wcomment -Wformat -Wnonnull -Wimplicit-int -Wimplicit \
@@ -69,7 +68,7 @@ fi
 AC_SUBST(WARN_CFLAGS)
 
 # Build test code?
-AC_ARG_ENABLE(tests, [AC_HELP_STRING([--disable-tests],[do not build tests])], tests=$enableval, tests=yes)
+AC_ARG_ENABLE(tests, [AS_HELP_STRING([--disable-tests],[do not build tests])], tests=$enableval, tests=yes)
 if test x$tests = xyes; then
 	PKG_CHECK_MODULES([CHECK], [check >= 0.9.4],have_check=yes,have_check=no)
 	AM_CONDITIONAL(HAVE_CHECK, test x"$have_check" = "xyes")
@@ -213,8 +212,7 @@ AC_SUBST(DMAP_HAVE_UNALIGNED_ACCESS_DEFINE)
 # Select mDNS library.
 AC_ARG_WITH(
 	mdns,
-	AC_HELP_STRING([--with-mdns=auto|avahi|dns_sd],
-	[Select the mDNS/DNS-SD implementation to use (default auto)]),
+	AS_HELP_STRING([--with-mdns=auto|avahi|dns_sd],[Select the mDNS/DNS-SD implementation to use (default auto)]),
 	WITH_MDNS=$withval,
 	WITH_MDNS=auto
 )
