@@ -33,7 +33,11 @@ build-fedora:
 
   script:
     - ./autogen.sh --enable-more-warnings
-    - make all check clean all dist
+    - make
+    - make check
+    - make clean
+    - make
+    - make dist
     - mkdir -p ~/rpmbuild/SOURCES
     - cp libdmapsharing-*.*.*.tar.gz ~/rpmbuild/SOURCES
     - rpmbuild -ba distro/libdmapsharing4.spec
