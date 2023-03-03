@@ -27,6 +27,7 @@ build-fedora:
   before_script:
     - dnf -y update
     - dnf -y install autoconf automake check-devel dbus-daemon gcc gtk-doc avahi avahi-glib-devel avahi-compat-libdns_sd-devel gdk-pixbuf2-devel libgee-devel glib2-devel gstreamer1-plugins-base-devel gtk3-devel libsoup3-devel libtool make pkgconf-pkg-config rpm-build vala
+    - mkdir -p /run
     - dbus-daemon --system --fork
     - avahi-daemon -D
 
