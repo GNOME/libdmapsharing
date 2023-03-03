@@ -725,8 +725,8 @@ _parse_container_buffer (GNode * parent, const guint8 * buf,
 			}
 		case DMAP_TYPE_POINTER:{
 				gpointer *data =
-					g_memdup ((const gchar *) &(buf[l]),
-						  codesize);
+					g_memdup2 ((const gchar *) &(buf[l]),
+						   codesize);
 
 				item->size = codesize;
 				g_value_set_pointer (&(item->content), data);
