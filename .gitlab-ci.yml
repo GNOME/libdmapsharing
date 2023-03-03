@@ -10,10 +10,10 @@ build-ubuntu:
 
   script:
     - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
-    - make all check
+    - make
     - make clean
     - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
-    - make all check
+    - make
     - make clean
 
   artifacts:
@@ -26,7 +26,7 @@ build-fedora:
 
   before_script:
     - dnf -y update
-    - dnf -y install autoconf automake check-devel gcc gtk-doc avahi-glib-devel avahi-compat-libdns_sd-devel gdk-pixbuf2-devel libgee-devel glib2-devel gstreamer1-plugins-base-devel gtk3-devel libsoup3-devel libtool make pkgconf-pkg-config rpm-build vala
+    - dnf -y install autoconf automake check-devel gcc gtk-doc avahi avahi-glib-devel avahi-compat-libdns_sd-devel gdk-pixbuf2-devel libgee-devel glib2-devel gstreamer1-plugins-base-devel gtk3-devel libsoup3-devel libtool make pkgconf-pkg-config rpm-build vala
 
   script:
     - ./autogen.sh --enable-more-warnings
