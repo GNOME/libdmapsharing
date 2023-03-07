@@ -24,6 +24,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-image-connection
+ * @short_description: A DPAP connection.
+ *
+ * #DmapImageConnection objects encapsulate a DPAP connection.
+ */
+
+/**
  * DMAP_TYPE_IMAGE_CONNECTION:
  *
  * The type for #DmapImageConnection.

@@ -29,6 +29,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-av-record
+ * @short_description: The description of an item shared using DAAP.
+ *
+ * #DmapAvRecord objects encapsulate the description of an item shared using DAAP.
+ */
+
+/**
  * DMAP_TYPE_AV_RECORD:
  *
  * The type for #DmapAvRecord.

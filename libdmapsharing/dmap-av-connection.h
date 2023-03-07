@@ -24,6 +24,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-av-connection
+ * @short_description: A DAAP connection.
+ *
+ * #DmapAvConnection objects encapsulate a DAAP connection.
+ */
+
+/**
  * DMAP_TYPE_AV_CONNECTION:
  *
  * The type for #DmapAvConnection.

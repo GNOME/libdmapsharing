@@ -24,6 +24,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-mdns-service
+ * @short_description: An mDNS service.
+ *
+ * #DmapMdnsService objects advertise DMAP shares.
+ */
+
+/**
  * DMAP_TYPE_MDNS_SERVICE:
  *
  * The type for #DmapMdnsService.

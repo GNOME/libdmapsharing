@@ -26,6 +26,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-container-record
+ * @short_description: The description of an item shared using DACP.
+ *
+ * #DmapContainerRecord objects encapsulate the description of an item shared using DACP.
+ */
+
+/**
  * DMAP_TYPE_CONTAINER_RECORD:
  *
  * The type for #DmapContainerRecord.

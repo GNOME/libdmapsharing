@@ -31,6 +31,13 @@
 
 G_BEGIN_DECLS
 
+/**
+ * SECTION: dmap-connection
+ * @short_description: An abstract parent to the various connection classes.
+ *
+ * #DmapConnection provides an abstract parent to the #DmapAvConnection, #DmapControlConnection, and #DmapImageConnection classes.
+ */
+
 typedef struct {
 	char *name;
 	int id;

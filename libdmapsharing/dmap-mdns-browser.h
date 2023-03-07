@@ -29,6 +29,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-mdns-browser
+ * @short_description: An mDNS browser.
+ *
+ * #DmapMdnsBrowser objects watch for DMAP shares.
+ */
+
+/**
  * DMAP_TYPE_MDNS_BROWSER:
  *
  * The type for #DmapMdnsBrowser.

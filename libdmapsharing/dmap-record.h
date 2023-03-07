@@ -24,6 +24,14 @@
 #include <glib-object.h>
 
 G_BEGIN_DECLS
+
+/**
+ * SECTION: dmap-record
+ * @short_description: An abstract parent to the various record classes.
+ *
+ * #DmapRecord provides an abstract parent to the #DmapAvRecord and #DmapImageRecord classes.
+ */
+
 /**
  * DMAP_TYPE_RECORD:
  *

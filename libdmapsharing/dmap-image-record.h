@@ -28,6 +28,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-image-record
+ * @short_description: The description of an item shared using DPAP.
+ *
+ * #DmapImageRecord objects encapsulate the description of an item shared using DPAP.
+ */
+
+/**
  * DMAP_TYPE_IMAGE_RECORD:
  *
  * The type for #DmapImageRecord.

@@ -27,6 +27,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-record-factory
+ * @short_description: A factory for DmapRecord objects.
+ *
+ * #DmapRecordFactory is a factory capable of creating #DmapRecord objects.
+ */
+
+/**
  * DMAP_TYPE_RECORD_FACTORY:
  *
  * The type for #DmapRecordFactory.

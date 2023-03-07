@@ -24,6 +24,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-control-player
+ * @short_description: An interface for media controllers.
+ *
+ * #DmapControlPlayer provides an interface for controlling the playback of media.
+ */
+
+/**
  * DMAP_TYPE_CONTROL_PLAYER:
  *
  * The type for #DmapControlPlayer.

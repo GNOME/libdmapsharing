@@ -32,6 +32,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-av-share
+ * @short_description: A DAAP share.
+ *
+ * #DmapAvShare objects encapsulate a DAAP share.
+ */
+
+/**
  * DMAP_TYPE_AV_SHARE:
  *
  * The type for #DmapAvShare.

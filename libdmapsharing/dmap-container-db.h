@@ -27,6 +27,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-container-db
+ * @short_description: An interface for DMAP container databases.
+ *
+ * #DmapContainerDb provides an interface for DMAP container databases.
+ */
+
+/**
  * DMAP_TYPE_CONTAINER_DB:
  *
  * The type for #DmapContainerDb.

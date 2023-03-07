@@ -27,6 +27,14 @@
 #include <glib-object.h>
 
 G_BEGIN_DECLS
+
+/**
+ * SECTION: dmap-transcode-stream
+ * @short_description: A transcoding #GInputStream wrapper.
+ *
+ * #DmapTranscodeStream objects wrap a #GInputStream in a way that transcodes the data therein.
+ */
+
 #define DMAP_TYPE_TRANSCODE_STREAM         (dmap_transcode_stream_get_type ())
 #define DMAP_TRANSCODE_STREAM(o)           (G_TYPE_CHECK_INSTANCE_CAST ((o), \
                                             DMAP_TYPE_TRANSCODE_STREAM, \

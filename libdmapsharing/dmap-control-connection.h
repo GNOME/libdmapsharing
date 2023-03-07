@@ -24,6 +24,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-control-connection
+ * @short_description: A DACP connection.
+ *
+ * #DmapControlConnection objects encapsulate a DACP connection.
+ */
+
+/**
  * DACP_TYPE_CONNECTION:
  *
  * The type for #DmapControlConnection.

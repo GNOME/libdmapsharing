@@ -32,6 +32,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-control-share
+ * @short_description: A DACP share.
+ *
+ * #DmapControlShare objects encapsulate a DACP share.
+ */
+
+/**
  * DMAP_TYPE_CONTROL_SHARE:
  *
  * The type for #DmapControlShare.

@@ -33,6 +33,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-share
+ * @short_description: An abstract parent to the various share classes.
+ *
+ * #DmapShare provides an abstract parent to the #DmapAvShare, #DmapControlShare, and #DmapImageShare classes.
+ */
+
+/**
  * DMAP_TYPE_SHARE:
  *
  * The type for #DmapShare.

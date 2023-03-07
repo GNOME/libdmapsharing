@@ -30,6 +30,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-image-share
+ * @short_description: A DPAP share.
+ *
+ * #DmapImageShare objects encapsulate a DPAP share.
+ */
+
+/**
  * DMAP_TYPE_IMAGE_SHARE:
  *
  * The type for #DmapImageShare.

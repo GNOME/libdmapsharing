@@ -27,6 +27,13 @@
 
 G_BEGIN_DECLS
 /**
+ * SECTION: dmap-db
+ * @short_description: An interface for DMAP databases.
+ *
+ * #DmapDb provides an interface for DMAP databases.
+ */
+
+/**
  * DMAP_TYPE_DB:
  *
  * The type for #DmapDb.
