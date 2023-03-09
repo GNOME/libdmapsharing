@@ -200,9 +200,9 @@ check:
 	make CFLAGS="-fprofile-arcs -ftest-coverage -g"
 	../tests/unit-test
 	set -e; for i in $(libdmapsharing_4_0_la_SOURCES); do \
-		gcov -r -o $(patsubst %.c,%.o,.libs/libdmapsharing_4_0_la-$$i) $$i >/dev/null; \
+		gcov -r -o .libs/libdmapsharing_4_0_la-$${i%.c}.o $$i >/dev/null; \
 	done
-	../tests/summarize-coverage $(patsubst %,%.gcov,$(libdmapsharing_4_0_la_SOURCES))
+	../tests/summarize-coverage ${libdmapsharing_4_0_la_SOURCES:.c=.c.gcov}
 if HAVE_PEDANSEE
 	echo    "[flags]" >pedansee.conf
 	echo    "	skip-unit-test-present = true" >>pedansee.conf
