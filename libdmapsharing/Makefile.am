@@ -95,7 +95,6 @@ maintained_headers = \
 	dmap-container-db.h \
 	dmap-container-record.h \
 	dmap-db.h \
-	dmap-enums.h \
 	dmap-error.h \
 	dmap-md5.h \
 	dmap-mdns-browser.h \
