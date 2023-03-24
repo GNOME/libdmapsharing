@@ -928,7 +928,7 @@ _databases_items_xxx (DmapShare * share,
 	const gchar *id_str;
 	guint id;
 	const gchar *range_header;
-	guint64 filesize;
+	guint64 filesize = 0;
 	guint64 offset = 0;
 
 	rest_of_path = strchr (path + 1, '/');

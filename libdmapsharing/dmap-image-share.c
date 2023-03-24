@@ -387,11 +387,11 @@ _databases_items_xxx (DmapShare * share,
                       SoupServerMessage * msg,
                       const char *path)
 {
-	DmapDb *db;
+	DmapDb *db = NULL;
 	const gchar *rest_of_path;
 	const gchar *id_str;
 	guint id;
-	guint64 filesize;
+	guint64 filesize = 0;
 	DmapImageRecord *record;
 
 	rest_of_path = strchr (path + 1, '/');
