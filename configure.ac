@@ -35,8 +35,6 @@ if test "x$enable_debug" = "xyes"; then
 	CFLAGS="$CFLAGS -O0 -g"
 elif test "x$enable_coverage" = "xyes"; then
 	CFLAGS="$CFLAGS -O0 -g -fprofile-arcs -ftest-coverage"
-else
-	CFLAGS="$CFLAGS -O2"
 fi
 
 # Select more compiler warnings?
