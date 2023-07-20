@@ -184,11 +184,10 @@ AC_SUBST(GSTREAMERAPP_LIBS)
 AM_PROG_VALAC([0.11.4])
 AM_CONDITIONAL(HAVE_VALAC, test -x "$VALAC")
 
-# Have vala-gen-introspect?
-AC_PATH_PROG(VALA_GEN_INTROSPECT, vala-gen-introspect)
+# Have vapigen?
 AC_PATH_PROG(VAPIGEN, vapigen)
-AM_CONDITIONAL(BUILD_VAPI, test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspection")
-if ! test -n "$VALA_GEN_INTROSPECT" -a -n "$VAPIGEN" -a xyes = x"$found_introspection"; then
+AM_CONDITIONAL(BUILD_VAPI, test -n "$VAPIGEN" -a xyes = x"$found_introspection")
+if ! test -n "$VAPIGEN" -a xyes = x"$found_introspection"; then
 	AC_MSG_WARN([Will not build vapi])
 fi
 
@@ -297,7 +296,6 @@ AC_CONFIG_FILES([
 	m4/Makefile
 	media/Makefile
 	vala/Makefile
-	vala/libdmapsharing-${API_VERSION}-uninstalled.files
 ])
 
 AC_OUTPUT
