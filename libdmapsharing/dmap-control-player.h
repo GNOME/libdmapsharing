@@ -108,6 +108,8 @@ DmapAvRecord *dmap_control_player_now_playing_record (DmapControlPlayer * player
  * @player: a player
  * @width: width
  * @height: height
+ *
+ * Returns: (transfer none): artwork for the currently playing record.
  */
 gchar *dmap_control_player_now_playing_artwork (DmapControlPlayer * player,
                                                 guint width, guint height);

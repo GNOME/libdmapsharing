@@ -87,9 +87,12 @@ int main (string[] args) {
 	GLib.Log.set_handler ("libdmapsharing", GLib.LogLevelFlags.LEVEL_DEBUG, debug_null);
 	GLib.Log.set_handler (null, GLib.LogLevelFlags.LEVEL_DEBUG, debug_null);
 
-	var dmapcopy = new DPAPCopy ();
-
-	loop.run ();
+	try {
+		var dmapcopy = new DPAPCopy ();
+		loop.run ();
+	} catch (Error e) {
+		stderr.printf("Error: %s\n", e.message);
+	}
 
 	return 0;
 }

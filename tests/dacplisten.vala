@@ -21,6 +21,36 @@
  */
 
 private class ValaDacpPlayer : GLib.Object, Dmap.ControlPlayer {
+	private ulong _playing_time;
+	private bool _shuffle_state;
+	private Dmap.ControlRepeatState _repeat_state;
+	private Dmap.ControlPlayState _play_state;
+	private ulong _volume;
+
+	public ulong playing_time {
+		get { return this._playing_time; }
+		set { this._playing_time = value; }
+	}
+
+	public virtual bool shuffle_state {
+		get { return this._shuffle_state; }
+		set { this._shuffle_state = value; }
+	}
+
+	public virtual Dmap.ControlRepeatState repeat_state {
+		get { return this._repeat_state; }
+		set { this._repeat_state = value; }
+	}
+
+	public virtual Dmap.ControlPlayState play_state {
+		get { return this._play_state; }
+		set { this._play_state = value; }
+	}
+
+	public virtual ulong volume {
+		get { return this._volume; }
+		set { this._volume = value; }
+	}
 
 	unowned Dmap.AvRecord now_playing_record () {
 		stdout.printf ("Now playing record request received\n");
@@ -52,7 +82,7 @@ private class ValaDacpPlayer : GLib.Object, Dmap.ControlPlayer {
 		stdout.printf ("Cue clear request received\n");
 	}
 
-	void cue_play (GLib.List records, uint index) {
+	void cue_play (GLib.List<Dmap.Record> records, uint index) {
 		stdout.printf ("Cue play request received\n");
 	}
 }

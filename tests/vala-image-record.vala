@@ -25,8 +25,9 @@ private class ValaImageRecord : GLib.Object, Dmap.Record, Dmap.ImageRecord {
 	private string _filename;
 	private string _aspect_ratio;
 	private string _format;
+	private GLib.Array _hash;
 	private string _comments;
-	GLib.Array _thumbnail;
+	private GLib.Array _thumbnail;
 	private int _large_filesize;
 	private int _pixel_height;
 	private int _pixel_width;
@@ -34,35 +35,43 @@ private class ValaImageRecord : GLib.Object, Dmap.Record, Dmap.ImageRecord {
 	private int _creation_date;
 
 	public string location {
-		get { return _location; }
+		owned get { return _location; }
 		set { _location = value; }
 	}
 
 	public string filename {
-		get { return _filename; }
+		owned get { return _filename; }
 		set { _filename = value; }
 	}
 
 	public string aspect_ratio {
-		get { return _aspect_ratio; }
+		owned get { return _aspect_ratio; }
 		set { _aspect_ratio = value; }
 	}
 
 	public string format {
-		get { return _format; }
+		owned get { return _format; }
 		set { _format = value; }
 	}
 
-	public GLib.Array thumbnail {
-		get { return _thumbnail; }
+	public  GLib.Array<void *> hash {
+		owned get { return _hash; }
 		set {
-			_thumbnail = new GLib.Array<uint8> (false, false, 1);
+			_hash = new GLib.Array<void *> (false, false, 1);
+			_hash.append_vals (value.data, value.data.length);
+		}
+	}
+
+	public GLib.Array<void *> thumbnail {
+		owned get { return _thumbnail; }
+		set {
+			_thumbnail = new GLib.Array<void *> (false, false, 1);
 			_thumbnail.append_vals (value.data, value.data.length);
 		}
 	}
 
 	public string comments {
-		get { return _comments; }
+		owned get { return _comments; }
 		set { _comments = value; }
 	}
 
@@ -91,15 +100,15 @@ private class ValaImageRecord : GLib.Object, Dmap.Record, Dmap.ImageRecord {
 		set { _creation_date = value; }
 	}
 
-	public unowned GLib.InputStream read () throws GLib.Error {
+	public GLib.InputStream read () throws GLib.Error {
 		GLib.error ("read not implemented");
 	}
 
-	public unowned bool set_from_blob (GLib.Array blob) {
+	public unowned bool set_from_blob (GLib.Array<uint8> blob) {
 		GLib.error ("set_from_blob not implemented");
 	}
 
-	public unowned GLib.Array to_blob () {
+	public GLib.Array<uint8> to_blob () {
 		GLib.error ("to_blob not implemented");
 	}
 
@@ -117,14 +126,20 @@ private class ValaImageRecord : GLib.Object, Dmap.Record, Dmap.ImageRecord {
 
 		string path = GLib.Environment.get_current_dir () + "/media/test.jpeg";
 		uint8[] data;
-		GLib.FileUtils.get_data (path, out data);
+
+		try {
+			GLib.FileUtils.get_data (path, out data);
+		} catch (Error e) {
+			stderr.printf("Error: %s\n", e.message);
+		}
+
 		_thumbnail = new GLib.Array<uint8> (false, false, 1);
 		_thumbnail.append_vals (data, data.length);
 	}
 }
 
 private class ValaImageRecordFactory : GLib.Object, Dmap.RecordFactory {
-	public Dmap.Record create (void* user_data) {
+	public Dmap.Record create () {
 		return new ValaImageRecord ();
 	}
 }
