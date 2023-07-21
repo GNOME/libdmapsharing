@@ -1,5 +1,5 @@
 Name: libdmapsharing4
-Version: 3.9.12
+Version: 3.9.13
 Release: 1%{?dist}
 Summary: A DMAP client and server library
 
@@ -62,7 +62,16 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %changelog
-* Fri Feb 10 2023 W. Michael Petullo <mike@flyn.org> - 3.9.11-1
+* Thu Jul 20 2023 W. Michael Petullo <mike@flyn.org> - 3.9.13-1
+- new upstream version
+
+* Thu Jul 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.12-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
+
+* Mon May 15 2023 W. Michael Petullo <mike@flyn.org> - 3.9.12-1
+- new upstream version
+
+* Sat Feb 11 2023 W. Michael Petullo <mike@flyn.org> - 3.9.11-1
 - new upstream version
 - require libsoup3
 
