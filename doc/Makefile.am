@@ -58,3 +58,17 @@ DISTCLEANFILES = \
 	libdmapsharing-4.0-overrides.txt \
 	libdmapsharing-4.0-sections.txt \
 	libdmapsharing-4.0.types
+
+EXTRA_DIST = \
+	authenticatecb.xml \
+	browserapi.xml \
+	client-internals.xml \
+	coding-standards.xml \
+	connectedcb.xml \
+	containerdb.xml \
+	errorcb.xml \
+	libdmapsharing-4.0-docs.xml \
+	mediadb.xml \
+	server-internals.xml \
+	serviceaddedcb.xml \
+	shareapi.xml
