@@ -523,7 +523,7 @@ _message_add_headers (SoupMessage *message, DmapConnection * connection, const g
 	DmapConnectionPrivate *priv = connection->priv;
 	SoupMessageHeaders *headers;
 	char hash[33] = { 0 };
-	char *norb_daap_uri = (char *) uri;
+	const guchar *norb_daap_uri = (const guchar *) uri;
 	char *request_id;
 
 	headers = soup_message_get_request_headers(message);
@@ -531,7 +531,7 @@ _message_add_headers (SoupMessage *message, DmapConnection * connection, const g
 	priv->request_id++;
 
 	if (g_ascii_strncasecmp (uri, "daap://", 7) == 0) {
-		norb_daap_uri = strstr (uri, "/data");
+		norb_daap_uri = (const guchar *) strstr (uri, "/data");
 	}
 
 	dmap_md5_generate ((short) floorf (priv->dmap_version),
@@ -1873,13 +1873,13 @@ dmap_connection_get_headers (DmapConnection * connection, const gchar * uri)
 	DmapConnectionPrivate *priv = connection->priv;
 	SoupMessageHeaders *headers = NULL;
 	char hash[33] = { 0 };
-	char *norb_daap_uri = (char *) uri;
+	const guchar *norb_daap_uri = (const guchar *) uri;
 	char *request_id;
 
 	priv->request_id++;
 
 	if (g_ascii_strncasecmp (uri, "daap://", 7) == 0) {
-		norb_daap_uri = strstr (uri, "/data");
+		norb_daap_uri = (const guchar *) strstr (uri, "/data");
 	}
 
 	dmap_md5_generate ((short) floorf (priv->dmap_version),
