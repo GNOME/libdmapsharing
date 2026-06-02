@@ -2063,6 +2063,14 @@ dmap_share_build_filter (gchar * filterstr)
 		next_char++;
 	};
 
+	if (parentheses_count != 0) {
+		g_warning("bad parenthesis in query %s", filterstr);
+	}
+
+	if (quotes_count != 0) {
+		g_warning("bad quotes in query %s", filterstr);
+	}
+
 	// Any remaining def or filter must still be handled here.
 	if (def) {
 		filter = g_slist_append (filter, def);
