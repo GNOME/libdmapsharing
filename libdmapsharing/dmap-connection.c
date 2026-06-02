@@ -1397,7 +1397,6 @@ _handle_playlists (DmapConnection * connection, guint status,
 	gboolean ok = FALSE;
 	DmapConnectionPrivate *priv = connection->priv;
 	GNode *listing_node;
-	gint i;
 	GNode *n;
 
 	if (structure == NULL || SOUP_STATUS_IS_SUCCESSFUL (status) == FALSE) {
@@ -1410,7 +1409,7 @@ _handle_playlists (DmapConnection * connection, guint status,
 		goto done;
 	}
 
-	for (i = 0, n = listing_node->children; n; n = n->next, i++) {
+	for (n = listing_node->children; n; n = n->next) {
 		DmapStructureItem *item;
 		gint id;
 		gchar *name;
@@ -1465,7 +1464,6 @@ _handle_playlist_entries (DmapConnection * connection, guint status,
 	DmapPlaylist *playlist;
 	GNode *listing_node;
 	GNode *node;
-	gint i;
 	GList *playlist_uris = NULL;
 
 	if (structure == NULL || SOUP_STATUS_IS_SUCCESSFUL (status) == FALSE) {
@@ -1483,8 +1481,7 @@ _handle_playlist_entries (DmapConnection * connection, guint status,
 		goto done;
 	}
 
-	for (i = 0, node = listing_node->children; node;
-	     node = node->next, i++) {
+	for (node = listing_node->children; node; node = node->next) {
 		gchar *item_uri;
 		gint playlist_item_id;
 		DmapStructureItem *item;
