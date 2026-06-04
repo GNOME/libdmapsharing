@@ -1,9 +1,9 @@
 Name: libdmapsharing4
-Version: 3.9.13
+Version: 3.9.14
 Release: 1%{?dist}
 Summary: A DMAP client and server library
 
-License: LGPLv2+
+License: LGPL-2.1-or-later
 URL: https://www.flyn.org/projects/libdmapsharing/
 Source0: https://www.flyn.org/projects/libdmapsharing/libdmapsharing-%{version}.tar.gz
 
@@ -62,18 +62,49 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 %{_datadir}/vala/vapi/libdmapsharing-4.0.vapi
 
 %changelog
+* Thu Jun 04 2026 W. Michael Petullo <mike@flyn.org> - 3.9.14-1
+- New upstream version
+- Consistent capitalization in changelog
+
+* Fri Jan 16 2026 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.13-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_44_Mass_Rebuild
+
+* Thu Jul 24 2025 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.13-9
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_43_Mass_Rebuild
+
+* Fri Jan 17 2025 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.13-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
+
+* Wed Jan 01 2025 W. Michael Petullo <mike@flyn.org> - 3.9.13-7
+- Fix date in changelog
+
+* Wed Jan 01 2025 W. Michael Petullo <mike@flyn.org> - 3.9.13-6
+- Review and adjust license after SPDX cleanup
+
+* Mon Sep 02 2024 Miroslav Suchý <msuchy@redhat.com> - 3.9.13-5
+- Convert license to SPDX
+
+* Thu Jul 18 2024 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.13-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
+
+* Thu Jan 25 2024 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.13-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Sun Jan 21 2024 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.13-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
 * Thu Jul 20 2023 W. Michael Petullo <mike@flyn.org> - 3.9.13-1
-- new upstream version
+- New upstream version
 
 * Thu Jul 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.12-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_39_Mass_Rebuild
 
 * Mon May 15 2023 W. Michael Petullo <mike@flyn.org> - 3.9.12-1
-- new upstream version
+- New upstream version
 
 * Sat Feb 11 2023 W. Michael Petullo <mike@flyn.org> - 3.9.11-1
-- new upstream version
-- require libsoup3
+- New upstream version
+- Require libsoup3
 
 * Thu Jan 19 2023 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.10-7
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
@@ -94,13 +125,13 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
 * Wed Jul 08 2020 W. Michael Petullo <mike@flyn.org> - 3.9.10-1
-- new upstream version
+- New upstream version
 
 * Tue Jun 30 2020 W. Michael Petullo <mike@flyn.org> - 3.9.9-1
-- new upstream version (will be required for next grilo-plugins release)
+- New upstream version (will be required for next grilo-plugins release)
 
 * Tue May 26 2020 W. Michael Petullo <mike@flyn.org> - 3.9.8-1
-- new upstream version
+- New upstream version
 
 * Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.7-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
@@ -109,7 +140,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
 * Sun May 19 2019 W. Michael Petullo <mike@flyn.org> - 3.9.7-1
-- new upstream version
+- New upstream version
 
 * Mon Feb 04 2019 Kalev Lember <klember@redhat.com> - 3.9.3-3
 - Use standard vala packaging pattern where vapi files are in -devel
@@ -118,16 +149,16 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
 * Mon Sep 03 2018 W. Michael Petullo <mike[@]flyn.org> - 3.9.3-1
-- new upstream version
+- New upstream version
 
 * Sat Jul 21 2018 W. Michael Petullo <mike[@]flyn.org> - 3.9.2-1
-- new upstream version
+- New upstream version
 
 * Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3.9.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
 * Sun Mar 18 2018 W. Michael Petullo <mike[@]flyn.org> - 3.9.1-1
-- new upstream version with new API
+- New upstream version with new API
 
 * Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.37-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
@@ -142,10 +173,10 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
 * Fri Nov 11 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.37-1
-- new upstream version
+- New upstream version
 
 * Mon Aug 01 2016 W. Michael Petullo <mike[@]flyn.org> - 2.9.36-1
-- new upstream version to fix Bugzilla #1158652
+- New upstream version to fix Bugzilla #1158652
 
 * Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 2.9.30-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
@@ -154,27 +185,27 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
 
 * Mon Mar 16 2015 Than Ngo <than@redhat.com> - 2.9.30-2
-- bump release and rebuild so that koji-shadow can rebuild it
+- Bump release and rebuild so that koji-shadow can rebuild it
   against new gcc on secondary arch
 
 * Sat Feb 07 2015 W. Michael Petullo <mike[@]flyn.org> - 2.9.30-1
-- new upstream version
+- New upstream version
 
 * Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.29-2
-- add DMAP-3.0.typelib and DMAP-3.0.gir
+- Add DMAP-3.0.typelib and DMAP-3.0.gir
 
 * Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.29-1
-- new upstream version
-- do not build tests
+- New upstream version
+- Do not build tests
 
 * Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.28-3
-- require libgee-devel in order to build
+- Require libgee-devel in order to build
 
 * Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.28-2
-- package Vala support
+- Package Vala support
 
 * Mon Sep 01 2014 W. Michael Petullo <mike[@]flyn.org> - 2.9.28-1
-- new upstream version
+- New upstream version
 
 * Sun Aug 17 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.24-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_22_Mass_Rebuild
@@ -186,16 +217,16 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Drop empty NEWS from docs.
 
 * Thu Nov 07 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.24-1
-- new upstream version
+- New upstream version
 
 * Thu Sep 26 2013 Rex Dieter <rdieter@fedoraproject.org> 2.9.18-3
-- add explicit avahi build deps
+- Add explicit avahi build deps
 
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.9.18-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
 * Fri Jul 05 2013 W. Michael Petullo <mike[@]flyn.org> - 2.9.18-1
-- new upstream version
+- New upstream version
 
 * Sun Apr 07 2013 Kalev Lember <kalevlember@gmail.com> - 2.9.16-1
 - Update to 2.9.16
@@ -210,14 +241,14 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libdmapsharing-4.0.la
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
 * Mon Dec 05 2011 W. Michael Petullo <mike[@]flyn.org> - 2.9.14-1
-- new upstream version
+- New upstream version
 - Remove patch from previous release (upstreamed)
 
 * Tue Nov 08 2011 Adam Jackson <ajax@redhat.com> 2.9.12-2
 - libdmapsharing-2.9.12-glib.patch: Fix FTBFS against new glib
 
 * Mon Aug 22 2011 Adam Williamson <awilliam@redhat.com> - 2.9.12-1
-- new upstream version
+- New upstream version
 
 * Mon Mar 21 2011 W. Michael Petullo <mike[@]flyn.org> - 2.9.6-1
 - New upstream version.
