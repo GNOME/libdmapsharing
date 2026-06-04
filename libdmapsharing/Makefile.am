@@ -106,12 +106,8 @@ maintained_headers = \
 	dmap-utils.h \
 	dmap-image-connection.h \
 	dmap-image-record.h \
-	dmap-image-share.h
-
-if USE_GSTREAMERAPP
-maintained_headers += \
+	dmap-image-share.h \
 	dmap-transcode-stream.h
-endif
 
 generated_headers = \
 	dmap-enums.h
