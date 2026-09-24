@@ -42,8 +42,8 @@
 #include <libdmapsharing/dmap-structure.h>
 
 static guint _get_desired_port (DmapShare * share);
-static const char *_get_type_of_service (DmapShare * share);
-static void _server_info (DmapShare * share, SoupServerMessage * message, const char *path);
+static const gchar *_get_type_of_service (DmapShare * share);
+static void _server_info (DmapShare * share, SoupServerMessage * message, const gchar *path);
 static void _message_add_standard_headers (DmapShare * share, SoupServerMessage * message);
 
 #define DPAP_TYPE_OF_SERVICE "_dpap._tcp"
@@ -115,11 +115,11 @@ _get_meta_data_map (G_GNUC_UNUSED DmapShare * share)
 }
 
 static GMappedFile *
-_file_to_mmap (const char *location)
+_file_to_mmap (const gchar *location)
 {
 	GFile *file;
 	GMappedFile *mapped_file = NULL;
-	char *path = NULL;
+	gchar *path = NULL;
 	GError *error = NULL;
 
 	file = g_file_new_for_uri (location);
@@ -279,8 +279,8 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 	}
 
 	if (dmap_share_client_requested (mb->bits, PHOTO_FILEDATA)) {
-		size_t size = 0;
-		char *data = NULL;
+		gsize size = 0;
+		gchar *data = NULL;
 		GArray *thumbnail = NULL;
 
 		if (dmap_share_client_requested (mb->bits, PHOTO_THUMB)) {
@@ -294,7 +294,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 			}
 		} else {
 			/* Should be PHOTO_HIRES */
-			char *location = NULL;
+			gchar *location = NULL;
 
 			g_object_get (record, "location", &location, NULL);
 			if (_mapped_file) {
@@ -322,7 +322,7 @@ _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer _mb)
 static void
 _databases_browse_xxx (G_GNUC_UNUSED DmapShare * share,
                        G_GNUC_UNUSED SoupServerMessage * msg,
-                       const char *path,
+                       const gchar *path,
                        G_GNUC_UNUSED GHashTable *query)
 {
 	g_warning ("Unhandled: %s", path);
@@ -333,7 +333,7 @@ _send_chunked_file (SoupServer * server, SoupServerMessage * message,
                     DmapImageRecord * record, guint64 filesize)
 {
 	GInputStream *stream;
-	char *location = NULL;
+	gchar *location = NULL;
 	GError *error = NULL;
 	ChunkData *cd = g_new0 (ChunkData, 1);
 	SoupMessageHeaders *headers = NULL;
@@ -385,7 +385,7 @@ static void
 _databases_items_xxx (DmapShare * share,
                       SoupServer * server,
                       SoupServerMessage * msg,
-                      const char *path)
+                      const gchar *path)
 {
 	DmapDb *db = NULL;
 	const gchar *rest_of_path;
@@ -438,8 +438,8 @@ dmap_image_share_init (DmapImageShare * share)
  *        Threrfore, it is not passed to g_object_new.
  */
 DmapImageShare *
-dmap_image_share_new (const char *name,
-                      const char *password,
+dmap_image_share_new (const gchar *name,
+                      const gchar *password,
                       gpointer db,
                       gpointer container_db,
                       G_GNUC_UNUSED gchar * transcode_mimetype)
@@ -475,14 +475,14 @@ _get_desired_port (G_GNUC_UNUSED DmapShare * share)
 	return DPAP_PORT;
 }
 
-static const char *
+static const gchar *
 _get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DPAP_TYPE_OF_SERVICE;
 }
 
 static void
-_server_info (DmapShare * share, SoupServerMessage * message, const char *path)
+_server_info (DmapShare * share, SoupServerMessage * message, const gchar *path)
 {
 /* MSRV	server info response
  * 	MSTT status

@@ -90,8 +90,8 @@ typedef struct {
 
 GType dmap_image_connection_get_type (void);
 
-DmapImageConnection *dmap_image_connection_new (const char *name,
-				     const char *host,
+DmapImageConnection *dmap_image_connection_new (const gchar *name,
+				     const gchar *host,
 				     guint port,
 				     DmapDb * db,
 				     DmapRecordFactory * factory);

@@ -114,7 +114,7 @@ GType dmap_av_share_get_type (void);
  *
  * Returns: a pointer to a DmapAvShare.
  */
-DmapAvShare *dmap_av_share_new (const char *name, const char *password,
+DmapAvShare *dmap_av_share_new (const gchar *name, const gchar *password,
 			   DmapDb * db, DmapContainerDb * container_db,
 			   gchar * transcode_mimetype);
 

@@ -44,9 +44,9 @@ static void _finalize (GObject * object);
 
 struct DmapMdnsPublisherService
 {
-	char *name;
+	gchar *name;
 	guint port;
-	char *type_of_service;
+	gchar *type_of_service;
 	gboolean password_required;
 	gchar **txt_records;
 };
@@ -86,7 +86,7 @@ dmap_mdns_publisher_error_quark (void)
 }
 
 static void
-_emit_published (char *name, DmapMdnsPublisher * publisher)
+_emit_published (gchar *name, DmapMdnsPublisher * publisher)
 {
 	g_signal_emit (publisher, _signals[PUBLISHED], 0, name);
 }
@@ -113,9 +113,9 @@ static gboolean
 _create_service (struct DmapMdnsPublisherService *service,
                  DmapMdnsPublisher * publisher, GError ** error)
 {
-	int ret;
+	gint ret;
 	gboolean ok = FALSE;
-	const char *password_record;
+	const gchar *password_record;
 	AvahiStringList *txt_records;
 
 	if (service->password_required) {
@@ -170,11 +170,11 @@ static gboolean
 _create_services (DmapMdnsPublisher * publisher, GError ** error)
 {
 	gboolean ok = FALSE;
-	static int suffix = 0;
+	static gint suffix = 0;
 	gchar *name;
 	GSList *ptr1, *ptr2;
 	struct DmapMdnsPublisherService *service1, *service2;
-	int ret;
+	gint ret;
 
 	if (publisher->priv->entry_group == NULL) {
 		publisher->priv->entry_group =
@@ -264,7 +264,7 @@ _find_service_by_port (GSList * list, guint port)
 gboolean
 dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher * publisher,
 				    guint port,
-				    const char *name, GError ** error)
+				    const gchar *name, GError ** error)
 {
 	struct DmapMdnsPublisherService *ptr;
 
@@ -292,9 +292,9 @@ dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher * publisher,
 
 gboolean
 dmap_mdns_publisher_publish (DmapMdnsPublisher * publisher,
-			     const char *name,
+			     const gchar *name,
 			     guint port,
-			     const char *type_of_service,
+			     const gchar *type_of_service,
 			     gboolean password_required,
 			     gchar ** txt_records, GError ** error)
 {

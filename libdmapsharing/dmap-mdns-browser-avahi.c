@@ -71,7 +71,7 @@ static void _resolve_cb (AvahiServiceResolver * service_resolver,
 			const gchar * domain,
 			const gchar * host_name,
 			const AvahiAddress * address,
-			uint16_t port, AvahiStringList * text,
+			guint16 port, AvahiStringList * text,
 			AvahiLookupResultFlags flags,
 			DmapMdnsBrowser * browser);
 static gboolean _resolve (DmapMdnsBrowser * browser,
@@ -334,7 +334,7 @@ _resolve_cb (AvahiServiceResolver * service_resolver,
              const gchar * domain,
              G_GNUC_UNUSED const gchar * host_name,
              const AvahiAddress * address,
-             uint16_t port, AvahiStringList * text,
+             guint16 port, AvahiStringList * text,
              G_GNUC_UNUSED AvahiLookupResultFlags flags,
              DmapMdnsBrowser * browser)
 {
@@ -360,7 +360,7 @@ _resolve_cb (AvahiServiceResolver * service_resolver,
 			AvahiStringList *l;
 
 			for (l = text; l != NULL; l = l->next) {
-				size_t size;
+				gsize size;
 				gchar *key;
 				gchar *value;
 				gint ret;

@@ -90,8 +90,8 @@ typedef struct {
 
 GType dmap_control_connection_get_type (void);
 
-DmapControlConnection *dmap_control_connection_new (const char *name,
-				     const char *host,
+DmapControlConnection *dmap_control_connection_new (const gchar *name,
+				     const gchar *host,
 				     guint port,
 				     DmapDb * db,
 				     DmapRecordFactory * factory);

@@ -110,7 +110,7 @@ typedef struct {
 
 	/* Pure virtual methods: */
 	  guint (*get_desired_port) (DmapShare * share);
-	const char *(*get_type_of_service) (DmapShare * share);
+	const gchar *(*get_type_of_service) (DmapShare * share);
 	void (*message_add_standard_headers) (DmapShare * share,
 					      SoupServerMessage * msg);
 	struct DmapMetaDataMap *(*get_meta_data_map) (DmapShare * share);

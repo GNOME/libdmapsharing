@@ -43,7 +43,7 @@ _get_query_metadata (G_GNUC_UNUSED DmapConnection * connection)
 
 static DmapRecord *
 _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
-	      GNode * n, int *item_id)
+	      GNode * n, gint *item_id)
 {
 	GNode *n2;
 	GError *error = NULL;
@@ -170,8 +170,8 @@ dmap_av_connection_class_init (DmapAvConnectionClass * klass)
 }
 
 DmapAvConnection *
-dmap_av_connection_new (const char *name,
-		     const char *host,
+dmap_av_connection_new (const gchar *name,
+		     const gchar *host,
 		     guint port,
 		     DmapDb * db,
 		     DmapRecordFactory * factory)
@@ -213,7 +213,7 @@ END_TEST
 
 START_TEST(_get_query_metadata_test)
 {
-	char *str = _get_query_metadata(NULL);
+	gchar *str = _get_query_metadata(NULL);
 
 	ck_assert_str_eq(str, "dmap.itemid,dmap.itemname,daap.songalbum,"
 	                      "daap.songartist,daap.songgenre,daap.songsize,"
@@ -228,8 +228,8 @@ END_TEST
 
 START_TEST(_new_test)
 {
-	char *str;
-	int   port;
+	gchar *str;
+	gint   port;
 	DmapDb *db1, *db2;
 	DmapRecordFactory *factory1, *factory2;
 
@@ -272,13 +272,13 @@ START_TEST(_handle_mlcl_test)
 	TestDmapAvRecordFactory *factory;
 	GNode *parent;
 	DmapRecord *record;
-	char *expected_title        = "title", *title             = NULL;
-	char *expected_album        = "album", *album             = NULL;
-	char *expected_artist       = "artist", *artist           = NULL;
-	char *expected_format       = "format", *format           = NULL;
-	char *expected_genre        = "genre", *genre             = NULL;
-	char *expected_sort_artist  = "sort-artist", *sort_artist = NULL;
-	char *expected_sort_album   = "sort-album", *sort_album   = NULL;
+	gchar *expected_title        = "title", *title             = NULL;
+	gchar *expected_album        = "album", *album             = NULL;
+	gchar *expected_artist       = "artist", *artist           = NULL;
+	gchar *expected_format       = "format", *format           = NULL;
+	gchar *expected_genre        = "genre", *genre             = NULL;
+	gchar *expected_sort_artist  = "sort-artist", *sort_artist = NULL;
+	gchar *expected_sort_album   = "sort-album", *sort_album   = NULL;
 	gboolean expected_has_video =  TRUE, has_video            = FALSE;
 	gint  expected_length       =  10000, length              = 0;
 	gint  expected_track        =  20, track                  = 0;
@@ -373,9 +373,9 @@ START_TEST(_handle_mlcl_bad_code_test)
 	TestDmapAvRecordFactory *factory;
 	GNode *parent, *child;
 	DmapRecord *record;
-	int item_id;
-	char *set_value      = "value";
-	char *expected_title = "title", *title = NULL;
+	gint item_id;
+	gchar *set_value      = "value";
+	gchar *expected_title = "title", *title = NULL;
 
 	parent = dmap_structure_add(NULL, DMAP_CC_MLCL);
 

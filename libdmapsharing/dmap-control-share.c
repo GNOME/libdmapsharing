@@ -45,11 +45,11 @@
 
 void dmap_control_share_ctrl_int (DmapShare * share,
 			  SoupServerMessage * message,
-			  const char *path,
+			  const gchar *path,
 			  GHashTable * query);
 void dmap_control_share_login (DmapShare * share,
 		       SoupServerMessage * message,
-		       const char *path,
+		       const gchar *path,
 		       GHashTable * query);
 
 #define DACP_TYPE_OF_SERVICE "_touch-able._tcp"
@@ -225,7 +225,7 @@ _finalize (GObject * object)
 	G_OBJECT_CLASS (dmap_control_share_parent_class)->finalize (object);
 }
 
-static const char *
+static const gchar *
 _get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DACP_TYPE_OF_SERVICE;
@@ -414,7 +414,7 @@ _mdns_remote_added (G_GNUC_UNUSED DmapMdnsBrowser * browser,
 
 static void
 _mdns_remote_removed (G_GNUC_UNUSED DmapMdnsBrowser * browser,
-                      const char *service_name, DmapControlShare * share)
+                      const gchar *service_name, DmapControlShare * share)
 {
 	gboolean found;
 	g_signal_emit (share, _signals[REMOTE_LOST], 0, service_name);
@@ -609,7 +609,7 @@ _debug_param (gpointer key, gpointer val, G_GNUC_UNUSED gpointer user_data)
 void
 dmap_control_share_login (DmapShare * share,
 		  SoupServerMessage * message,
-		  const char *path,
+		  const gchar *path,
 		  GHashTable * query)
 {
 	gchar *pairing_guid;
@@ -640,10 +640,10 @@ dmap_control_share_login (DmapShare * share,
 void
 dmap_control_share_ctrl_int (DmapShare * share,
                              SoupServerMessage * message,
-                             const char *path,
+                             const gchar *path,
                              GHashTable * query)
 {
-	const char *rest_of_path;
+	const gchar *rest_of_path;
 
 	DmapControlShare *dmap_control_share = DMAP_CONTROL_SHARE (share);
 
@@ -970,7 +970,7 @@ done:
 static gchar *
 _pairing_code (gchar * pair_txt, gchar passcode[4])
 {
-	int i;
+	gint i;
 	gsize ssize, dsize;
 	GString *pairing_code;
 	gchar *pairing_string;

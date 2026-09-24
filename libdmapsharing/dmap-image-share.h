@@ -111,7 +111,7 @@ GType dmap_image_share_get_type (void);
  *
  * Returns: a pointer to a DmapImageShare.
  */
-DmapImageShare *dmap_image_share_new (const char *name, const char *password,
+DmapImageShare *dmap_image_share_new (const gchar *name, const gchar *password,
 			   gpointer db, gpointer container_db,
 			   gchar * transcode_mimetype);
 

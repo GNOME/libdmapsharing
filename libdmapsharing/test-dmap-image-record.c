@@ -29,11 +29,11 @@ struct TestDmapImageRecordPrivate {
 	gint pixelwidth;
 	gint rating;
 	gint creationdate;
-	char *location;
-	char *aspectratio;
-	char *filename;
-	char *format;
-	char *comments;
+	gchar *location;
+	gchar *aspectratio;
+	gchar *filename;
+	gchar *format;
+	gchar *comments;
 	GArray *thumbnail;
 	GArray *hash;
 };
@@ -261,7 +261,7 @@ test_dmap_image_record_finalize (GObject *object)
 TestDmapImageRecord *
 test_dmap_image_record_new (void)
 {
-	unsigned char *thumbnail;
+	guchar *thumbnail;
 	GError *error;
 	gchar *path;
 	gsize size;

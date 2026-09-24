@@ -269,10 +269,10 @@ START_TEST(_read_test)
 	GInputStream *stream;
 	GError *error = NULL;
 	gssize count1, count2;
-	char buf[PATH_MAX];
-	char template[sizeof TMP];
-	char uri[PATH_MAX];
-	int tmp;
+	gchar buf[PATH_MAX];
+	gchar template[sizeof TMP];
+	gchar uri[PATH_MAX];
+	gint tmp;
 
 	strcpy(template, TMP);
 
@@ -318,7 +318,7 @@ START_TEST(_read_bad_path_test)
 {
 	DmapAvRecord *record;
 	GError *error = NULL;
-	const char *uri = "/xxx";
+	const gchar *uri = "/xxx";
 
 	record = DMAP_AV_RECORD(test_dmap_av_record_new());
 	g_object_set(record, "location", uri, NULL);

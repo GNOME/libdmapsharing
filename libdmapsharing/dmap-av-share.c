@@ -41,20 +41,20 @@
 #endif /* HAVE_GSTREAMERAPP */
 
 static guint _get_desired_port (DmapShare * share);
-static const char *_get_type_of_service (DmapShare * share);
+static const gchar *_get_type_of_service (DmapShare * share);
 static void _server_info (DmapShare * share,
                           SoupServerMessage * message,
-                          const char *path);
+                          const gchar *path);
 static void _message_add_standard_headers (DmapShare * share,
                                            SoupServerMessage * message);
 static void _databases_browse_xxx (DmapShare * share,
                                    SoupServerMessage * msg,
-                                   const char *path,
+                                   const gchar *path,
                                    GHashTable * query);
 static void _databases_items_xxx (DmapShare * share,
                                   SoupServer * server,
                                   SoupServerMessage * msg,
-                                  const char *path);
+                                  const gchar *path);
 static struct DmapMetaDataMap *_get_meta_data_map (DmapShare * share);
 static void _add_entry_to_mlcl (guint id, DmapRecord * record, gpointer mb);
 
@@ -85,8 +85,8 @@ dmap_av_share_init (G_GNUC_UNUSED DmapAvShare * share)
 }
 
 DmapAvShare *
-dmap_av_share_new (const char *name,
-                   const char *password,
+dmap_av_share_new (const gchar *name,
+                   const gchar *password,
                    DmapDb * db,
                    DmapContainerDb * container_db,
                    gchar * transcode_mimetype)
@@ -119,7 +119,7 @@ _get_desired_port (G_GNUC_UNUSED DmapShare * share)
 	return DAAP_PORT;
 }
 
-static const char *
+static const gchar *
 _get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 {
 	return DAAP_TYPE_OF_SERVICE;
@@ -128,7 +128,7 @@ _get_type_of_service (G_GNUC_UNUSED DmapShare * share)
 static void
 _server_info (DmapShare * share,
               SoupServerMessage * message,
-              const char *path)
+              const gchar *path)
 {
 /* MSRV	server info response
  * 	MSTT status
@@ -293,7 +293,7 @@ _should_transcode (DmapAvShare *share,
                    const gchar *transcode_mimetype)
 {
 	gboolean fnval = FALSE;
-	char *format2 = NULL;
+	gchar *format2 = NULL;
 
 	// Not presently transcoding videos (see also same comments elsewhere).
 	if (TRUE == has_video) {
@@ -833,7 +833,7 @@ _add_to_category_listing (gpointer key, gpointer user_data)
 static void
 _databases_browse_xxx (DmapShare * share,
                        SoupServerMessage * msg,
-                       const char *path,
+                       const gchar *path,
                        GHashTable * query)
 {
 	/* ABRO database browse
@@ -919,7 +919,7 @@ static void
 _databases_items_xxx (DmapShare * share,
                       SoupServer * server,
                       SoupServerMessage * msg,
-                      const char *path)
+                      const gchar *path)
 {
 	DmapDb *db = NULL;
 	DmapAvRecord *record = NULL;
@@ -1015,7 +1015,7 @@ _get_meta_data_map (G_GNUC_UNUSED DmapShare * share)
 #include <unistd.h>
 
 static DmapShare *
-_build_share_test(char *name)
+_build_share_test(gchar *name)
 {
 	DmapDb *db;
 	DmapContainerRecord *container_record;
@@ -1080,7 +1080,7 @@ START_TEST(_new_test)
 	DmapContainerDb *container_db;
 	DmapRecord *record;
 	DmapShare *share;
-	char *str;
+	gchar *str;
 
 	db = DMAP_DB(test_dmap_db_new());
 	container_record = DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
@@ -1213,7 +1213,7 @@ START_TEST(_serve_publish_collision_test)
 END_TEST
 
 static void
-_tabulator_test(char *property,
+_tabulator_test(gchar *property,
                 void (*tabulator) (gpointer id, DmapRecord * record, GHashTable * ht))
 {
 	guint id1, id2;
@@ -1365,7 +1365,7 @@ END_TEST
 
 START_TEST(_server_info_test)
 {
-	char *nameprop = "_server_info_test";
+	gchar *nameprop = "_server_info_test";
 	DmapShare *share;
 	SoupServerMessage *message;
 	SoupMessageBody *body;
@@ -1443,7 +1443,7 @@ END_TEST
 
 START_TEST(_message_add_standard_headers_test)
 {
-	const char *header;
+	const gchar *header;
 	DmapShare *share;
 	SoupMessage *message;
 	SoupMessageHeaders *headers;
@@ -1466,7 +1466,7 @@ END_TEST
 
 START_TEST(_databases_browse_xxx_test)
 {
-	char *nameprop = "databases_browse_xxx_test";
+	gchar *nameprop = "databases_browse_xxx_test";
 	DmapShare *share;
 	SoupServerMessage *message;
 	GHashTable *query;
@@ -1521,7 +1521,7 @@ END_TEST
 
 START_TEST(_databases_browse_xxx_artists_test)
 {
-	char *nameprop = "databases_browse_xxx_artists_test";
+	gchar *nameprop = "databases_browse_xxx_artists_test";
 	DmapShare *share;
 	SoupServerMessage *message;
 	GHashTable *query;
@@ -1560,7 +1560,7 @@ END_TEST
 
 START_TEST(_databases_browse_xxx_albums_test)
 {
-	char *nameprop = "databases_browse_xxx_albums_test";
+	gchar *nameprop = "databases_browse_xxx_albums_test";
 	DmapShare *share;
 	SoupServerMessage *message;
 	GHashTable *query;
@@ -1599,7 +1599,7 @@ END_TEST
 
 START_TEST(_databases_browse_xxx_bad_category_test)
 {
-	char *nameprop = "databases_browse_xxx_bad_category_test";
+	gchar *nameprop = "databases_browse_xxx_bad_category_test";
 	DmapShare *share;
 	SoupServerMessage *message;
 	GHashTable *query;
@@ -1631,18 +1631,18 @@ END_TEST
 
 START_TEST(_databases_items_xxx_test)
 {
-	char *nameprop = "databases_items_xxx_test";
+	gchar *nameprop = "databases_items_xxx_test";
 	DmapShare *share;
 	SoupServer *server;
 	SoupServerMessage *message;
 	SoupMessageBody *body = NULL;
 	GBytes *buffer;
-	char path[PATH_MAX + 1];
+	gchar path[PATH_MAX + 1];
 	DmapDb *db = NULL;
 	DmapRecord *record = NULL;
 	gsize size1 = 0, size2 = 0;
 	const guint8 *contents1;
-	char *location, *contents2, *etag_out;
+	gchar *location, *contents2, *etag_out;
 	GFile *file;
 	GError *error = NULL;
 	gboolean ok;
@@ -1698,11 +1698,11 @@ END_TEST
 
 START_TEST(_databases_items_xxx_test_bad_id)
 {
-	char *nameprop = "databases_items_xxx_test";
+	gchar *nameprop = "databases_items_xxx_test";
 	DmapShare *share;
 	SoupServer *server;
 	SoupServerMessage *message;
-	char path[PATH_MAX + 1];
+	gchar path[PATH_MAX + 1];
 
 	share   = _build_share_test(nameprop);
 	server  = soup_server_new(NULL, NULL);

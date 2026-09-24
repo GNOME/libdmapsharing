@@ -382,7 +382,7 @@ _skip_finish (G_GNUC_UNUSED GInputStream * stream,
 
 static void
 _close_async (G_GNUC_UNUSED GInputStream * stream,
-              G_GNUC_UNUSED int io_priority,
+              G_GNUC_UNUSED gint io_priority,
               G_GNUC_UNUSED GCancellable * cancellable,
               G_GNUC_UNUSED GAsyncReadyCallback callback,
               G_GNUC_UNUSED gpointer data)
@@ -394,7 +394,7 @@ static void
 _read_async (G_GNUC_UNUSED GInputStream * stream,
              G_GNUC_UNUSED void *buffer,
              G_GNUC_UNUSED gsize count,
-             G_GNUC_UNUSED int io_priority,
+             G_GNUC_UNUSED gint io_priority,
              G_GNUC_UNUSED GCancellable * cancellable,
              G_GNUC_UNUSED GAsyncReadyCallback callback,
              G_GNUC_UNUSED gpointer user_data)
@@ -405,7 +405,7 @@ _read_async (G_GNUC_UNUSED GInputStream * stream,
 static void
 _skip_async (G_GNUC_UNUSED GInputStream * stream,
              G_GNUC_UNUSED gsize count,
-             G_GNUC_UNUSED int io_priority,
+             G_GNUC_UNUSED gint io_priority,
              G_GNUC_UNUSED GCancellable * cancellabl,
              G_GNUC_UNUSED GAsyncReadyCallback callback,
              G_GNUC_UNUSED gpointer datae)

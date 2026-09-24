@@ -39,8 +39,8 @@ G_BEGIN_DECLS
  */
 
 typedef struct {
-	char *name;
-	int id;
+	gchar *name;
+	gint id;
 	GList *uris;
 } DmapPlaylist;
 
@@ -145,7 +145,7 @@ typedef struct {
 	void (*connected) (DmapConnection * connection);
 	void (*disconnected) (DmapConnection * connection);
 
-	char *(*authenticate) (DmapConnection * connection, const char *name);
+	gchar *(*authenticate) (DmapConnection * connection, const gchar *name);
 	void (*connecting) (DmapConnection * connection,
 			    DmapConnectionState state, float progress);
 
@@ -156,7 +156,7 @@ typedef struct {
 /* hmm, maybe should give more error information? */
 typedef void (*DmapConnectionFunc) (DmapConnection * connection,
                                     gboolean result,
-                                    const char *reason,
+                                    const gchar *reason,
                                     gpointer user_data);
 
 GType dmap_connection_get_type (void);
@@ -194,7 +194,7 @@ void dmap_connection_stop(DmapConnection * connection,
                           gpointer user_data);
 
 SoupMessageHeaders *dmap_connection_get_headers (DmapConnection * connection,
-						 const char *uri);
+						 const gchar *uri);
 
 /**
  * dmap_connection_get_playlists:
@@ -224,7 +224,7 @@ void dmap_connection_authenticate_message (DmapConnection *connection,
                                            SoupSession *session,
                                            SoupMessage *message,
 					   SoupAuth *auth,
-					   const char *password);
+					   const gchar *password);
 
 /**
  * dmap_connection_emit_error:

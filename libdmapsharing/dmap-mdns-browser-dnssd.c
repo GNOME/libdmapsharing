@@ -44,7 +44,7 @@ typedef struct _ServiceContext
 	DNSServiceRef host_lookup_ref;
 	DmapMdnsBrowser *browser;
 	DNSServiceFlags flags;
-	uint32_t interface_index;
+	guint32 interface_index;
 	DmapMdnsService *service;
 	gchar *domain;
 } ServiceContext;
@@ -91,7 +91,7 @@ _signal_service_added (ServiceContext *context)
 	gchar                           *service_name       = NULL;
 	gchar                           *name               = NULL;
 	gchar                           *host               = NULL;
-	uint16_t                         port               = 0;
+	guint16                          port               = 0;
 	gchar                           *pair               = NULL;
 	DmapMdnsServiceTransportProtocol transport_protocol = DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP;
 	gboolean                         password_protected = FALSE;
@@ -134,19 +134,19 @@ _signal_service_added (ServiceContext *context)
 	return TRUE;
 }
 
-static char *
-_extract_name (const char *dns_name)
+static gchar *
+_extract_name (const gchar *dns_name)
 {
         /* Turns "Children's\032Music._daap._tcp.local
 	 * into "Children's Music"
 	 */
 
-	char *name = calloc(strlen(dns_name) + 1, sizeof(char));
+	gchar *name = calloc(strlen(dns_name) + 1, sizeof(char));
 	if (NULL == name) {
 		goto done;
 	}
 
-	char *space;
+	gchar *space;
 	do {
 		space = strstr(dns_name, "\\032");
 		if (NULL != space) {
@@ -159,7 +159,7 @@ _extract_name (const char *dns_name)
 		dns_name = space + 4;
 	} while (NULL != space);
 
-	char *dot = strchr(name, '.');
+	gchar *dot = strchr(name, '.');
 	if (NULL != dot) {
 		*dot = 0x00;
 	}
@@ -171,11 +171,11 @@ done:
 static void
 _dns_service_browse_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
                            DNSServiceFlags flags,
-                           uint32_t interface_index,
+                           guint32 interface_index,
                            DNSServiceErrorType error_code,
-                           const char *service_name,
-                           G_GNUC_UNUSED const char *regtype,
-                           const char *domain, void *udata)
+                           const gchar *service_name,
+                           G_GNUC_UNUSED const gchar *regtype,
+                           const gchar *domain, void *udata)
 {
 	if (error_code != kDNSServiceErr_NoError) {
 		g_warning ("dnsServiceBrowserReply ():  fail");
@@ -276,7 +276,7 @@ done:
 static gboolean
 _add_host_lookup_to_event_loop (ServiceContext *context)
 {
-	int dns_sd_fd = DNSServiceRefSockFD (context->host_lookup_ref);
+	gint dns_sd_fd = DNSServiceRefSockFD (context->host_lookup_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
@@ -294,13 +294,13 @@ _add_host_lookup_to_event_loop (ServiceContext *context)
 static void
 _dns_service_resolve_reply (G_GNUC_UNUSED DNSServiceRef sd_ref,
                             DNSServiceFlags flags,
-                            uint32_t interface_index,
+                            guint32 interface_index,
                             DNSServiceErrorType error_code,
-                            const char *name,
-                            G_GNUC_UNUSED const char *host,
-                            uint16_t port,
-                            G_GNUC_UNUSED uint16_t txt_len,
-                            G_GNUC_UNUSED const char *txt_record,
+                            const gchar *name,
+                            G_GNUC_UNUSED const gchar *host,
+                            guint16 port,
+                            G_GNUC_UNUSED guint16 txt_len,
+                            G_GNUC_UNUSED const gchar *txt_record,
                             void *udata)
 {
 	DNSServiceRef ref;
@@ -368,7 +368,7 @@ done:
 static gboolean
 _add_service_discovery_to_event_loop (ServiceContext *context)
 {
-	int dns_sd_fd = DNSServiceRefSockFD (context->service_discovery_ref);
+	gint dns_sd_fd = DNSServiceRefSockFD (context->service_discovery_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 
@@ -442,7 +442,7 @@ _add_browse_to_event_loop (DmapMdnsBrowser *browser)
 {
 	gboolean fnval = FALSE;
 
-	int dns_sd_fd = DNSServiceRefSockFD (browser->priv->sd_browse_ref);
+	gint dns_sd_fd = DNSServiceRefSockFD (browser->priv->sd_browse_ref);
 
 	GIOChannel *dns_sd_chan = g_io_channel_unix_new (dns_sd_fd);
 

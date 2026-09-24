@@ -38,7 +38,7 @@ enum {
 	DPAP
 };
 
-static char *
+static gchar *
 dmap_sharing_default_share_name ()
 {
 	const gchar *real_name;
@@ -67,7 +67,7 @@ _quit(gpointer user_data)
 static DmapShare *
 create_share (guint conn_type, GMainLoop *loop)
 {
-	char *name = dmap_sharing_default_share_name ();
+	gchar *name = dmap_sharing_default_share_name ();
 	DmapContainerRecord *dmap_container_record = \
 		DMAP_CONTAINER_RECORD (test_dmap_container_record_new ());
 	DmapContainerDb *container_db = \
@@ -140,8 +140,8 @@ create_share (guint conn_type, GMainLoop *loop)
 	return share;
 }
 
-int
-main (int argc, char *argv[])
+gint
+main (gint argc, gchar *argv[])
 {
 	DmapShare *share = NULL;
 	guint conn_type = DAAP;

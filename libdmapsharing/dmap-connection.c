@@ -45,10 +45,10 @@ static gboolean _do_something (DmapConnection * connection);
 
 struct DmapConnectionPrivate
 {
-	char *name;
-	char *username;
-	char *password;
-	char *host;
+	gchar *name;
+	gchar *username;
+	gchar *password;
+	gchar *host;
 	guint port;
 
 	gboolean is_connected;
@@ -74,13 +74,13 @@ struct DmapConnectionPrivate
 
 	DmapConnectionState state;
 	gboolean use_response_handler_thread;
-	float progress;
+	gfloat progress;
 
 	guint emit_progress_id;
 	guint do_something_id;
 
 	gboolean result;
-	char *last_error_message;
+	gchar *last_error_message;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (DmapConnection,
@@ -522,9 +522,9 @@ _message_add_headers (SoupMessage *message, DmapConnection * connection, const g
 {
 	DmapConnectionPrivate *priv = connection->priv;
 	SoupMessageHeaders *headers;
-	char hash[33] = { 0 };
+	gchar hash[33] = { 0 };
 	const guchar *norb_daap_uri = (const guchar *) uri;
-	char *request_id;
+	gchar *request_id;
 
 	headers = soup_message_get_request_headers(message);
 
@@ -586,9 +586,9 @@ dmap_connection_authenticate_message (DmapConnection * connection,
                                       G_GNUC_UNUSED SoupSession *session,
                                       G_GNUC_UNUSED SoupMessage *message,
                                       SoupAuth *auth,
-                                      const char *password)
+                                      const gchar *password)
 {
-	char *username = NULL;
+	gchar *username = NULL;
 
 	g_object_set (connection, "password", password, NULL);
 
@@ -602,12 +602,12 @@ dmap_connection_authenticate_message (DmapConnection * connection,
 
 static SoupMessage *
 _build_message (DmapConnection * connection,
-                const char *path)
+                const gchar *path)
 {
 	SoupMessage *message = NULL;
 	GUri *base_uri = NULL;
 	GUri *uri = NULL;
-	char *uri_str = NULL;
+	gchar *uri_str = NULL;
 
 	g_object_get (connection, "base-uri", &base_uri, NULL);
 	if (base_uri == NULL) {
@@ -665,7 +665,7 @@ _zfree_wrapper (G_GNUC_UNUSED voidpf opaque, voidpf address)
 
 static void
 _connection_set_error_message (DmapConnection * connection,
-                               const char *message)
+                               const gchar *message)
 {
 	/* FIXME: obtain a lock */
 	g_free (connection->priv->last_error_message);
@@ -678,11 +678,11 @@ _connection_set_error_message (DmapConnection * connection,
 
 typedef struct {
 	GBytes *body;
-	int status;
+	gint status;
 	DmapConnection *connection;
 
-	char *message_path;
-	char *reason_phrase;
+	gchar *message_path;
+	gchar *reason_phrase;
 	SoupMessageHeaders *headers;
 
 	DmapResponseHandler response_handler;
@@ -786,7 +786,7 @@ _actual_http_response_handler (DmapResponseData * data)
 	GNode *structure;
 	guint8 *new_response = NULL;
 	const guint8 *response;
-	const char *encoding_header;
+	const gchar *encoding_header;
 	gsize response_length;
 	gboolean ok = FALSE;
 
@@ -802,7 +802,7 @@ _actual_http_response_handler (DmapResponseData * data)
 		 data->reason_phrase);
 
 	if (data->headers) {
-		const char *server;
+		const gchar *server;
 
 		encoding_header = soup_message_headers_get_one (data->headers, "Content-Encoding");
 		server = soup_message_headers_get_one (data->headers, "DAAP-Server");
@@ -821,8 +821,8 @@ _actual_http_response_handler (DmapResponseData * data)
 	    && strcmp (encoding_header, "gzip") == 0) {
 #ifdef HAVE_LIBZ
 		z_stream stream;
-		unsigned int factor = 4;
-		unsigned int unc_size = response_length * factor;
+		guint factor = 4;
+		guint unc_size = response_length * factor;
 
 		stream.next_in = (unsigned char *) response;
 		stream.avail_in = response_length;
@@ -851,7 +851,7 @@ _actual_http_response_handler (DmapResponseData * data)
 			goto done;
 		} else {
 			do {
-				int z_res;
+				gint z_res;
 
 				z_res = inflate (&stream, Z_FINISH);
 				if (z_res == Z_STREAM_END) {
@@ -918,7 +918,7 @@ _actual_http_response_handler (DmapResponseData * data)
 			g_clear_error(&error);
 			goto done;
 		} else {
-			int dmap_status = 0;
+			gint dmap_status = 0;
 
 			item = dmap_structure_find_item (structure,
 							 DMAP_CC_MSTT);
@@ -1045,7 +1045,7 @@ done:
 
 static gboolean
 _http_get (DmapConnection * connection,
-           const char *path,
+           const gchar *path,
            DmapResponseHandler handler,
            gpointer user_data, gboolean use_thread)
 {
@@ -1374,7 +1374,7 @@ done:
 	return;
 }
 
-static int
+static gint
 _compare_playlists_by_name (gconstpointer a, gconstpointer b)
 {
 	const DmapPlaylist *playlist1 = a;
@@ -1545,8 +1545,8 @@ static gboolean
 _do_something (DmapConnection * connection)
 {
 	DmapConnectionPrivate *priv = connection->priv;
-	char *meta;
-	char *path;
+	gchar *meta;
+	gchar *path;
 
 	g_debug ("Doing something for state: %d", priv->state);
 
@@ -1872,9 +1872,9 @@ dmap_connection_get_headers (DmapConnection * connection, const gchar * uri)
 {
 	DmapConnectionPrivate *priv = connection->priv;
 	SoupMessageHeaders *headers = NULL;
-	char hash[33] = { 0 };
+	gchar hash[33] = { 0 };
 	const guchar *norb_daap_uri = (const guchar *) uri;
-	char *request_id;
+	gchar *request_id;
 
 	priv->request_id++;
 
@@ -1931,7 +1931,7 @@ dmap_connection_emit_error(DmapConnection *connection, gint code,
 #include <check.h>
 #include <libdmapsharing/dmap-av-connection.h>
 
-static int _status = DMAP_STATUS_OK;
+static gint _status = DMAP_STATUS_OK;
 
 static void
 _error_cb(G_GNUC_UNUSED DmapConnection *connection, GError *error,

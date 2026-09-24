@@ -43,7 +43,7 @@ static DmapRecord *
 _handle_mlcl (G_GNUC_UNUSED DmapConnection * connection,
               G_GNUC_UNUSED DmapRecordFactory * factory,
               G_GNUC_UNUSED GNode * n,
-              G_GNUC_UNUSED int *item_id)
+              G_GNUC_UNUSED gint *item_id)
 {
 	/* FIXME: */
 	g_error ("Not implemented");
@@ -63,8 +63,8 @@ dmap_control_connection_class_init (DmapControlConnectionClass * klass)
 }
 
 DmapControlConnection *
-dmap_control_connection_new (const char *name,
-		     const char *host,
+dmap_control_connection_new (const gchar *name,
+		     const gchar *host,
 		     guint port,
 		     DmapDb * db, DmapRecordFactory * factory)
 {

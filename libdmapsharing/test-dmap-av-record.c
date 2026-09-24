@@ -25,19 +25,19 @@
 struct TestDmapAvRecordPrivate {
 	gint filesize;
 	gint rating;
-	char *location;
-	char *title;
-	char *format;
-	char *real_format;
-	char *album;
-	char *sort_album;
-	char *artist;
-	char *sort_artist;
+	gchar *location;
+	gchar *title;
+	gchar *format;
+	gchar *real_format;
+	gchar *album;
+	gchar *sort_album;
+	gchar *artist;
+	gchar *sort_artist;
 	gint32 bitrate;
 	gint32 firstseen;
 	gint32 mtime;
 	gint32 disc;
-	char *genre;
+	gchar *genre;
 	gint32 duration;
 	gint32 track;
 	gint32 year;

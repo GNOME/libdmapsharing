@@ -37,7 +37,7 @@ _get_query_metadata (G_GNUC_UNUSED DmapConnection * connection)
 
 static DmapRecord *
 _handle_mlcl (DmapConnection * connection, DmapRecordFactory * factory,
-              GNode * n, int *item_id)
+              GNode * n, gint *item_id)
 {
 	GNode *n2;
 	GError *error = NULL;
@@ -160,8 +160,8 @@ dmap_image_connection_class_init (DmapImageConnectionClass * klass)
 }
 
 DmapImageConnection *
-dmap_image_connection_new (const char *name,
-		     const char *host,
+dmap_image_connection_new (const gchar *name,
+		     const gchar *host,
 		     guint port,
 		     DmapDb * db, DmapRecordFactory * factory)
 {

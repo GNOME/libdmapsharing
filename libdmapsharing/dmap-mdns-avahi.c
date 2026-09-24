@@ -80,7 +80,7 @@ dmap_mdns_avahi_get_client (void)
 	if (g_once_init_enter (&_client_init)) {
 		AvahiClientFlags flags = 0;
 		AvahiGLibPoll *apoll;
-		int error = 0;
+		gint error = 0;
 
 		avahi_set_allocator (avahi_glib_allocator ());
 

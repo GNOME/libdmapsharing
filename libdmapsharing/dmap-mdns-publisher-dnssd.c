@@ -28,7 +28,7 @@
 
 struct DmapMdnsPublisherPrivate {
 	DNSServiceRef	 sdref;
-        char            *name;
+        gchar            *name;
 };
 
 enum {
@@ -58,7 +58,7 @@ dmap_mdns_publisher_error_quark (void)
 gboolean
 dmap_mdns_publisher_rename_at_port (G_GNUC_UNUSED DmapMdnsPublisher *publisher,
 				    G_GNUC_UNUSED guint	       port,
-                                    G_GNUC_UNUSED const char        *name,
+                                    G_GNUC_UNUSED const gchar        *name,
                                     G_GNUC_UNUSED GError           **error)
 {
 	g_error ("Not implemented");
@@ -67,7 +67,7 @@ dmap_mdns_publisher_rename_at_port (G_GNUC_UNUSED DmapMdnsPublisher *publisher,
 }
 
 static gchar *
-_build_txt_record(gboolean password_required, gchar **txt_records, uint16_t *txt_len)
+_build_txt_record(gboolean password_required, gchar **txt_records, guint16 *txt_len)
 {
 	*txt_len = 0;
 
@@ -77,7 +77,7 @@ _build_txt_record(gboolean password_required, gchar **txt_records, uint16_t *txt
 		_txt_records++;
 	}
 
-	char password_size = 0;
+	gchar password_size = 0;
 	if(TRUE == password_required) {
 		password_size = (char) strlen("Password=true") + 1;
 	} else {
@@ -85,11 +85,11 @@ _build_txt_record(gboolean password_required, gchar **txt_records, uint16_t *txt
 	}
 	*txt_len += password_size;
 
-	size_t i = 0;
+	gsize i = 0;
 	gchar *txt_record = g_malloc(*txt_len);
 
 	for (; txt_records && *txt_records; txt_records++) {
-		size_t len = strlen(*txt_records);
+		gsize len = strlen(*txt_records);
 
 		g_assert(len <= 255);
 
@@ -111,17 +111,17 @@ _build_txt_record(gboolean password_required, gchar **txt_records, uint16_t *txt
 
 gboolean
 dmap_mdns_publisher_publish (DmapMdnsPublisher *publisher,
-                             const char          *name,
+                             const gchar          *name,
                              guint                port,
-                             const char          *type_of_service,
+                             const gchar          *type_of_service,
                              gboolean             password_required,
 			     gchar              **txt_records,
                              GError             **error)
 {
 	gboolean fnval = TRUE;
-	uint16_t txt_len = 0;
-	char *txt_record = NULL;
-	int dns_err;
+	guint16 txt_len = 0;
+	gchar *txt_record = NULL;
+	gint dns_err;
 
 	/* TODO: Unify txt_records and password_required to simplify build_txt_...? */
 	txt_record = _build_txt_record(password_required, txt_records, &txt_len);

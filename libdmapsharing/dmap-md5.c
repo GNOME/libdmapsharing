@@ -56,14 +56,14 @@ static void _transform (guint32 buf[4], guint32 const in[16], gint version);
 #if 0				//ndef WORDS_BIGENDIAN /* was: HIGHFIRST */
 #define _byte_reverse(buf, len)	/* Nothing */
 #else
-static void _byte_reverse (unsigned char *buf, unsigned longs);
+static void _byte_reverse (guchar *buf, guint longs);
 
 #ifndef ASM_MD5
 /*
 * Note: this code is harmless on little-endian machines.
 */
 static void
-_byte_reverse (unsigned char *buf, unsigned longs)
+_byte_reverse (guchar *buf, guint longs)
 {
 	guint32 t;
 
@@ -93,7 +93,7 @@ _init (DmapHashContext * ctx, gint version)
 }
 
 static void
-_update (DmapHashContext * ctx, unsigned char const *buf, unsigned int len)
+_update (DmapHashContext * ctx, guchar const *buf, guint len)
 {
 	guint32 t;
 
@@ -110,7 +110,7 @@ _update (DmapHashContext * ctx, unsigned char const *buf, unsigned int len)
 	/* Handle any leading odd-sized chunks */
 
 	if (t) {
-		unsigned char *p = (unsigned char *) ctx->in + t;
+		guchar *p = (guchar *) ctx->in + t;
 
 		t = 64 - t;
 		if (len < t) {
@@ -139,10 +139,10 @@ _update (DmapHashContext * ctx, unsigned char const *buf, unsigned int len)
 }
 
 static void
-_final (DmapHashContext * ctx, unsigned char digest[16])
+_final (DmapHashContext * ctx, guchar digest[16])
 {
-	unsigned count;
-	unsigned char *p;
+	guint count;
+	guchar *p;
 	guint32 *tmp;
 
 	/* Compute number of bytes mod 64 */
@@ -296,20 +296,20 @@ _transform (guint32 buf[4], guint32 const in[16], gint version)
 #endif
 
 static gint _done = 0;
-static unsigned char _42[256 * 65] = { 0 };
-static unsigned char _45[256 * 65] = { 0 };
+static guchar _42[256 * 65] = { 0 };
+static guchar _45[256 * 65] = { 0 };
 
 static const gchar _hexchars[] = "0123456789ABCDEF";
 static gchar _ac[] = "Dpqzsjhiu!3114!Bqqmf!Dpnqvufs-!Jod/";	/* +1 */
 static gboolean _ac_unfudged = FALSE;
 
 void
-dmap_md5_progressive_to_string (const unsigned char *digest, gchar * string)
+dmap_md5_progressive_to_string (const guchar *digest, gchar * string)
 {
 	gint i;
 
 	for (i = 0; i < 16; i++) {
-		unsigned char tmp = digest[i];
+		guchar tmp = digest[i];
 
 		string[i * 2 + 1] = _hexchars[tmp & 0x0f];
 		string[i * 2] = _hexchars[(tmp >> 4) & 0x0f];
@@ -320,9 +320,9 @@ static void
 _generate_static_42 ()
 {
 	DmapHashContext ctx;
-	unsigned char *p = _42;
-	int i;
-	unsigned char buf[16];
+	guchar *p = _42;
+	gint i;
+	guchar buf[16];
 
 	for (i = 0; i < 256; i++) {
 		_init (&ctx, 0);
@@ -388,9 +388,9 @@ static void
 _generate_static_45 ()
 {
 	DmapHashContext ctx;
-	unsigned char *p = _45;
-	int i;
-	unsigned char buf[16];
+	guchar *p = _45;
+	gint i;
+	guchar buf[16];
 
 	for (i = 0; i < 256; i++) {
 		_init (&ctx, 1);
@@ -454,15 +454,15 @@ _generate_static_45 ()
 }
 
 void
-dmap_md5_generate (short version_major,
+dmap_md5_generate (gshort version_major,
                    const guchar * url,
                    guchar hash_select, guchar * out, gint request_id)
 {
-	unsigned char buf[16];
+	guchar buf[16];
 	DmapHashContext ctx;
 	gsize i;
 
-	unsigned char *hashTable = (version_major == 3) ?
+	guchar *hashTable = (version_major == 3) ?
 		_45 : _42;
 
 	if (!_done) {
@@ -514,15 +514,15 @@ dmap_md5_progressive_init (DmapHashContext *context)
 
 void
 dmap_md5_progressive_update (DmapHashContext *context,
-                                   unsigned char const *buffer,
-                                   unsigned int length)
+                                   guchar const *buffer,
+                                   guint length)
 {
 	_update (context, buffer, length);
 }
 
 void
 dmap_md5_progressive_final (DmapHashContext *context,
-                                  unsigned char digest[16])
+                                  guchar digest[16])
 {
 	/* FIXME: This is only equivalent to dmap_md5_generate()
          *        when it is called with (3, x, 2, y, 0).

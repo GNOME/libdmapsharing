@@ -63,14 +63,14 @@ GType dmap_mdns_publisher_get_type (void);
 
 DmapMdnsPublisher *dmap_mdns_publisher_new (void);
 gboolean dmap_mdns_publisher_publish (DmapMdnsPublisher * publisher,
-				      const char *name,
+				      const gchar *name,
 				      guint port,
-				      const char *type_of_service,
+				      const gchar *type_of_service,
 				      gboolean password_required,
 				      gchar ** txt_records, GError ** error);
 gboolean dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher * publisher,
 					     guint port,
-					     const char *name,
+					     const gchar *name,
 					     GError ** error);
 gboolean dmap_mdns_publisher_withdraw (DmapMdnsPublisher * publisher,
 				       guint port, GError ** error);

@@ -66,19 +66,19 @@ typedef struct {
 	gchar *name;
 	gint64 group_id;
 	gchar *artist;
-	int count;
+	gint count;
 } GroupInfo;
 
 struct DmapSharePrivate
 {
 	gchar *name;
 	guint port;
-	char *password;
+	gchar *password;
 
 	/* FIXME: eventually, this should be determined dynamically, based
 	 * on what client has connected and its supported mimetypes.
 	 */
-	char *transcode_mimetype;
+	gchar *transcode_mimetype;
 
 	DmapShareAuthMethod auth_method;
 
@@ -130,12 +130,12 @@ G_DEFINE_ABSTRACT_TYPE_WITH_PRIVATE (DmapShare,
 static gboolean
 _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
                      SoupServerMessage * msg,
-                     const char *username,
+                     const gchar *username,
                      gpointer password,
                      DmapShare * share)
 {
 	gboolean allowed;
-	const char *path;
+	const gchar *path;
 
 	path = g_uri_get_path(soup_server_message_get_uri (msg));
 	g_debug ("Auth request for %s, user %s", path, username);
@@ -149,7 +149,7 @@ _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
 static void
 _server_info_adapter (G_GNUC_UNUSED SoupServer * server,
                       SoupServerMessage * message,
-                      const char *path,
+                      const gchar *path,
                       G_GNUC_UNUSED GHashTable * query,
                       DmapShare * share)
 {
@@ -159,7 +159,7 @@ _server_info_adapter (G_GNUC_UNUSED SoupServer * server,
 static void
 _content_codes (DmapShare * share,
                 SoupServerMessage * message,
-                const char *path)
+                const gchar *path)
 {
 /* MCCR content codes response
  * 	MSTT status
@@ -200,7 +200,7 @@ _content_codes (DmapShare * share,
 static void
 _content_codes_adapter (G_GNUC_UNUSED SoupServer * server,
                         SoupServerMessage * message,
-                        const char *path,
+                        const gchar *path,
                         G_GNUC_UNUSED GHashTable * query,
                         DmapShare * share)
 {
@@ -212,7 +212,7 @@ _content_codes_adapter (G_GNUC_UNUSED SoupServer * server,
 static void
 _login_adapter (G_GNUC_UNUSED SoupServer * server,
 	       SoupServerMessage * message,
-	       const char *path,
+	       const gchar *path,
 	       GHashTable * query,
                DmapShare * share)
 {
@@ -229,10 +229,10 @@ _session_id_remove (DmapShare * share,
 static void
 _logout (DmapShare * share,
          SoupServerMessage * message,
-         const char *path,
+         const gchar *path,
          GHashTable * query)
 {
-	int status;
+	gint status;
 	guint32 id;
 
 	g_debug ("Path is %s.", path);
@@ -252,7 +252,7 @@ _logout (DmapShare * share,
 static void
 _logout_adapter (G_GNUC_UNUSED SoupServer * server,
                  SoupServerMessage * message,
-                 const char *path,
+                 const gchar *path,
                  GHashTable * query,
                  DmapShare * share)
 {
@@ -270,7 +270,7 @@ _get_revision_number_from_query (GHashTable * query,
                                  guint * number)
 {
 	gboolean ok = FALSE;
-	char *revision_number_str;
+	gchar *revision_number_str;
 	guint revision_number;
 
 	revision_number_str = g_hash_table_lookup (query, "revision-number");
@@ -294,7 +294,7 @@ done:
 static void
 _update (DmapShare * share,
          SoupServerMessage * message,
-         const char *path,
+         const gchar *path,
          GHashTable * query)
 {
 	guint revision_number;
@@ -333,7 +333,7 @@ _update (DmapShare * share,
 static void
 _update_adapter (G_GNUC_UNUSED SoupServer * server,
                  SoupServerMessage * message,
-                 const char *path,
+                 const gchar *path,
                  GHashTable * query,
                  DmapShare * share)
 {
@@ -538,7 +538,7 @@ _chunked_message_finished (G_GNUC_UNUSED SoupServerMessage * message,
 }
 
 static DmapBits
-_parse_meta_str (const char *attrs, struct DmapMetaDataMap *mdm)
+_parse_meta_str (const gchar *attrs, struct DmapMetaDataMap *mdm)
 {
 	guint i;
 	DmapBits bits = 0;
@@ -594,10 +594,10 @@ static void
 _databases (DmapShare * share,
             SoupServer * server,
             SoupServerMessage * message,
-            const char *path,
+            const gchar *path,
             GHashTable * query)
 {
-	const char *rest_of_path;
+	const gchar *rest_of_path;
 
 	g_debug ("Path is %s.", path);
 	g_hash_table_foreach (query, _debug_param, NULL);
@@ -1080,7 +1080,7 @@ done:
 static void
 _databases_adapter (SoupServer * server,
                     SoupServerMessage * message,
-                    const char *path,
+                    const gchar *path,
                     GHashTable * query,
                     DmapShare * share)
 {
@@ -1093,7 +1093,7 @@ _databases_adapter (SoupServer * server,
 static void
 _ctrl_int (G_GNUC_UNUSED DmapShare * share,
            G_GNUC_UNUSED SoupServerMessage * message,
-           const char *path,
+           const gchar *path,
            GHashTable * query)
 {
 	g_debug ("Path is %s.", path);
@@ -1107,7 +1107,7 @@ _ctrl_int (G_GNUC_UNUSED DmapShare * share,
 static void
 _ctrl_int_adapter (G_GNUC_UNUSED SoupServer * server,
                    SoupServerMessage * message,
-                   const char *path,
+                   const gchar *path,
                    GHashTable * query,
                    DmapShare * share)
 {
@@ -1117,7 +1117,7 @@ _ctrl_int_adapter (G_GNUC_UNUSED SoupServer * server,
 }
 
 static void
-_set_name (DmapShare * share, const char *name)
+_set_name (DmapShare * share, const gchar *name)
 {
 	GError *error;
 
@@ -1144,7 +1144,7 @@ _set_name (DmapShare * share, const char *name)
 static void
 _published (DmapShare * share,
             G_GNUC_UNUSED DmapMdnsPublisher * publisher,
-            const char *name)
+            const gchar *name)
 {
 	if (share->priv->name == NULL || name == NULL) {
 		return;
@@ -1158,7 +1158,7 @@ _published (DmapShare * share,
 
 static void
 _published_adapter (DmapMdnsPublisher * publisher,
-                    const char *name,
+                    const gchar *name,
                     DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->published (share, publisher, name);
@@ -1167,7 +1167,7 @@ _published_adapter (DmapMdnsPublisher * publisher,
 static void
 _name_collision (DmapShare * share,
                  G_GNUC_UNUSED DmapMdnsPublisher * publisher,
-                 const char *name)
+                 const gchar *name)
 {
 	g_assert(NULL != name);
 	g_assert(NULL != share->priv->name);
@@ -1181,7 +1181,7 @@ _name_collision (DmapShare * share,
 
 static void
 _name_collision_adapter (DmapMdnsPublisher * publisher,
-			const char *name, DmapShare * share)
+			const gchar *name, DmapShare * share)
 {
 	DMAP_SHARE_GET_CLASS (share)->name_collision (share, publisher, name);
 }
@@ -1191,7 +1191,7 @@ _soup_auth_filter (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
                    SoupServerMessage * msg, G_GNUC_UNUSED gpointer user_data)
 {
 	gboolean ok = FALSE;
-	const char *path;
+	const gchar *path;
 
 	path = g_uri_get_path(soup_server_message_get_uri (msg));
 	if (g_str_has_prefix (path, "/databases/")) {
@@ -1405,7 +1405,7 @@ _maybe_restart (DmapShare * share)
 }
 
 static void
-_set_password (DmapShare * share, const char *password)
+_set_password (DmapShare * share, const gchar *password)
 {
 	if (share->priv->password && password &&
 	    0 == strcmp (password, share->priv->password)) {
@@ -1699,7 +1699,7 @@ static gboolean
 _get_session_id (GHashTable * query, guint32 * id)
 {
 	gboolean ok = FALSE;
-	char *session_id_str;
+	gchar *session_id_str;
 	guint32 session_id;
 
 	session_id_str = g_hash_table_lookup (query, "session-id");
@@ -1727,8 +1727,8 @@ dmap_share_session_id_validate (DmapShare * share,
 	gboolean ok = FALSE;
 	guint32 session_id;
 	gboolean res;
-	const char *addr;
-	const char *remote_address;
+	const gchar *addr;
+	const gchar *remote_address;
 
 	if (id) {
 		*id = 0;
@@ -1783,8 +1783,8 @@ static guint32
 _session_id_create (DmapShare *share, SoupServerMessage *message)
 {
 	guint32 id;
-	const char *addr;
-	char *remote_address;
+	const gchar *addr;
+	gchar *remote_address;
 
 	do {
 		/* create a unique session id */
@@ -1846,7 +1846,7 @@ dmap_share_client_requested (DmapBits bits, gint field)
 void
 dmap_share_login (DmapShare * share,
                   SoupServerMessage * message,
-                  const char *path,
+                  const gchar *path,
                   G_GNUC_UNUSED GHashTable * query)
 {
 /* MLOG login response

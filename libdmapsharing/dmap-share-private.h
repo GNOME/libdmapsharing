@@ -51,13 +51,13 @@ GSList *dmap_share_build_filter (gchar * filterstr);
 
 void dmap_share_login (DmapShare * share,
                        SoupServerMessage * message,
-                       const char *path,
+                       const gchar *path,
                        GHashTable * query);
 
 /* Virtual methods: MDNS callbacks */
 void dmap_share_name_collision (DmapShare * share,
 				 DmapMdnsPublisher * publisher,
-				 const char *name);
+				 const gchar *name);
 
 #endif /* _DMAP_SHARE_PRIVATE_H */
 

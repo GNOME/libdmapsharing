@@ -79,7 +79,7 @@ static void error_cb(G_GNUC_UNUSED DmapConnection *connection,
 static void
 connected_cb (G_GNUC_UNUSED DmapConnection *connection,
               G_GNUC_UNUSED gboolean        result,
-              G_GNUC_UNUSED const char     *reason,
+              G_GNUC_UNUSED const gchar    *reason,
               DmapDb         *db)
 {
 	g_print ("Connection cb., DB has %lu entries\n", dmap_db_count (db));
@@ -89,14 +89,14 @@ connected_cb (G_GNUC_UNUSED DmapConnection *connection,
 
 static void
 authenticate_cb (DmapConnection *connection,
-		 G_GNUC_UNUSED const char *name,
+		 G_GNUC_UNUSED const gchar *name,
 		 SoupSession *session,
 		 SoupMessage *msg,
 		 SoupAuth *auth,
 		 G_GNUC_UNUSED gboolean retrying,
 		 G_GNUC_UNUSED gpointer user_data)
 {
-	char *username, password[BUFSIZ + 1], *rc;
+	gchar *username, password[BUFSIZ + 1], *rc;
 	g_object_get (connection, "username", &username, NULL);
 	g_print ("Password required (username is %s): ", username);
 
@@ -163,7 +163,7 @@ service_added_cb (G_GNUC_UNUSED DmapMdnsBrowser *browser,
 }
 
 static void
-_log_printf(const char *log_domain,
+_log_printf(const gchar *log_domain,
             G_GNUC_UNUSED GLogLevelFlags level,
             const gchar *message,
             G_GNUC_UNUSED gpointer user_data)
@@ -171,7 +171,8 @@ _log_printf(const char *log_domain,
     g_printerr("%s: %s\n", log_domain, message);
 }
 
-int main(int argc, char **argv)
+gint
+main(gint argc, gchar **argv)
 {
     DmapMdnsBrowser *browser;
     GError *error = NULL;

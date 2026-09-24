@@ -102,8 +102,8 @@ GType dmap_av_connection_get_type (void);
  *
  * Returns: a pointer to a DmapAvConnection.
  */
-DmapAvConnection *dmap_av_connection_new (const char *name,
-				     const char *host,
+DmapAvConnection *dmap_av_connection_new (const gchar *name,
+				     const gchar *host,
 				     guint port,
 				     DmapDb * db,
 				     DmapRecordFactory * factory);

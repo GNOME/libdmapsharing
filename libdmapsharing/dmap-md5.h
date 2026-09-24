@@ -31,22 +31,22 @@ typedef struct DmapHashContext
 {
         guint32 buf[4];
         guint32 bits[2];
-        unsigned char in[64];
+        guchar in[64];
         gint version;
 } DmapHashContext;
 
 void dmap_md5_progressive_init      (DmapHashContext *context);
 
 void dmap_md5_progressive_update    (DmapHashContext *context,
-                                     unsigned char const *buffer,
-                                     unsigned int length);
+                                     guchar const *buffer,
+                                     guint length);
 
 void dmap_md5_progressive_final     (DmapHashContext *context,
-                                     unsigned char digest[16]);
+                                     guchar digest[16]);
 
-void dmap_md5_progressive_to_string (const unsigned char *digest, gchar * string);
+void dmap_md5_progressive_to_string (const guchar *digest, gchar * string);
 
-void dmap_md5_generate              (short version_major,
+void dmap_md5_generate              (gshort version_major,
                                      const guchar *url,
                                      guchar hash_select,
                                      guchar *out,
