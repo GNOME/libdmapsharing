@@ -95,10 +95,9 @@ dmap_connection_init (DmapConnection * connection)
 	connection->priv = dmap_connection_get_instance_private(connection);
 }
 
-enum
+typedef enum
 {
-	PROP_0,
-	PROP_DB,
+	PROP_DB = 1,
 	PROP_FACTORY,
 	PROP_NAME,
 	PROP_ENTRY_TYPE,
@@ -111,7 +110,7 @@ enum
 	PROP_REVISION_NUMBER,
 	PROP_USERNAME,
 	PROP_PASSWORD,
-};
+} DmapConnectionProperty;
 
 enum
 {
@@ -220,7 +219,7 @@ _set_property (GObject * object, guint prop_id,
 {
 	DmapConnectionPrivate *priv = DMAP_CONNECTION (object)->priv;
 
-	switch (prop_id) {
+	switch ((DmapConnectionProperty) prop_id) {
 	case PROP_NAME:
 		g_free (priv->name);
 		priv->name = g_value_dup_string (value);
@@ -283,7 +282,7 @@ _get_property (GObject * object, guint prop_id,
 {
 	DmapConnectionPrivate *priv = DMAP_CONNECTION (object)->priv;
 
-	switch (prop_id) {
+	switch ((DmapConnectionProperty) prop_id) {
 	case PROP_DB:
 		g_value_set_object (value, priv->db);
 		break;

@@ -39,16 +39,15 @@ struct _DmapMdnsServicePrivate {
         DmapMdnsServiceTransportProtocol transport_protocol; // FIXME: subclass
 };
 
-enum {
-        PROP_0,
-        PROP_SERVICE_NAME,
+typedef enum {
+        PROP_SERVICE_NAME = 1,
         PROP_NAME,
         PROP_HOST,
         PROP_PORT,
         PROP_PASSWORD_PROTECTED,
         PROP_PAIR,
         PROP_TRANSPORT_PROTOCOL
-};
+} DmapMdnsServiceProperty;
 
 static void
 _set_property (GObject *object,
@@ -58,7 +57,7 @@ _set_property (GObject *object,
 {
 	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
-	switch (prop_id) {
+	switch ((DmapMdnsServiceProperty) prop_id) {
 	case PROP_SERVICE_NAME:
 		g_free (service->priv->service_name);
 		service->priv->service_name = g_value_dup_string (value);
@@ -100,7 +99,7 @@ _get_property (GObject *object,
 {
 	DmapMdnsService *service = DMAP_MDNS_SERVICE (object);
 
-	switch (prop_id) {
+	switch ((DmapMdnsServiceProperty) prop_id) {
 	case PROP_SERVICE_NAME:
 		g_value_set_string (value, service->priv->service_name);
 		break;

@@ -40,10 +40,9 @@
 #define DAAP_VERSION 3.0
 #define DMAP_TIMEOUT 1800
 
-enum
+typedef enum
 {
-	PROP_0,
-	PROP_SERVER,
+	PROP_SERVER = 1,
 	PROP_NAME,
 	PROP_PASSWORD,
 	PROP_REVISION_NUMBER,
@@ -52,7 +51,7 @@ enum
 	PROP_CONTAINER_DB,
 	PROP_TRANSCODE_MIMETYPE,
 	PROP_TXT_RECORDS
-};
+} DmapShareProperty;
 
 enum
 {
@@ -1433,7 +1432,7 @@ _set_property (GObject * object,
 {
 	DmapShare *share = DMAP_SHARE (object);
 
-	switch (prop_id) {
+	switch ((DmapShareProperty) prop_id) {
 	case PROP_NAME:
 		_set_name (share, g_value_get_string (value));
 		break;
@@ -1472,7 +1471,7 @@ _get_property (GObject * object,
 {
 	DmapShare *share = DMAP_SHARE (object);
 
-	switch (prop_id) {
+	switch ((DmapShareProperty) prop_id) {
 	case PROP_SERVER:
 		g_value_set_object (value, share->priv->server);
 		return;

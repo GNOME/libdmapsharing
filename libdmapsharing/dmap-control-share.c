@@ -77,11 +77,10 @@ typedef struct {
 	DmapConnection *connection;
 } DACPRemoteInfo;
 
-enum {
-	PROP_0,
-	PROP_LIBRARY_NAME,
+typedef enum {
+	PROP_LIBRARY_NAME = 1,
 	PROP_PLAYER
-};
+} DmapControlShareProperty;
 
 enum {
 	REMOTE_FOUND,
@@ -155,7 +154,7 @@ _set_property (GObject * object,
 {
 	DmapControlShare *share = DMAP_CONTROL_SHARE (object);
 
-	switch (prop_id) {
+	switch ((DmapControlShareProperty) prop_id) {
 	case PROP_LIBRARY_NAME:
 		g_free (share->priv->library_name);
 		share->priv->library_name = g_value_dup_string (value);
@@ -179,7 +178,7 @@ _get_property (GObject * object,
 {
 	DmapControlShare *share = DMAP_CONTROL_SHARE (object);
 
-	switch (prop_id) {
+	switch ((DmapControlShareProperty) prop_id) {
 	case PROP_LIBRARY_NAME:
 		g_value_set_string (value, share->priv->library_name);
 		break;

@@ -47,9 +47,8 @@ struct TestDmapAvRecordPrivate {
 	GArray *hash;
 };
 
-enum {
-        PROP_0,
-        PROP_LOCATION,
+typedef enum {
+        PROP_LOCATION = 1,
         PROP_TITLE,
         PROP_RATING,
         PROP_FILESIZE,
@@ -71,7 +70,7 @@ enum {
         PROP_SONGALBUMID,
         PROP_MEDIAKIND,
         PROP_HASH
-};
+} TestDmapAvRecordProperty;
 
 static void
 test_dmap_av_record_set_property (GObject *object,
@@ -81,7 +80,7 @@ test_dmap_av_record_set_property (GObject *object,
 {
         TestDmapAvRecord *record = TEST_DMAP_AV_RECORD (object);
 
-        switch (prop_id) {
+        switch ((TestDmapAvRecordProperty) prop_id) {
                 case PROP_LOCATION:
 			g_free (record->priv->location);
                         record->priv->location = g_value_dup_string (value);
@@ -174,7 +173,7 @@ test_dmap_av_record_get_property (GObject *object,
 {
         TestDmapAvRecord *record = TEST_DMAP_AV_RECORD (object);
 
-        switch (prop_id) {
+        switch ((TestDmapAvRecordProperty) prop_id) {
                 case PROP_LOCATION:
                         g_value_set_string (value, record->priv->location);
                         break;

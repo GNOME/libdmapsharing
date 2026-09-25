@@ -20,10 +20,9 @@
 
 #include "test-dmap-container-record.h"
 
-enum {
-        PROP_0,
-	PROP_NAME
-};
+typedef enum {
+	PROP_NAME = 1
+} DmapDbProperty;
 
 static DmapDb *_entries = NULL;
 

@@ -39,9 +39,8 @@ struct TestDmapImageRecordPrivate {
 	GArray *hash;
 };
 
-enum {
-        PROP_0,
-        PROP_LARGE_FILESIZE,
+typedef enum {
+        PROP_LARGE_FILESIZE = 1,
         PROP_CREATION_DATE,
         PROP_RATING,
         PROP_LOCATION,
@@ -53,7 +52,7 @@ enum {
         PROP_THUMBNAIL,
 	PROP_HASH,
         PROP_COMMENTS
-};
+} TestDmapImageRecordProperty;
 
 static void
 test_dmap_image_record_set_property (GObject *object,
