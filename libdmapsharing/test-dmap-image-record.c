@@ -263,7 +263,7 @@ TestDmapImageRecord *
 test_dmap_image_record_new (void)
 {
 	guchar *thumbnail;
-	GError *error;
+	GError *error = NULL;
 	gchar *path;
 	gsize size;
 	TestDmapImageRecord *record;
