@@ -1689,6 +1689,7 @@ START_TEST(_databases_items_xxx_test)
 	ck_assert(size1 == size2);
 	ck_assert(0 == memcmp(contents1, contents2, size1));
 
+	g_clear_error(&error);
 	g_object_unref(record);
 	g_object_unref(db);
 	g_object_unref(share);

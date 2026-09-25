@@ -307,5 +307,7 @@ test_dmap_image_record_new (void)
 	memset(hash, 0xaa, DMAP_HASH_SIZE);
 	g_array_append_vals (record->priv->hash, hash, DMAP_HASH_SIZE);
 
+	g_clear_error(&error);
+
 	return record;
 }

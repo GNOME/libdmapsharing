@@ -174,6 +174,7 @@ _log_printf(const gchar *log_domain,
 gint
 main(gint argc, gchar **argv)
 {
+    int exitcode = EXIT_FAILURE;
     DmapMdnsBrowser *browser;
     GError *error = NULL;
 
@@ -206,10 +207,15 @@ main(gint argc, gchar **argv)
         g_warning ("error starting browser. code: %d message: %s",
                 error->code,
                 error->message);
-        return 1;
+	goto done;
     }
 
     g_main_loop_run (loop);
 
-    return 0;
+    exitcode = EXIT_SUCCESS;
+
+done:
+    g_clear_error(&error);
+
+    return exitcode;
 }

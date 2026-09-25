@@ -308,6 +308,7 @@ START_TEST(_read_test)
 	ck_assert_int_eq(count1, count2);
 	ck_assert_str_eq(buf, template);
 
+	g_clear_error(&error);
 	g_input_stream_close(stream, NULL, NULL);
 	g_object_unref(record);
 	close(tmp);
@@ -328,6 +329,7 @@ START_TEST(_read_bad_path_test)
 
 	ck_assert(NULL != error);
 
+	g_clear_error(&error);
 	g_object_unref(record);
 }
 END_TEST

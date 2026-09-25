@@ -1033,6 +1033,7 @@ _http_response_handler (G_GNUC_UNUSED GObject *source,
 	ok = TRUE;
 
 done:
+	g_clear_error(&error);
 	g_object_unref(message);
 
 	if (!ok) {
@@ -1350,6 +1351,7 @@ _handle_song_listing (DmapConnection * connection, guint status,
 			g_hash_table_insert (connection->priv->item_id_to_uri,
 					     GINT_TO_POINTER (item_id),
 					     g_strdup (uri));
+			g_clear_error(&error);
 			g_free (uri);
 			g_free (format);
 		} else {

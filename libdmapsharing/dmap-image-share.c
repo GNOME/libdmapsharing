@@ -138,6 +138,7 @@ _file_to_mmap (const gchar *location)
 	}
 
 done:
+	g_clear_error(&error);
 	g_free (path);
 
 	return mapped_file;
