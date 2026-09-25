@@ -344,7 +344,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 	                                                      DMAP_TYPE_DB,
 							      G_PARAM_READWRITE
 							      |
-							      G_PARAM_CONSTRUCT_ONLY));
+							      G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_FACTORY,
@@ -354,7 +354,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 	                                                       DMAP_TYPE_RECORD_FACTORY,
 							      G_PARAM_READWRITE
 							      |
-							      G_PARAM_CONSTRUCT_ONLY));
+							      G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class, PROP_NAME,
 					 g_param_spec_string ("name",
@@ -363,20 +363,20 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 							      NULL,
 							      G_PARAM_READWRITE
 							      |
-							      G_PARAM_CONSTRUCT_ONLY));
+							      G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class, PROP_HOST,
 					 g_param_spec_string ("host", "host",
 							      "host", NULL,
 							      G_PARAM_READWRITE
 							      |
-							      G_PARAM_CONSTRUCT_ONLY));
+							      G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class, PROP_PORT,
 					 g_param_spec_uint ("port", "port",
 							    "port", 0,
 							    G_MAXINT, 0,
 							    G_PARAM_READWRITE
 							    |
-							    G_PARAM_CONSTRUCT_ONLY));
+							    G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_BASE_URI,
@@ -384,7 +384,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 	                                                     "base URI",
 	                                                     "base URI",
 	                                                      G_TYPE_URI,
-	                                                      G_PARAM_READWRITE));
+	                                                      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_DATABASE_ID,
@@ -392,7 +392,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 							   "database ID",
 							   "database ID",
 							   0, G_MAXINT, 0,
-							   G_PARAM_READWRITE));
+							   G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_SESSION_ID,
@@ -400,7 +400,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 							   "session ID",
 							   "session ID",
 							   0, G_MAXINT, 0,
-							   G_PARAM_READWRITE));
+							   G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_DMAP_VERSION,
@@ -409,7 +409,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 							      "DMAP version",
 							      0, G_MAXDOUBLE,
 							      0,
-							      G_PARAM_READWRITE));
+							      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_REVISION_NUMBER,
@@ -417,7 +417,7 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 							   "revision number",
 							   "revision number",
 							   0, G_MAXINT, 0,
-							   G_PARAM_READWRITE));
+							   G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class, PROP_USERNAME,
 					 g_param_spec_string ("username",
@@ -425,14 +425,14 @@ dmap_connection_class_init (DmapConnectionClass * klass)
 							      "connection username",
 							      "libdmapsharing",
 							      G_PARAM_READWRITE |
-							      G_PARAM_CONSTRUCT_ONLY));
+							      G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class, PROP_PASSWORD,
 					 g_param_spec_string ("password",
 							      "connection password",
 							      "connection password",
 							      NULL,
-							      G_PARAM_WRITABLE));
+							      G_PARAM_WRITABLE | G_PARAM_STATIC_STRINGS));
 
 	_signals[AUTHENTICATE] = g_signal_new ("authenticate",
 					      G_TYPE_FROM_CLASS

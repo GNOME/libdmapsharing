@@ -305,7 +305,7 @@ test_dmap_av_record_class_init (TestDmapAvRecordClass *klass)
                              "Real format of song data",
                              "Real format of song data",
                                NULL,
-                            G_PARAM_READWRITE));
+                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void

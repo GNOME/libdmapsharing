@@ -249,7 +249,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 							      "Library Name",
 							      "Library name as will be shown in the Remote",
 							      NULL,
-							      G_PARAM_READWRITE));
+							      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_PLAYER,
@@ -259,7 +259,7 @@ dmap_control_share_class_init (DmapControlShareClass * klass)
 							      G_TYPE_OBJECT,
 							      G_PARAM_READWRITE
 							      |
-							      G_PARAM_CONSTRUCT_ONLY));
+							      G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	/**
 	 * DmapControlShare::remote-found

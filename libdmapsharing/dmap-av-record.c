@@ -35,7 +35,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "URI pointing to song data",
 						      "URI pointing to song data",
 						      NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_boxed
@@ -43,13 +43,13 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Hash of media file contents",
 						      "Hash of media file contents",
 		                                      G_TYPE_ARRAY,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
 						     ("title", "Song title",
 						      "Song title", "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_enum
@@ -58,7 +58,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Media kind",
 						      DMAP_TYPE_DMAP_MEDIA_KIND,
 						      DMAP_MEDIA_KIND_MUSIC,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		/* NOTE: the name must match the part after the last dot of the
 		 * DAAP name, so daap.songalbum becomes songalbum and so on. */
@@ -67,14 +67,14 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						     ("songalbum",
 						      "Album name",
 						      "Album name", "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int64
 						     ("songalbumid",
 						      "Album id", "Album id",
 						      G_MININT64, G_MAXINT64,
-						      0, G_PARAM_READWRITE));
+						      0, G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
@@ -82,7 +82,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Album sort name",
 						      "Album sort name",
 						      "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
@@ -90,7 +90,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song artist",
 						      "Song artist",
 						      "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
@@ -98,14 +98,14 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song artist sort name",
 						      "Song artist sort name",
 						      "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
 						     ("songgenre",
 						      "Song genre",
 						      "Song genre", "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
@@ -113,13 +113,13 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song data format",
 						      "Song data format",
 						      "Unknown",
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
 						     ("rating", "Song rating",
 						      "Song rating", 0, 5, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_uint64
@@ -127,7 +127,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song data size in bytes",
 						      "Song data size in bytes",
 						      0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -135,7 +135,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song duration in seconds",
 						      "Song duration in seconds",
 						      0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -143,7 +143,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song track number",
 						      "Song track number", 0,
 						      G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int ("year",
@@ -152,13 +152,13 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 								       0,
 								       G_MAXINT,
 								       0,
-								       G_PARAM_READWRITE));
+								       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
 						     ("firstseen", "FIXME",
 						      "FIXME", 0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -166,7 +166,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song modification time",
 						      "Song modification time",
 						      0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int ("disc",
@@ -175,7 +175,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 								       0,
 								       G_MAXINT,
 								       0,
-								       G_PARAM_READWRITE));
+								       G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -183,7 +183,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song data bitrate in Kb/s",
 						      "Song data bitrate in Kb/s",
 						      0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_boolean
@@ -191,7 +191,7 @@ dmap_av_record_default_init (DmapAvRecordInterface * iface)
 						      "Song has video component",
 						      "Song has video component",
 						      FALSE,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		is_initialized = TRUE;
 	}

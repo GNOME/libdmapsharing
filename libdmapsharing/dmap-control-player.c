@@ -34,14 +34,14 @@ dmap_control_player_default_init (DmapControlPlayerInterface * iface)
 						      "Playing time",
 						      "Playing time (ms)", 0,
 						      G_MAXULONG, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_boolean
 						     ("shuffle-state",
 						      "Shuffle state",
 						      "Shufle state", FALSE,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_enum
@@ -50,7 +50,7 @@ dmap_control_player_default_init (DmapControlPlayerInterface * iface)
 						      "Repeat state",
 						      DMAP_TYPE_DMAP_CONTROL_REPEAT_STATE,
 						      DMAP_CONTROL_REPEAT_NONE,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_enum
@@ -59,13 +59,13 @@ dmap_control_player_default_init (DmapControlPlayerInterface * iface)
 						      "Play state",
 						      DMAP_TYPE_DMAP_CONTROL_PLAY_STATE,
 						      DMAP_CONTROL_PLAY_STOPPED,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_ulong
 						     ("volume", "Volume",
 						      "Volume", 0, 100, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	}
 }
 

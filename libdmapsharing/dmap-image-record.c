@@ -34,7 +34,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "URI pointing to photo data",
 						      "URI pointing to photo data",
 						      NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_boxed
@@ -42,7 +42,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Hash of media file contents",
 						      "Hash of media file contents",
 		                                      G_TYPE_ARRAY,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		/* iTunes does not require to this to match the datatype for the image
 		 * to be displayed (set to "JPEG" and served a PNG). I think this is
@@ -54,7 +54,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo data format",
 						      "Photo data format",
 						      NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
@@ -62,21 +62,21 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo aspect ratio",
 						      "Photo aspect ratio",
 						      NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
 						     ("filename",
 						      "Photo filename",
 						      "Photo filename", NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_string
 						     ("comments",
 						      "Photo comments",
 						      "Photo comments", NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_boxed
@@ -84,7 +84,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo thumbnail",
 						      "Photo thumbnail",
 		                                      G_TYPE_ARRAY,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -92,7 +92,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo rating",
 						      "Photo rating", 0,
 						      G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -100,7 +100,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo creation date",
 						      "Photo creation date",
 						      0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -108,7 +108,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo large file size",
 						      "Photo large file size",
 						      0, G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -116,7 +116,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo pixel height",
 						      "Photo pixel height", 0,
 						      G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		g_object_interface_install_property (iface,
 						     g_param_spec_int
@@ -124,7 +124,7 @@ dmap_image_record_default_init (DmapImageRecordInterface * iface)
 						      "Photo pixel width",
 						      "Photo pixel width", 0,
 						      G_MAXINT, 0,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		is_initialized = TRUE;
 	}

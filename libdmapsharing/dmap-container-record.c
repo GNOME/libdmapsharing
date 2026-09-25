@@ -31,7 +31,7 @@ dmap_container_record_default_init (DmapContainerRecordInterface * iface)
 						     ("name",
 						      "Container name",
 						      "Container name", NULL,
-						      G_PARAM_READWRITE));
+						      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 		is_initialized = TRUE;
 	}

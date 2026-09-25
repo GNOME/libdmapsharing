@@ -1583,7 +1583,7 @@ dmap_share_class_init (DmapShareClass * klass)
 							      "Soup Server",
 							      "Soup server",
 							      SOUP_TYPE_SERVER,
-							      G_PARAM_READABLE));
+							      G_PARAM_READABLE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_NAME,
@@ -1591,14 +1591,14 @@ dmap_share_class_init (DmapShareClass * klass)
 							      "Name",
 							      "Share Name",
 							      NULL,
-							      G_PARAM_READWRITE));
+							      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class,
 					 PROP_PASSWORD,
 					 g_param_spec_string ("password",
 							      "Authentication password",
 							      "Authentication password",
 							      NULL,
-							      G_PARAM_READWRITE));
+							      G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_REVISION_NUMBER,
@@ -1608,7 +1608,7 @@ dmap_share_class_init (DmapShareClass * klass)
 							    0,
 							    G_MAXINT,
 							    0,
-							    G_PARAM_READWRITE));
+							    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_AUTH_METHOD,
@@ -1618,7 +1618,7 @@ dmap_share_class_init (DmapShareClass * klass)
 							    DMAP_SHARE_AUTH_METHOD_NONE,
 							    DMAP_SHARE_AUTH_METHOD_PASSWORD,
 							    0,
-							    G_PARAM_READWRITE));
+							    G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 	g_object_class_install_property (object_class,
 					 PROP_DB,
 					 g_param_spec_object ("db",
@@ -1626,7 +1626,7 @@ dmap_share_class_init (DmapShareClass * klass)
 							      "DB object",
 	                                                       DMAP_TYPE_DB,
 							       G_PARAM_READWRITE |
-							       G_PARAM_CONSTRUCT_ONLY));
+							       G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_CONTAINER_DB,
@@ -1635,7 +1635,7 @@ dmap_share_class_init (DmapShareClass * klass)
 							      "Container DB object",
 	                                                       DMAP_TYPE_CONTAINER_DB,
 							       G_PARAM_READWRITE |
-							       G_PARAM_CONSTRUCT_ONLY));
+							       G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_TRANSCODE_MIMETYPE,
@@ -1645,7 +1645,7 @@ dmap_share_class_init (DmapShareClass * klass)
 					  "Set mimetype of stream after transcoding",
 					  NULL,
 					  G_PARAM_READWRITE |
-					  G_PARAM_CONSTRUCT_ONLY));
+					  G_PARAM_CONSTRUCT_ONLY | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
 					 PROP_TXT_RECORDS,
@@ -1653,7 +1653,7 @@ dmap_share_class_init (DmapShareClass * klass)
 							     "TXT-Records",
 							     "Set TXT-Records used for MDNS publishing",
 							     G_TYPE_STRV,
-							     G_PARAM_READWRITE));
+							     G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	_signals[ERROR] =
 		g_signal_new ("error",

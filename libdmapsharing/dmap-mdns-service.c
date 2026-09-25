@@ -154,7 +154,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
                                                               "Service Name",
                                                               "Service Name",
                                                               NULL,
-                                                              G_PARAM_READWRITE));
+                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
                                          PROP_NAME,
@@ -162,7 +162,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
                                                               "Name",
                                                               "Name",
                                                               NULL,
-                                                              G_PARAM_READWRITE));
+                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
                                          PROP_HOST,
@@ -170,7 +170,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
                                                               "Host",
                                                               "Host",
                                                               NULL,
-                                                              G_PARAM_READWRITE));
+                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
                                          PROP_PORT,
@@ -180,7 +180,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
                                                             0,
 	                                                    G_MAXINT,
                                                             0,
-                                                            G_PARAM_READWRITE));
+                                                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
                                          PROP_PASSWORD_PROTECTED,
@@ -188,7 +188,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
                                                                "Password Protected",
                                                                "Password Protected",
                                                                FALSE,
-                                                               G_PARAM_READWRITE));
+                                                               G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
                                          PROP_PAIR,
@@ -196,7 +196,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
                                                               "Pair",
                                                               "Pair",
                                                               NULL,
-                                                              G_PARAM_READWRITE));
+                                                              G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 
 	g_object_class_install_property (object_class,
                                          PROP_TRANSPORT_PROTOCOL,
@@ -206,7 +206,7 @@ dmap_mdns_service_class_init (DmapMdnsServiceClass * klass)
 	                                                    DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP,
 	                                                    DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_LAST,
 	                                                    DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_TCP,
-                                                            G_PARAM_READWRITE));
+                                                            G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
