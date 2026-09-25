@@ -370,7 +370,7 @@ _resolve_cb (AvahiServiceResolver * service_resolver,
 					continue;
 				}
 
-				if (strcmp (key, "Password") == 0) {
+				if (g_strcmp0 (key, "Password") == 0) {
 					if (size >= 4
 					    && strncmp (value, "true",
 							4) == 0) {
@@ -380,20 +380,20 @@ _resolve_cb (AvahiServiceResolver * service_resolver,
 							       1) == 0) {
 						pp = TRUE;
 					}
-				} else if (strcmp (key, "Machine Name") == 0) {
+				} else if (g_strcmp0 (key, "Machine Name") == 0) {
 					if (name == NULL) {
 						name = g_strdup (value);
 					}
-				} else if (strcmp (key, "DvNm") == 0) {
+				} else if (g_strcmp0 (key, "DvNm") == 0) {
 					if (name != NULL) {
 						g_free (name);
 					}
 					/* Remote's name is presented as DvNm in DACP */
 					name = g_strdup (value);
-				} else if (strcmp (key, "Pair") == 0) {
+				} else if (g_strcmp0 (key, "Pair") == 0) {
 					/* Pair is used when first connecting to a DACP remote */
 					pair = g_strdup (value);
-				} else if (strcmp (key, "tp") == 0) {
+				} else if (g_strcmp0 (key, "tp") == 0) {
 					/* RAOP transport protocol */
 					transport_protocol = strstr (value, "UDP")
 					                   ? DMAP_MDNS_SERVICE_TRANSPORT_PROTOCOL_UDP

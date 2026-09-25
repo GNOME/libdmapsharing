@@ -35,11 +35,11 @@ dmap_utils_mime_to_format (const gchar * transcode_mimetype)
 		goto done;
 	}
 
-        if (!strcmp (transcode_mimetype, "audio/wav")) {
+        if (!g_strcmp0 (transcode_mimetype, "audio/wav")) {
                 format = g_strdup ("wav");
-        } else if (!strcmp (transcode_mimetype, "audio/mp3")) {
+        } else if (!g_strcmp0 (transcode_mimetype, "audio/mp3")) {
                 format = g_strdup ("mp3");
-        } else if (!strcmp (transcode_mimetype, "video/quicktime")) {
+        } else if (!g_strcmp0 (transcode_mimetype, "video/quicktime")) {
                 format = g_strdup ("mp4");
         }
 

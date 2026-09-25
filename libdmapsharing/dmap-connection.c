@@ -820,7 +820,7 @@ _actual_http_response_handler (DmapResponseData * data)
 	}
 
 	if (SOUP_STATUS_IS_SUCCESSFUL (data->status) && encoding_header
-	    && strcmp (encoding_header, "gzip") == 0) {
+	    && g_strcmp0 (encoding_header, "gzip") == 0) {
 #ifdef HAVE_LIBZ
 		z_stream stream;
 		guint factor = 4;
@@ -1382,7 +1382,7 @@ _compare_playlists_by_name (gconstpointer a, gconstpointer b)
 	const DmapPlaylist *playlist1 = a;
 	const DmapPlaylist *playlist2 = b;
 
-	return strcmp (playlist1->name, playlist2->name);
+	return g_strcmp0 (playlist1->name, playlist2->name);
 }
 
 /* FIXME

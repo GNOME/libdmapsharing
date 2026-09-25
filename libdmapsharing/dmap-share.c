@@ -140,7 +140,7 @@ _soup_auth_callback (G_GNUC_UNUSED SoupAuthDomain * auth_domain,
 	path = g_uri_get_path(soup_server_message_get_uri (msg));
 	g_debug ("Auth request for %s, user %s", path, username);
 
-	allowed = !strcmp (password, share->priv->password);
+	allowed = !g_strcmp0 (password, share->priv->password);
 	g_debug ("Auth request: %s", allowed ? "ALLOWED" : "DENIED");
 
 	return allowed;
@@ -544,7 +544,7 @@ _parse_meta_str (const gchar *attrs, struct DmapMetaDataMap *mdm)
 	DmapBits bits = 0;
 
 	/* iTunes 8 uses meta=all for /databases/1/items query: */
-	if (strcmp (attrs, "all") == 0) {
+	if (g_strcmp0 (attrs, "all") == 0) {
 		bits = ~0;
 	} else {
 		gchar **attrsv;
@@ -556,7 +556,7 @@ _parse_meta_str (const gchar *attrs, struct DmapMetaDataMap *mdm)
 			gboolean found = FALSE;
 
 			for (j = 0; mdm[j].tag; j++) {
-				if (strcmp (mdm[j].tag, attrsv[i]) == 0) {
+				if (g_strcmp0 (mdm[j].tag, attrsv[i]) == 0) {
 					bits |= (((DmapBits) 1) << mdm[j].md);
 					found = TRUE;
 				}
@@ -1150,7 +1150,7 @@ _published (DmapShare * share,
 		return;
 	}
 
-	if (strcmp (share->priv->name, name) == 0) {
+	if (g_strcmp0 (share->priv->name, name) == 0) {
 		g_debug ("mDNS publish successful");
 		share->priv->published = TRUE;
 	}
@@ -1408,7 +1408,7 @@ static void
 _set_password (DmapShare * share, const gchar *password)
 {
 	if (share->priv->password && password &&
-	    0 == strcmp (password, share->priv->password)) {
+	    0 == g_strcmp0 (password, share->priv->password)) {
 		goto done;
 	}
 
@@ -1753,7 +1753,7 @@ dmap_share_session_id_validate (DmapShare * share,
 	remote_address = soup_server_message_get_remote_host (message);
 	g_debug ("Validating session id %u from %s matches %s",
 		 session_id, remote_address, addr);
-	if (remote_address == NULL || strcmp (addr, remote_address) != 0) {
+	if (remote_address == NULL || g_strcmp0 (addr, remote_address) != 0) {
 		g_warning
 			("Validation failed: Remote address does not match stored address");
 		goto done;

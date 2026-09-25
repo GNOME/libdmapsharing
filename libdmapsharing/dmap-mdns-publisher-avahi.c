@@ -206,12 +206,12 @@ _create_services (DmapMdnsPublisher * publisher, GError ** error)
 				continue;
 			}
 			service2 = ptr2->data;
-			if (!strcmp(service1->name, service2->name)
-			 && !strcmp(service1->type_of_service, service2->type_of_service)) {
+			if (!g_strcmp0(service1->name, service2->name)
+			 && !g_strcmp0(service1->type_of_service, service2->type_of_service)) {
 				name = g_strdup_printf("%s-%d", service1->name, suffix++);
 			}
 		}
-		if (strcmp(name, service1->name)) {
+		if (g_strcmp0(name, service1->name)) {
 			g_free(service1->name);
 			service1->name = name;
 			g_signal_emit (publisher, _signals[NAME_COLLISION], 0, name);

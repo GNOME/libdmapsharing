@@ -249,7 +249,7 @@ _itunes_compat (DmapAvRecord *record)
 {
 	const gchar *format = TEST_DMAP_AV_RECORD (record)->priv->format;
 
-	return ! strcmp (format, "mp3");
+	return ! g_strcmp0 (format, "mp3");
 }
 
 static GInputStream *
