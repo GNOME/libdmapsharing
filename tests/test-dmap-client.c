@@ -174,7 +174,7 @@ _log_printf(const gchar *log_domain,
 gint
 main(gint argc, gchar **argv)
 {
-    int exitcode = EXIT_FAILURE;
+    gint exitcode = EXIT_FAILURE;
     DmapMdnsBrowser *browser;
     GError *error = NULL;
 
