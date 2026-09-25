@@ -716,7 +716,7 @@ _emit_progress_idle (DmapConnection * connection)
 		       connection->priv->state, connection->priv->progress);
 	connection->priv->emit_progress_id = 0;
 	// FIXME: GDK_THREADS_LEAVE ();
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 static void
@@ -1687,7 +1687,7 @@ _do_something (DmapConnection * connection)
 		break;
 	}
 
-	return FALSE;
+	return G_SOURCE_REMOVE;
 }
 
 gboolean
