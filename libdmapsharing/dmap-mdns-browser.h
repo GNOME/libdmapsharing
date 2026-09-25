@@ -19,8 +19,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef _DMAP_MDNS_BROWSER_H
-#define _DMAP_MDNS_BROWSER_H
+#pragma once
 
 #include <glib-object.h>
 #include <glib.h>
@@ -161,4 +160,3 @@ DmapMdnsServiceType dmap_mdns_browser_get_service_type (DmapMdnsBrowser
  */
 
 G_END_DECLS
-#endif

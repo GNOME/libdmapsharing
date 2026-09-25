@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_ERROR_H
-#define _DMAP_ERROR_H
+#pragma once
 
 #include <glib-object.h>
 #include <glib.h>
@@ -68,6 +67,3 @@ typedef enum
 } DmapError;
 
 G_END_DECLS
-
-#endif
-

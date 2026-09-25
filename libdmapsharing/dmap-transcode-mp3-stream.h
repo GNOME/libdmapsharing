@@ -20,8 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_TRANSCODE_MP3_STREAM_H
-#define _DMAP_TRANSCODE_MP3_STREAM_H
+#pragma once
 
 #include <gio/gio.h>
 
@@ -58,4 +57,3 @@ GType dmap_transcode_mp3_stream_get_type (void);
 GInputStream *dmap_transcode_mp3_stream_new (GInputStream * stream);
 
 G_END_DECLS
-#endif

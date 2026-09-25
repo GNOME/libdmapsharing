@@ -16,8 +16,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef _DMAP_MDNS_SERVICE_H
-#define _DMAP_MDNS_SERVICE_H
+#pragma once
 
 #include <glib-object.h>
 #include <glib.h>
@@ -129,4 +128,3 @@ typedef struct {
 GType dmap_mdns_service_get_type (void);
 
 G_END_DECLS
-#endif

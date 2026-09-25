@@ -19,8 +19,7 @@
  *
  */
 
-#ifndef _DMAP_CONTROL_SHARE_H
-#define _DMAP_CONTROL_SHARE_H
+#pragma once
 
 #include <glib-object.h>
 #include <libdmapsharing/dmap-av-share.h>
@@ -170,7 +169,5 @@ gboolean dmap_control_share_stop_lookup (DmapControlShare * share, GError **erro
  * state changed, suffle state changed, etc).
  */
 void dmap_control_share_player_updated (DmapControlShare * share);
-
-#endif /* _DMAP_CONTROL_SHARE_H */
 
 G_END_DECLS

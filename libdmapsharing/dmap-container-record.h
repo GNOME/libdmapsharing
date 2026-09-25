@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_CONTAINER_RECORD_H
-#define _DMAP_CONTAINER_RECORD_H
+#pragma once
 
 #include <glib-object.h>
 #include <libdmapsharing/dmap-db.h>
@@ -122,7 +121,5 @@ guint64 dmap_container_record_get_entry_count (DmapContainerRecord * record);
  * Returns: (transfer full): A pointer to a DmapDb containing the entries contained in record.
  */
 DmapDb *dmap_container_record_get_entries (DmapContainerRecord * record);
-
-#endif /* _DMAP_CONTAINER_RECORD_H */
 
 G_END_DECLS

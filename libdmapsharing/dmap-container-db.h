@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_CONTAINER_DB_H
-#define _DMAP_CONTAINER_DB_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -139,7 +138,5 @@ void dmap_container_db_foreach (DmapContainerDb * db,
  * Returns: the number of records in the database.
  */
 gulong dmap_container_db_count (DmapContainerDb * db);
-
-#endif /* _DMAP_CONTAINER_DB_H */
 
 G_END_DECLS

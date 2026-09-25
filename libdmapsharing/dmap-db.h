@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_DB_H
-#define _DMAP_DB_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -220,7 +219,5 @@ gulong dmap_db_count (const DmapDb * db);
  * Returns: (element-type guint DmapRecord) (transfer full): the records which satisfy a record in @filter_def.
  */
 GHashTable *dmap_db_apply_filter (DmapDb * db, GSList * filter_def);
-
-#endif /* _DMAP_DB_H */
 
 G_END_DECLS

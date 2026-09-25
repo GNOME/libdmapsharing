@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_RECORD_FACTORY_H
-#define _DMAP_RECORD_FACTORY_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -95,7 +94,5 @@ GType dmap_record_factory_get_type (void);
 DmapRecord *dmap_record_factory_create (DmapRecordFactory * factory,
 					gpointer user_data,
                                         GError **error);
-
-#endif /* _DMAP_RECORD_FACTORY_H */
 
 G_END_DECLS

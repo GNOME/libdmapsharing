@@ -16,13 +16,10 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_TRANSCODE_STREAM_PRIVATE_H
-#define _DMAP_TRANSCODE_STREAM_PRIVATE_H
+#pragma once
 
 #include <dmap-transcode-stream.h>
 #include <gst/gst.h>
 
 void dmap_transcode_stream_private_new_buffer_cb(GstElement *element,
                                                  DmapTranscodeStream *stream);
-
-#endif

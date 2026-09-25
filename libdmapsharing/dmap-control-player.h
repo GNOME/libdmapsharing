@@ -15,8 +15,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_CONTROL_PLAYER_H_
-#define _DMAP_CONTROL_PLAYER_H_
+#pragma once
 
 #include <glib-object.h>
 
@@ -153,4 +152,3 @@ void dmap_control_player_cue_clear (DmapControlPlayer * player);
 void dmap_control_player_cue_play (DmapControlPlayer * player, GList * records, guint index);
 
 G_END_DECLS
-#endif /* _DMAP_CONTROL_PLAYER_H_ */

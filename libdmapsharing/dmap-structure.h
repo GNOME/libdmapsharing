@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef _DMAP_STRUCTURE_H
-#define _DMAP_STRUCTURE_H
+#pragma once
 
 #include <glib-object.h>
 #include <glib.h>
@@ -72,4 +71,3 @@ const DmapContentCodeDefinition * dmap_structure_content_codes (guint * number);
 gint32 dmap_structure_cc_string_as_int32 (const gchar * str);
 
 G_END_DECLS
-#endif

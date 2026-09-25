@@ -14,8 +14,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_CONTROL_CONNECTION_H
-#define _DMAP_CONTROL_CONNECTION_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -96,4 +95,3 @@ DmapControlConnection *dmap_control_connection_new (const gchar *name,
 				     DmapDb * db,
 				     DmapRecordFactory * factory);
 G_END_DECLS
-#endif /* _DMAP_CONTROL_CONNECTION_H */

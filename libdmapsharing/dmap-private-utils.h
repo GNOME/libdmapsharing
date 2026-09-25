@@ -17,8 +17,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef _DMAP_PRIVATE_UTILS_H
-#define _DMAP_PRIVATE_UTILS_H
+#pragma once
 
 #include <glib.h>
 #include <libdmapsharing/dmap-config.h>
@@ -68,4 +67,3 @@ void   dmap_private_utils_write_next_chunk (SoupServerMessage * message, ChunkDa
 void   dmap_private_utils_chunked_message_finished (SoupServerMessage * message, ChunkData * cd);
 
 G_END_DECLS
-#endif

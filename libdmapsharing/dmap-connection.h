@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_CONNECTION_H
-#define _DMAP_CONNECTION_H
+#pragma once
 
 #include <glib-object.h>
 #include <glib.h>
@@ -236,4 +235,3 @@ void dmap_connection_emit_error(DmapConnection *connection, gint code,
                                 const gchar *format, ...);
 
 G_END_DECLS
-#endif /* _DMAP_CONNECTION_H */

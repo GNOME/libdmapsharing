@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_RECORD_H
-#define _DMAP_RECORD_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -101,7 +100,5 @@ GArray *dmap_record_to_blob (DmapRecord * record);
  */
 gboolean dmap_record_set_from_blob (DmapRecord * record,
                                     GArray * blob);
-
-#endif /* _DMAP_RECORD_H */
 
 G_END_DECLS

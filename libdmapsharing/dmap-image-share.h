@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef _DMAP_IMAGE_SHARE_H
-#define _DMAP_IMAGE_SHARE_H
+#pragma once
 
 #include <glib-object.h>
 
@@ -114,7 +113,5 @@ GType dmap_image_share_get_type (void);
 DmapImageShare *dmap_image_share_new (const gchar *name, const gchar *password,
 			   gpointer db, gpointer container_db,
 			   gchar * transcode_mimetype);
-
-#endif /* _DMAP_IMAGE_SHARE_H */
 
 G_END_DECLS

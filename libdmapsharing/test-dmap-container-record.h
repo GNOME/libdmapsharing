@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _TEST_DMAP_CONTAINER_RECORD_H
-#define _TEST_DMAP_CONTAINER_RECORD_H
+#pragma once
 
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/test-dmap-db.h>
@@ -57,5 +56,3 @@ TestDmapContainerRecord *test_dmap_container_record_new           (void);
 guint            test_dmap_container_record_get_id        (DmapContainerRecord *record);
 
 G_END_DECLS
-
-#endif

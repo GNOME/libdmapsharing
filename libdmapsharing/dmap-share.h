@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef _DMAP_SHARE_H
-#define _DMAP_SHARE_H
+#pragma once
 
 #include <glib-object.h>
 #include <libdmapsharing/dmap-container-record.h>
@@ -220,7 +219,5 @@ void dmap_share_free_filter (GSList * filter);
  * @...: parameters for message format
  */
 void dmap_share_emit_error(DmapShare *share, gint code, const gchar *format, ...);
-
-#endif /* _DMAP_SHARE_H */
 
 G_END_DECLS

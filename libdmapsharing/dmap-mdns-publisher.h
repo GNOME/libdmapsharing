@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef _DMAP_MDNS_PUBLISHER_H
-#define _DMAP_MDNS_PUBLISHER_H
+#pragma once
 
 #include <glib-object.h>
 #include <glib.h>
@@ -76,4 +75,3 @@ gboolean dmap_mdns_publisher_withdraw (DmapMdnsPublisher * publisher,
 				       guint port, GError ** error);
 
 G_END_DECLS
-#endif /* _DMAP_MDNS_PUBLISHER_H */

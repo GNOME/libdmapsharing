@@ -20,8 +20,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _DMAP_TRANSCODE_STREAM_H
-#define _DMAP_TRANSCODE_STREAM_H
+#pragma once
 
 #include <gio/gio.h>
 #include <glib-object.h>
@@ -77,4 +76,3 @@ GInputStream *dmap_transcode_stream_new (const gchar * transcode_mimetype,
 					 GInputStream * src_stream);
 
 G_END_DECLS
-#endif /* _DMAP_TRANSCODE_STREAM_H */

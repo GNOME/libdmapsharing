@@ -18,8 +18,7 @@
  *
  */
 
-#ifndef _DMAP_MDNS_AVAHI_H
-#define _DMAP_MDNS_AVAHI_H
+#pragma once
 
 #include <avahi-client/client.h>
 #include <avahi-client/publish.h>
@@ -27,5 +26,3 @@
 AvahiClient *dmap_mdns_avahi_get_client (void);
 
 void dmap_mdns_avahi_set_entry_group (AvahiEntryGroup * group);
-
-#endif

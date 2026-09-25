@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _TEST_DMAP_AV_RECORD_H
-#define _TEST_DMAP_AV_RECORD_H
+#pragma once
 
 #include <libdmapsharing/dmap.h>
 
@@ -57,5 +56,3 @@ TestDmapAvRecord *test_dmap_av_record_new           (void);
 GInputStream   *test_dmap_av_record_read          (DmapAvRecord *record, GError **err);
 
 G_END_DECLS
-
-#endif

@@ -20,8 +20,7 @@
  *
  */
 
-#ifndef _DMAP_SHARE_PRIVATE_H
-#define _DMAP_SHARE_PRIVATE_H
+#pragma once
 
 #include <glib-object.h>
 #include <libdmapsharing/dmap-container-record.h>
@@ -56,7 +55,5 @@ void dmap_share_login (DmapShare * share,
 void dmap_share_name_collision (DmapShare * share,
 				 DmapMdnsPublisher * publisher,
 				 const gchar *name);
-
-#endif /* _DMAP_SHARE_PRIVATE_H */
 
 G_END_DECLS

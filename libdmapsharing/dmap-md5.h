@@ -18,8 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#ifndef _DMAP_MD5_H__
-#define _DMAP_MD5_H__
+#pragma once
 
 #include <glib.h>
 
@@ -53,4 +52,3 @@ void dmap_md5_generate              (gshort version_major,
                                      gint request_id);
 
 G_END_DECLS
-#endif

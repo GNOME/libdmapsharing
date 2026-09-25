@@ -21,8 +21,7 @@
  *
  */
 
-#ifndef _DMAP_AV_SHARE_H
-#define _DMAP_AV_SHARE_H
+#pragma once
 
 #include <glib-object.h>
 #include <libdmapsharing/dmap-container-db.h>
@@ -116,7 +115,5 @@ GType dmap_av_share_get_type (void);
 DmapAvShare *dmap_av_share_new (const gchar *name, const gchar *password,
 			   DmapDb * db, DmapContainerDb * container_db,
 			   gchar * transcode_mimetype);
-
-#endif /* _DMAP_AV_SHARE_H */
 
 G_END_DECLS
