@@ -309,7 +309,7 @@ _should_transcode (DmapAvShare *share,
 		goto done;
 	}
 
-	if (g_strcmp0 (format, format2)) {
+	if (g_strcmp0 (format, format2) != 0) {
 		fnval = TRUE;
 	}
 

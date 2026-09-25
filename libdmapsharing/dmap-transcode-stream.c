@@ -255,13 +255,13 @@ dmap_transcode_stream_new (const gchar * transcode_mimetype,
 
 	if (!transcode_mimetype) {
 		stream = src_stream;
-	} else if (!g_strcmp0 (transcode_mimetype, "audio/mp3")) {
+	} else if (g_strcmp0 (transcode_mimetype, "audio/mp3") == 0) {
 		stream = G_INPUT_STREAM (dmap_transcode_mp3_stream_new
 					 (src_stream));
-	} else if (!g_strcmp0 (transcode_mimetype, "audio/wav")) {
+	} else if (g_strcmp0 (transcode_mimetype, "audio/wav") == 0) {
 		stream = G_INPUT_STREAM (dmap_transcode_wav_stream_new
 					 (src_stream));
-	} else if (!g_strcmp0 (transcode_mimetype, "video/quicktime")) {
+	} else if (g_strcmp0 (transcode_mimetype, "video/quicktime") == 0) {
 		stream = G_INPUT_STREAM (dmap_transcode_qt_stream_new
 					 (src_stream));
 	} else {
