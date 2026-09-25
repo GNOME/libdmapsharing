@@ -18,10 +18,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <libdmapsharing/dmap-utils.h>
+#include "test-dmap-image-record.h"
+
 #include <string.h>
 
-#include "test-dmap-image-record.h"
+#include <libdmapsharing/dmap-utils.h>
 
 struct TestDmapImageRecordPrivate {
 	gint largefilesize;

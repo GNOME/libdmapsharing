@@ -22,9 +22,9 @@
 #include "config.h"
 #endif
 
-#include <string.h>
-
 #include "dmap-utils.h"
+
+#include <string.h>
 
 gchar *
 dmap_utils_mime_to_format (const gchar * transcode_mimetype)

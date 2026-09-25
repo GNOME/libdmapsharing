@@ -21,9 +21,8 @@
 #define _DMAP_PRIVATE_UTILS_H
 
 #include <glib.h>
-#include <libsoup/soup.h>
-
 #include <libdmapsharing/dmap-config.h>
+#include <libsoup/soup.h>
 
 G_BEGIN_DECLS
 

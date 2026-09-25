@@ -22,16 +22,16 @@
 
 #include "config.h"
 
-#include <time.h>
+#include <libdmapsharing/dmap-share-private.h>
+
 #include <stdarg.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include <glib/gi18n.h>
-
-#include <libdmapsharing/dmap.h>
-#include <libdmapsharing/dmap-share-private.h>
 #include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap.h>
 
 #define TYPE_OF_SERVICE "_daap._tcp"
 #define STANDARD_DAAP_PORT 3689

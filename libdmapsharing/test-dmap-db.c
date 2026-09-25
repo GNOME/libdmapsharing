@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <glib.h>
-
 #include "test-dmap-db.h"
+
+#include <glib.h>
 
 struct TestDmapDbPrivate {
 	GHashTable *db;

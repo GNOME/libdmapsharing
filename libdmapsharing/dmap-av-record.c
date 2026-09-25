@@ -255,9 +255,10 @@ dmap_av_record_cmp_by_album (gpointer a, gpointer b, DmapDb * db)
 
 #ifdef HAVE_CHECK
 
-#include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <check.h>
 #include <libdmapsharing/test-dmap-av-record.h>
 #include <libdmapsharing/test-dmap-db.h>
 

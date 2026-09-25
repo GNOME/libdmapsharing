@@ -19,18 +19,18 @@
 #include "config.h"
 
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
-#include <glib.h>
+#include <unistd.h>
 
+#include <glib.h>
 #include <libdmapsharing/dmap.h>
-#include <libdmapsharing/test-dmap-av-record.h>
-#include <libdmapsharing/test-dmap-image-record.h>
 #include <libdmapsharing/test-dmap-av-record-factory.h>
-#include <libdmapsharing/test-dmap-image-record-factory.h>
-#include <libdmapsharing/test-dmap-db.h>
-#include <libdmapsharing/test-dmap-container-record.h>
+#include <libdmapsharing/test-dmap-av-record.h>
 #include <libdmapsharing/test-dmap-container-db.h>
+#include <libdmapsharing/test-dmap-container-record.h>
+#include <libdmapsharing/test-dmap-db.h>
+#include <libdmapsharing/test-dmap-image-record-factory.h>
+#include <libdmapsharing/test-dmap-image-record.h>
 
 /* For use when deciding whether to test DAAP or DPAP. */
 enum {

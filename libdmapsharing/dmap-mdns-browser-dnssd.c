@@ -16,17 +16,18 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <dns_sd.h>
-#include <string.h>
+#include <arpa/inet.h>
 #include <assert.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <errno.h>
-#include <glib.h>
+
+#include <dns_sd.h>
 #include <glib-object.h>
-#include <arpa/inet.h>
+#include <glib.h>
 
 #include "dmap-mdns-browser.h"
 

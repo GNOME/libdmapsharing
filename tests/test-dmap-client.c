@@ -17,15 +17,15 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <glib.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include <glib.h>
 #include <libdmapsharing/dmap.h>
 #include <libdmapsharing/test-dmap-av-record-factory.h>
-#include <libdmapsharing/test-dmap-image-record-factory.h>
 #include <libdmapsharing/test-dmap-db.h>
+#include <libdmapsharing/test-dmap-image-record-factory.h>
 
 enum {
     DAAP,

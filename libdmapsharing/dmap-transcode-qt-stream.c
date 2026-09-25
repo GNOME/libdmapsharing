@@ -20,10 +20,11 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <gst/gst.h>
-#include <gst/app/gstappsink.h>
-
 #include "dmap-transcode-qt-stream.h"
+
+#include <gst/app/gstappsink.h>
+#include <gst/gst.h>
+
 #include "dmap-transcode-stream-private.h"
 #include "gst-util.h"
 

@@ -21,13 +21,12 @@
 #ifndef _DMAP_CONNECTION_H
 #define _DMAP_CONNECTION_H
 
-#include <glib.h>
 #include <glib-object.h>
-#include <libsoup/soup.h>
-
+#include <glib.h>
 #include <libdmapsharing/dmap-cc.h>
 #include <libdmapsharing/dmap-db.h>
 #include <libdmapsharing/dmap-record-factory.h>
+#include <libsoup/soup.h>
 
 G_BEGIN_DECLS
 

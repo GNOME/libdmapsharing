@@ -23,12 +23,11 @@
 #define _DMAP_CONTROL_SHARE_H
 
 #include <glib-object.h>
-
-#include <libdmapsharing/dmap-control-player.h>
-#include <libdmapsharing/dmap-share.h>
-#include <libdmapsharing/dmap-db.h>
-#include <libdmapsharing/dmap-container-db.h>
 #include <libdmapsharing/dmap-av-share.h>
+#include <libdmapsharing/dmap-container-db.h>
+#include <libdmapsharing/dmap-control-player.h>
+#include <libdmapsharing/dmap-db.h>
+#include <libdmapsharing/dmap-share.h>
 
 G_BEGIN_DECLS
 /**

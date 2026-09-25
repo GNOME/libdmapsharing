@@ -22,24 +22,21 @@
 
 #include "config.h"
 
-#include <time.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include <glib/gi18n.h>
-#include <glib.h>
-
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
+#include <unistd.h>
 
-#include <libsoup/soup.h>
-
-#include <libdmapsharing/dmap.h>
-#include <libdmapsharing/dmap-share-private.h>
+#include <glib.h>
+#include <glib/gi18n.h>
 #include <libdmapsharing/dmap-private-utils.h>
+#include <libdmapsharing/dmap-share-private.h>
 #include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap.h>
+#include <libsoup/soup.h>
 
 static guint _get_desired_port (DmapShare * share);
 static const gchar *_get_type_of_service (DmapShare * share);

@@ -21,11 +21,10 @@
 #ifndef _DMAP_AV_RECORD_H
 #define _DMAP_AV_RECORD_H
 
-#include <glib.h>
 #include <gio/gio.h>
-
-#include <libdmapsharing/dmap-record.h>
+#include <glib.h>
 #include <libdmapsharing/dmap-db.h>
+#include <libdmapsharing/dmap-record.h>
 
 G_BEGIN_DECLS
 /**

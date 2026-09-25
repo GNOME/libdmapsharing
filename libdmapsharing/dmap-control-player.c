@@ -16,8 +16,9 @@
  */
 
 #include <libdmapsharing/dmap-control-player.h>
-#include <libdmapsharing/dmap-enums.h>
+
 #include <libdmapsharing/dmap-av-record.h>
+#include <libdmapsharing/dmap-enums.h>
 
 static void
 dmap_control_player_default_init (DmapControlPlayerInterface * iface)

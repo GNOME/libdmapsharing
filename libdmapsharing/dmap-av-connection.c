@@ -199,8 +199,8 @@ G_DEFINE_TYPE (DmapAvConnection, dmap_av_connection, DMAP_TYPE_CONNECTION);
 #ifdef HAVE_CHECK
 
 #include <check.h>
-#include <libdmapsharing/test-dmap-av-record.h>
 #include <libdmapsharing/test-dmap-av-record-factory.h>
+#include <libdmapsharing/test-dmap-av-record.h>
 
 START_TEST(_get_protocol_version_cc_test)
 {

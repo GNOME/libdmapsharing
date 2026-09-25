@@ -23,22 +23,20 @@
 #include "config.h"
 #endif
 
-#include <libdmapsharing/dmap.h>
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include <glib.h>
-#include <glib/gi18n.h>
-#include <glib-object.h>
-
+#include <avahi-client/client.h>
 #include <avahi-client/lookup.h>
 #include <avahi-client/publish.h>
-#include <avahi-client/client.h>
 #include <avahi-common/error.h>
 #include <avahi-glib/glib-malloc.h>
 #include <avahi-glib/glib-watch.h>
+#include <glib-object.h>
+#include <glib.h>
+#include <glib/gi18n.h>
+#include <libdmapsharing/dmap.h>
 
 struct _DmapMdnsBrowserPrivate
 {

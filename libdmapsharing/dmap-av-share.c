@@ -22,19 +22,17 @@
 
 #include "config.h"
 
-#include <time.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include <glib.h>
-
-#include <libsoup/soup.h>
-
-#include <libdmapsharing/dmap.h>
+#include <libdmapsharing/dmap-private-utils.h>
 #include <libdmapsharing/dmap-share-private.h>
 #include <libdmapsharing/dmap-structure.h>
-#include <libdmapsharing/dmap-private-utils.h>
 #include <libdmapsharing/dmap-utils.h>
+#include <libdmapsharing/dmap.h>
+#include <libsoup/soup.h>
 
 #ifdef HAVE_GSTREAMERAPP
 #include <libdmapsharing/dmap-transcode-stream.h>
@@ -1005,14 +1003,15 @@ _get_meta_data_map (G_GNUC_UNUSED DmapShare * share)
 
 #ifdef HAVE_CHECK
 
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include <check.h>
-#include <libdmapsharing/test-dmap-db.h>
 #include <libdmapsharing/test-dmap-av-record.h>
 #include <libdmapsharing/test-dmap-container-db.h>
 #include <libdmapsharing/test-dmap-container-record.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#include <libdmapsharing/test-dmap-db.h>
 
 static DmapShare *
 _build_share_test(gchar *name)

@@ -20,28 +20,26 @@
 
 #include "config.h"
 
-#include <time.h>
-#include <string.h>
-#include <stdlib.h>
+#include <libdmapsharing/dmap-control-share.h>
 
-#include <glib.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 #include <glib-object.h>
+#include <glib.h>
+#include <libdmapsharing/dmap-connection-private.h>
+#include <libdmapsharing/dmap-control-connection.h>
+#include <libdmapsharing/dmap-control-player.h>
+#include <libdmapsharing/dmap-share-private.h>
+#include <libdmapsharing/dmap-share.h>
+#include <libdmapsharing/dmap-structure.h>
+#include <libdmapsharing/dmap.h>
+#include <libsoup/soup.h>
 
 #ifdef HAVE_GDKPIXBUF
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #endif /* HAVE_GDKPIXBUF */
-
-#include <libsoup/soup.h>
-
-#include <libdmapsharing/dmap.h>
-#include <libdmapsharing/dmap-structure.h>
-#include <libdmapsharing/dmap-share-private.h>
-
-#include <libdmapsharing/dmap-share.h>
-#include <libdmapsharing/dmap-connection-private.h>
-#include <libdmapsharing/dmap-control-share.h>
-#include <libdmapsharing/dmap-control-connection.h>
-#include <libdmapsharing/dmap-control-player.h>
 
 void dmap_control_share_ctrl_int (DmapShare * share,
 			  SoupServerMessage * message,

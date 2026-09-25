@@ -20,22 +20,24 @@
 
 #include "config.h"
 
+#include "dmap-connection-private.h"
+#include "dmap-connection.h"
+
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
-#include <math.h>
-#ifdef HAVE_LIBZ
-#include <zlib.h>
-#endif
 
 #include <libsoup/soup.h>
 
-#include "dmap-md5.h"
-#include "dmap-connection.h"
-#include "dmap-connection-private.h"
 #include "dmap-error.h"
+#include "dmap-md5.h"
 #include "dmap-record-factory.h"
 #include "dmap-structure.h"
+
+#ifdef HAVE_LIBZ
+#include <zlib.h>
+#endif
 
 #define DMAP_USER_AGENT "iTunes/4.6 (Windows; N)"
 

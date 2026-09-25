@@ -22,9 +22,8 @@
 #ifndef _DMAP_MDNS_BROWSER_H
 #define _DMAP_MDNS_BROWSER_H
 
-#include <glib.h>
 #include <glib-object.h>
-
+#include <glib.h>
 #include <libdmapsharing/dmap-mdns-service.h>
 
 G_BEGIN_DECLS

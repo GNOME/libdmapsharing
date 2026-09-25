@@ -20,15 +20,14 @@
 #include "config.h"
 #endif
 
-#include <libdmapsharing/dmap.h>
-
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
+#include <glib-object.h>
 #include <glib.h>
 #include <glib/gi18n.h>
-#include <glib-object.h>
+#include <libdmapsharing/dmap.h>
 
 struct _DmapMdnsServicePrivate {
 	gchar *service_name;

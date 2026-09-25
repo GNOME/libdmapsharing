@@ -18,16 +18,17 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA*
  */
 
-#include "dmap-error.h"
 #include "dmap-structure.h"
-#include "dmap-private-utils.h"
 
-#include <glib.h>
+#include <stdarg.h>
+#include <string.h>
+
 #include <glib-object.h>
+#include <glib.h>
 #include <gobject/gvaluecollector.h>
 
-#include <string.h>
-#include <stdarg.h>
+#include "dmap-error.h"
+#include "dmap-private-utils.h"
 
 #define MAKE_CONTENT_CODE(ch0, ch1, ch2, ch3) \
     (( (gint32)(gchar)(ch0) | ( (gint32)(gchar)(ch1) << 8 ) | \

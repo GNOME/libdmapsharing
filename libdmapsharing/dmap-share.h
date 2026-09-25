@@ -24,12 +24,10 @@
 #define _DMAP_SHARE_H
 
 #include <glib-object.h>
-
-#include <libsoup/soup.h>
-
-#include <libdmapsharing/dmap-record.h>
-#include <libdmapsharing/dmap-mdns-publisher.h>
 #include <libdmapsharing/dmap-container-record.h>
+#include <libdmapsharing/dmap-mdns-publisher.h>
+#include <libdmapsharing/dmap-record.h>
+#include <libsoup/soup.h>
 
 G_BEGIN_DECLS
 /**

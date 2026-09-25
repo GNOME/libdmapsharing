@@ -21,9 +21,8 @@
 #ifndef _DMAP_IMAGE_RECORD_H
 #define _DMAP_IMAGE_RECORD_H
 
-#include <glib.h>
 #include <gio/gio.h>
-
+#include <glib.h>
 #include <libdmapsharing/dmap-record.h>
 
 G_BEGIN_DECLS

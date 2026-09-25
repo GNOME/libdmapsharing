@@ -20,12 +20,12 @@
 
 #include "config.h"
 
-#include <glib.h>
+#include "dmap-mdns-avahi.h"
+
+#include <avahi-common/error.h>
 #include <avahi-glib/glib-malloc.h>
 #include <avahi-glib/glib-watch.h>
-#include <avahi-common/error.h>
-
-#include "dmap-mdns-avahi.h"
+#include <glib.h>
 
 static AvahiClient *_client = NULL;
 static AvahiEntryGroup *_entry_group = NULL;

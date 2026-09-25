@@ -18,9 +18,9 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <string.h>
-
 #include "dmap-private-utils.h"
+
+#include <string.h>
 
 void
 dmap_private_utils_write_next_chunk (SoupServerMessage * message, ChunkData * cd)

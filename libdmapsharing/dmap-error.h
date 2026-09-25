@@ -21,8 +21,8 @@
 #ifndef _DMAP_ERROR_H
 #define _DMAP_ERROR_H
 
-#include <glib.h>
 #include <glib-object.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 

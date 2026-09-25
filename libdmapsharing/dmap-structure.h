@@ -21,9 +21,8 @@
 #ifndef _DMAP_STRUCTURE_H
 #define _DMAP_STRUCTURE_H
 
-#include <glib.h>
 #include <glib-object.h>
-
+#include <glib.h>
 #include <libdmapsharing/dmap-cc.h>
 
 typedef struct _DmapStructureItem DmapStructureItem;

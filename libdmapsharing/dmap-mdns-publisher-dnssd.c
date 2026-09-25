@@ -18,11 +18,12 @@
 
 #include "config.h"
 
+#include <arpa/inet.h>
 #include <stdio.h>
 #include <string.h>
-#include <glib.h>
+
 #include <dns_sd.h>
-#include <arpa/inet.h>
+#include <glib.h>
 
 #include "dmap-mdns-publisher.h"
 

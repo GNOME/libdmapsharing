@@ -24,8 +24,8 @@
 #ifndef _DMAP_MDNS_PUBLISHER_H
 #define _DMAP_MDNS_PUBLISHER_H
 
-#include <glib.h>
 #include <glib-object.h>
+#include <glib.h>
 
 G_BEGIN_DECLS
 #define DMAP_TYPE_MDNS_PUBLISHER         (dmap_mdns_publisher_get_type ())

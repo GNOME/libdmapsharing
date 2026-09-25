@@ -20,15 +20,17 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <string.h>
-#include <gst/gst.h>
-#include <gst/app/gstappsink.h>
-
-#include "dmap-transcode-stream.h"
 #include "dmap-transcode-stream-private.h"
+#include "dmap-transcode-stream.h"
+
+#include <string.h>
+
+#include <gst/app/gstappsink.h>
+#include <gst/gst.h>
+
 #include "dmap-transcode-mp3-stream.h"
-#include "dmap-transcode-wav-stream.h"
 #include "dmap-transcode-qt-stream.h"
+#include "dmap-transcode-wav-stream.h"
 #include "gst-util.h"
 
 #define GST_APP_MAX_BUFFERS 1024
