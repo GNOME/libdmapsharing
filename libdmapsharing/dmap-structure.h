@@ -24,6 +24,8 @@
 #include <glib.h>
 #include <libdmapsharing/dmap-cc.h>
 
+G_BEGIN_DECLS
+
 typedef struct _DmapStructureItem DmapStructureItem;
 
 struct _DmapStructureItem

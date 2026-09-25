@@ -22,6 +22,8 @@
 
 #include <gst/gst.h>
 
+G_BEGIN_DECLS
+
 gboolean gst_util_pads_compatible (GstPad * pad1, GstPad * pad2);
 
 G_END_DECLS
