@@ -366,9 +366,9 @@ _send_chunked_file (SoupServer * server, SoupServerMessage * message,
 	soup_message_headers_append (headers, "Connection", "Close");
 	soup_message_headers_append (headers, "Content-Type", "application/x-dmap-tagged");
 
-	g_signal_connect (message, "wrote_headers",
+	g_signal_connect (message, "wrote-headers",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd);
-	g_signal_connect (message, "wrote_chunk",
+	g_signal_connect (message, "wrote-chunk",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd);
 	g_signal_connect (message, "finished",
 			  G_CALLBACK (dmap_private_utils_chunked_message_finished), cd);

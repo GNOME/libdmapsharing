@@ -431,17 +431,17 @@ _send_chunked_file (DmapAvShare *share, SoupServer * server, SoupServerMessage *
 				     "Content-Type",
 				     "application/x-dmap-tagged");
 
-	if (0 == g_signal_connect (message, "wrote_headers",
+	if (0 == g_signal_connect (message, "wrote-headers",
 			           G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
 		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_FAILED,
-		                     "Error connecting to wrote_headers signal");
+		                     "Error connecting to wrote-headers signal");
 		goto done;
 	}
 
-	if (0 == g_signal_connect (message, "wrote_chunk",
+	if (0 == g_signal_connect (message, "wrote-chunk",
 			  G_CALLBACK (dmap_private_utils_write_next_chunk), cd)) {
 		dmap_share_emit_error(DMAP_SHARE(share), DMAP_STATUS_FAILED,
-		                     "Error connecting to wrote_chunk signal");
+		                     "Error connecting to wrote-chunk signal");
 		goto done;
 	}
 
@@ -1665,10 +1665,10 @@ START_TEST(_databases_items_xxx_test)
 	ck_assert(0 != size1);
 	ck_assert(NULL != location);
 
-	g_signal_emit_by_name(message, "wrote_headers", NULL);
+	g_signal_emit_by_name(message, "wrote-headers", NULL);
 
 	for (i = 0; i < size1 / DMAP_SHARE_CHUNK_SIZE + 1; i++) {
-		g_signal_emit_by_name(message, "wrote_chunk", NULL);
+		g_signal_emit_by_name(message, "wrote-chunk", NULL);
 	}
 
 	g_signal_emit_by_name(message, "finished", NULL);

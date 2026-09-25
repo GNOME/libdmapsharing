@@ -848,11 +848,11 @@ _databases (DmapShare * share,
 		soup_server_message_set_status (message, SOUP_STATUS_OK, NULL);
 
 		/* 4: */
-		g_signal_connect (message, "wrote_headers",
+		g_signal_connect (message, "wrote-headers",
 				  G_CALLBACK (_write_dmap_preamble), adbs);
 
 		/* 5: */
-		g_signal_connect (message, "wrote_chunk",
+		g_signal_connect (message, "wrote-chunk",
 				  G_CALLBACK (_write_next_mlit),
 				  share_bitwise);
 		g_signal_connect (message, "finished",
