@@ -385,9 +385,8 @@ _resolve_cb (AvahiServiceResolver * service_resolver,
 						name = g_strdup (value);
 					}
 				} else if (g_strcmp0 (key, "DvNm") == 0) {
-					g_free (name);
 					/* Remote's name is presented as DvNm in DACP */
-					name = g_strdup (value);
+					g_set_str(&name, value);
 				} else if (g_strcmp0 (key, "Pair") == 0) {
 					/* Pair is used when first connecting to a DACP remote */
 					pair = g_strdup (value);

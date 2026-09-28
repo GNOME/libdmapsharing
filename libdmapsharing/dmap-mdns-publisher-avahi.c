@@ -279,8 +279,7 @@ dmap_mdns_publisher_rename_at_port (DmapMdnsPublisher * publisher,
 		return FALSE;
 	}
 
-	g_free (ptr->name);
-	ptr->name = g_strdup (name);
+	g_set_str(&ptr->name, name);
 
 	if (publisher->priv->entry_group) {
 		_refresh_services (publisher, error);

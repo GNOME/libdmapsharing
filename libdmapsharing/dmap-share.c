@@ -1122,8 +1122,7 @@ _set_name (DmapShare * share, const gchar *name)
 
 	g_return_if_fail (share != NULL);
 
-	g_free (share->priv->name);
-	share->priv->name = g_strdup (name);
+	g_set_str(&share->priv->name, name);
 
 	if (share->priv->published) {
 		error = NULL;
@@ -1411,8 +1410,7 @@ _set_password (DmapShare * share, const gchar *password)
 		goto done;
 	}
 
-	g_free (share->priv->password);
-	share->priv->password = g_strdup (password);
+	g_set_str (&share->priv->password, password);
 	if (password != NULL) {
 		share->priv->auth_method = DMAP_SHARE_AUTH_METHOD_PASSWORD;
 	} else {
