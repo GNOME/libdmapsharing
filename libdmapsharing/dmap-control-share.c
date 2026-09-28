@@ -116,7 +116,7 @@ _get_dbid (void)
 		g_string_ascii_up (name);
 		g_string_append_len (name, name->str, 4);
 
-		dbid = g_string_free (name, FALSE);
+		dbid = g_string_free_and_steal (name);
 	}
 	return dbid;
 }
@@ -987,7 +987,7 @@ _pairing_code (gchar * pair_txt, gchar passcode[4])
 			      (G_CHECKSUM_MD5, (guchar *) pairing_string,
 			       PAIR_TXT_LENGTH + PASSCODE_LENGTH * 2));
 	g_string_ascii_up (pairing_code);
-	ret = g_string_free (pairing_code, FALSE);
+	ret = g_string_free_and_steal (pairing_code);
 
 	return ret;
 }

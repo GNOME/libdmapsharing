@@ -2029,14 +2029,12 @@ dmap_share_build_filter (gchar * filterstr)
 				def = g_new0 (DmapDbFilterDefinition, 1);
 			}
 			if (is_key) {
-				def->key = value->str;
-				g_string_free (value, FALSE);
+				def->key = g_string_free_and_steal(value);
 				def->negate = negate;
 				negate = FALSE;
 				is_key = FALSE;
 			} else {
-				def->value = value->str;
-				g_string_free (value, FALSE);
+				def->value = g_string_free_and_steal(value);
 				is_value = FALSE;
 				is_key = TRUE;
 			}
