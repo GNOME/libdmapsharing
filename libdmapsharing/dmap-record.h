@@ -79,7 +79,7 @@ typedef enum {
 	DMAP_MEDIA_KIND_MOVIE = 2,
 	DMAP_MEDIA_KIND_PODCAST = 32,
 	DMAP_MEDIA_KIND_TV_SHOW = 64 
-} DmapMediaKind;
+} G_GNUC_FLAG_ENUM DmapMediaKind;
 
 GType dmap_record_get_type (void);
 
