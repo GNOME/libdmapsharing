@@ -204,10 +204,7 @@ _dispose (GObject * object)
 		share->priv->update_queue = NULL;
 	}
 
-	if (NULL != share->priv->remotes) {
-		g_hash_table_destroy (share->priv->remotes);
-		share->priv->remotes = NULL;
-	}
+	g_clear_pointer (&share->priv->remotes, g_hash_table_destroy);
 
 	G_OBJECT_CLASS (dmap_control_share_parent_class)->dispose (object);
 }
@@ -578,8 +575,7 @@ _send_playstatusupdate (DmapControlShare * share)
 		}
 		g_object_unref (server);
 	}
-	g_slist_free (share->priv->update_queue);
-	share->priv->update_queue = NULL;
+	g_clear_slist (&share->priv->update_queue, NULL);
 }
 
 void

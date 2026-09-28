@@ -1535,9 +1535,7 @@ _finalize (GObject * object)
 
 	g_debug ("Finalizing DmapShare");
 
-	g_hash_table_destroy (share->priv->session_ids);
-	share->priv->session_ids = NULL;
-
+	g_clear_pointer (&share->priv->session_ids, g_hash_table_destroy);
 	g_free (share->priv->name);
 	g_free (share->priv->password);
 	g_free (share->priv->transcode_mimetype);

@@ -943,8 +943,8 @@ dmap_structure_find_node (GNode * structure, DmapContentCode code)
 			 _gnode_find_node, finder);
 
 	node = finder->node;
-	g_free (finder);
-	finder = NULL;
+
+	g_clear_pointer (&finder, g_free);
 
 	return node;
 }

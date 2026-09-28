@@ -134,13 +134,11 @@ _dispose (GObject * object)
 	g_debug ("DMAP connection dispose");
 
 	if (priv->emit_progress_id != 0) {
-		g_source_remove (priv->emit_progress_id);
-		priv->emit_progress_id = 0;
+		g_clear_handle_id (&priv->emit_progress_id, g_source_remove);
 	}
 
 	if (priv->do_something_id != 0) {
-		g_source_remove (priv->do_something_id);
-		priv->do_something_id = 0;
+		g_clear_handle_id (&priv->do_something_id, g_source_remove);
 	}
 
 	if (priv->playlists) {
@@ -153,14 +151,10 @@ _dispose (GObject * object)
 			g_free (playlist);
 			l->data = NULL;
 		}
-		g_slist_free (priv->playlists);
-		priv->playlists = NULL;
+		g_clear_slist (&priv->playlists, NULL);
 	}
 
-	if (priv->item_id_to_uri) {
-		g_hash_table_destroy (priv->item_id_to_uri);
-		priv->item_id_to_uri = NULL;
-	}
+	g_clear_pointer (&priv->item_id_to_uri, g_hash_table_destroy);
 
 	if (priv->session) {
 		g_debug ("Aborting all pending requests");
@@ -170,22 +164,16 @@ _dispose (GObject * object)
 	}
 
 	if (priv->base_uri) {
-		g_uri_unref (priv->base_uri);
-		priv->base_uri = NULL;
+		g_clear_pointer (&priv->base_uri, g_uri_unref);
 	}
 
 	if (priv->daap_base_uri) {
-		g_free (priv->daap_base_uri);
-		priv->daap_base_uri = NULL;
+		g_clear_pointer (&priv->daap_base_uri, g_free);
 	}
 
 	g_clear_object(&priv->db);
 	g_clear_object(&priv->record_factory);
-
-	if (priv->last_error_message != NULL) {
-		g_free (priv->last_error_message);
-		priv->last_error_message = NULL;
-	}
+	g_clear_pointer (&priv->last_error_message, g_free);
 
 	G_OBJECT_CLASS (dmap_connection_parent_class)->dispose (object);
 }
@@ -841,8 +829,7 @@ _actual_http_response_handler (DmapResponseData * data)
 		    (&stream,
 		     32 /* auto-detect */  + 15 /* max */ ) != Z_OK) {
 			inflateEnd (&stream);
-			g_free (new_response);
-			new_response = NULL;
+			g_clear_pointer (&new_response, g_free);
 			g_debug ("Unable to decompress response from %s",
 				 data->message_path);
 			_connection_set_error_message (
@@ -862,8 +849,7 @@ _actual_http_response_handler (DmapResponseData * data)
 				    || stream.avail_out != 0
 				    || unc_size > 40 * 1000 * 1000) {
 					inflateEnd (&stream);
-					g_free (new_response);
-					new_response = NULL;
+					g_clear_pointer (&new_response, g_free);
 					break;
 				}
 
