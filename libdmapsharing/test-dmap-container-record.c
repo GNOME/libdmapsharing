@@ -50,7 +50,7 @@ test_dmap_container_record_get_property (GObject *object,
 {
         switch (prop_id) {
                 case PROP_NAME:
-                        g_value_set_string (value, "Test");
+                        g_value_set_static_string (value, "Test");
                         break;
                 default:
                         G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
