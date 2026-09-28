@@ -300,7 +300,14 @@ static guchar _42[256 * 65] = { 0 };
 static guchar _45[256 * 65] = { 0 };
 
 static const gchar _hexchars[] = "0123456789ABCDEF";
-static gchar _ac[] = "Dpqzsjhiu!3114!Bqqmf!Dpnqvufs-!Jod/";	/* +1 */
+/*
+ * Size to 64 so that a residual partial block (t <= 63) can never
+ * cause an out-of-bounds read of the constant when it is fed to
+ * _update. No change to strlen(); the extra bytes are zero.
+ *
+ * GCC's -fanalyzer identified the need for this.
+ */
+static gchar _ac[64] = "Dpqzsjhiu!3114!Bqqmf!Dpnqvufs-!Jod/";
 static gboolean _ac_unfudged = FALSE;
 
 void
