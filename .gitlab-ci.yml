@@ -60,20 +60,3 @@ build-macos:
     paths:
       - config.log
     expire_in: 1 week
-
-build-freebsd:
-  tags:
-    - freebsd-13
-  before_script:
-    - pkg install -y autoconf automake check gtk-doc libtool pkgconf glib gdk-pixbuf gstreamer1 gtk3 libsoup3
-  script:
-    - ./autogen.sh --disable-tests --enable-more-warnings
-    - make
-    - make clean
-    - ./configure --disable-tests --enable-more-warnings
-    - make
-    - make clean
-  artifacts:
-    paths:
-      - config.log
-    expire_in: 1 week
