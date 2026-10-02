@@ -46,9 +46,10 @@ build-fedora:
 build-macos:
   tags:
     - macos
-  before_script:
-    - brew install autoconf automake check gtk-doc libtool pkg-config glib gdk-pixbuf gstreamer gtk+3 libsoup
+  variables:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
   script:
+    - brew install autoconf automake check gtk-doc libtool pkg-config glib gdk-pixbuf gstreamer gtk+3 libsoup
     - ./autogen.sh --with-mdns=dns_sd --disable-tests --enable-more-warnings
     - make
     - make clean
