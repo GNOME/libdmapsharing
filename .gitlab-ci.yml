@@ -1,5 +1,5 @@
 build-ubuntu:
-  image: i386/debian:unstable
+  image: debian:unstable
 
   variables:
     DEBIAN_FRONTEND: noninteractive
@@ -9,10 +9,10 @@ build-ubuntu:
     - apt-get install -q -y --no-install-recommends autoconf automake avahi-daemon check gcc git gtk-doc-tools libavahi-client-dev libavahi-compat-libdnssd-dev libavahi-glib-dev libgdk-pixbuf2.0-dev libglib2.0-dev libgstreamer-plugins-base1.0-dev libgtk-3-dev libsoup-3.0-dev libtool pkg-config make
 
   script:
-    - ./autogen.sh --with-mdns=avahi --disable-tests --enable-more-warnings
+    - ./autogen.sh --disable-tests --enable-more-warnings
     - make
     - make clean
-    - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
+    - ./configure --disable-tests --enable-more-warnings
     - make
     - make clean
 
@@ -41,4 +41,38 @@ build-fedora:
     paths:
       - config.log
       - libdmapsharing4*.rpm
+    expire_in: 1 week
+
+build-macos:
+  tags:
+    - macos
+  before_script:
+    - brew install autoconf automake check gtk-doc libtool pkg-config glib gdk-pixbuf gstreamer gtk+3 libsoup
+  script:
+    - ./autogen.sh --with-mdns=dns_sd --disable-tests --enable-more-warnings
+    - make
+    - make clean
+    - ./configure --with-mdns=dns_sd --disable-tests --enable-more-warnings
+    - make
+    - make clean
+  artifacts:
+    paths:
+      - config.log
+    expire_in: 1 week
+
+build-freebsd:
+  tags:
+    - freebsd
+  before_script:
+    - pkg install -y autoconf automake check gtk-doc libtool pkgconf glib gdk-pixbuf gstreamer1 gtk3 libsoup3
+  script:
+    - ./autogen.sh --disable-tests --enable-more-warnings
+    - make
+    - make clean
+    - ./configure --disable-tests --enable-more-warnings
+    - make
+    - make clean
+  artifacts:
+    paths:
+      - config.log
     expire_in: 1 week
