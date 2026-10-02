@@ -46,8 +46,6 @@ build-fedora:
 build-macos:
   tags:
     - macos
-  variables:
-    HOMEBREW_NO_AUTO_UPDATE: "1"
   before_script:
     - eval "$(/opt/homebrew/bin/brew shellenv)"
     - brew install autoconf check libtool pkg-config gdk-pixbuf gstreamer gtk+3 libsoup
